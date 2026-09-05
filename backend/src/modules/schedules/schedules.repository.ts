@@ -1,6 +1,6 @@
 import { db } from '../../shared/db';
 import { workingSchedules, workingScheduleLines, employees, contracts } from '../../db/schema';
-import { eq, sql, desc, inArray } from 'drizzle-orm';
+import { eq, sql, inArray } from 'drizzle-orm';
 import type { ScheduleLineInput } from './schedules.validators';
 
 export type WorkingScheduleRecord = typeof workingSchedules.$inferSelect;
@@ -25,16 +25,20 @@ export async function findAllSchedules() {
     .from(workingSchedules)
     .orderBy(workingSchedules.name);
 
-  // Fetch lines for all schedules to embed compact summary
-  const allLines = await db
-    .select()
-    .from(workingScheduleLines);
-
+  const scheduleIds = schedules.map((s) => s.id);
   const linesByScheduleId = new Map<string, WorkingScheduleLineRecord[]>();
-  for (const line of allLines) {
-    const list = linesByScheduleId.get(line.scheduleId) || [];
-    list.push(line);
-    linesByScheduleId.set(line.scheduleId, list);
+
+  if (scheduleIds.length > 0) {
+    const lines = await db
+      .select()
+      .from(workingScheduleLines)
+      .where(inArray(workingScheduleLines.scheduleId, scheduleIds));
+
+    for (const line of lines) {
+      const list = linesByScheduleId.get(line.scheduleId) || [];
+      list.push(line);
+      linesByScheduleId.set(line.scheduleId, list);
+    }
   }
 
   return schedules.map((s) => ({

@@ -1,28 +1,58 @@
 import { z } from 'zod';
 import { ValidationError } from '../../shared/errors';
+import { realCalendarDateSchema } from '../../shared/validators';
+
+const pastOrPresentDateTimeSchema = z
+  .string()
+  .datetime()
+  .refine(
+    (dt) => {
+      const parsed = Date.parse(dt);
+      return !isNaN(parsed) && parsed <= Date.now() + 5 * 60 * 1000;
+    },
+    { message: 'Timestamp cannot be in the future' },
+  );
 
 export const checkInSchema = z.object({
   employeeId: z.string().uuid('Invalid employee ID'),
-  checkIn: z.string().datetime().optional(),
+  checkIn: pastOrPresentDateTimeSchema.optional(),
 });
 
 export const checkOutSchema = z.object({
   employeeId: z.string().uuid('Invalid employee ID'),
-  checkOut: z.string().datetime().optional(),
+  checkOut: pastOrPresentDateTimeSchema.optional(),
 });
 
-export const attendanceRecordSchema = z.object({
+export const baseAttendanceRecordSchema = z.object({
   employeeId: z.string().uuid('Invalid employee ID'),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (YYYY-MM-DD)'),
-  checkIn: z.string().datetime().optional().nullable(),
-  checkOut: z.string().datetime().optional().nullable(),
+  date: realCalendarDateSchema,
+  checkIn: pastOrPresentDateTimeSchema.optional().nullable(),
+  checkOut: pastOrPresentDateTimeSchema.optional().nullable(),
   workedHours: z.number().min(0).max(24).optional(),
   status: z.enum(['Present', 'Late', 'Absent', 'Overtime', 'Half-day']).default('Present'),
   exceptionNote: z.string().optional().nullable(),
   isManualEdit: z.boolean().optional(),
 });
 
-export const updateAttendanceSchema = attendanceRecordSchema.partial();
+export const attendanceRecordSchema = baseAttendanceRecordSchema.refine(
+  (data) => {
+    if (data.checkIn && data.checkOut) {
+      return Date.parse(data.checkOut) >= Date.parse(data.checkIn);
+    }
+    return true;
+  },
+  { message: 'Check-out timestamp cannot be earlier than check-in', path: ['checkOut'] },
+);
+
+export const updateAttendanceSchema = baseAttendanceRecordSchema.partial().refine(
+  (data) => {
+    if (data.checkIn && data.checkOut) {
+      return Date.parse(data.checkOut) >= Date.parse(data.checkIn);
+    }
+    return true;
+  },
+  { message: 'Check-out timestamp cannot be earlier than check-in', path: ['checkOut'] },
+);
 
 export function validateAttendanceRecord(data: unknown) {
   const result = attendanceRecordSchema.safeParse(data);
