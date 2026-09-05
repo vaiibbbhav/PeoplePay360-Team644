@@ -163,6 +163,17 @@ export const attendance = pgTable('attendance', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
+// 7b. Fingerprint
+export const fingerprint = pgTable('fingerprint', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  employeeId: uuid('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+  encrytedTemplate: text('encryted_template').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+});
+
 // 8. Time Off Types, Allocations, and Requests
 export const timeOffTypes = pgTable('time_off_types', {
   id: uuid('id').defaultRandom().primaryKey(),

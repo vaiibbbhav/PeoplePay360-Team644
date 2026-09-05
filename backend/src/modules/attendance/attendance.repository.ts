@@ -22,6 +22,7 @@ export async function findAllAttendance(employeeId?: string, startDate?: string,
       exception_note: attendance.exceptionNote,
       is_manual_edit: attendance.isManualEdit,
       created_at: attendance.createdAt,
+      updated_at: attendance.updatedAt,
     })
     .from(attendance)
     .leftJoin(employees, eq(attendance.employeeId, employees.id))
@@ -46,6 +47,7 @@ export async function findAttendanceById(id: string) {
       exception_note: attendance.exceptionNote,
       is_manual_edit: attendance.isManualEdit,
       created_at: attendance.createdAt,
+      updated_at: attendance.updatedAt,
     })
     .from(attendance)
     .where(eq(attendance.id, id))
@@ -121,3 +123,4 @@ export async function countWorkedDaysForPeriod(
 
   return res?.val ?? 0;
 }
+

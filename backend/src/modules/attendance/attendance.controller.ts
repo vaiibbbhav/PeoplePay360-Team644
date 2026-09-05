@@ -33,3 +33,4 @@ export const saveManualAttendance = asyncHandler(async (req: Request, res: Respo
   const record = await attendanceService.saveManualAttendance(validated);
   res.status(201).json(record);
 });
+
