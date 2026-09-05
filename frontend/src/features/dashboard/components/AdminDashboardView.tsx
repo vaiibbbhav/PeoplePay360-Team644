@@ -156,7 +156,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
         <h2 className="text-sm font-semibold text-ink uppercase tracking-wider mb-4">
           Administrative Launchpad
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <Link
             to="/users"
             className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
@@ -165,10 +165,10 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
               🛡️
             </div>
             <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
-              User Management
+              User Accounts
             </h4>
             <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Create and manage authentication accounts, assign roles, and activate/deactivate users.
+              Manage credentials, roles, and status.
             </p>
           </Link>
 
@@ -183,7 +183,37 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
               Employees Master
             </h4>
             <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Global employee directory, job titles, manager links, and working schedules.
+              Global directory & department assignments.
+            </p>
+          </Link>
+
+          <Link
+            to="/contracts"
+            className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
+          >
+            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
+              📄
+            </div>
+            <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
+              Contracts
+            </h4>
+            <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+              Wages, active terms, and structure links.
+            </p>
+          </Link>
+
+          <Link
+            to="/schedules"
+            className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
+          >
+            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
+              📅
+            </div>
+            <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
+              Work Schedules
+            </h4>
+            <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+              Weekly shifts, working days & hours.
             </p>
           </Link>
 
@@ -198,7 +228,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
               Payroll Engine
             </h4>
             <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Payrun batches, payslip generation, and rule evaluation audit.
+              Payrun batches & payslip generation.
             </p>
           </Link>
         </div>

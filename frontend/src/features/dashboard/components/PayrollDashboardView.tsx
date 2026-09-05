@@ -229,6 +229,136 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
         </div>
       </div>
 
+      {/* Contracts & Working Schedules Operational Baseline */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-bg border border-line rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
+              <div>
+                <h3 className="font-serif text-base font-semibold text-ink">
+                  Contracts Baseline
+                </h3>
+                <p className="text-xs text-ink-soft mt-0.5">
+                  Payroll salary base & active wage contracts
+                </p>
+              </div>
+              <Link
+                to="/contracts"
+                className="text-xs text-accent font-medium hover:underline no-underline"
+              >
+                View all ({dashboard?.contracts?.total ?? 0}) →
+              </Link>
+            </div>
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
+                <span className="text-[11px] text-ink-soft block">Active Wages</span>
+                <span className="text-lg font-serif font-bold text-accent mt-0.5 block">
+                  {dashboard?.contracts?.active ?? 0}
+                </span>
+              </div>
+              <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
+                <span className="text-[11px] text-ink-soft block">Draft Wages</span>
+                <span className="text-lg font-serif font-bold text-ink mt-0.5 block">
+                  {dashboard?.contracts?.draft ?? 0}
+                </span>
+              </div>
+              <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
+                <span className="text-[11px] text-ink-soft block">Expired</span>
+                <span className="text-lg font-serif font-bold text-amber-600 dark:text-amber-400 mt-0.5 block">
+                  {dashboard?.contracts?.expired ?? 0}
+                </span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {(dashboard?.contracts?.recent || []).slice(0, 3).map((c) => (
+                <div
+                  key={c.id}
+                  className="flex items-center justify-between text-xs p-2.5 rounded-xl border border-line/60 bg-bg-raised/30"
+                >
+                  <span className="font-medium text-ink truncate max-w-[140px] sm:max-w-none">
+                    {c.employee_name || c.name}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-semibold text-ink">
+                      ₹{Number(c.wage).toLocaleString('en-IN')}/{c.wage_type === 'hourly' ? 'hr' : 'mo'}
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full border border-accent/40 bg-accent-soft text-accent">
+                      {c.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="pt-4 mt-4 border-t border-line/60 flex justify-between items-center text-xs">
+            <span className="text-ink-soft">Drives payrun wage computation</span>
+            <Link
+              to="/contracts"
+              className="text-accent font-medium hover:underline no-underline"
+            >
+              Open Contracts List →
+            </Link>
+          </div>
+        </div>
+
+        <div className="bg-bg border border-line rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
+              <div>
+                <h3 className="font-serif text-base font-semibold text-ink">
+                  Working Schedules & Shifts
+                </h3>
+                <p className="text-xs text-ink-soft mt-0.5">
+                  Standard hours context for worked days calculations
+                </p>
+              </div>
+              <Link
+                to="/schedules"
+                className="text-xs text-accent font-medium hover:underline no-underline"
+              >
+                View all ({dashboard?.schedules?.total ?? 0}) →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
+                <span className="text-[11px] text-ink-soft block">Active Schedules</span>
+                <span className="text-lg font-serif font-bold text-accent mt-0.5 block">
+                  {dashboard?.schedules?.active ?? 0}
+                </span>
+              </div>
+              <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
+                <span className="text-[11px] text-ink-soft block">Avg Weekly Standard</span>
+                <span className="text-lg font-serif font-bold text-ink mt-0.5 block">
+                  {dashboard?.schedules?.avgWeeklyHours ?? 40} hrs
+                </span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {(dashboard?.schedules?.list || []).slice(0, 3).map((s) => (
+                <div
+                  key={s.id}
+                  className="flex items-center justify-between text-xs p-2.5 rounded-xl border border-line/60 bg-bg-raised/30"
+                >
+                  <span className="font-medium text-ink">{s.name}</span>
+                  <span className="font-mono font-semibold text-accent">
+                    {s.weekly_hours} hrs/week
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="pt-4 mt-4 border-t border-line/60 flex justify-between items-center text-xs">
+            <span className="text-ink-soft">Sets standard shift duration</span>
+            <Link
+              to="/schedules"
+              className="text-accent font-medium hover:underline no-underline"
+            >
+              Open Shift Schedules →
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* Operations Launchpad */}
       <div>
         <h2 className="text-sm font-semibold text-ink uppercase tracking-wider mb-4">

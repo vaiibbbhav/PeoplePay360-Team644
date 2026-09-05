@@ -1,13 +1,15 @@
 import * as reportingRepo from './reporting.repository';
 
 export async function getDashboardOverview() {
-  const [payrollKpis, timeOffStats, attendanceHealth, deptCosts, salaryTrends] = await Promise.all([
-    reportingRepo.getPayrollKpis(),
-    reportingRepo.getTimeOffStats(),
-    reportingRepo.getAttendanceHealthStats(),
-    reportingRepo.getSalaryCostByDepartment(),
-    reportingRepo.getMonthlySalaryTrends(),
-  ]);
+  const [payrollKpis, timeOffStats, attendanceHealth, deptCosts, salaryTrends, contractAndSchedule] =
+    await Promise.all([
+      reportingRepo.getPayrollKpis(),
+      reportingRepo.getTimeOffStats(),
+      reportingRepo.getAttendanceHealthStats(),
+      reportingRepo.getSalaryCostByDepartment(),
+      reportingRepo.getMonthlySalaryTrends(),
+      reportingRepo.getContractAndScheduleStats(),
+    ]);
 
   const totalAttendance = attendanceHealth.total_attendance_entries || 0;
   const presentRate =
@@ -34,6 +36,8 @@ export async function getDashboardOverview() {
       overtime: attendanceHealth.overtime_count,
       manualEdits: attendanceHealth.manual_edits_count,
     },
+    contracts: contractAndSchedule.contracts,
+    schedules: contractAndSchedule.schedules,
     charts: {
       departmentBreakdown: deptCosts.map((d: any) => ({
         department: d.department_name,

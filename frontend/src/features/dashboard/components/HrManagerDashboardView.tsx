@@ -133,6 +133,173 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
         </div>
       </div>
 
+      {/* Contracts & Working Schedules Operational Integration */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Active Contracts Summary & Recent List */}
+        <div className="bg-bg border border-line rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
+              <div>
+                <h3 className="font-serif text-base font-semibold text-ink">
+                  Employment Contracts
+                </h3>
+                <p className="text-xs text-ink-soft mt-0.5">
+                  Period-based binding agreements & status
+                </p>
+              </div>
+              <Link
+                to="/contracts"
+                className="text-xs text-accent font-medium hover:underline no-underline"
+              >
+                View all contracts ({dashboard?.contracts?.total ?? 0}) →
+              </Link>
+            </div>
+
+            {/* Quick KPI badges */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
+                <span className="text-[11px] text-ink-soft block">Active</span>
+                <span className="text-lg font-serif font-bold text-accent mt-0.5 block">
+                  {dashboard?.contracts?.active ?? 0}
+                </span>
+              </div>
+              <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
+                <span className="text-[11px] text-ink-soft block">Draft</span>
+                <span className="text-lg font-serif font-bold text-ink mt-0.5 block">
+                  {dashboard?.contracts?.draft ?? 0}
+                </span>
+              </div>
+              <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
+                <span className="text-[11px] text-ink-soft block">Expired</span>
+                <span className="text-lg font-serif font-bold text-amber-600 dark:text-amber-400 mt-0.5 block">
+                  {dashboard?.contracts?.expired ?? 0}
+                </span>
+              </div>
+            </div>
+
+            {/* Recent contracts preview */}
+            <div className="space-y-2.5">
+              {(dashboard?.contracts?.recent || []).slice(0, 3).map((c) => (
+                <div
+                  key={c.id}
+                  className="flex items-center justify-between text-xs p-2.5 rounded-xl border border-line/60 bg-bg-raised/30"
+                >
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-ink">{c.employee_name || c.name}</span>
+                    <span className="text-[11px] text-ink-soft">
+                      Starts: {new Date(c.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-ink text-[11px]">
+                      ₹{Number(c.wage).toLocaleString('en-IN')}/{c.wage_type === 'hourly' ? 'hr' : 'mo'}
+                    </span>
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded-full border ${
+                        c.status === 'active'
+                          ? 'border-accent/40 bg-accent-soft text-accent'
+                          : 'border-line bg-bg-raised text-ink-soft'
+                      }`}
+                    >
+                      {c.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-4 mt-4 border-t border-line/60 flex justify-between items-center text-xs">
+            <span className="text-ink-soft">Overlapping checks active</span>
+            <Link
+              to="/contracts"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 no-underline transition-opacity"
+            >
+              + Add Contract
+            </Link>
+          </div>
+        </div>
+
+        {/* Working Schedules Patterns */}
+        <div className="bg-bg border border-line rounded-2xl p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
+              <div>
+                <h3 className="font-serif text-base font-semibold text-ink">
+                  Working Schedules
+                </h3>
+                <p className="text-xs text-ink-soft mt-0.5">
+                  Shift patterns, daily hours & break policies
+                </p>
+              </div>
+              <Link
+                to="/schedules"
+                className="text-xs text-accent font-medium hover:underline no-underline"
+              >
+                Configure schedules ({dashboard?.schedules?.total ?? 0}) →
+              </Link>
+            </div>
+
+            {/* Quick KPI badges */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
+                <span className="text-[11px] text-ink-soft block">Active Shift Models</span>
+                <span className="text-lg font-serif font-bold text-accent mt-0.5 block">
+                  {dashboard?.schedules?.active ?? 0}
+                </span>
+              </div>
+              <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
+                <span className="text-[11px] text-ink-soft block">Avg Weekly Commitment</span>
+                <span className="text-lg font-serif font-bold text-ink mt-0.5 block">
+                  {dashboard?.schedules?.avgWeeklyHours ?? 40} hrs
+                </span>
+              </div>
+            </div>
+
+            {/* Schedules list */}
+            <div className="space-y-2.5">
+              {(dashboard?.schedules?.list || []).slice(0, 3).map((s) => (
+                <div
+                  key={s.id}
+                  className="flex items-center justify-between text-xs p-2.5 rounded-xl border border-line/60 bg-bg-raised/30"
+                >
+                  <div className="flex flex-col">
+                    <span className="font-semibold text-ink">{s.name}</span>
+                    <span className="text-[11px] text-ink-soft">
+                      Weekly standard allocation
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-semibold text-accent text-xs">
+                      {s.weekly_hours} hrs/wk
+                    </span>
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded-full border ${
+                        s.is_active
+                          ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                          : 'border-line bg-bg-raised text-ink-soft'
+                      }`}
+                    >
+                      {s.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-4 mt-4 border-t border-line/60 flex justify-between items-center text-xs">
+            <span className="text-ink-soft">Auto-computed break & weekly hours</span>
+            <Link
+              to="/schedules"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium border border-line bg-bg-raised hover:border-ink-soft text-ink no-underline transition-colors"
+            >
+              + Create Schedule
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* HR Operations Launchpad */}
       <div>
         <h2 className="text-sm font-semibold text-ink uppercase tracking-wider mb-4">

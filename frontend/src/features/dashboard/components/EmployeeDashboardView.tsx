@@ -147,8 +147,8 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
         </div>
       )}
 
-      {/* Quick Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Quick Summary Cards: Identity, Contract, Schedule, Biometrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-xs text-ink-soft font-medium">Session Role</span>
           <div className="text-base font-semibold text-ink mt-1">{user.role}</div>
@@ -157,25 +157,35 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
           </span>
         </div>
         <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
+          <span className="text-xs text-ink-soft font-medium">Employment Contract</span>
+          <div className="text-base font-semibold text-ink mt-1">Active Agreement</div>
+          <Link
+            to="/compensation"
+            className="text-[11px] text-accent font-medium mt-1 block hover:underline no-underline"
+          >
+            View wage & contract →
+          </Link>
+        </div>
+        <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
+          <span className="text-xs text-ink-soft font-medium">Working Schedule</span>
+          <div className="text-base font-semibold text-ink mt-1">Standard 40h Shift</div>
+          <Link
+            to="/attendance"
+            className="text-[11px] text-accent font-medium mt-1 block hover:underline no-underline"
+          >
+            Check shift timetable →
+          </Link>
+        </div>
+        <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-xs text-ink-soft font-medium">Biometrics & Punches</span>
           <div className="text-base font-semibold text-ink mt-1">
-            {hasFingerprint ? 'Fingerprint Enrolled' : 'Punch Clock Active'}
+            {hasFingerprint ? 'Enrolled & Verified' : 'Punch Clock Ready'}
           </div>
           <Link
             to="/attendance"
             className="text-[11px] text-accent font-medium mt-1 block hover:underline no-underline"
           >
-            Open attendance terminal →
-          </Link>
-        </div>
-        <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
-          <span className="text-xs text-ink-soft font-medium">Compensation</span>
-          <div className="text-base font-semibold text-ink mt-1">Payslips Ready</div>
-          <Link
-            to="/compensation"
-            className="text-[11px] text-accent font-medium mt-1 block hover:underline no-underline"
-          >
-            Open compensation hub →
+            Open punch terminal →
           </Link>
         </div>
       </div>
