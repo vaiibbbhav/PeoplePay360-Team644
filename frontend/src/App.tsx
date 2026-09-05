@@ -10,6 +10,8 @@ import { UserManagementPage } from './features/users/pages/UserManagementPage';
 import { EmployeeDirectoryPage } from './features/employees/pages/EmployeeDirectoryPage';
 import { EmployeeProfilePage } from './features/employees/pages/EmployeeProfilePage';
 
+import { CompensationPage } from './features/compensation/pages/CompensationPage';
+
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -21,6 +23,8 @@ export function App() {
           <Route path="/employee/dashboard" element={<EmployeeDashboardPage />} />
           <Route path="/employee/attendance" element={<EmployeeAttendancePage />} />
           <Route path="/users" element={<UserManagementPage />} />
+          <Route path="/compensation" element={<CompensationPage />} />
+          <Route path="/payslips" element={<CompensationPage />} />
           <Route path="/employees" element={<EmployeeDirectoryPage />} />
           <Route path="/employees/:id" element={<EmployeeProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

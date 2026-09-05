@@ -192,6 +192,26 @@ export const DashboardPage: React.FC = () => {
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-line bg-bg text-ink-soft">
             v1.0
           </span>
+          <Link
+            to="/compensation"
+            className="text-xs px-2.5 py-1 rounded-md bg-accent-soft text-accent font-medium hover:opacity-80 transition-opacity no-underline flex items-center gap-1.5"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Compensation & Payslips
+          </Link>
+          {user.role === 'Admin' && (
+            <Link
+              to="/users"
+              className="text-xs px-2.5 py-1 rounded-md bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 font-medium hover:opacity-80 transition-opacity no-underline flex items-center gap-1.5"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              User Management
+            </Link>
+          )}
         </div>
 
         {/* User Quick Info */}
@@ -279,6 +299,75 @@ export const DashboardPage: React.FC = () => {
         />
       )}
 
+        {/* Action Modules Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+          {[
+            {
+              title: 'My Compensation & Payslips',
+              desc: 'View active CTC packages, download monthly verified payslips, and inspect income tax computation.',
+              tag: 'Self-Service',
+              link: '/compensation',
+              isDirectLink: true,
+            },
+            ...(user.role === 'Admin'
+              ? [
+                  {
+                    title: 'User Management',
+                    desc: 'System access control, employee account provisioning, and RBAC permission grants.',
+                    tag: 'Admin Only',
+                    link: '/users',
+                    isDirectLink: true,
+                  },
+                ]
+              : []),
+            {
+              title: 'Employee Master',
+              desc: 'Central employee profiles, departments, and working schedules.',
+              tag: 'Core HR',
+              link: '#',
+              isDirectLink: false,
+            },
+            {
+              title: 'Contract Management',
+              desc: 'Period-active compensation contracts and wage structures.',
+              tag: 'Contracts',
+              link: '#',
+              isDirectLink: false,
+            },
+            {
+              title: 'Attendance & Punches',
+              desc: 'Check-in, check-out logs, and manual exception reviews.',
+              tag: 'Operations',
+              link: '#',
+              isDirectLink: false,
+            },
+            {
+              title: 'Time Off & Balances',
+              desc: 'Leave allocations, employee requests, and approval actions.',
+              tag: 'Leaves',
+              link: '#',
+              isDirectLink: false,
+            },
+            {
+              title: 'Payrun Wizard',
+              desc: 'Initiate batch payruns, compute salary rules, and validate slips.',
+              tag: 'Payroll',
+              link: '#',
+              isDirectLink: false,
+            },
+            {
+              title: 'Live Payroll Analytics',
+              desc: 'Department salary distributions, KPI cards, and anomaly warnings.',
+              tag: 'Reporting',
+              link: '#',
+              isDirectLink: false,
+            },
+          ].map((card) => (
+            <div
+              key={card.title}
+              className={`border border-line rounded-xl p-6 bg-bg-raised flex flex-col justify-between ${
+                card.isDirectLink ? 'ring-1 ring-accent/30 shadow-xs' : ''
+              }`}
       {/* ---------------- MAIN CANVAS ---------------- */}
       <div className="flex-1 lg:pl-64 flex flex-col min-h-screen">
         {/* Top Header Bar */}

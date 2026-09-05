@@ -6,6 +6,8 @@ import {
   payslips,
   payslipLines,
   employees,
+  departments,
+  jobPositions,
 } from '../../db/schema';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { PayslipLine, SalaryRule } from './rule-engine';
@@ -160,11 +162,12 @@ export async function findPayslipsByPayrunId(payrunId: string) {
     .where(eq(payslips.payrunId, payrunId));
 }
 
-export async function findPayslipById(id: string) {
-  const rows = await db
+export async function findPayslips(filter?: { employeeId?: string; payrunId?: string }) {
+  let query = db
     .select({
       id: payslips.id,
       payrun_id: payslips.payrunId,
+      payrun_name: payruns.name,
       employee_id: payslips.employeeId,
       employee_name: sql<string>`CONCAT(${employees.firstName}, ' ', ${employees.lastName})`,
       employee_email: employees.email,
@@ -184,6 +187,57 @@ export async function findPayslipById(id: string) {
     .from(payslips)
     .leftJoin(employees, eq(payslips.employeeId, employees.id))
     .leftJoin(salaryStructures, eq(payslips.structureId, salaryStructures.id))
+    .leftJoin(payruns, eq(payslips.payrunId, payruns.id))
+    .$dynamic();
+
+  if (filter?.employeeId && filter?.payrunId) {
+    query = query.where(
+      and(eq(payslips.employeeId, filter.employeeId), eq(payslips.payrunId, filter.payrunId)),
+    );
+  } else if (filter?.employeeId) {
+    query = query.where(eq(payslips.employeeId, filter.employeeId));
+  } else if (filter?.payrunId) {
+    query = query.where(eq(payslips.payrunId, filter.payrunId));
+  }
+
+  return await query.orderBy(desc(payslips.periodStart));
+}
+
+export async function findPayslipById(id: string) {
+  const rows = await db
+    .select({
+      id: payslips.id,
+      payrun_id: payslips.payrunId,
+      payrun_name: payruns.name,
+      employee_id: payslips.employeeId,
+      employee_name: sql<string>`CONCAT(${employees.firstName}, ' ', ${employees.lastName})`,
+      employee_email: employees.email,
+      employee_phone: employees.phone,
+      identification_number: employees.identificationNumber,
+      bank_name: employees.bankName,
+      bank_account_number: employees.bankAccountNumber,
+      bank_routing_code: employees.bankRoutingCode,
+      department_name: departments.name,
+      job_position_title: jobPositions.title,
+      structure_id: payslips.structureId,
+      structure_name: salaryStructures.name,
+      period_start: payslips.periodStart,
+      period_end: payslips.periodEnd,
+      worked_days: payslips.workedDays,
+      basic_salary: payslips.basicSalary,
+      gross_salary: payslips.grossSalary,
+      total_deductions: payslips.totalDeductions,
+      net_salary: payslips.netSalary,
+      status: payslips.status,
+      warnings: payslips.warnings,
+      created_at: payslips.createdAt,
+    })
+    .from(payslips)
+    .leftJoin(employees, eq(payslips.employeeId, employees.id))
+    .leftJoin(departments, eq(employees.departmentId, departments.id))
+    .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
+    .leftJoin(salaryStructures, eq(payslips.structureId, salaryStructures.id))
+    .leftJoin(payruns, eq(payslips.payrunId, payruns.id))
     .where(eq(payslips.id, id))
     .limit(1);
 

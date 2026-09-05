@@ -59,3 +59,22 @@ body {
   -webkit-font-smoothing: antialiased;
   transition: background 0.25s ease, color 0.25s ease;
 }
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  header, footer, nav, button {
+    display: none !important;
+  }
+  #monthly-salary-slip, #yearly-salary-slip {
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+}
