@@ -36,37 +36,40 @@ CREATE TABLE IF NOT EXISTS working_schedule_lines (
     break_minutes INT NOT NULL DEFAULT 60
 );
 
--- 3. Employees
-CREATE TABLE IF NOT EXISTS employees (
+-- 3. Users (Authentication & Canonical Identity)
+CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'Employee',
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    is_email_verified BOOLEAN NOT NULL DEFAULT false,
+    email_verified_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. Employees (HR Operational Extension)
+CREATE TABLE IF NOT EXISTS employees (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
     phone VARCHAR(30),
     department_id UUID REFERENCES departments(id) ON DELETE SET NULL,
     job_position_id UUID REFERENCES job_positions(id) ON DELETE SET NULL,
     manager_id UUID REFERENCES employees(id) ON DELETE SET NULL,
     working_schedule_id UUID REFERENCES working_schedules(id) ON DELETE SET NULL,
-    employment_status VARCHAR(30) NOT NULL DEFAULT 'active', -- active, inactive, on_leave, terminated
+    employment_status VARCHAR(30) NOT NULL DEFAULT 'incomplete', -- incomplete, active, on_leave, inactive, terminated
     date_of_joining DATE NOT NULL DEFAULT CURRENT_DATE,
     date_of_birth DATE,
     gender VARCHAR(20),
     identification_number VARCHAR(50),
+    location VARCHAR(150) DEFAULT 'Main Headquarters',
     bank_name VARCHAR(100),
     bank_account_number VARCHAR(50),
     bank_routing_code VARCHAR(50),
     avatar_url TEXT,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-);
-
--- 4. Users (Authentication & RBAC)
-CREATE TABLE IF NOT EXISTS users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    email VARCHAR(150) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(50) NOT NULL, -- 'Employee', 'HR Manager', 'HR Payroll User', 'HR Payroll Manager', 'Admin'
-    employee_id UUID REFERENCES employees(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );

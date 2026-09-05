@@ -63,7 +63,7 @@ export const createUser = async (input: CreateUserInput) => {
     const verificationToken = jwt.sign(
       { userId: user.id, email: user.email, purpose: 'email-verification' },
       JWT_SECRET,
-      { expiresIn: '7d' },
+      { expiresIn: '8h' },
     );
 
     sendWelcomeCredentialsEmail({

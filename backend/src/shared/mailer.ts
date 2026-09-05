@@ -264,7 +264,7 @@ export const sendVerificationEmail = async (
                 <a href="${verificationUrl}" style="color: #6A3FA0; word-break: break-all; font-size: 12px;">${verificationUrl}</a>
               </p>
               <p style="margin: 24px 0 0 0; font-size: 12px; line-height: 1.5; color: #94a3b8;">
-                This link will expire in 7 days. If you did not request this email, please ignore it.
+                This link will expire in 8 hours. If you did not request this email, please ignore it.
               </p>
             </td>
           </tr>
@@ -284,10 +284,10 @@ ${greeting}
 Please verify your email address to activate your PeoplePay360 account and sign in:
 ${verificationUrl}
 
-This link is valid for 7 days.
+This link is valid for 8 hours.
   `.trim();
 
-  const transporter = getTransporter();
+  const transporter = await getTransporter();
 
   if (!transporter) {
     console.warn(
