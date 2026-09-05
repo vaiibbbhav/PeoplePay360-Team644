@@ -21,6 +21,14 @@ export async function getActiveContractForPeriod(
   return await contractsRepo.findActiveContractForPeriod(employeeId, periodStart, periodEnd);
 }
 
+export async function getActiveContractsForEmployees(
+  employeeIds: string[],
+  periodStart: string,
+  periodEnd: string,
+) {
+  return await contractsRepo.findActiveContractsForEmployees(employeeIds, periodStart, periodEnd);
+}
+
 export async function createContract(data: Record<string, unknown>) {
   if (data.status === 'active') {
     const overlapping = await contractsRepo.findOverlappingActiveContracts(
@@ -63,10 +71,13 @@ export async function updateContract(id: string, data: Record<string, unknown>) 
     }
   }
 
+  if (newEnd && newEnd < newStart) {
+    throw new ValidationError('End date cannot be prior to start date');
+  }
+
   return await contractsRepo.updateContract(id, data);
 }
 
 export async function getContractsMetadata() {
   return await contractsRepo.getContractsMetadata();
 }
-

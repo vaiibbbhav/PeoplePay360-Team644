@@ -21,6 +21,7 @@ export type RuleContext = {
   results: Record<string, number>;
   contractWage?: number;
   workedDays?: number;
+  totalPeriodDays?: number;
   [key: string]: unknown;
 };
 
@@ -109,6 +110,8 @@ export function evaluateFormula(formula: string | undefined, context: RuleContex
     contractWage: Number(context.contractWage) || 0,
     WORKED_DAYS: Number(context.workedDays) || 0,
     workedDays: Number(context.workedDays) || 0,
+    TOTAL_PERIOD_DAYS: Number(context.totalPeriodDays) || 0,
+    totalPeriodDays: Number(context.totalPeriodDays) || 0,
   };
   return roundToTwoDecimals(new ArithmeticParser(formula.replace(/\s+/g, ''), values).parse());
 }

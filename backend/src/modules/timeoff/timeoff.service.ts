@@ -1,5 +1,5 @@
 import * as timeoffRepo from './timeoff.repository';
-import { NotFoundError, ValidationError, ForbiddenError } from '../../shared/errors';
+import { NotFoundError, ValidationError } from '../../shared/errors';
 
 export type RequestFilterOptions = timeoffRepo.RequestFilterOptions;
 
@@ -93,6 +93,21 @@ export async function createRequest(data: Record<string, unknown>) {
   }
 
   const duration = Number(data.duration);
+  const start = Date.parse(`${data.startDate}T00:00:00Z`);
+  const end = Date.parse(`${data.endDate}T00:00:00Z`);
+  const calendarDays = Math.floor((end - start) / 86_400_000) + 1;
+  if (!Number.isFinite(start) || !Number.isFinite(end) || calendarDays < 1) {
+    throw new ValidationError('End date cannot be earlier than start date');
+  }
+  if (type.unit === 'days' && duration > calendarDays) {
+    throw new ValidationError('Leave duration cannot exceed the requested date range');
+  }
+  if (type.unit === 'days' && duration !== calendarDays) {
+    throw new ValidationError('Leave duration must match the requested date range');
+  }
+  if (type.unit === 'hours' && duration > calendarDays * 24) {
+    throw new ValidationError('Leave duration exceeds the requested date range');
+  }
   if (type.requiresAllocation) {
     const allocation = await timeoffRepo.findValidAllocation(
       data.employeeId as string,
