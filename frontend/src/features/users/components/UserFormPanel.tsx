@@ -1,3 +1,4 @@
+/* oxlint-disable react/set-state-in-effect */
 import React, { useState, useEffect } from 'react';
 import type { UserItem, EmployeeOption } from '../queries/useUsers';
 import type { UserRole } from '@/features/auth/queries/useAuth';

@@ -30,7 +30,9 @@ export async function findAllEmployees() {
       job_position_id: employees.jobPositionId,
       job_position_title: jobPositions.title,
       manager_id: employees.managerId,
-      manager_name: sql<string | null>`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
+      manager_name: sql<
+        string | null
+      >`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
       working_schedule_id: employees.workingScheduleId,
       working_schedule_name: workingSchedules.name,
       employment_status: employees.employmentStatus,
@@ -68,7 +70,9 @@ export async function findEmployeeById(id: string) {
       job_position_id: employees.jobPositionId,
       job_position_title: jobPositions.title,
       manager_id: employees.managerId,
-      manager_name: sql<string | null>`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
+      manager_name: sql<
+        string | null
+      >`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
       working_schedule_id: employees.workingScheduleId,
       working_schedule_name: workingSchedules.name,
       weekly_hours: workingSchedules.weeklyHours,

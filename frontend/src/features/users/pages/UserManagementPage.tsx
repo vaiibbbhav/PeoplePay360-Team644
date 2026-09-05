@@ -16,7 +16,8 @@ import { useNavigate } from 'react-router-dom';
 // ── Helper ─────────────────────────────────────────────────────────────────
 const roleBadge: Record<string, string> = {
   Admin: 'bg-accent text-white border border-accent',
-  'HR Manager': 'bg-black text-white border border-black dark:bg-neutral-950 dark:border-neutral-700',
+  'HR Manager':
+    'bg-black text-white border border-black dark:bg-neutral-950 dark:border-neutral-700',
   'HR Payroll Manager':
     'bg-black text-white border border-black dark:bg-neutral-950 dark:border-neutral-700',
   'HR Payroll User':
