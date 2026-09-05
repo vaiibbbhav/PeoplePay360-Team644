@@ -8,7 +8,7 @@ import {
   jobPositions,
   workingSchedules,
 } from '../../db/schema';
-import { eq, and, lte, gte, or, isNull, desc, ne, inArray, sql } from 'drizzle-orm';
+import { eq, and, lte, gte, or, isNull, desc, ne, sql } from 'drizzle-orm';
 
 export async function findAllContracts(employeeId?: string) {
   const query = db
@@ -126,43 +126,6 @@ export async function findActiveContractForPeriod(
     .limit(1);
 
   return rows[0] || null;
-}
-
-export async function findActiveContractsForEmployees(
-  employeeIds: string[],
-  periodStart: string,
-  periodEnd: string,
-) {
-  if (employeeIds.length === 0) return [];
-  return await db
-    .select({
-      id: contracts.id,
-      employee_id: contracts.employeeId,
-      name: contracts.name,
-      wage: contracts.wage,
-      wage_type: contracts.wageType,
-      salary_structure_id: contracts.salaryStructureId,
-      salary_structure_name: salaryStructures.name,
-      working_schedule_id: contracts.workingScheduleId,
-      department_id: contracts.departmentId,
-      job_position_id: contracts.jobPositionId,
-      start_date: contracts.startDate,
-      end_date: contracts.endDate,
-      status: contracts.status,
-      notes: contracts.notes,
-      created_at: contracts.createdAt,
-    })
-    .from(contracts)
-    .leftJoin(salaryStructures, eq(contracts.salaryStructureId, salaryStructures.id))
-    .where(
-      and(
-        inArray(contracts.employeeId, employeeIds),
-        eq(contracts.status, 'active'),
-        lte(contracts.startDate, periodEnd),
-        or(isNull(contracts.endDate), gte(contracts.endDate, periodStart)),
-      ),
-    )
-    .orderBy(desc(contracts.startDate));
 }
 
 export async function findOverlappingActiveContracts(

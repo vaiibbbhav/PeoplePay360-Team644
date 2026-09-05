@@ -16,23 +16,13 @@ import { securityHeaders } from './shared/security';
 
 export const createApp = (): Express => {
   const app = express();
-  app.set('trust proxy', 1);
   app.disable('x-powered-by');
   app.use(securityHeaders);
-
-  const allowedOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
-    : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
 
   // Middleware
   app.use(
     cors({
-      origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-          return callback(null, true);
-        }
-        return callback(new Error('Not allowed by CORS'), false);
-      },
+      origin: process.env.CORS_ORIGIN || true,
       credentials: true,
     }),
   );
@@ -48,17 +38,25 @@ export const createApp = (): Express => {
     });
   });
 
-  // Canonical resource API Module routes
+  // Resource-oriented API Module routes
   app.use('/api/auth', authRoutes);
   app.use('/api/users', usersRoutes);
   app.use('/api/employees', hrRoutes);
   app.use('/api/contracts', contractsRoutes);
   app.use('/api/attendance', attendanceRoutes);
   app.use('/api/time-off', timeoffRoutes);
+  app.use('/api/timeoff', timeoffRoutes);
   app.use('/api/payroll', payrollRoutes);
   app.use('/api/reports', reportingRoutes);
   app.use('/api/documents', documentsRoutes);
+  app.use('/api/policies', documentsRoutes);
   app.use('/api/schedules', schedulesRoutes);
+  app.use('/api/working-schedules', schedulesRoutes);
+
+  // Direct resource aliases matching GEMINI.md section 9
+  app.use('/api/payruns', payrollRoutes);
+  app.use('/api/payslips', payrollRoutes);
+  app.use('/api/salary-structures', payrollRoutes);
 
   // 404 handler for unmatched routes
   app.use((_req: Request, res: Response) => {

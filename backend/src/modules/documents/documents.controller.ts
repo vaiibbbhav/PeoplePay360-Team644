@@ -1,11 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../shared/async-handler';
 import * as documentsService from './documents.service';
-import {
-  acceptPolicySchema,
-  validateCreatePolicy,
-  validateUpdatePolicy,
-} from './documents.validators';
+import { acceptPolicySchema } from './documents.validators';
 import { UnauthorizedError } from '../../shared/errors';
 
 export const listPolicies = asyncHandler(async (req: Request, res: Response): Promise<void> => {
@@ -26,7 +22,7 @@ export const acceptPolicy = asyncHandler(async (req: Request, res: Response): Pr
   const user = req.user;
   if (!user) throw new UnauthorizedError();
   const input = acceptPolicySchema.parse(req.body || {});
-  const ipAddress = req.ip || req.socket.remoteAddress;
+  const ipAddress = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress;
   const userAgent = req.headers['user-agent'];
 
   const updated = await documentsService.acceptPolicy(
@@ -41,7 +37,7 @@ export const acceptAllPolicies = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const user = req.user;
     if (!user) throw new UnauthorizedError();
-    const ipAddress = req.ip || req.socket.remoteAddress;
+    const ipAddress = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress;
     const userAgent = req.headers['user-agent'];
 
     const overview = await documentsService.acceptAllPolicies(
@@ -60,12 +56,15 @@ export const getComplianceStats = asyncHandler(
 );
 
 export const createPolicy = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const validated = documentsService.createPolicy;
+  const { validateCreatePolicy } = await import('./documents.validators');
   const input = validateCreatePolicy(req.body);
   const created = await documentsService.createPolicy(input);
   res.status(201).json(created);
 });
 
 export const updatePolicy = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { validateUpdatePolicy } = await import('./documents.validators');
   const input = validateUpdatePolicy(req.body);
   const updated = await documentsService.updatePolicy(req.params.id, input);
   res.json(updated);

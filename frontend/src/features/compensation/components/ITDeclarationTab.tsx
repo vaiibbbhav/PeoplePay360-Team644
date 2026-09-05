@@ -61,57 +61,57 @@ export const ITDeclarationTab: React.FC<ITDeclarationTabProps> = ({
   const [activeCategory, setActiveCategory] = useState<SchemeCategory>('80c');
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
   const [isForm12BBModalOpen, setIsForm12BBModalOpen] = useState(false);
-  const [submissionStatus, setSubmissionStatus] = useState<'draft' | 'submitted'>('draft');
-  const [lastUpdated, setLastUpdated] = useState<string>('');
+  const [submissionStatus, setSubmissionStatus] = useState<'draft' | 'submitted'>('submitted');
+  const [lastUpdated, setLastUpdated] = useState<string>('01 Sep 2026, 14:30 IST');
   const [saveToast, setSaveToast] = useState<string | null>(null);
 
   // 1. Section 80C Schemes (Max ₹1,50,000)
-  const [epfDeclared, setEpfDeclared] = useState(0);
-  const [ppfDeclared, setPpfDeclared] = useState(0);
-  const [elssDeclared, setElssDeclared] = useState(0);
-  const [licDeclared, setLicDeclared] = useState(0);
+  const [epfDeclared, setEpfDeclared] = useState(25920); // auto from payroll
+  const [ppfDeclared, setPpfDeclared] = useState(50000);
+  const [elssDeclared, setElssDeclared] = useState(40000);
+  const [licDeclared, setLicDeclared] = useState(25000);
   const [nscDeclared, setNscDeclared] = useState(0);
   const [fd5YearDeclared, setFd5YearDeclared] = useState(0);
   const [tuitionFeesDeclared, setTuitionFeesDeclared] = useState(0);
-  const [homeLoanPrincipal, setHomeLoanPrincipal] = useState(0);
+  const [homeLoanPrincipal, setHomeLoanPrincipal] = useState(35000);
   const [ssyDeclared, setSsyDeclared] = useState(0);
   const [stampDutyDeclared, setStampDutyDeclared] = useState(0);
 
   // 2. House Rent Allowance (HRA) & Section 10
-  const [monthlyRent, setMonthlyRent] = useState(0);
+  const [monthlyRent, setMonthlyRent] = useState(22000);
   const [isMetroCity, setIsMetroCity] = useState(true);
-  const [landlordName, setLandlordName] = useState('');
-  const [landlordPan, setLandlordPan] = useState('');
-  const [landlordAddress, setLandlordAddress] = useState('');
-  const [ltaDeclared, setLtaDeclared] = useState(0);
-  const [childrenEduAllowance, setChildrenEduAllowance] = useState(0);
+  const [landlordName, setLandlordName] = useState('Rameshwar Sharma');
+  const [landlordPan, setLandlordPan] = useState('ABCPS1234F');
+  const [landlordAddress, setLandlordAddress] = useState('Flat 402, Lotus Greens, Indiranagar, Bengaluru');
+  const [ltaDeclared, setLtaDeclared] = useState(25000);
+  const [childrenEduAllowance, setChildrenEduAllowance] = useState(2400);
 
   // 3. Section 80D (Health Insurance)
-  const [healthSelf, setHealthSelf] = useState(0);
+  const [healthSelf, setHealthSelf] = useState(18000);
   const [healthSelfSenior, setHealthSelfSenior] = useState(false);
-  const [healthParents, setHealthParents] = useState(0);
-  const [healthParentsSenior, setHealthParentsSenior] = useState(false);
-  const [preventiveCheckup, setPreventiveCheckup] = useState(0);
+  const [healthParents, setHealthParents] = useState(28000);
+  const [healthParentsSenior, setHealthParentsSenior] = useState(true);
+  const [preventiveCheckup, setPreventiveCheckup] = useState(4500);
 
   // 4. Section 24(b) (Home Loan Interest)
-  const [homeLoanInterest, setHomeLoanInterest] = useState(0);
+  const [homeLoanInterest, setHomeLoanInterest] = useState(145000);
   const [propertyType, setPropertyType] = useState<'self_occupied' | 'let_out'>('self_occupied');
-  const [lenderName, setLenderName] = useState('');
-  const [lenderPan, setLenderPan] = useState('');
+  const [lenderName, setLenderName] = useState('HDFC Bank Ltd');
+  const [lenderPan, setLenderPan] = useState('AAACH1234H');
   const [rentalIncome, setRentalIncome] = useState(0);
   const [municipalTaxes, setMunicipalTaxes] = useState(0);
 
   // 5. Section 80CCD - NPS Schemes
-  const [npsEmployee80CCD1B, setNpsEmployee80CCD1B] = useState(0); // Max 50k
-  const [npsEmployer80CCD2, setNpsEmployer80CCD2] = useState(0);
-  const [pranNumber, setPranNumber] = useState('');
+  const [npsEmployee80CCD1B, setNpsEmployee80CCD1B] = useState(50000); // Max 50k
+  const [npsEmployer80CCD2, setNpsEmployer80CCD2] = useState(Math.round(annualGrossSalary * 0.05)); // 5% of basic
+  const [pranNumber, setPranNumber] = useState('110022334455');
 
   // 6. Other Chapter VI-A Deductions
   const [sec80EDeclared, setSec80EDeclared] = useState(0); // Education loan interest
   const [sec80EEADeclared, setSec80EEADeclared] = useState(0); // Affordable housing
   const [sec80EEBDeclared, setSec80EEBDeclared] = useState(0); // Electric Vehicle
-  const [sec80GDeclared, setSec80GDeclared] = useState(0); // Donations
-  const [sec80TTADeclared, setSec80TTADeclared] = useState(0); // Savings interest
+  const [sec80GDeclared, setSec80GDeclared] = useState(10000); // Donations
+  const [sec80TTADeclared, setSec80TTADeclared] = useState(8500); // Savings interest
   const [sec80UDeclared, setSec80UDeclared] = useState(0); // Disability
 
   // 7. Previous Employment (Form 12B)
@@ -132,23 +132,14 @@ export const ITDeclarationTab: React.FC<ITDeclarationTabProps> = ({
         if (parsed.ppfDeclared !== undefined) setPpfDeclared(parsed.ppfDeclared);
         if (parsed.elssDeclared !== undefined) setElssDeclared(parsed.elssDeclared);
         if (parsed.licDeclared !== undefined) setLicDeclared(parsed.licDeclared);
-        if (parsed.homeLoanPrincipal !== undefined) setHomeLoanPrincipal(parsed.homeLoanPrincipal);
         if (parsed.monthlyRent !== undefined) setMonthlyRent(parsed.monthlyRent);
-        if (parsed.landlordName !== undefined) setLandlordName(parsed.landlordName);
-        if (parsed.landlordPan !== undefined) setLandlordPan(parsed.landlordPan);
-        if (parsed.landlordAddress !== undefined) setLandlordAddress(parsed.landlordAddress);
         if (parsed.homeLoanInterest !== undefined) setHomeLoanInterest(parsed.homeLoanInterest);
-        if (parsed.lenderName !== undefined) setLenderName(parsed.lenderName);
-        if (parsed.lenderPan !== undefined) setLenderPan(parsed.lenderPan);
         if (parsed.healthSelf !== undefined) setHealthSelf(parsed.healthSelf);
         if (parsed.healthParents !== undefined) setHealthParents(parsed.healthParents);
         if (parsed.npsEmployee80CCD1B !== undefined) setNpsEmployee80CCD1B(parsed.npsEmployee80CCD1B);
-        if (parsed.pranNumber !== undefined) setPranNumber(parsed.pranNumber);
-        if (parsed.sec80GDeclared !== undefined) setSec80GDeclared(parsed.sec80GDeclared);
-        if (parsed.sec80TTADeclared !== undefined) setSec80TTADeclared(parsed.sec80TTADeclared);
       }
-    } catch (err) {
-      console.warn('Failed to load IT declaration from storage:', err);
+    } catch {
+      // ignore
     }
   }, [storageKey]);
 
@@ -168,25 +159,16 @@ export const ITDeclarationTab: React.FC<ITDeclarationTabProps> = ({
       ppfDeclared,
       elssDeclared,
       licDeclared,
-      homeLoanPrincipal,
       monthlyRent,
-      landlordName,
-      landlordPan,
-      landlordAddress,
       homeLoanInterest,
-      lenderName,
-      lenderPan,
       healthSelf,
       healthParents,
       npsEmployee80CCD1B,
-      pranNumber,
-      sec80GDeclared,
-      sec80TTADeclared,
     };
     try {
       localStorage.setItem(storageKey, JSON.stringify(stateToSave));
-    } catch (err) {
-      console.warn('Failed to save IT declaration to storage:', err);
+    } catch {
+      // ignore
     }
     setSubmissionStatus(status);
     setLastUpdated(timestamp);

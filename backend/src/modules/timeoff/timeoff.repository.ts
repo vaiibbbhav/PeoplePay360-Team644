@@ -9,7 +9,6 @@ import {
   jobPositions,
 } from '../../db/schema';
 import { eq, and, lte, gte, gt, desc, sql, type SQL } from 'drizzle-orm';
-import { ConflictError, NotFoundError } from '../../shared/errors';
 
 export type RequestFilterOptions = {
   employeeId?: string;
@@ -317,35 +316,19 @@ export async function executeApproveRequestTx(
         .select()
         .from(timeOffAllocations)
         .where(eq(timeOffAllocations.id, allocationId))
-        .for('update')
         .limit(1);
 
-      if (!alloc) {
-        throw new NotFoundError('Leave allocation record not found');
+      if (alloc) {
+        const taken = parseFloat(alloc.takenAmount) + duration;
+        const remaining = parseFloat(alloc.remainingAmount) - duration;
+        await tx
+          .update(timeOffAllocations)
+          .set({
+            takenAmount: String(taken),
+            remainingAmount: String(remaining),
+          })
+          .where(eq(timeOffAllocations.id, allocationId));
       }
-
-      const currentRemaining = parseFloat(alloc.remainingAmount);
-      if (currentRemaining < duration) {
-        throw new ConflictError(
-          `Insufficient leave allocation balance (remaining: ${currentRemaining}, requested: ${duration})`,
-        );
-      }
-
-      const taken = parseFloat(alloc.takenAmount) + duration;
-      const remaining = currentRemaining - duration;
-
-      await tx
-        .update(timeOffAllocations)
-        .set({
-          takenAmount: String(taken),
-          remainingAmount: String(remaining),
-        })
-        .where(
-          and(
-            eq(timeOffAllocations.id, allocationId),
-            gte(timeOffAllocations.remainingAmount, String(duration)),
-          ),
-        );
     }
 
     const [updated] = await tx
@@ -356,12 +339,8 @@ export async function executeApproveRequestTx(
         approvedAt: new Date(),
         updatedAt: new Date(),
       })
-      .where(and(eq(timeOffRequests.id, requestId), eq(timeOffRequests.status, 'pending')))
+      .where(eq(timeOffRequests.id, requestId))
       .returning();
-
-    if (!updated) {
-      throw new ConflictError('Leave request is no longer pending or has already been processed');
-    }
 
     return updated;
   });

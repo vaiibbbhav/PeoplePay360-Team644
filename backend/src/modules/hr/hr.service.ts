@@ -1,8 +1,9 @@
 import * as hrRepo from './hr.repository';
-import * as usersRepo from '../users/users.repository';
 import { NotFoundError, ConflictError } from '../../shared/errors';
+import { db } from '../../shared/db';
+import { users } from '../../db/schema';
+import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
 
 export async function listEmployees() {
   return await hrRepo.findAllEmployees();
@@ -39,27 +40,33 @@ export async function createEmployee(data: Record<string, any>) {
 
   let userId = data.userId as string | undefined;
   if (!userId) {
-    const existingUser = await usersRepo.findUserByEmail(email);
-    if (existingUser) {
-      userId = existingUser.id;
+    const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    if (existingUser[0]) {
+      userId = existingUser[0].id;
       if (data.firstName !== undefined || data.lastName !== undefined) {
-        await usersRepo.updateUser(userId, {
-          ...(data.firstName ? { firstName: data.firstName } : {}),
-          ...(data.lastName ? { lastName: data.lastName } : {}),
-        });
+        await db
+          .update(users)
+          .set({
+            ...(data.firstName ? { firstName: data.firstName } : {}),
+            ...(data.lastName ? { lastName: data.lastName } : {}),
+            updatedAt: new Date(),
+          })
+          .where(eq(users.id, userId));
       }
     } else {
-      const generatedPassword = crypto.randomBytes(16).toString('hex') + 'A1!';
       const salt = await bcrypt.genSalt(10);
-      const defaultPasswordHash = await bcrypt.hash(generatedPassword, salt);
-      const newUser = await usersRepo.createUser({
-        firstName: data.firstName || 'New',
-        lastName: data.lastName || 'Employee',
-        email,
-        passwordHash: defaultPasswordHash,
-        role: 'Employee',
-        isActive: true,
-      });
+      const defaultPasswordHash = await bcrypt.hash('Employee@123', salt);
+      const [newUser] = await db
+        .insert(users)
+        .values({
+          firstName: data.firstName || 'New',
+          lastName: data.lastName || 'Employee',
+          email,
+          passwordHash: defaultPasswordHash,
+          role: 'Employee',
+          isActive: true,
+        })
+        .returning();
       userId = newUser.id;
     }
   }

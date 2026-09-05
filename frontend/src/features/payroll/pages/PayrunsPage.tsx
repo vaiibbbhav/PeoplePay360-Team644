@@ -242,7 +242,7 @@ const WizardStep2: React.FC<{
               id="select-all"
               checked={selectedIds.size === eligible.length && eligible.length > 0}
               onChange={toggleAll}
-              className="w-4 h-4 rounded border-line accent-accent cursor-pointer"
+              className="w-4 h-4 rounded border-line accent-[#6A3FA0] cursor-pointer"
             />
             <label htmlFor="select-all" className="text-xs font-semibold text-ink cursor-pointer">
               Select All ({eligible.length} employees)
@@ -265,14 +265,9 @@ const WizardStep2: React.FC<{
               >
                 <input
                   type="checkbox"
-                  id={`emp-select-${emp.id}`}
                   checked={isSelected}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    toggleEmployee(emp.id);
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-4 h-4 rounded border-line accent-accent cursor-pointer shrink-0"
+                  onChange={() => toggleEmployee(emp.id)}
+                  className="w-4 h-4 rounded border-line accent-[#6A3FA0] cursor-pointer shrink-0"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center  gap-2">

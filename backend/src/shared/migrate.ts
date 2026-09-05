@@ -5,21 +5,12 @@ import { pool, closeDb } from './db';
 export const runMigrations = async (): Promise<void> => {
   const client = await pool.connect();
   try {
-    const migrationsDir = path.resolve(__dirname, '../../migrations');
-    const files = fs
-      .readdirSync(migrationsDir)
-      .filter((file) => file.endsWith('.sql'))
-      .sort((a, b) => a.localeCompare(b));
+    const migrationFile = path.resolve(__dirname, '../../migrations/001_initial_schema.sql');
+    const sql = fs.readFileSync(migrationFile, 'utf-8');
 
-    console.info(`Found ${files.length} database migration(s):`, files.join(', '));
-
-    for (const file of files) {
-      const filePath = path.join(migrationsDir, file);
-      const sql = fs.readFileSync(filePath, 'utf-8');
-      console.info(`Executing database migration: ${file}...`);
-      await client.query(sql);
-    }
-    console.info('All migrations completed successfully.');
+    console.info('Executing database migration: 001_initial_schema.sql...');
+    await client.query(sql);
+    console.info('Migration completed successfully.');
   } catch (error) {
     console.error('Migration failed:', error);
     throw error;

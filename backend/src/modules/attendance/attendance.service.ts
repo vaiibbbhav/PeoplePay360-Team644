@@ -31,18 +31,10 @@ export async function recordCheckIn(employeeId: string, checkInTime?: string) {
     throw new ValidationError('Employee has already checked in today');
   }
 
-  const dayOfWeek = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Asia/Kolkata',
-    weekday: 'long',
-  }).format(now);
-  const schedule = await attendanceRepo.findScheduleLineForDate(employeeId, dayOfWeek);
-  let status = 'Present';
-  if (schedule) {
-    const { hours, minutes } = getIstTimeParts(now);
-    const [startHour, startMinute] = String(schedule.startTime).split(':').map(Number);
-    const isLate = hours * 60 + minutes > startHour * 60 + startMinute;
-    status = isLate ? 'Late' : 'Present';
-  }
+  // Determine status (if check-in is past 09:30 AM IST, mark as Late)
+  const { hours, minutes } = getIstTimeParts(now);
+  const isLate = hours > 9 || (hours === 9 && minutes > 30);
+  const status = isLate ? 'Late' : 'Present';
 
   return await attendanceRepo.upsertAttendance({
     employeeId,
@@ -57,7 +49,8 @@ export async function recordCheckIn(employeeId: string, checkInTime?: string) {
 
 export async function recordCheckOut(employeeId: string, checkOutTime?: string) {
   const now = checkOutTime ? new Date(checkOutTime) : new Date();
-  const existing = await attendanceRepo.findOpenAttendance(employeeId);
+  const dateStr = formatDateIso(now);
+  const existing = await attendanceRepo.findAttendanceByEmployeeAndDate(employeeId, dateStr);
 
   if (!existing || !existing.checkIn) {
     throw new ValidationError('No active check-in found for today');
@@ -68,27 +61,15 @@ export async function recordCheckOut(employeeId: string, checkOutTime?: string) 
   const diffHours = roundToTwoDecimals(Math.max(0, diffMs / (1000 * 60 * 60)));
 
   let status = existing.status;
-  const dayOfWeek = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Asia/Kolkata',
-    weekday: 'long',
-  }).format(checkInDate);
-  const schedule = await attendanceRepo.findScheduleLineForDate(employeeId, dayOfWeek);
-  if (schedule) {
-    const startMinutes = String(schedule.startTime).split(':').map(Number);
-    const endMinutes = String(schedule.endTime).split(':').map(Number);
-    const scheduledHours =
-      (endMinutes[0] * 60 +
-        endMinutes[1] -
-        (startMinutes[0] * 60 + startMinutes[1]) -
-        Number(schedule.breakMinutes)) /
-      60;
-    if (diffHours > scheduledHours) status = 'Overtime';
-    else if (diffHours < scheduledHours / 2) status = 'Half-day';
+  if (diffHours > 8.5) {
+    status = 'Overtime';
+  } else if (diffHours < 4) {
+    status = 'Half-day';
   }
 
   return await attendanceRepo.upsertAttendance({
     employeeId,
-    date: existing.date,
+    date: dateStr,
     checkIn: existing.checkIn.toISOString(),
     checkOut: now.toISOString(),
     workedHours: diffHours,
