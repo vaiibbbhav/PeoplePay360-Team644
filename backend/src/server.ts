@@ -14,5 +14,6 @@ process.on('SIGTERM', () => {
   console.info('SIGTERM signal received: closing HTTP server');
   server.close(() => {
     console.info('HTTP server closed');
+    process.exit(0);
   });
 });

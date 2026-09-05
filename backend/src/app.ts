@@ -45,6 +45,7 @@ export const createApp = (): Express => {
   app.use('/api/contracts', contractsRoutes);
   app.use('/api/attendance', attendanceRoutes);
   app.use('/api/time-off', timeoffRoutes);
+  app.use('/api/timeoff', timeoffRoutes);
   app.use('/api/payroll', payrollRoutes);
   app.use('/api/reports', reportingRoutes);
   app.use('/api/documents', documentsRoutes);

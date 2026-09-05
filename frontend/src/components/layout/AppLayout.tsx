@@ -352,6 +352,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     if (itemPath === '/documents') {
       return location.pathname === '/documents' || location.pathname === '/policies';
     }
+    if (itemPath === '/time-off') {
+      return (
+        location.pathname === '/time-off' ||
+        location.pathname === '/employee/time-off' ||
+        location.pathname === '/timeoff'
+      );
+    }
     return location.pathname === itemPath;
   };
 

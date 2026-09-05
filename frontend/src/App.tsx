@@ -46,6 +46,8 @@ export function App() {
             <Route path="/employee/attendance" element={<EmployeeAttendancePage />} />
             <Route path="/attendance/terminal" element={<AttendanceTerminalPage />} />
             <Route path="/time-off" element={<TimeOffPage />} />
+            <Route path="/employee/time-off" element={<TimeOffPage />} />
+            <Route path="/timeoff" element={<TimeOffPage />} />
             <Route path="/leaves" element={<TimeOffPage />} />
             <Route path="/compensation" element={<CompensationPage />} />
             <Route path="/payslips" element={<CompensationPage />} />
