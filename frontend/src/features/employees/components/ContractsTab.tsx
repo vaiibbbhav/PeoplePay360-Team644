@@ -88,7 +88,6 @@ export const ContractsTab: React.FC<ContractsTabProps> = ({ employeeId }) => {
       <StatGrid
         columns={3}
         items={[
-
           {
             label: 'Agreed Wage',
             value: activeContract ? (
@@ -110,11 +109,10 @@ export const ContractsTab: React.FC<ContractsTabProps> = ({ employeeId }) => {
       <div className="bg-bg border border-line rounded-2xl overflow-hidden">
         <div className="px-6 py-4 border-b border-line flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h3 className="font-serif text-base font-semibold text-ink">
-              Employment Contracts
-            </h3>
+            <h3 className="font-serif text-base font-semibold text-ink">Employment Contracts</h3>
             <p className="text-xs text-ink-soft mt-0.5">
-              Historical and active contracts driving payroll context, schedule, and wage computations.
+              Historical and active contracts driving payroll context, schedule, and wage
+              computations.
             </p>
           </div>
           <span className="text-xs text-ink-soft px-2.5 py-1 rounded-md border border-line bg-bg-raised">
@@ -127,9 +125,7 @@ export const ContractsTab: React.FC<ContractsTabProps> = ({ employeeId }) => {
             <div className="w-12 h-12 mx-auto mb-3 rounded-xl border border-line bg-bg-raised flex items-center justify-center text-ink-soft text-lg font-serif">
               §
             </div>
-            <h4 className="font-serif text-base font-semibold text-ink mb-1">
-              No Contracts Found
-            </h4>
+            <h4 className="font-serif text-base font-semibold text-ink mb-1">No Contracts Found</h4>
             <p className="text-xs text-ink-soft max-w-sm mx-auto">
               No employment contracts are currently linked to this employee profile.
             </p>

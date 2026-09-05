@@ -21,7 +21,7 @@ export const EmployeeAttendancePage: React.FC = () => {
   const [calendarDate, setCalendarDate] = useState(() => new Date());
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
-    now.getDate()
+    now.getDate(),
   ).padStart(2, '0')}`;
 
   const [selectedDateStr, setSelectedDateStr] = useState<string>(todayStr);
@@ -107,7 +107,12 @@ export const EmployeeAttendancePage: React.FC = () => {
               onClick={() => setIsFingerprintModalOpen(true)}
               className="px-3.5 py-2 rounded-lg text-xs font-medium border border-line bg-bg hover:bg-bg-raised text-ink transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs"
             >
-              <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-4 h-4 text-accent"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -144,7 +149,9 @@ export const EmployeeAttendancePage: React.FC = () => {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-semibold text-ink">Monthly Punch Calendar</h2>
-            <span className="text-xs text-ink-soft">Click any date card to inspect full statistics</span>
+            <span className="text-xs text-ink-soft">
+              Click any date card to inspect full statistics
+            </span>
           </div>
 
           <AttendanceCalendarGrid

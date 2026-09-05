@@ -123,4 +123,3 @@ export async function countWorkedDaysForPeriod(
 
   return res?.val ?? 0;
 }
-

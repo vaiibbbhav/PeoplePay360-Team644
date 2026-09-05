@@ -9,9 +9,37 @@ export const seedDatabase = async (): Promise<void> => {
   try {
     console.info('🌱 Starting PeoplePay360 database seed...');
 
-    // 1. Ensure `is_active` column exists on `users` table
+    // 1. Ensure schema tables exist
     await client.query(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+
+      CREATE TABLE IF NOT EXISTS company_policies (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        title VARCHAR(255) NOT NULL,
+        code VARCHAR(60) NOT NULL UNIQUE,
+        category VARCHAR(50) NOT NULL,
+        version VARCHAR(20) NOT NULL DEFAULT '1.0',
+        summary TEXT NOT NULL,
+        content TEXT NOT NULL,
+        is_mandatory BOOLEAN NOT NULL DEFAULT true,
+        effective_date DATE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS policy_acceptances (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        policy_id UUID NOT NULL REFERENCES company_policies(id) ON DELETE CASCADE,
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        employee_id UUID REFERENCES employees(id) ON DELETE SET NULL,
+        policy_version VARCHAR(20) NOT NULL,
+        accepted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        ip_address VARCHAR(50),
+        user_agent TEXT
+      );
+
+      CREATE UNIQUE INDEX IF NOT EXISTS policy_user_version_idx 
+      ON policy_acceptances (policy_id, user_id, policy_version);
     `);
 
     // 2. Validate admin password criteria
@@ -411,6 +439,161 @@ export const seedDatabase = async (): Promise<void> => {
         await validatePayrun(created.id);
         await markPayrunPaid(created.id);
         console.info(`✅ Seeded and finalized payrun: ${p.name}`);
+      }
+    }
+
+    // 14. Seed Company Policies
+    const initialPolicies = [
+      {
+        code: 'CODE_OF_CONDUCT',
+        title: 'Code of Business Conduct & Ethics',
+        category: 'compliance',
+        version: '1.0',
+        summary:
+          'Sets mandatory standards for integrity, workplace respect, anti-bribery, conflict of interest disclosure, and ethical decision-making.',
+        content: `### 1. Purpose and Philosophy
+Anchorage Technologies Pvt. Ltd. is dedicated to conducting business with absolute honesty, transparency, and integrity. This Code of Business Conduct applies universally to all officers, directors, contractors, and full-time employees.
+
+### 2. Fair Competition & Anti-Bribery
+We strictly prohibit offering, giving, soliciting, or receiving bribes, kickbacks, or unlawful inducements. Employees must never accept personal gifts, travel, or entertainment from vendors or clients that exceed nominal hospitality value.
+
+### 3. Conflicts of Interest
+Employees must avoid situations where personal or financial relationships conflict with the company's best interests. Any outside consulting, secondary employment, or board memberships must be formally submitted and approved by HR & Legal.
+
+### 4. Respect in the Workplace
+Every individual is entitled to a professional environment free of harassment, discrimination, and bullying. We uphold equal employment opportunities irrespective of race, gender, religion, sexual orientation, disability, or marital status.
+
+### 5. Compliance & Reporting
+Violations of this Code will lead to disciplinary proceedings up to and including termination of employment. Suspected violations may be reported confidentially through our anonymous ethics reporting channel.`,
+        isMandatory: true,
+        effectiveDate: '2026-04-01',
+      },
+      {
+        code: 'INFO_SECURITY',
+        title: 'Information Security & Data Privacy Policy',
+        category: 'security',
+        version: '1.2',
+        summary:
+          'Governs data protection protocols, confidential system access, multi-factor authentication, device encryption, and ISO 27001 / GDPR compliance.',
+        content: `### 1. Information Classification
+All corporate assets, databases, customer personal data, and source code repositories are designated as Confidential or Strictly Confidential.
+
+### 2. Access Controls & Passwords
+- Multi-factor authentication (MFA) is mandatory for all production systems, email accounts, and internal portals.
+- Passwords must be at least 12 characters in length and updated per enterprise password lifecycle policies.
+- Sharing credentials or API keys across team members or over unencrypted messaging tools is strictly forbidden.
+
+### 3. Device & Endpoint Security
+- Company-issued laptops must have full-disk encryption (FileVault/BitLocker) enabled and active at all times.
+- Automated security patches must be installed within 7 calendar days of release.
+- Connecting personal USB storage devices or unapproved peripherals to corporate workstations is blocked.
+
+### 4. Incident Reporting
+Any suspected security compromise, phishing email click, lost device, or data breach must be reported immediately to security@peoplepay360.com within two hours of discovery.`,
+        isMandatory: true,
+        effectiveDate: '2026-04-01',
+      },
+      {
+        code: 'POSH_POLICY',
+        title: 'Prevention of Sexual Harassment (POSH) & Anti-Discrimination',
+        category: 'compliance',
+        version: '2.0',
+        summary:
+          'Comprehensive policy providing a safe, respectful environment free from sexual harassment, detailing the Internal Complaints Committee (ICC) redressal process.',
+        content: `### 1. Zero Tolerance Mandate
+Anchorage Technologies maintains a strict zero-tolerance policy against any form of sexual harassment, unwelcome verbal/physical conduct, visual harassment, or gender-based discrimination in the physical or digital workplace.
+
+### 2. Definition of Workplace
+The workplace includes all company premises, client sites, company-sponsored offsites, conferences, business travel, virtual video calls, and official corporate messaging channels.
+
+### 3. Internal Complaints Committee (ICC)
+Pursuant to statutory guidelines, an independent Internal Complaints Committee headed by a senior female presiding officer investigates all complaints with complete confidentiality and fairness.
+
+### 4. Redressal & Protection Against Retaliation
+- Formal complaints are acknowledged within 48 hours and investigated thoroughly within 30 days.
+- Strict anti-retaliation protections ensure that complainants and witnesses are fully protected against any career or interpersonal repercussions.`,
+        isMandatory: true,
+        effectiveDate: '2026-04-01',
+      },
+      {
+        code: 'REMOTE_WORK',
+        title: 'Remote & Hybrid Workplace Guidelines',
+        category: 'workplace',
+        version: '1.1',
+        summary:
+          'Operational expectations, core working hours, virtual meeting etiquette, communication cadence, and ergonomics for hybrid teams.',
+        content: `### 1. Hybrid Model Overview
+Full-time employees operate on a flexible hybrid model comprising structured core in-office days and remote work allowances coordinated with team leads.
+
+### 2. Core Working Hours & Availability
+- Team members are expected to be available for synchronous collaboration during core hours: 10:00 AM – 5:00 PM local time.
+- Statuses on corporate messaging (Slack/Teams) should accurately reflect working, in a meeting, or away.
+
+### 3. Home Workspace & Ergonomics
+- Employees working remotely must ensure a quiet, private environment with a stable high-speed broadband connection.
+- The company provides an initial home workstation subsidy to support ergonomic chairs, external monitors, and accessories.
+
+### 4. Virtual Etiquette
+Video cameras are encouraged during internal 1-on-1s and customer presentations to foster strong team bonding and active engagement.`,
+        isMandatory: true,
+        effectiveDate: '2026-04-01',
+      },
+      {
+        code: 'IP_CONFIDENTIALITY',
+        title: 'Intellectual Property, Inventions & Confidentiality Agreement',
+        category: 'compliance',
+        version: '1.0',
+        summary:
+          'Protects proprietary company software, customer datasets, patents, and confirms invention assignment developed during employment.',
+        content: `### 1. Ownership of Inventions
+All software, algorithms, designs, documentation, patents, and business methodologies created by employees during the course of employment are the exclusive proprietary property of the company ("Work Made for Hire").
+
+### 2. Non-Disclosure Obligations
+Employees agree never to disclose non-public company trade secrets, pricing formulas, client lists, or technological architectures to any third party during or following their term of employment.
+
+### 3. Open Source Usage
+Any integration of open source software (OSS) into company products must comply with enterprise licensing policies (permissive licenses like MIT/Apache 2.0; copyleft licenses like GPL require explicit CTO sign-off).
+
+### 4. Return of Company Property
+Upon separation, employees must immediately surrender all hardware, access tokens, customer files, and proprietary records in their possession.`,
+        isMandatory: true,
+        effectiveDate: '2026-04-01',
+      },
+      {
+        code: 'LEAVE_ATTENDANCE',
+        title: 'Leave, Working Hours & Attendance Regularization Policy',
+        category: 'hr',
+        version: '1.0',
+        summary:
+          'Defines daily check-in protocols, shift schedules, paid time off accruals, compensatory leaves, and regularization procedures.',
+        content: `### 1. Standard Working Schedule
+Standard working hours consist of 40 hours per week across Monday to Friday, with 8 working hours and a mandatory 1-hour lunch break per day.
+
+### 2. Attendance Recording
+- Employees must record their daily Check-In and Check-Out through the PeoplePay360 portal or biometric attendance station.
+- Punches submitted after 10:00 AM without prior manager notice are flagged as Late Arrivals.
+
+### 3. Time Off Approvals
+- Planned leaves (Paid Time Off, Vacation) must be requested at least 3 business days in advance through the Time Off portal.
+- Sick Leave can be applied on the day of absence, with medical certification required for absences exceeding two consecutive days.
+
+### 4. Attendance Regularization
+Manual punch corrections for missed check-ins or biometric failures must be submitted within 3 business days and require manager approval before the monthly payroll cut-off.`,
+        isMandatory: true,
+        effectiveDate: '2026-04-01',
+      },
+    ];
+
+    for (const pol of initialPolicies) {
+      const [existing] = await db
+        .select()
+        .from(schema.companyPolicies)
+        .where(eq(schema.companyPolicies.code, pol.code))
+        .limit(1);
+
+      if (!existing) {
+        await db.insert(schema.companyPolicies).values(pol);
+        console.info(`✅ Seeded policy: ${pol.title} (${pol.code})`);
       }
     }
 

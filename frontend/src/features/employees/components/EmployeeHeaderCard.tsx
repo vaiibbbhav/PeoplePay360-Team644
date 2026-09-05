@@ -59,7 +59,6 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
                 <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink leading-tight">
                   {fullName}
                 </h1>
-
               </div>
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-ink-soft mt-1 flex-wrap">
@@ -138,7 +137,6 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
               <span>{employee.email}</span>
             </div>
           </div>
-
         </div>
       </div>
     </div>

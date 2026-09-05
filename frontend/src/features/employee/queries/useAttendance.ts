@@ -81,7 +81,8 @@ export function generateFallbackAttendance(
         check_out: `${dateStr}T17:30:00Z`,
         worked_hours: '8.50',
         status: 'Present',
-        exception_note: 'Biometric hardware sensor offline. Manual HR log adjustment per badge swipe.',
+        exception_note:
+          'Biometric hardware sensor offline. Manual HR log adjustment per badge swipe.',
         is_manual_edit: true,
         created_at: `${dateStr}T09:00:00Z`,
         updated_at: `${dateStr}T17:35:00Z`,
@@ -136,7 +137,11 @@ const getAttendanceApi = async (params: AttendanceFilterParams): Promise<Attenda
   }
 
   const now = new Date();
-  return generateFallbackAttendance(params.employeeId || 'emp-001', now.getFullYear(), now.getMonth());
+  return generateFallbackAttendance(
+    params.employeeId || 'emp-001',
+    now.getFullYear(),
+    now.getMonth(),
+  );
 };
 
 const LOCAL_STORAGE_FP_KEY = 'peoplepay_employee_fingerprint_';
@@ -174,12 +179,18 @@ const updateFingerprintApi = async (payload: {
   return record;
 };
 
-const checkInApi = async (payload: { employeeId: string; checkIn: string }): Promise<AttendanceRecord> => {
+const checkInApi = async (payload: {
+  employeeId: string;
+  checkIn: string;
+}): Promise<AttendanceRecord> => {
   const { data } = await api.post<AttendanceRecord>('/attendance/check-in', payload);
   return data;
 };
 
-const checkOutApi = async (payload: { employeeId: string; checkOut: string }): Promise<AttendanceRecord> => {
+const checkOutApi = async (payload: {
+  employeeId: string;
+  checkOut: string;
+}): Promise<AttendanceRecord> => {
   const { data } = await api.post<AttendanceRecord>('/attendance/check-out', payload);
   return data;
 };

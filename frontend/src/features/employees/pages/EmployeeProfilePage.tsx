@@ -27,7 +27,9 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
   const updateEmployeeMutation = useUpdateEmployee();
   const deleteEmployeeMutation = useDeleteEmployee();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'personal' | 'employment' | 'contracts' | 'payslips'>('overview');
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'personal' | 'employment' | 'contracts' | 'payslips'
+  >('overview');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -222,7 +224,10 @@ export const EmployeeProfilePage: React.FC = () => {
           <p className="text-xs text-ink-soft mb-4">
             Your user account is not linked to an employee profile record yet.
           </p>
-          <Link to="/employee/dashboard" className="px-4 py-2 text-xs font-medium bg-accent text-accent-ink rounded-lg no-underline inline-block">
+          <Link
+            to="/employee/dashboard"
+            className="px-4 py-2 text-xs font-medium bg-accent text-accent-ink rounded-lg no-underline inline-block"
+          >
             Return to Dashboard
           </Link>
         </div>

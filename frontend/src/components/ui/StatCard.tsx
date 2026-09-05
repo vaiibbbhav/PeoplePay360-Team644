@@ -17,10 +17,8 @@ export const StatCard: React.FC<StatCardProps> = ({ label, value, subtext, class
   return (
     <div className={`p-5 rounded-2xl border border-line bg-bg-raised/40 ${className}`}>
       <span className="text-xs block font-medium mb-2">{label}</span>
-      <div className="text-2xl font-bold text-ink mt-1.5">
-        {value}
-      </div>
-      {/* {subtext && <span className="text-xs text-ink-soft mt-1.5 block">{subtext}</span>} */}
+      <div className="text-2xl font-bold text-ink mt-1.5">{value}</div>
+      {subtext && <span className="text-xs text-ink-soft mt-1.5 block">{subtext}</span>}
     </div>
   );
 };

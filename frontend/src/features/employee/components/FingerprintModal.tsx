@@ -7,7 +7,11 @@ type FingerprintModalProps = {
   employeeId: string;
 };
 
-export const FingerprintModal: React.FC<FingerprintModalProps> = ({ isOpen, onClose, employeeId }) => {
+export const FingerprintModal: React.FC<FingerprintModalProps> = ({
+  isOpen,
+  onClose,
+  employeeId,
+}) => {
   const { data: fingerprint } = useFingerprint(employeeId);
   const updateMutation = useUpdateFingerprint();
 
@@ -26,7 +30,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ isOpen, onCl
     setTimeout(() => {
       // Generate a simulated cryptographic biometric hash template
       const randomHex = Array.from({ length: 48 }, () =>
-        Math.floor(Math.random() * 16).toString(16)
+        Math.floor(Math.random() * 16).toString(16),
       ).join('');
       const newTemplate = `FP_SHA256_${randomHex}`;
       setCustomTemplate(newTemplate);
@@ -79,7 +83,12 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ isOpen, onCl
             className="text-ink-soft hover:text-ink p-1 rounded-md cursor-pointer transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -109,7 +118,8 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ isOpen, onCl
 
           <div>
             <label className="block text-xs font-medium text-ink mb-1.5">
-              Encrypted Biometric Template (<code className="text-accent font-mono text-[11px]">encryted_template</code>)
+              Encrypted Biometric Template (
+              <code className="text-accent font-mono text-[11px]">encryted_template</code>)
             </label>
             <textarea
               rows={3}
@@ -138,8 +148,18 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ isOpen, onCl
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                  <svg
+                    className="w-4 h-4 text-accent"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
+                    />
                   </svg>
                   <span>Scan / Re-generate Biometric Key</span>
                 </>

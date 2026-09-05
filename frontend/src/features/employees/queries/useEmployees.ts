@@ -231,5 +231,3 @@ export const useEmployeeContracts = (employeeId: string) => {
     enabled: Boolean(employeeId),
   });
 };
-
-

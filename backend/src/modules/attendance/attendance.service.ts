@@ -95,4 +95,3 @@ export async function saveManualAttendance(data: Record<string, unknown>) {
     isManualEdit: true,
   });
 }
-

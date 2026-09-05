@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ExternalLink, FileText } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { useEmployeePayslips } from '../queries/useEmployees';
 import { usePayslipDetail } from '@/features/compensation/queries/useEmployeePayslips';
 import { MonthlyPayslipDocument } from '@/features/compensation/components/MonthlyPayslipDocument';
@@ -13,7 +13,8 @@ type PayslipsTabProps = {
 export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
   const { data: payslips = [], isLoading, error } = useEmployeePayslips(employeeId);
   const [selectedPayslipId, setSelectedPayslipId] = useState<string | null>(null);
-  const { data: activePayslipDetail, isLoading: isDetailLoading } = usePayslipDetail(selectedPayslipId);
+  const { data: activePayslipDetail, isLoading: isDetailLoading } =
+    usePayslipDetail(selectedPayslipId);
 
   const formatDate = (val: string | null | undefined) => {
     if (!val) return '—';
@@ -62,12 +63,12 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
         items={[
           { label: 'Total Payslips', value: payslips.length },
           { label: 'Total Net Pay', value: formatCurrency(totalNet) },
-          // {
-          //   label: 'Latest Period',
-          //   value: latestPayslip
-          //     ? `${formatDate(latestPayslip.period_start)}– ${formatDate(latestPayslip.period_end)}`
-          //     : 'None',
-          // },
+          {
+            label: 'Latest Period',
+            value: latestPayslip
+              ? `${formatDate(latestPayslip.period_start)} – ${formatDate(latestPayslip.period_end)}`
+              : 'None',
+          },
         ]}
       />
 
@@ -75,9 +76,7 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
       <div className="bg-bg border border-line rounded-2xl overflow-hidden">
         <div className="px-6 py-4 border-b border-line flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h3 className="font-serif text-base font-semibold text-ink">
-              Payroll Settlements
-            </h3>
+            <h3 className="font-serif text-base font-semibold text-ink">Payroll Settlements</h3>
           </div>
           <div className="flex items-center gap-3">
             <Link
@@ -103,7 +102,8 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
               No Payslips Generated Yet
             </h4>
             <p className="text-xs text-ink-soft max-w-sm mx-auto">
-              Payslips will be generated automatically when monthly payruns are executed and validated for this employee.
+              Payslips will be generated automatically when monthly payruns are executed and
+              validated for this employee.
             </p>
           </div>
         ) : (
@@ -129,8 +129,9 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
                         className="inline-flex items-center gap-1.5 text-accent hover:underline group text-xs font-medium cursor-pointer text-left"
                         title="Open payslip modal"
                       >
-
-                        <span>{formatDate(payslip.period_start)} – {formatDate(payslip.period_end)}</span>
+                        <span>
+                          {formatDate(payslip.period_start)} – {formatDate(payslip.period_end)}
+                        </span>
                       </button>
                     </td>
                     <td className="py-3.5 px-4 text-ink-soft whitespace-nowrap">
@@ -157,8 +158,8 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
       </div>
 
       {/* Monthly Salary Slip Document Modal */}
-      {selectedPayslipId && (
-        activePayslipDetail ? (
+      {selectedPayslipId &&
+        (activePayslipDetail ? (
           <MonthlyPayslipDocument
             payslip={activePayslipDetail}
             onClose={() => setSelectedPayslipId(null)}
@@ -170,8 +171,7 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
               <span className="text-xs text-ink-soft">Loading salary slip document...</span>
             </div>
           </div>
-        ) : null
-      )}
+        ) : null)}
     </div>
   );
 };

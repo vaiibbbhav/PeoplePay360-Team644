@@ -176,12 +176,13 @@ export const EmployeeDirectoryPage: React.FC = () => {
                       </div>
 
                       <span
-                        className={`text-[11px] font-medium px-2 py-0.5 rounded-full border border-line ${emp.employment_status === 'active'
+                        className={`text-[11px] font-medium px-2 py-0.5 rounded-full border border-line ${
+                          emp.employment_status === 'active'
                             ? 'bg-bg-raised text-ink'
                             : emp.employment_status === 'on_leave'
                               ? 'bg-accent-soft text-accent'
                               : 'bg-bg-raised text-ink-soft'
-                          }`}
+                        }`}
                       >
                         {emp.employment_status.replace('_', ' ')}
                       </span>

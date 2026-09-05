@@ -64,8 +64,16 @@ export const EmployeeDashboardPage: React.FC = () => {
       title: 'Compensation & Slips',
       desc: 'Monthly payslips, wage breakdown, and tax declarations.',
       tag: 'Payroll',
-      link: '#compensation',
-      isDirectLink: false,
+      link: '/compensation',
+      isDirectLink: true,
+    },
+    {
+      id: 'documents',
+      title: 'Policies & Documents',
+      desc: 'Mandatory company policies, code of conduct, and compliance acknowledgments.',
+      tag: 'Compliance',
+      link: '/documents',
+      isDirectLink: true,
     },
     {
       id: 'recruitment',

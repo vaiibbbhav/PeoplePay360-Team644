@@ -12,6 +12,7 @@ import { EmployeeProfilePage } from './features/employees/pages/EmployeeProfileP
 
 import { CompensationPage } from './features/compensation/pages/CompensationPage';
 import { PayslipViewPage } from './features/compensation/pages/PayslipViewPage';
+import { DocumentsPage } from './features/documents/pages/DocumentsPage';
 
 export function App() {
   return (
@@ -26,6 +27,8 @@ export function App() {
           <Route path="/users" element={<UserManagementPage />} />
           <Route path="/compensation" element={<CompensationPage />} />
           <Route path="/payslips" element={<CompensationPage />} />
+          <Route path="/documents" element={<DocumentsPage />} />
+          <Route path="/policies" element={<DocumentsPage />} />
           <Route path="/payslip/:id" element={<PayslipViewPage />} />
           <Route path="/employees" element={<EmployeeDirectoryPage />} />
           <Route path="/employees/:id" element={<EmployeeProfilePage />} />

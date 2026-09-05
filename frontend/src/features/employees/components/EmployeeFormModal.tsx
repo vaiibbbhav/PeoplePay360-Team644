@@ -108,10 +108,11 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
             <button
               type="button"
               onClick={() => setActiveSubTab('personal')}
-              className={`py-3.5 text-sm font-medium border-b-2 cursor-pointer transition-colors focus:outline-none ${activeSubTab === 'personal'
-                ? 'border-accent text-accent font-semibold'
-                : 'border-transparent text-ink-soft hover:text-ink'
-                }`}
+              className={`py-3.5 text-sm font-medium border-b-2 cursor-pointer transition-colors focus:outline-none ${
+                activeSubTab === 'personal'
+                  ? 'border-accent text-accent font-semibold'
+                  : 'border-transparent text-ink-soft hover:text-ink'
+              }`}
             >
               1. Personal & Banking
             </button>
@@ -119,10 +120,11 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
             <button
               type="button"
               onClick={() => setActiveSubTab('employment')}
-              className={`py-3.5 text-sm font-medium border-b-2 cursor-pointer transition-colors focus:outline-none ${activeSubTab === 'employment'
-                ? 'border-accent text-accent font-semibold'
-                : 'border-transparent text-ink-soft hover:text-ink'
-                }`}
+              className={`py-3.5 text-sm font-medium border-b-2 cursor-pointer transition-colors focus:outline-none ${
+                activeSubTab === 'employment'
+                  ? 'border-accent text-accent font-semibold'
+                  : 'border-transparent text-ink-soft hover:text-ink'
+              }`}
             >
               2. Employment & Schedule
             </button>
@@ -210,7 +212,9 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-ink-soft mb-1">Date of Birth</label>
+                    <label className="block text-xs font-medium text-ink-soft mb-1">
+                      Date of Birth
+                    </label>
                     <input
                       type="date"
                       value={dateOfBirth}
@@ -253,7 +257,9 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-medium text-ink-soft mb-1">Bank Name</label>
+                      <label className="block text-xs font-medium text-ink-soft mb-1">
+                        Bank Name
+                      </label>
                       <input
                         type="text"
                         value={bankName}
@@ -297,7 +303,9 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-ink-soft mb-1">Department</label>
+                    <label className="block text-xs font-medium text-ink-soft mb-1">
+                      Department
+                    </label>
                     <select
                       value={departmentId}
                       onChange={(e) => setDepartmentId(e.target.value)}
@@ -415,7 +423,6 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
             </button>
 
             <div className="flex gap-2">
-
               <button
                 type="submit"
                 disabled={isSaving}

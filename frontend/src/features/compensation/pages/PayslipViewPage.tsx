@@ -162,9 +162,12 @@ export const PayslipViewPage: React.FC = () => {
                 PeoplePay360 Operations Ltd.
               </h1>
               <p className="text-[11px] leading-relaxed text-neutral-800 mt-1 mb-0.5">
-                <b>Registered Office :</b> 3rd Floor, Corporate Tower, Richmond Rd, Bengaluru, Karnataka 560025, India
+                <b>Registered Office :</b> 3rd Floor, Corporate Tower, Richmond Rd, Bengaluru,
+                Karnataka 560025, India
               </p>
-              <p className="text-[11px] font-bold text-black m-0">Business Unit : Technology & Operations</p>
+              <p className="text-[11px] font-bold text-black m-0">
+                Business Unit : Technology & Operations
+              </p>
             </div>
           </div>
 
@@ -208,7 +211,9 @@ export const PayslipViewPage: React.FC = () => {
             <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
               <div className="col-span-6 p-1.5 pl-2">
                 <span>Department: </span>
-                <b>{payslip.department_name ? payslip.department_name.toUpperCase() : 'OPERATIONS'}</b>
+                <b>
+                  {payslip.department_name ? payslip.department_name.toUpperCase() : 'OPERATIONS'}
+                </b>
               </div>
               <div className="col-span-6 p-1.5 pl-2">
                 <span>Worked Days: </span>
@@ -298,7 +303,8 @@ export const PayslipViewPage: React.FC = () => {
 
             {/* Note Footer */}
             <div className="py-2.5 text-center text-[11px] text-neutral-600">
-              <b>Note:</b> This is a computer-generated salary slip and does not require a signature.
+              <b>Note:</b> This is a computer-generated salary slip and does not require a
+              signature.
             </div>
           </div>
         </div>
