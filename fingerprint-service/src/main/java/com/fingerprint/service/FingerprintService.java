@@ -21,6 +21,7 @@ public class FingerprintService {
 
     private static final Logger logger = LoggerFactory.getLogger(FingerprintService.class);
     private static final double MATCH_THRESHOLD = 30.0; // SourceAFIS matching threshold
+    private static final java.time.ZoneId IST_ZONE = java.time.ZoneId.of("Asia/Kolkata");
 
     private final JdbcTemplate jdbcTemplate;
     private final FingerprintCryptoService cryptoService;
@@ -203,15 +204,18 @@ public class FingerprintService {
             employeeEmail = emp.get("email") != null ? (String) emp.get("email") : "";
         }
 
-        // Query today's attendance record
+        // Query today's attendance record in Indian Standard Time (Asia/Kolkata)
+        java.time.LocalDate todayIst = java.time.LocalDate.now(IST_ZONE);
+        java.sql.Date todaySqlDate = java.sql.Date.valueOf(todayIst);
+
         String attSql = """
             SELECT id, check_in, check_out, status, worked_hours
             FROM attendance
-            WHERE employee_id = ?::uuid AND date = CURRENT_DATE
+            WHERE employee_id = ?::uuid AND date = ?
             LIMIT 1
             """;
 
-        List<Map<String, Object>> attList = jdbcTemplate.queryForList(attSql, employeeId);
+        List<Map<String, Object>> attList = jdbcTemplate.queryForList(attSql, employeeId, todaySqlDate);
 
         String action;
         String status;
@@ -224,16 +228,16 @@ public class FingerprintService {
         if (attList.isEmpty()) {
             // Case 1: Not checked in today -> INSERT PUNCH IN
             action = "PUNCH_IN";
-            LocalTime localTime = LocalTime.now();
+            LocalTime localTime = LocalTime.now(IST_ZONE);
             boolean isLate = localTime.isAfter(LocalTime.of(9, 30));
             status = isLate ? "Late" : "Present";
             checkInStr = now.toString();
 
             String insertSql = """
                 INSERT INTO attendance (employee_id, date, check_in, check_out, worked_hours, status, is_manual_edit, created_at, updated_at)
-                VALUES (?::uuid, CURRENT_DATE, ?, NULL, 0.0, ?, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                VALUES (?::uuid, ?, ?, NULL, 0.0, ?, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
                 """;
-            jdbcTemplate.update(insertSql, employeeId, nowTs, status);
+            jdbcTemplate.update(insertSql, employeeId, todaySqlDate, nowTs, status);
             logger.info("Employee {} punched in at {} with status {}", employeeName, now, status);
         } else {
             Map<String, Object> record = attList.get(0);
@@ -244,7 +248,7 @@ public class FingerprintService {
             if (checkInTs == null) {
                 // Not checked in yet -> PUNCH IN
                 action = "PUNCH_IN";
-                LocalTime localTime = LocalTime.now();
+                LocalTime localTime = LocalTime.now(IST_ZONE);
                 boolean isLate = localTime.isAfter(LocalTime.of(9, 30));
                 status = isLate ? "Late" : "Present";
                 checkInStr = now.toString();
@@ -297,7 +301,7 @@ public class FingerprintService {
         }
 
         java.time.format.DateTimeFormatter timeFormatter = java.time.format.DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH)
-            .withZone(java.time.ZoneId.systemDefault());
+            .withZone(IST_ZONE);
         String timeStr = timeFormatter.format(now);
 
         String announcement = action.equals("PUNCH_IN")
@@ -344,14 +348,15 @@ public class FingerprintService {
             return status;
         }
 
+        java.time.LocalDate todayIst = java.time.LocalDate.now(IST_ZONE);
         String sql = """
             SELECT check_in, check_out, status, worked_hours
             FROM attendance
-            WHERE employee_id = ?::uuid AND date = CURRENT_DATE
+            WHERE employee_id = ?::uuid AND date = ?
             LIMIT 1
             """;
 
-        List<Map<String, Object>> list = jdbcTemplate.queryForList(sql, employeeId);
+        List<Map<String, Object>> list = jdbcTemplate.queryForList(sql, employeeId, java.sql.Date.valueOf(todayIst));
         if (list.isEmpty() || list.get(0).get("check_in") == null) {
             status.put("punchedIn", false);
             status.put("checkIn", null);

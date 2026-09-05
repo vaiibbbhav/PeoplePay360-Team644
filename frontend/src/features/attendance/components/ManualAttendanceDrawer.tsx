@@ -6,11 +6,28 @@ import {
   type AttendanceRecord,
   type SaveManualAttendancePayload,
 } from '@/features/employee/queries/useAttendance';
+import { getTodayIST, formatDateIST } from '@/lib/formatters';
 
 type ManualAttendanceDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
   initialRecord?: AttendanceRecord | null;
+};
+
+const formatTimeInputIST = (isoString?: string | null): string => {
+  if (!isoString) return '';
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return '';
+    return new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Kolkata',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(d);
+  } catch {
+    return '';
+  }
 };
 
 export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
@@ -34,29 +51,13 @@ export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
   useEffect(() => {
     if (initialRecord) {
       setEmployeeId(initialRecord.employee_id);
-      setDate(initialRecord.date);
+      const effectiveDate = initialRecord.check_in
+        ? formatDateIST(initialRecord.check_in) || initialRecord.date
+        : initialRecord.date;
+      setDate(effectiveDate);
 
-      if (initialRecord.check_in) {
-        try {
-          const d = new Date(initialRecord.check_in);
-          setCheckInTime(d.toISOString().substring(11, 16));
-        } catch {
-          setCheckInTime('09:00');
-        }
-      } else {
-        setCheckInTime('');
-      }
-
-      if (initialRecord.check_out) {
-        try {
-          const d = new Date(initialRecord.check_out);
-          setCheckOutTime(d.toISOString().substring(11, 16));
-        } catch {
-          setCheckOutTime('17:30');
-        }
-      } else {
-        setCheckOutTime('');
-      }
+      setCheckInTime(formatTimeInputIST(initialRecord.check_in) || '09:00');
+      setCheckOutTime(formatTimeInputIST(initialRecord.check_out) || '17:30');
 
       const hrs =
         typeof initialRecord.worked_hours === 'number'
@@ -66,7 +67,7 @@ export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
       setStatus(initialRecord.status || 'Present');
       setExceptionNote(initialRecord.exception_note || '');
     } else {
-      const todayStr = new Date().toISOString().split('T')[0];
+      const todayStr = getTodayIST();
       setDate(todayStr);
       setCheckInTime('09:00');
       setCheckOutTime('17:30');
@@ -106,8 +107,9 @@ export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
       return;
     }
 
-    const checkInIso = checkInTime ? `${date}T${checkInTime}:00.000Z` : null;
-    const checkOutIso = checkOutTime ? `${date}T${checkOutTime}:00.000Z` : null;
+    // Parse input times with Indian Standard Time (+05:30) offset
+    const checkInIso = checkInTime ? new Date(`${date}T${checkInTime}:00+05:30`).toISOString() : null;
+    const checkOutIso = checkOutTime ? new Date(`${date}T${checkOutTime}:00+05:30`).toISOString() : null;
 
     const payload: SaveManualAttendancePayload = {
       employeeId,

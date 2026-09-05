@@ -1,6 +1,6 @@
 import * as attendanceRepo from './attendance.repository';
 import { NotFoundError, ValidationError } from '../../shared/errors';
-import { formatDateIso, roundToTwoDecimals } from '../../shared/formatters';
+import { formatDateIso, roundToTwoDecimals, getIstTimeParts } from '../../shared/formatters';
 
 export async function listAttendance(employeeId?: string, startDate?: string, endDate?: string) {
   return await attendanceRepo.findAllAttendance(employeeId, startDate, endDate);
@@ -31,9 +31,8 @@ export async function recordCheckIn(employeeId: string, checkInTime?: string) {
     throw new ValidationError('Employee has already checked in today');
   }
 
-  // Determine status (if check-in is past 09:30, mark as Late)
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
+  // Determine status (if check-in is past 09:30 AM IST, mark as Late)
+  const { hours, minutes } = getIstTimeParts(now);
   const isLate = hours > 9 || (hours === 9 && minutes > 30);
   const status = isLate ? 'Late' : 'Present';
 

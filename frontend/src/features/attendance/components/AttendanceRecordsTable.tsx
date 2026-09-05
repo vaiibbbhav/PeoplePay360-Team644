@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import type { AttendanceRecord } from '@/features/employee/queries/useAttendance';
 
+import { formatTimeIST, formatDateIST } from '@/lib/formatters';
+
 type AttendanceRecordsTableProps = {
   records: AttendanceRecord[];
   isLoading?: boolean;
@@ -24,28 +26,16 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
   canManage,
 }) => {
   const formatTime = (isoString?: string | null) => {
-    if (!isoString) return '—';
-    try {
-      const d = new Date(isoString);
-      if (isNaN(d.getTime())) {
-        // Might be just "HH:mm:ss" or already formatted
-        return isoString;
-      }
-      return d.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      });
-    } catch {
-      return isoString;
-    }
+    return formatTimeIST(isoString);
   };
 
-  const formatDate = (dateStr: string) => {
+  const formatDate = (dateStr: string, checkIn?: string | null) => {
     try {
-      const d = new Date(dateStr + 'T00:00:00');
-      const weekday = d.toLocaleDateString('en-US', { weekday: 'short' });
-      const dayMonthYear = d.toLocaleDateString('en-GB', {
+      const targetDateStr = checkIn ? formatDateIST(checkIn) || dateStr : dateStr;
+      const d = new Date(targetDateStr + 'T12:00:00+05:30');
+      const weekday = d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', weekday: 'short' });
+      const dayMonthYear = d.toLocaleDateString('en-IN', {
+        timeZone: 'Asia/Kolkata',
         day: '2-digit',
         month: 'short',
         year: 'numeric',
@@ -147,7 +137,7 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
           </thead>
           <tbody className="divide-y divide-line">
             {records.map((record) => {
-              const { weekday, dayMonthYear } = formatDate(record.date);
+              const { weekday, dayMonthYear } = formatDate(record.date, record.check_in);
               const hrs =
                 typeof record.worked_hours === 'number'
                   ? record.worked_hours.toFixed(2)

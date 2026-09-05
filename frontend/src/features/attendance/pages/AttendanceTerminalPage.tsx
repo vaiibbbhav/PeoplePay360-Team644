@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePunchFingerprint, type PunchResult } from '../queries/useFingerprint';
 import { useAttendanceList } from '@/features/employee/queries/useAttendance';
+import { getTodayIST, formatTimeIST } from '@/lib/formatters';
 import { ReaderStatusCard } from '../components/ReaderStatusCard';
 import { FingerprintScannerPad } from '../components/FingerprintScannerPad';
 
@@ -12,8 +13,8 @@ export const AttendanceTerminalPage: React.FC = () => {
 
   const punchMutation = usePunchFingerprint();
 
-  // Query today's attendance logs from NeonDB
-  const todayStr = new Date().toISOString().split('T')[0];
+  // Query today's attendance logs from NeonDB using Indian Standard Time
+  const todayStr = getTodayIST();
   const { data: todayRecords = [], refetch: refetchAttendance } = useAttendanceList({
     startDate: todayStr,
     endDate: todayStr,
@@ -67,7 +68,7 @@ export const AttendanceTerminalPage: React.FC = () => {
       refetchAttendance();
 
       if (result.matched && result.success) {
-        const timeStr = result.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const timeStr = result.time || formatTimeIST(new Date().toISOString());
         const text = result.announcement || (
           result.action === 'PUNCH_IN'
             ? `Welcome ${result.employeeName}! Punched in at ${timeStr}`

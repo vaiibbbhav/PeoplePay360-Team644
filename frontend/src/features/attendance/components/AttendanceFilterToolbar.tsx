@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { getTodayIST } from '@/lib/formatters';
+
 export type AttendanceFilterState = {
   search: string;
   startDate: string;
@@ -30,21 +32,24 @@ export const AttendanceFilterToolbar: React.FC<AttendanceFilterToolbarProps> = (
   };
 
   const handleQuickPreset = (preset: 'today' | 'week' | 'month' | 'all') => {
-    const now = new Date();
-    const todayStr = now.toISOString().split('T')[0];
+    const todayStr = getTodayIST();
 
     if (preset === 'today') {
       onFilterChange({ ...filter, startDate: todayStr, endDate: todayStr });
     } else if (preset === 'week') {
+      const now = new Date();
       const day = now.getDay();
       const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Monday
       const monday = new Date(now.setDate(diff));
-      const mondayStr = monday.toISOString().split('T')[0];
+      const mondayStr = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(monday);
       onFilterChange({ ...filter, startDate: mondayStr, endDate: todayStr });
     } else if (preset === 'month') {
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const startOfMonth = `${year}-${month}-01`;
+      const startOfMonth = `${todayStr.substring(0, 7)}-01`;
       onFilterChange({ ...filter, startDate: startOfMonth, endDate: todayStr });
     } else {
       onFilterChange({ ...filter, startDate: '', endDate: '' });
