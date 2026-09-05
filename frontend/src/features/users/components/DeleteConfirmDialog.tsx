@@ -1,4 +1,5 @@
 import React from 'react';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 type Props = {
   isOpen: boolean;
@@ -15,6 +16,10 @@ export const DeleteConfirmDialog: React.FC<Props> = ({
   onConfirm,
   onCancel,
 }) => {
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!isDeleting) onCancel();
+  }, isOpen);
+
   if (!isOpen) return null;
 
   return (
@@ -26,7 +31,10 @@ export const DeleteConfirmDialog: React.FC<Props> = ({
       />
 
       {/* Dialog */}
-      <div className="relative z-10 w-full max-w-sm bg-bg border border-line rounded-xl shadow-sm overflow-hidden">
+      <div
+        ref={modalRef}
+        className="relative z-10 w-full max-w-sm bg-bg border border-line rounded-xl shadow-sm overflow-hidden"
+      >
         {/* Header */}
         <div className="px-6 pt-5 pb-4">
           <div className="w-10 h-10 rounded-full bg-over-red/10 flex items-center justify-center mb-3">

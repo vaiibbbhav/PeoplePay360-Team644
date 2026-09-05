@@ -334,3 +334,16 @@ export const policyAcceptances = pgTable(
     uniqueIndex('policy_user_version_idx').on(table.policyId, table.userId, table.policyVersion),
   ],
 );
+
+// 13. System Audit Logs
+export const auditLogs = pgTable('audit_logs', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  actorId: uuid('actor_id').references(() => users.id, { onDelete: 'set null' }),
+  actorName: varchar('actor_name', { length: 150 }).notNull().default('System Admin'),
+  action: varchar('action', { length: 60 }).notNull(),
+  entityType: varchar('entity_type', { length: 50 }).notNull().default('user'),
+  entityId: varchar('entity_id', { length: 100 }),
+  description: text('description').notNull(),
+  metadata: jsonb('metadata').default(sql`'{}'::jsonb`),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});

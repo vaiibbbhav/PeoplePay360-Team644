@@ -47,18 +47,24 @@ export const EmployeeDirectoryPage: React.FC = () => {
       }
     >
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto w-full flex-1 px-6 sm:px-8 py-8">
+      <div className="max-w-7xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8">
         {/* Page Title & Intro */}
-        <div className="mb-6">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink">Employee Directory</h1>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="sm:hidden self-start px-3.5 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
+          >
+            <span>+</span> Onboard Employee
+          </button>
         </div>
 
         {/* Toolbar & Filter Controls */}
-        <div className="bg-bg border border-line rounded-2xl p-4 mb-6 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+        <div className="bg-bg border border-line rounded-2xl p-3.5 sm:p-4 mb-6 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
           <div className="relative flex-1">
             <input
               type="text"
-              placeholder="Search by employee name, email or job title..."
+              placeholder="Search by name, email or job..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-lg border border-line bg-bg text-ink placeholder:text-ink-soft focus:outline-none focus:border-accent"
@@ -78,11 +84,11 @@ export const EmployeeDirectoryPage: React.FC = () => {
             </svg>
           </div>
 
-          <div className="flex gap-2.5">
+          <div className="grid grid-cols-2 gap-2.5 sm:flex sm:items-center">
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="px-3 py-2 text-xs rounded-lg border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer"
+              className="w-full sm:w-auto px-3 py-2 text-xs rounded-lg border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer truncate"
             >
               <option value="">All Departments</option>
               {meta?.departments.map((d) => (
@@ -95,7 +101,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 text-xs rounded-lg border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer"
+              className="w-full sm:w-auto px-3 py-2 text-xs rounded-lg border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer truncate"
             >
               <option value="">All Statuses</option>
               <option value="active">Active</option>
@@ -113,7 +119,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
             Loading employees master directory...
           </div>
         ) : filteredEmployees.length === 0 ? (
-          <div className="bg-bg border border-line rounded-2xl p-16 text-center">
+          <div className="bg-bg border border-line rounded-2xl p-12 sm:p-16 text-center">
             <h3 className="font-serif text-lg font-semibold text-ink mb-1">No employees found</h3>
             <p className="text-xs text-ink-soft mb-4">
               {search || departmentFilter || statusFilter
@@ -139,12 +145,12 @@ export const EmployeeDirectoryPage: React.FC = () => {
                 <div
                   key={emp.id}
                   onClick={() => navigate(`/employees/${emp.id}`)}
-                  className="bg-bg border border-line rounded-2xl p-5 hover:border-ink-soft/40 transition-colors cursor-pointer flex flex-col justify-between"
+                  className="bg-bg border border-line rounded-2xl p-4 sm:p-5 hover:border-ink-soft/40 transition-colors cursor-pointer flex flex-col justify-between"
                 >
                   <div>
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-accent-soft text-accent font-serif font-bold text-base flex items-center justify-center shrink-0 overflow-hidden">
+                    <div className="flex items-start justify-between gap-2.5 mb-3">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-accent-soft text-accent font-serif font-bold text-base flex items-center justify-center shrink-0 overflow-hidden">
                           {emp.avatar_url ? (
                             <img
                               src={emp.avatar_url}
@@ -155,18 +161,18 @@ export const EmployeeDirectoryPage: React.FC = () => {
                             <span>{initials}</span>
                           )}
                         </div>
-                        <div>
-                          <h3 className="font-serif text-base font-bold text-ink leading-tight">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-serif text-base font-bold text-ink leading-tight truncate">
                             {fullName}
                           </h3>
-                          <span className="text-xs text-ink-soft block mt-0.5">
+                          <span className="text-xs text-ink-soft block mt-0.5 truncate">
                             {emp.job_position_title || 'Unassigned Role'}
                           </span>
                         </div>
                       </div>
 
                       <span
-                        className={`text-[11px] font-medium px-2 py-0.5 rounded-full border border-line ${
+                        className={`text-[10px] sm:text-[11px] font-medium px-2 py-0.5 rounded-full border border-line shrink-0 ${
                           emp.employment_status === 'active'
                             ? 'bg-bg-raised text-ink'
                             : emp.employment_status === 'on_leave'
@@ -205,7 +211,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
             })}
           </div>
         )}
-      </main>
+      </div>
 
       {/* Onboarding / Create Employee Modal */}
       {isCreateModalOpen && meta && (

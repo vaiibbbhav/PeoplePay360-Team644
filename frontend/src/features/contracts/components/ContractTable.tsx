@@ -70,7 +70,7 @@ export const ContractTable: React.FC<ContractTableProps> = ({
   return (
     <div className="border border-line rounded-2xl overflow-hidden bg-bg">
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
+        <table className="w-full text-left text-xs min-w-[700px]">
           <thead>
             <tr className="border-b border-line bg-bg-raised text-ink-soft uppercase tracking-wider text-[11px]">
               <th className="py-3 px-4 font-semibold">Employee</th>

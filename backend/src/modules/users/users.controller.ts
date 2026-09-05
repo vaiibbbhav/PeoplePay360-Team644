@@ -16,13 +16,13 @@ export const getUserById = asyncHandler(async (req: Request, res: Response): Pro
 
 export const createUser = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const validated = createUserSchema.parse(req.body);
-  const user = await usersService.createUser(validated);
+  const user = await usersService.createUser(validated, req.user);
   res.status(201).json(user);
 });
 
 export const updateUser = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const validated = updateUserSchema.parse(req.body);
-  const user = await usersService.updateUser(req.params.id, validated);
+  const user = await usersService.updateUser(req.params.id, validated, req.user);
   res.json(user);
 });
 
@@ -33,6 +33,6 @@ export const getEmployeeOptions = asyncHandler(
   },
 );
 export const deleteUser = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  await usersService.deleteUser(req.params.id, req.user?.id);
+  await usersService.deleteUser(req.params.id, req.user);
   res.status(204).send();
 });

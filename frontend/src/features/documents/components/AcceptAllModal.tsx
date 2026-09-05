@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Policy } from '../queries/useDocuments';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 type AcceptAllModalProps = {
   isOpen: boolean;
@@ -18,11 +19,18 @@ export const AcceptAllModal: React.FC<AcceptAllModalProps> = ({
 }) => {
   const [agreed, setAgreed] = useState(false);
 
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!isAccepting) onClose();
+  }, isOpen);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/40 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="relative w-full max-w-lg bg-bg-raised border border-line rounded-2xl shadow-xl overflow-hidden p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink/40 backdrop-blur-xs animate-in fade-in duration-150">
+      <div
+        ref={modalRef}
+        className="relative w-full max-w-lg bg-bg-raised border border-line rounded-2xl shadow-xl overflow-hidden p-4 sm:p-6"
+      >
         <div className="flex items-center justify-between pb-4 border-b border-line">
           <div>
             <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-accent block">

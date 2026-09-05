@@ -88,7 +88,7 @@ export const ContractsPage: React.FC = () => {
         }
       />
 
-      <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8 space-y-8">
+      <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Stat Cards */}
         <StatGrid
           columns={4}
@@ -117,7 +117,7 @@ export const ContractsPage: React.FC = () => {
         />
 
         {/* Filter & Search Toolbar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-line bg-bg">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-3.5 sm:p-4 rounded-2xl border border-line bg-bg">
           <div className="flex-1 w-full sm:w-auto relative">
             <input
               type="text"
@@ -141,13 +141,13 @@ export const ContractsPage: React.FC = () => {
             </svg>
           </div>
 
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 no-scrollbar">
             {(['all', 'active', 'draft', 'expired', 'cancelled'] as const).map((st) => (
               <button
                 key={st}
                 type="button"
                 onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors cursor-pointer border ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors cursor-pointer border shrink-0 ${
                   statusFilter === st
                     ? 'border-accent bg-accent-soft text-accent'
                     : 'border-line bg-bg text-ink-soft hover:text-ink'

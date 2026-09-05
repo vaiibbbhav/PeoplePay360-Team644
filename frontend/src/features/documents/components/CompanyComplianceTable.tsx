@@ -31,7 +31,7 @@ export const CompanyComplianceTable: React.FC<CompanyComplianceTableProps> = ({
 
   return (
     <div className="border border-line rounded-2xl overflow-hidden bg-bg">
-      <div className="px-6 py-4 border-b border-line flex items-center justify-between">
+      <div className="px-4 sm:px-6 py-4 border-b border-line flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="font-serif text-base font-semibold text-ink m-0">
             Company-Wide Policy Sign-off Audit
@@ -40,13 +40,13 @@ export const CompanyComplianceTable: React.FC<CompanyComplianceTableProps> = ({
             Track employee acceptance rates and manage published regulatory documents.
           </p>
         </div>
-        <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-accent-soft text-accent">
+        <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-accent-soft text-accent shrink-0 self-start sm:self-auto">
           {roster.length} Documents Monitored
         </span>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
+        <table className="w-full text-left text-xs min-w-[680px]">
           <thead>
             <tr className="border-b border-line bg-bg-raised text-ink-soft uppercase tracking-wider text-[11px]">
               <th className="py-3 px-6 font-semibold">Policy Name & Ref</th>

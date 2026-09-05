@@ -114,7 +114,7 @@ export const PayslipsTable: React.FC<PayslipsTableProps> = ({
         </div>
       ) : (
         <div className="border border-line rounded-lg overflow-x-auto bg-bg">
-          <table className="w-full text-left text-xs sm:text-sm border-collapse">
+          <table className="w-full text-left text-xs sm:text-sm border-collapse min-w-[750px]">
             <thead>
               <tr className="border-b border-line bg-bg-raised text-ink-soft text-xs font-semibold">
                 <th className="py-3 px-4 w-10">

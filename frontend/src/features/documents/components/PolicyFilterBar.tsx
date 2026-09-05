@@ -53,10 +53,10 @@ export const PolicyFilterBar: React.FC<PolicyFilterBarProps> = ({
         </div>
 
         {/* Status Filter Toggle */}
-        <div className="flex items-center p-1 bg-bg-sunken rounded-xl border border-line-subtle text-xs">
+        <div className="flex items-center p-1 bg-bg-sunken rounded-xl border border-line-subtle text-[11px] sm:text-xs shrink-0 self-start sm:self-auto">
           <button
             onClick={() => onStatusFilterChange('all')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
               statusFilter === 'all'
                 ? 'bg-bg-raised text-ink shadow-xs'
                 : 'text-ink-soft hover:text-ink'
@@ -66,7 +66,7 @@ export const PolicyFilterBar: React.FC<PolicyFilterBarProps> = ({
           </button>
           <button
             onClick={() => onStatusFilterChange('pending')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
               statusFilter === 'pending'
                 ? 'bg-bg-raised text-accent shadow-xs'
                 : 'text-ink-soft hover:text-ink'
@@ -76,7 +76,7 @@ export const PolicyFilterBar: React.FC<PolicyFilterBarProps> = ({
           </button>
           <button
             onClick={() => onStatusFilterChange('accepted')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
               statusFilter === 'accepted'
                 ? 'bg-bg-raised text-emerald-700 shadow-xs'
                 : 'text-ink-soft hover:text-ink'

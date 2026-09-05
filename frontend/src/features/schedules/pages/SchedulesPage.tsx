@@ -11,6 +11,7 @@ import { HrNavHeader } from '@/components/layout/HrNavHeader';
 import { StatGrid } from '@/components/ui/StatCard';
 import { ScheduleCard } from '../components/ScheduleCard';
 import { ScheduleFormDrawer } from '../components/ScheduleFormDrawer';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 export const SchedulesPage: React.FC = () => {
   const { data: schedules = [], isLoading, error } = useSchedulesList();
@@ -24,6 +25,11 @@ export const SchedulesPage: React.FC = () => {
   const [editingSchedule, setEditingSchedule] = useState<ScheduleItem | null>(null);
   const [deletingSchedule, setDeletingSchedule] = useState<ScheduleItem | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  const deleteModalRef = useClickOutside<HTMLDivElement>(
+    () => setDeletingSchedule(null),
+    Boolean(deletingSchedule),
+  );
 
   // Filtered schedules
   const filtered = schedules.filter((s) => {
@@ -92,7 +98,7 @@ export const SchedulesPage: React.FC = () => {
         }
       />
 
-      <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8 space-y-8">
+      <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* KPI Cards */}
         <StatGrid
           columns={4}
@@ -121,7 +127,7 @@ export const SchedulesPage: React.FC = () => {
         />
 
         {/* Search & Filter Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-line bg-bg">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-3.5 sm:p-4 rounded-2xl border border-line bg-bg">
           <div className="flex-1 w-full sm:w-auto relative">
             <input
               type="text"
@@ -228,7 +234,10 @@ export const SchedulesPage: React.FC = () => {
       {/* Delete Confirmation Modal */}
       {deletingSchedule && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-bg border border-line rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+          <div
+            ref={deleteModalRef}
+            className="bg-bg border border-line rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl"
+          >
             <h3 className="font-serif text-lg font-bold text-ink m-0">
               Delete Working Schedule?
             </h3>

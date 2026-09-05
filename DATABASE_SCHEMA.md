@@ -271,3 +271,18 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `ip_address` (VARCHAR(50))
 - `user_agent` (TEXT)
 - **Constraint**: `UNIQUE(policy_id, user_id, policy_version)`
+
+---
+
+## 9. System Audit Logs
+
+### `audit_logs`
+- `id` (UUID, Primary Key, default random)
+- `actor_id` (UUID, nullable, references `users.id` ON DELETE SET NULL)
+- `actor_name` (VARCHAR(150), NOT NULL, default 'System Admin')
+- `action` (VARCHAR(60), NOT NULL) — e.g. 'USER_CREATED', 'USER_UPDATED', 'USER_DEACTIVATED', 'ROLE_CHANGED'
+- `entity_type` (VARCHAR(50), NOT NULL, default 'user')
+- `entity_id` (VARCHAR(100), nullable)
+- `description` (TEXT, NOT NULL) — human-readable feed message (e.g. "Admin created user J. Patel — HR Payroll User")
+- `metadata` (JSONB, default '{}')
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)

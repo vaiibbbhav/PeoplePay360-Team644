@@ -1,5 +1,6 @@
 import React from 'react';
 import type { EmployeePayslip } from '../queries/useEmployeePayslips';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 export type YearlyPayslipDocumentProps = {
   payslips: EmployeePayslip[];
@@ -64,9 +65,16 @@ export const YearlyPayslipDocument: React.FC<YearlyPayslipDocumentProps> = ({
     }
   }
 
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    onClose();
+  });
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-2 sm:p-4 overflow-y-auto">
-      <div className="bg-white text-black border border-neutral-300 rounded-lg max-w-6xl w-full max-h-[95vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95">
+      <div
+        ref={modalRef}
+        className="bg-white text-black border border-neutral-300 rounded-lg max-w-6xl w-full max-h-[95vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95"
+      >
         {/* Top Control Bar (Hidden on print) */}
         <div className="flex items-center justify-between px-6 py-3 border-b border-neutral-300 bg-neutral-100 print:hidden">
           <div className="flex items-center gap-2">
@@ -194,7 +202,7 @@ export const YearlyPayslipDocument: React.FC<YearlyPayslipDocumentProps> = ({
 
             {/* 14-Column Yearly Breakdown Table (Earning and Deduction + 12 Months + Total) */}
             <div className="overflow-x-auto text-[10px]">
-              <table className="w-full border-collapse text-left">
+              <table className="w-full border-collapse text-left min-w-[900px]">
                 <thead>
                   <tr className="border-b border-black font-bold divide-x divide-black bg-white">
                     <th className="py-2 px-2 min-w-[130px]">Earning and Deduction</th>

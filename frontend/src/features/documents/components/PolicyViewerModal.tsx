@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Policy } from '../queries/useDocuments';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 type PolicyViewerModalProps = {
   policy: Policy | null;
@@ -17,6 +18,10 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
   isAccepting = false,
 }) => {
   const [agreedPolicyId, setAgreedPolicyId] = useState<string | null>(null);
+
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!isAccepting) onClose();
+  }, isOpen && Boolean(policy));
 
   if (!isOpen || !policy) return null;
 
@@ -65,10 +70,13 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/40 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col bg-bg-raised border border-line rounded-2xl shadow-xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink/40 backdrop-blur-xs animate-in fade-in duration-150">
+      <div
+        ref={modalRef}
+        className="relative w-full max-w-3xl max-h-[90vh] flex flex-col bg-bg-raised border border-line rounded-2xl shadow-xl overflow-hidden"
+      >
         {/* Modal Topbar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-bg">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-line bg-bg">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-mono font-semibold uppercase px-2 py-0.5 rounded bg-bg-sunken text-ink-soft border border-line-subtle">
               {policy.code}
@@ -120,7 +128,7 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
         </div>
 
         {/* Modal Scrollable Document Body */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6">
           {/* Official Document Header */}
           <div className="border-b border-line pb-6 text-center">
             <p className="text-[11px] uppercase tracking-widest text-ink-faint font-mono">
@@ -182,7 +190,7 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
         </div>
 
         {/* Modal Footer (Action or Dismiss) */}
-        <div className="px-6 py-4 border-t border-line bg-bg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-t border-line bg-bg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           {!policy.isAccepted ? (
             <>
               <label className="flex items-start gap-2.5 text-xs text-ink-soft cursor-pointer select-none">

@@ -70,7 +70,7 @@ export const OrgViewPage: React.FC = () => {
 
   return (
     <EmployeeLayout title="Org View & Hierarchy">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 font-sans">
+      <div className="w-full font-sans">
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-3" />

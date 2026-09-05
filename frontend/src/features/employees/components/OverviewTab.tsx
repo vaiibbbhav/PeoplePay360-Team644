@@ -20,7 +20,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ employee }) => {
   return (
     <div className="space-y-6">
       {/* Profile Summary Panel */}
-      <div className="bg-bg border border-line rounded-2xl p-6 sm:p-8">
+      <div className="bg-bg border border-line rounded-2xl p-4 sm:p-8">
         <h3 className="font-serif text-lg font-semibold text-ink mb-6 pb-3 border-b border-line">
           Profile Summary
         </h3>
@@ -117,7 +117,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ employee }) => {
       />
 
       {/* Organization Context Card */}
-      <div className="bg-bg border border-line rounded-2xl p-6 sm:p-8">
+      <div className="bg-bg border border-line rounded-2xl p-4 sm:p-8">
         <div className="flex items-center justify-between pb-3 border-b border-line mb-6">
           <h3 className="font-serif text-lg font-semibold text-ink">Organization Hierarchy</h3>
           <span className="text-xs text-ink-soft">Direct Reporting Line</span>

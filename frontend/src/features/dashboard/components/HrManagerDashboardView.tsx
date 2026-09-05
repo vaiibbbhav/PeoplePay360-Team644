@@ -29,10 +29,10 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 font-sans">
+    <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
       {/* Welcome Banner */}
       <div>
-        <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">
+        <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
           HR Management Console
         </h1>
         <p className="text-ink-soft text-xs sm:text-sm mt-1">

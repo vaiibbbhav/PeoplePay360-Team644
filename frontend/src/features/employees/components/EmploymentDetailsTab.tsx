@@ -19,7 +19,7 @@ export const EmploymentDetailsTab: React.FC<EmploymentDetailsTabProps> = ({ empl
   return (
     <div className="space-y-6">
       {/* Position & Organizational Mapping */}
-      <div className="bg-bg border border-line rounded-2xl p-6 sm:p-8">
+      <div className="bg-bg border border-line rounded-2xl p-4 sm:p-8">
         <h3 className="font-serif text-lg font-semibold text-ink mb-6 pb-3 border-b border-line">
           Work & Organizational Assignment
         </h3>

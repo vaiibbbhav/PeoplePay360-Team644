@@ -74,7 +74,7 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
 
       {/* Payslips Table */}
       <div className="bg-bg border border-line rounded-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-line flex items-center justify-between flex-wrap gap-3">
+        <div className="px-4 sm:px-6 py-4 border-b border-line flex items-center justify-between flex-wrap gap-3">
           <div>
             <h3 className="font-serif text-base font-semibold text-ink">Payroll Settlements</h3>
           </div>
@@ -108,7 +108,7 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full text-left border-collapse text-xs min-w-[620px]">
               <thead>
                 <tr className="border-b border-line bg-bg-raised/40 text-ink-soft font-medium">
                   <th className="py-3 px-6">Pay Period</th>

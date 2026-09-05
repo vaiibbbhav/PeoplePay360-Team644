@@ -1,6 +1,7 @@
 import React from 'react';
 import { usePayslipDetail } from '../queries/useEmployeePayslips';
 import { formatCurrency, formatPeriod } from '@/lib/formatters';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 export type PayslipDetailModalProps = {
   payslipId: string | null;
@@ -72,6 +73,10 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
 }) => {
   const { data: payslip, isLoading, isError } = usePayslipDetail(payslipId);
 
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    onClose();
+  }, Boolean(payslipId));
+
   if (!payslipId) return null;
 
   const handlePrint = () => {
@@ -80,7 +85,10 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="bg-bg border border-line rounded-xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+      <div
+        ref={modalRef}
+        className="bg-bg border border-line rounded-xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-150"
+      >
         {/* Modal Top Bar (Hidden on print) */}
         <div className="flex items-center justify-between px-6 py-3.5 border-b border-line bg-bg-raised print:hidden">
           <div className="flex items-center gap-2">

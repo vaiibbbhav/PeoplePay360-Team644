@@ -208,3 +208,23 @@ export const deleteUser = async (id: string): Promise<boolean> => {
     .returning({ id: schema.users.id });
   return result.length > 0;
 };
+
+export const createAuditLog = async (log: {
+  actorId?: string | null;
+  actorName: string;
+  action: string;
+  entityType: string;
+  entityId?: string | null;
+  description: string;
+  metadata?: Record<string, unknown>;
+}) => {
+  return db.insert(schema.auditLogs).values({
+    actorId: log.actorId ?? null,
+    actorName: log.actorName || 'System Admin',
+    action: log.action,
+    entityType: log.entityType,
+    entityId: log.entityId ?? null,
+    description: log.description,
+    metadata: log.metadata || {},
+  });
+};

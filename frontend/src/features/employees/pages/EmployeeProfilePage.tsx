@@ -70,15 +70,15 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
       }
     >
       {/* Main Container */}
-      <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8">
+      <div className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8">
         {/* Template Hero Banner */}
         <EmployeeHeaderCard employee={employee} onEdit={() => setIsEditModalOpen(true)} />
 
         {/* Primary Sub-Navigation Tabs matching template */}
-        <div className="flex items-center gap-8 border-b border-line mb-6">
+        <div className="flex items-center gap-4 sm:gap-8 border-b border-line mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+            className={`pb-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
               activeTab === 'overview'
                 ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
@@ -89,7 +89,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
 
           <button
             onClick={() => setActiveTab('personal')}
-            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+            className={`pb-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
               activeTab === 'personal'
                 ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
@@ -100,7 +100,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
 
           <button
             onClick={() => setActiveTab('employment')}
-            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+            className={`pb-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
               activeTab === 'employment'
                 ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
@@ -111,7 +111,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
 
           <button
             onClick={() => setActiveTab('contracts')}
-            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+            className={`pb-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
               activeTab === 'contracts'
                 ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
@@ -122,7 +122,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
 
           <button
             onClick={() => setActiveTab('payslips')}
-            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+            className={`pb-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
               activeTab === 'payslips'
                 ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
@@ -138,7 +138,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
         {activeTab === 'employment' && <EmploymentDetailsTab employee={employee} />}
         {activeTab === 'contracts' && <ContractsTab employeeId={employee.id} />}
         {activeTab === 'payslips' && <PayslipsTab employeeId={employee.id} />}
-      </main>
+      </div>
 
       {/* Edit Employee Modal */}
       {isEditModalOpen && meta && (

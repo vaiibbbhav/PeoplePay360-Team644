@@ -1,5 +1,6 @@
 import React from 'react';
 import type { PayslipDetail } from '../queries/useEmployeePayslips';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 export type MonthlyPayslipDocumentProps = {
   payslip: PayslipDetail;
@@ -85,9 +86,16 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
   const maxRows = Math.max(earnings.length, deductions.length, 1);
   const netAmount = Math.round(Number(payslip.net_salary) || 0);
 
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    onClose();
+  });
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-2 sm:p-4 overflow-y-auto">
-      <div className="bg-white text-black border border-neutral-300 rounded-lg max-w-4xl w-full max-h-[95vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95">
+      <div
+        ref={modalRef}
+        className="bg-white text-black border border-neutral-300 rounded-lg max-w-4xl w-full max-h-[95vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95"
+      >
         {/* Modal Controls Toolbar (Hidden on print) */}
         <div className="flex items-center justify-between px-6 py-3 border-b border-neutral-300 bg-neutral-100 print:hidden">
           <div className="flex items-center gap-2">
@@ -131,8 +139,9 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
         </div>
 
         {/* Printable Paper Document (Pure B&W Table Structure matching Image 2) */}
-        <div className="p-4 sm:p-8 overflow-y-auto flex-1 bg-white text-black font-sans text-xs">
-          <div id="monthly-salary-slip" className="border border-black max-w-3xl mx-auto">
+        <div className="p-2 sm:p-8 overflow-y-auto flex-1 bg-white text-black font-sans text-xs">
+          <div className="overflow-x-auto">
+            <div id="monthly-salary-slip" className="border border-black max-w-3xl min-w-[580px] sm:min-w-0 mx-auto">
             {/* Top Company Header */}
             <div className="grid grid-cols-12 border-b border-black">
               <div className="col-span-3 border-r border-black p-4 flex items-center justify-center">
@@ -341,5 +350,6 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
         </div>
       </div>
     </div>
+  </div>
   );
 };

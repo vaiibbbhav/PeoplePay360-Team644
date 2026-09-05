@@ -100,11 +100,11 @@ export const EmployeeAttendancePage: React.FC = () => {
 
   return (
     <AppLayout title="Time Management">
-      <div className="space-y-8 font-sans">
+      <div className="space-y-6 sm:space-y-8 font-sans max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8">
         {/* Page Title */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+            <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-ink">
               Time & Attendance
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1">

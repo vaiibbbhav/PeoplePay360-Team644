@@ -16,7 +16,7 @@ export const ScheduleCard: React.FC<ScheduleCardProps> = ({
   const workingDayCount = schedule.lines.length;
 
   return (
-    <div className="border border-line rounded-2xl p-6 bg-bg hover:border-accent/40 transition-colors flex flex-col justify-between gap-5">
+    <div className="border border-line rounded-2xl p-4 sm:p-6 bg-bg hover:border-accent/40 transition-colors flex flex-col justify-between gap-5">
       <div>
         {/* Header row */}
         <div className="flex items-start justify-between gap-3 mb-3">

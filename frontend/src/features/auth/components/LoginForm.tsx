@@ -115,7 +115,7 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-7 sm:p-9 border border-line rounded-2xl bg-bg-raised shadow-xs">
+    <div className="w-full max-w-md mx-auto p-5 sm:p-8 border border-line rounded-2xl bg-bg-raised shadow-xs">
       <div className="mb-6 text-center">
         <h2 className="font-serif text-2xl font-bold mb-1.5 text-ink">Welcome back</h2>
         <p className="text-ink-soft text-xs sm:text-sm m-0">

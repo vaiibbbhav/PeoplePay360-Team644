@@ -3,6 +3,7 @@ import { Sparkles } from 'lucide-react';
 import type { EmployeeOption, CreateUserInput } from '../queries/useUsers';
 import type { UserRole } from '@/features/auth/queries/useAuth';
 import { generateStrongPassword } from '@/lib/passwordGenerator';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 type Props = {
   isOpen: boolean;
@@ -78,6 +79,10 @@ const UserAddForm: React.FC<Omit<Props, 'isOpen'>> = ({ isPending, onClose, onSa
     }
   };
 
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!isPending) onClose();
+  });
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -87,7 +92,10 @@ const UserAddForm: React.FC<Omit<Props, 'isOpen'>> = ({ isPending, onClose, onSa
       />
 
       {/* Dialog */}
-      <div className="relative z-10 w-full max-w-md bg-bg border border-line rounded-xl shadow-sm overflow-hidden">
+      <div
+        ref={modalRef}
+        className="relative z-10 w-full max-w-md bg-bg border border-line rounded-xl shadow-sm overflow-hidden"
+      >
         {/* Header */}
         <div className="px-6 pt-5 pb-4 border-b border-line">
           <h2 className="font-serif text-lg font-semibold text-ink">Add User</h2>

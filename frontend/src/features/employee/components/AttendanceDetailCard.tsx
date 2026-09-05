@@ -83,7 +83,7 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
   };
 
   return (
-    <div className="border border-line rounded-2xl p-6 sm:p-7 bg-bg-raised/40 font-sans shadow-xs transition-all">
+    <div className="border border-line rounded-2xl p-4 sm:p-7 bg-bg-raised/40 font-sans shadow-xs transition-all">
       {/* Header bar */}
       <div className="flex items-center justify-between pb-4 border-b border-line mb-5">
         <div className="flex items-center gap-3">

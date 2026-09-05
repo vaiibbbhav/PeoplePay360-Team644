@@ -18,6 +18,7 @@ import { PolicyViewerModal } from '../components/PolicyViewerModal';
 import { AcceptAllModal } from '../components/AcceptAllModal';
 import { PolicyFormDrawer } from '../components/PolicyFormDrawer';
 import { CompanyComplianceTable } from '../components/CompanyComplianceTable';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 export const DocumentsPage: React.FC = () => {
   const { data: currentUser } = useCurrentUser();
@@ -43,6 +44,11 @@ export const DocumentsPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<Policy | null>(null);
   const [deletingPolicy, setDeletingPolicy] = useState<{ id: string; title: string } | null>(null);
+
+  const deleteModalRef = useClickOutside<HTMLDivElement>(
+    () => setDeletingPolicy(null),
+    Boolean(deletingPolicy),
+  );
 
   const policies = data?.policies;
 
@@ -119,7 +125,7 @@ export const DocumentsPage: React.FC = () => {
 
   return (
     <AppLayout title="Policies & Documents">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 font-sans space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-8 font-sans space-y-6">
         {/* Page Header with Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
           <div>
@@ -146,11 +152,11 @@ export const DocumentsPage: React.FC = () => {
 
         {/* If Admin/HR Manager, show sub-tabs between catalog and company audit */}
         {isHrAdmin && (
-          <div className="flex items-center gap-2 border-b border-line pb-3">
+          <div className="flex items-center gap-2 border-b border-line pb-3 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
               type="button"
               onClick={() => setActiveTab('catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer border ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer border shrink-0 ${
                 activeTab === 'catalog'
                   ? 'border-accent bg-accent-soft text-accent font-semibold'
                   : 'border-line bg-bg text-ink-soft hover:text-ink'
@@ -161,7 +167,7 @@ export const DocumentsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('audit')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer border ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer border shrink-0 ${
                 activeTab === 'audit'
                   ? 'border-accent bg-accent-soft text-accent font-semibold'
                   : 'border-line bg-bg text-ink-soft hover:text-ink'
@@ -293,7 +299,10 @@ export const DocumentsPage: React.FC = () => {
       {/* Delete Confirmation Modal */}
       {deletingPolicy && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-bg border border-line rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+          <div
+            ref={deleteModalRef}
+            className="bg-bg border border-line rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl"
+          >
             <h3 className="font-serif text-lg font-bold text-ink m-0">Delete Policy Document?</h3>
             <p className="text-xs text-ink-soft leading-relaxed m-0">
               Are you sure you want to delete <b className="text-ink">{deletingPolicy.title}</b>?

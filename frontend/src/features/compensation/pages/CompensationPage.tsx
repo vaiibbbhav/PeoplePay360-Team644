@@ -42,7 +42,7 @@ export const CompensationPage: React.FC = () => {
   return (
     <AppLayout title="Compensation Hub">
       {/* Main Compensation Content Area */}
-      <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6">
+      <div className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6">
         {/* Header with Title and Controls */}
         <CompensationHeader
           financialYear={financialYear}
@@ -91,7 +91,7 @@ export const CompensationPage: React.FC = () => {
             </div>
           )}
         </div>
-      </main>
+      </div>
 
       {/* Monthly Salary Slip Modal (Exact match to reference Image 2) */}
       {selectedPayslipId && activePayslipDetail && (

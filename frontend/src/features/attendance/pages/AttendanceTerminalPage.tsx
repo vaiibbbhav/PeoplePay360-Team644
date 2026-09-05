@@ -60,7 +60,7 @@ export const AttendanceTerminalPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-bg text-ink font-sans flex flex-col selection:bg-accent/20">
       {/* Top Bar Navigation */}
-      <header className="h-16 border-b border-line px-6 sm:px-10 flex items-center justify-between bg-bg-raised/30 backdrop-blur-md sticky top-0 z-20">
+      <header className="h-16 border-b border-line px-4 sm:px-10 flex items-center justify-between bg-bg-raised/30 backdrop-blur-md sticky top-0 z-20">
         <div className="flex items-center gap-3">
           <Link to="/" className="flex items-center gap-2 no-underline">
             <span className="font-serif text-lg font-bold tracking-tight text-ink">
@@ -206,7 +206,7 @@ export const AttendanceTerminalPage: React.FC = () => {
 
           {/* Right Column: Today's Live Attendance Feed */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="rounded-2xl border border-line bg-bg p-5 sm:p-6 space-y-4">
+            <div className="rounded-2xl border border-line bg-bg p-4 sm:p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-line">
                 <div>
                   <h3 className="text-sm font-semibold text-ink">Today's Attendance Feed</h3>

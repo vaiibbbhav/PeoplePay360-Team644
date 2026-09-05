@@ -15,7 +15,7 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
   return (
     <div className="bg-bg border border-line rounded-2xl overflow-hidden mb-6">
       {/* Top Banner Cover Strip */}
-      <div className="h-28 bg-bg-raised border-b border-line relative px-6 sm:px-8 flex items-end justify-end pb-3">
+      <div className="h-28 bg-bg-raised border-b border-line relative px-4 sm:px-8 flex items-end justify-end pb-3">
         <div className="flex items-center gap-2">
           <button
             onClick={onEdit}
@@ -40,11 +40,11 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
       </div>
 
       {/* Profile Header Content */}
-      <div className=" pb-6 pt-0">
-        <div className="flex flex-col pt-4 px-6 sm:flex-row sm:items-end justify-between gap-4 -mt-10 mb-4">
-          <div className="flex items-end gap-4">
+      <div className="pb-6 pt-0">
+        <div className="flex flex-col pt-4 px-4 sm:px-6 sm:flex-row sm:items-end justify-between gap-4 -mt-10 mb-4">
+          <div className="flex items-end gap-3 sm:gap-4">
             {/* Avatar */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-bg bg-accent-soft text-accent font-serif text-2xl font-bold flex items-center justify-center relative shadow-xs overflow-hidden shrink-0">
+            <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl border-4 border-bg bg-accent-soft text-accent font-serif text-xl sm:text-2xl font-bold flex items-center justify-center relative shadow-xs overflow-hidden shrink-0">
               {employee.avatar_url ? (
                 <img
                   src={employee.avatar_url}
@@ -56,27 +56,27 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
               )}
             </div>
 
-            <div className="pt-2">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink leading-tight">
+            <div className="pt-2 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="font-serif text-xl sm:text-3xl font-bold text-ink leading-tight truncate">
                   {fullName}
                 </h1>
               </div>
 
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-ink-soft mt-1 flex-wrap">
-                <span className="font-medium text-ink">
+              <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-ink-soft mt-1 flex-wrap">
+                <span className="font-medium text-ink truncate">
                   {employee.job_position_title || 'Unassigned Position'}
                 </span>
                 <span>•</span>
-                <span>{employee.department_name || 'No Department'}</span>
+                <span className="truncate">{employee.department_name || 'No Department'}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Sub-bar Information: Location, Manager, Email */}
-        <div className="pt-4 mt-8 px-6 border-t border-line flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-6 text-xs text-ink-soft flex-wrap">
+        <div className="pt-4 mt-6 sm:mt-8 px-4 sm:px-6 border-t border-line flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-xs text-ink-soft">
             <div className="flex items-center gap-1.5">
               <svg
                 className="w-4 h-4 text-ink-soft"
@@ -136,7 +136,7 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
                   d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
                 />
               </svg>
-              <span>{employee.email}</span>
+              <span className="truncate max-w-[240px] sm:max-w-none">{employee.email}</span>
             </div>
           </div>
         </div>

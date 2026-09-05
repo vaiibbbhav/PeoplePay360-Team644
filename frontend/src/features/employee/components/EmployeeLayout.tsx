@@ -409,14 +409,14 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
       )}
 
       {/* ---------------- MAIN CANVAS ---------------- */}
-      <div className="flex-1 lg:pl-64 flex flex-col min-h-screen">
+      <div className="flex-1 lg:pl-64 flex flex-col min-h-screen min-w-0">
         {/* Top Header Bar */}
-        <header className="h-16 border-b border-line px-6 sm:px-8 flex items-center justify-between bg-bg/80 sticky top-0 z-20 backdrop-blur-md">
-          <div className="flex items-center gap-3">
+        <header className="h-16 border-b border-line px-4 sm:px-8 flex items-center justify-between bg-bg/80 sticky top-0 z-20 backdrop-blur-md">
+          <div className="flex items-center gap-3 min-w-0">
             {/* Mobile menu toggle button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg border border-line bg-bg text-ink cursor-pointer"
+              className="lg:hidden p-2 rounded-lg border border-line bg-bg text-ink cursor-pointer shrink-0"
               aria-label="Toggle navigation menu"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -429,16 +429,16 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
               </svg>
             </button>
 
-            <div className="flex items-center gap-2 text-xs text-ink-soft">
-              <span>Console</span>
-              <span className="text-line">/</span>
-              <span>Employee Portal</span>
-              <span className="text-line">/</span>
-              <span className="text-ink font-medium">{title}</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-ink-soft min-w-0 truncate">
+              <span className="hidden sm:inline">Console</span>
+              <span className="text-line hidden sm:inline">/</span>
+              <span className="hidden sm:inline">Employee Portal</span>
+              <span className="text-line hidden sm:inline">/</span>
+              <span className="text-ink font-medium truncate">{title}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <div className="text-xs text-ink-soft hidden md:block">{currentUser.email}</div>
             <Link
               to="/profile"
@@ -451,7 +451,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 max-w-6xl w-full mx-auto px-6 sm:px-8 py-8 sm:py-10">
+        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-8">
           {children}
         </main>
 

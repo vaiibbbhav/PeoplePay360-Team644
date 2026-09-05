@@ -32,44 +32,48 @@ export const WeeklyTimetableGrid: React.FC<WeeklyTimetableGridProps> = ({ lines 
 
   return (
     <div className="border border-line rounded-xl overflow-hidden bg-bg">
-      <div className="grid grid-cols-7 border-b border-line bg-bg-raised text-[11px] font-semibold text-ink-soft uppercase tracking-wider text-center py-2">
-        {ALL_DAYS.map((day) => (
-          <div key={day} className="px-1">{day.slice(0, 3)}</div>
-        ))}
-      </div>
-      <div className="grid grid-cols-7 divide-x divide-line text-center text-xs">
-        {ALL_DAYS.map((day) => {
-          const item = lineMap.get(day);
-          const isWorking = Boolean(item);
-          const dailyHours = isWorking
-            ? calculateDailyHours(item?.startTime, item?.endTime, item?.breakMinutes)
-            : null;
+      <div className="overflow-x-auto no-scrollbar">
+        <div className="min-w-[460px] sm:min-w-0">
+          <div className="grid grid-cols-7 border-b border-line bg-bg-raised text-[11px] font-semibold text-ink-soft uppercase tracking-wider text-center py-2">
+            {ALL_DAYS.map((day) => (
+              <div key={day} className="px-1">{day.slice(0, 3)}</div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 divide-x divide-line text-center text-xs">
+            {ALL_DAYS.map((day) => {
+              const item = lineMap.get(day);
+              const isWorking = Boolean(item);
+              const dailyHours = isWorking
+                ? calculateDailyHours(item?.startTime, item?.endTime, item?.breakMinutes)
+                : null;
 
-          return (
-            <div
-              key={day}
-              className={`p-3 flex flex-col items-center justify-center gap-1 min-h-[72px] ${
-                isWorking ? 'bg-bg' : 'bg-bg-raised/40 text-ink-soft'
-              }`}
-            >
-              {isWorking ? (
-                <>
-                  <span className="font-semibold text-ink text-[11px]">
-                    {item?.startTime.slice(0, 5)} - {item?.endTime.slice(0, 5)}
-                  </span>
-                  <span className="text-[10px] text-ink-soft">
-                    {item?.breakMinutes}m break
-                  </span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-accent-soft text-accent font-medium">
-                    {dailyHours}h
-                  </span>
-                </>
-              ) : (
-                <span className="text-[11px] text-ink-soft italic">Off</span>
-              )}
-            </div>
-          );
-        })}
+              return (
+                <div
+                  key={day}
+                  className={`p-2.5 sm:p-3 flex flex-col items-center justify-center gap-1 min-h-[72px] ${
+                    isWorking ? 'bg-bg' : 'bg-bg-raised/40 text-ink-soft'
+                  }`}
+                >
+                  {isWorking ? (
+                    <>
+                      <span className="font-semibold text-ink text-[11px] whitespace-nowrap">
+                        {item?.startTime.slice(0, 5)} - {item?.endTime.slice(0, 5)}
+                      </span>
+                      <span className="text-[10px] text-ink-soft whitespace-nowrap">
+                        {item?.breakMinutes}m break
+                      </span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-accent-soft text-accent font-medium">
+                        {dailyHours}h
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-[11px] text-ink-soft italic">Off</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

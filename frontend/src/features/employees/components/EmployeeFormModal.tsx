@@ -5,6 +5,7 @@ import type {
   CreateEmployeeInput,
   EmploymentStatus,
 } from '../queries/useEmployees';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 type EmployeeFormModalProps = {
   isOpen: boolean;
@@ -101,16 +102,23 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
     ? meta.jobPositions.filter((p) => p.departmentId === departmentId || !p.departmentId)
     : meta.jobPositions;
 
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!isSaving) onClose();
+  }, isOpen);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-ink/40 backdrop-blur-xs">
-      <div className="bg-bg border border-line rounded-2xl w-full max-w-4xl overflow-hidden flex flex-col h-[700px] max-h-[92vh] shadow-lg">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/40 backdrop-blur-xs">
+      <div
+        ref={modalRef}
+        className="bg-bg border border-line rounded-2xl w-full max-w-4xl overflow-hidden flex flex-col h-[700px] max-h-[92vh] shadow-lg"
+      >
         {/* Modal Top Bar */}
-        <div className="px-6 mt-2 flex items-center justify-between bg-bg">
-          <div className="flex items-center gap-8 -mb-px">
+        <div className="px-4 sm:px-6 mt-2 flex items-center justify-between bg-bg">
+          <div className="flex items-center gap-3 sm:gap-8 -mb-px overflow-x-auto no-scrollbar">
             <button
               type="button"
               onClick={() => setActiveSubTab('personal')}
-              className={`py-3.5 text-sm font-medium border-b-2 cursor-pointer transition-colors focus:outline-none ${
+              className={`py-3 sm:py-3.5 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors focus:outline-none shrink-0 ${
                 activeSubTab === 'personal'
                   ? 'border-accent text-accent font-semibold'
                   : 'border-transparent text-ink-soft hover:text-ink'
@@ -122,7 +130,7 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
             <button
               type="button"
               onClick={() => setActiveSubTab('employment')}
-              className={`py-3.5 text-sm font-medium border-b-2 cursor-pointer transition-colors focus:outline-none ${
+              className={`py-3 sm:py-3.5 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors focus:outline-none shrink-0 ${
                 activeSubTab === 'employment'
                   ? 'border-accent text-accent font-semibold'
                   : 'border-transparent text-ink-soft hover:text-ink'
@@ -134,7 +142,7 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
 
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-lg flex items-center justify-center border border-line bg-bg text-ink-soft hover:text-ink hover:bg-bg-raised transition-colors cursor-pointer text-xs"
+            className="w-7 h-7 rounded-lg flex items-center justify-center border border-line bg-bg text-ink-soft hover:text-ink hover:bg-bg-raised transition-colors cursor-pointer text-xs shrink-0 ml-2"
             aria-label="Close modal"
           >
             ✕
@@ -143,14 +151,14 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
 
         {/* Error notification banner */}
         {formError && (
-          <div className="mx-6 mt-4 p-3 rounded-lg border border-line bg-bg-raised text-over-red text-xs">
+          <div className="mx-4 sm:mx-6 mt-4 p-3 rounded-lg border border-line bg-bg-raised text-over-red text-xs">
             {formError}
           </div>
         )}
 
         {/* Modal Form Body */}
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-1 overflow-y-auto p-6 space-y-5">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5">
             {activeSubTab === 'personal' && (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -428,7 +436,7 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
           </div>
 
           {/* Modal Footer Controls - Sticky at bottom */}
-          <div className="p-4 px-6 border-t border-line bg-transparent flex items-center justify-between shrink-0">
+          <div className="p-3.5 px-4 sm:px-6 border-t border-line bg-transparent flex items-center justify-between shrink-0">
             <button
               type="button"
               onClick={onClose}

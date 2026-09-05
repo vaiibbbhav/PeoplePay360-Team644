@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ContractItem } from '../queries/useContracts';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 type ContractDetailModalProps = {
   contract: ContractItem | null;
@@ -12,6 +13,10 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
   onClose,
   onEdit,
 }) => {
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    onClose();
+  }, Boolean(contract));
+
   if (!contract) return null;
 
   const formatDate = (val?: string | null) => {
@@ -34,60 +39,63 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-      <div className="bg-bg border border-line rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-xs">
+      <div
+        ref={modalRef}
+        className="bg-bg border border-line rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+      >
         {/* Header */}
-        <div className="px-6 py-5 border-b border-line flex items-center justify-between bg-bg-raised/30">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-line flex items-center justify-between bg-bg-raised/30">
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-wider text-accent">
               Employment Agreement
             </span>
-            <h2 className="font-serif text-xl font-bold text-ink mt-0.5 mb-0">
+            <h2 className="font-serif text-lg sm:text-xl font-bold text-ink mt-0.5 mb-0">
               {contract.name}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-lg border border-line bg-transparent text-ink-soft hover:text-ink hover:bg-bg-raised transition-colors flex items-center justify-center cursor-pointer"
+            className="w-8 h-8 rounded-lg border border-line bg-transparent text-ink-soft hover:text-ink hover:bg-bg-raised transition-colors flex items-center justify-center cursor-pointer shrink-0 ml-2"
           >
             ✕
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto space-y-6 text-xs">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 text-xs">
           {/* Employee Hero */}
-          <div className="flex items-center justify-between p-4 rounded-xl border border-line bg-bg-raised/40">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl border border-line bg-bg-raised/40">
+            <div className="flex items-center gap-3 min-w-0">
               {contract.employee_avatar ? (
                 <img
                   src={contract.employee_avatar}
                   alt=""
-                  className="w-10 h-10 rounded-full object-cover border border-line"
+                  className="w-10 h-10 rounded-full object-cover border border-line shrink-0"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-accent-soft border border-accent/20 text-accent font-serif font-bold text-sm flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-accent-soft border border-accent/20 text-accent font-serif font-bold text-sm flex items-center justify-center shrink-0">
                   {(contract.employee_name || 'E').slice(0, 2).toUpperCase()}
                 </div>
               )}
-              <div>
-                <span className="text-sm font-bold text-ink block">
+              <div className="min-w-0">
+                <span className="text-sm font-bold text-ink block truncate">
                   {contract.employee_name || 'Contract Beneficiary'}
                 </span>
-                <span className="text-[11px] text-ink-soft block">
+                <span className="text-[11px] text-ink-soft block truncate">
                   {contract.job_position_title || 'Position not specified'} · {contract.department_name || 'No department'}
                 </span>
               </div>
             </div>
 
-            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider border border-accent/30 bg-accent-soft text-accent">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider border border-accent/30 bg-accent-soft text-accent shrink-0">
               {contract.status}
             </span>
           </div>
 
           {/* Key Terms Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div className="p-3.5 rounded-xl border border-line bg-bg">
               <span className="text-[11px] text-ink-soft block mb-1">Contract Wage</span>
               <span className="font-serif text-lg font-bold text-ink block">

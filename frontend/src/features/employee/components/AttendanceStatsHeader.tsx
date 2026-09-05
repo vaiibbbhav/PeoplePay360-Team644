@@ -37,7 +37,7 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
   return (
     <div className="space-y-4 font-sans">
       {/* Top Banner with Fingerprint action button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 border border-line rounded-2xl bg-bg-raised/40">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 sm:p-6 border border-line rounded-2xl bg-bg-raised/40">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[10px] uppercase font-semibold tracking-wider text-accent">

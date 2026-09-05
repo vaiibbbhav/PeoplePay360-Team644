@@ -90,11 +90,11 @@ const FlowInner: React.FC<OrgFlowChartProps> = ({
   return (
     <div className="relative w-full h-[650px] bg-bg-sunken/30 border border-line rounded-2xl overflow-hidden shadow-xs">
       {/* Top Floating Utility Controls */}
-      <div className="absolute top-4 right-4 z-10 flex items-center gap-2 bg-bg-raised/90 backdrop-blur-xs p-1.5 rounded-xl border border-line shadow-sm">
+      <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 flex items-center gap-1 sm:gap-2 bg-bg-raised/90 backdrop-blur-xs p-1 sm:p-1.5 rounded-xl border border-line shadow-sm text-[11px] sm:text-xs">
         <button
           onClick={() => fitView({ padding: 0.2, duration: 400 })}
           title="Fit view to all nodes"
-          className="px-2.5 py-1 text-xs font-medium text-ink hover:text-accent rounded-lg hover:bg-bg transition-colors cursor-pointer flex items-center gap-1.5"
+          className="px-2 sm:px-2.5 py-1 font-medium text-ink hover:text-accent rounded-lg hover:bg-bg transition-colors cursor-pointer flex items-center gap-1 sm:gap-1.5"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -104,7 +104,7 @@ const FlowInner: React.FC<OrgFlowChartProps> = ({
               d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
             />
           </svg>
-          <span>Fit View</span>
+          <span className="hidden sm:inline">Fit View</span>
         </button>
 
         <div className="w-px h-4 bg-line" />
@@ -112,16 +112,16 @@ const FlowInner: React.FC<OrgFlowChartProps> = ({
         <button
           onClick={handleExpandAll}
           title="Expand all branches"
-          className="px-2 py-1 text-xs text-ink-soft hover:text-ink rounded-lg hover:bg-bg transition-colors cursor-pointer"
+          className="px-1.5 sm:px-2 py-1 text-ink-soft hover:text-ink rounded-lg hover:bg-bg transition-colors cursor-pointer whitespace-nowrap"
         >
-          Expand All
+          Expand
         </button>
         <button
           onClick={handleCollapseAll}
           title="Collapse all sub-teams"
-          className="px-2 py-1 text-xs text-ink-soft hover:text-ink rounded-lg hover:bg-bg transition-colors cursor-pointer"
+          className="px-1.5 sm:px-2 py-1 text-ink-soft hover:text-ink rounded-lg hover:bg-bg transition-colors cursor-pointer whitespace-nowrap"
         >
-          Collapse All
+          Collapse
         </button>
       </div>
 

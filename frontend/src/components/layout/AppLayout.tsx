@@ -490,25 +490,56 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     <div className="min-h-screen flex bg-bg text-ink font-sans">
       {/* -------- SIDEBAR -------- */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 border-r border-line bg-bg-raised/40 backdrop-blur-md flex flex-col ${sidebarCollapsed ? 'w-16' : 'w-64'
-          } ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        className={`fixed inset-y-0 left-0 z-40 border-r border-line bg-bg-raised/95 backdrop-blur-md flex flex-col transition-transform duration-200 ease-in-out w-64 ${
+          sidebarCollapsed ? 'lg:w-16' : 'lg:w-64'
+        } ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* Brand — click goes to landing page */}
-        <div className={`h-16 px-4 border-b border-line flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'}`}>
-          <Link to="/" className="flex items-center gap-2 no-underline overflow-hidden">
-            <span className="font-serif text-lg font-bold tracking-tight text-ink whitespace-nowrap">
+        <div
+          className={`h-16 border-b border-line flex items-center justify-between px-4 ${
+            sidebarCollapsed ? 'lg:justify-center lg:px-1' : ''
+          }`}
+        >
+          <Link
+            to="/"
+            title="PeoplePay360"
+            className="flex items-center no-underline"
+          >
+            <span className="font-serif font-bold tracking-tight text-ink whitespace-nowrap text-lg">
               {sidebarCollapsed ? (
-                <>P<span className="text-accent">360</span></>
+                <>
+                  <span className="lg:hidden">
+                    PeoplePay<span className="text-accent">360</span>
+                  </span>
+                  <span className="hidden lg:inline text-[15px]">
+                    P<span className="text-accent">360</span>
+                  </span>
+                </>
               ) : (
-                <>PeoplePay<span className="text-accent">360</span></>
+                <>
+                  PeoplePay<span className="text-accent">360</span>
+                </>
               )}
             </span>
           </Link>
-          {!sidebarCollapsed && isEmployeeRole && (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-line bg-bg text-ink-soft">
-              Employee
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {!sidebarCollapsed && isEmployeeRole && (
+              <span className="hidden sm:inline text-[10px] font-semibold px-2 py-0.5 rounded-full border border-line bg-bg text-ink-soft">
+                Employee
+              </span>
+            )}
+            {/* Mobile close button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="lg:hidden p-1.5 rounded-lg border border-line bg-bg hover:bg-bg-raised text-ink cursor-pointer"
+              aria-label="Close menu"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Sidebar Nav Items */}
@@ -653,8 +684,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
       {/* -------- MAIN CANVAS -------- */}
       <div
-        className={`flex-1 flex flex-col min-h-screen ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'
-          }`}
+        className={`flex-1 flex flex-col min-h-screen min-w-0 ${
+          sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'
+        }`}
       >
         {/* Top Header */}
         <header className="h-16 border-b border-line px-4 sm:px-6 flex items-center justify-between bg-bg/80 sticky top-0 z-20 backdrop-blur-md">
@@ -663,9 +695,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2 rounded-lg border border-line bg-bg text-ink cursor-pointer"
+              aria-label="Open navigation menu"
             >
               <MenuIcon className="w-4 h-4" />
             </button>
+
+            <span className="lg:hidden font-serif font-bold text-base tracking-tight text-ink">
+              PeoplePay<span className="text-accent">360</span>
+            </span>
 
             {/* Desktop abrupt sidebar fold/expand toggle */}
             <button
@@ -693,7 +730,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1">{children ?? <Outlet />}</main>
+        <main className="flex-1 w-full min-w-0">{children ?? <Outlet />}</main>
       </div>
     </div>
   );

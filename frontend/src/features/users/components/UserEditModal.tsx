@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import type { UserItem, EmployeeOption, UpdateUserInput } from '../queries/useUsers';
 import type { UserRole } from '@/features/auth/queries/useAuth';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 type Props = {
   isOpen: boolean;
@@ -69,6 +70,10 @@ const UserEditForm: React.FC<EditFormProps> = ({ user, isPending, onClose, onSav
     }
   };
 
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!isPending) onClose();
+  });
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -78,7 +83,10 @@ const UserEditForm: React.FC<EditFormProps> = ({ user, isPending, onClose, onSav
       />
 
       {/* Dialog */}
-      <div className="relative z-10 w-full max-w-md bg-bg border border-line rounded-xl shadow-sm overflow-hidden">
+      <div
+        ref={modalRef}
+        className="relative z-10 w-full max-w-md bg-bg border border-line rounded-xl shadow-sm overflow-hidden"
+      >
         {/* Header */}
         <div className="px-6 pt-5 pb-4 border-b border-line">
           <h2 className="font-serif text-lg font-semibold text-ink">Edit User</h2>

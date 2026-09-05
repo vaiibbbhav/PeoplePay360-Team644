@@ -48,3 +48,20 @@ export async function getDashboardOverview() {
     },
   };
 }
+
+export async function getAdminOverview() {
+  const [attention, access, anomalies, recentActivity] = await Promise.all([
+    reportingRepo.getAdminAttentionMetrics(),
+    reportingRepo.getAdminAccessSnapshot(),
+    reportingRepo.getCrossModuleAnomalies(),
+    reportingRepo.getRecentAdminActivity(15),
+  ]);
+
+  return {
+    attention,
+    access,
+    anomalies,
+    recentActivity,
+  };
+}
+
