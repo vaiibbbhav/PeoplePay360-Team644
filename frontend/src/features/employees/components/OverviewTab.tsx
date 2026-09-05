@@ -1,5 +1,6 @@
 import React from 'react';
 import type { EmployeeHubDetails } from '../queries/useEmployees';
+import { StatGrid } from '@/components/ui/StatCard';
 
 type OverviewTabProps = {
   employee: EmployeeHubDetails;
@@ -87,6 +88,33 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ employee }) => {
           </div>
         </div>
       </div>
+
+      {/* Operational Highlights Cards - Below Profile Summary */}
+      <StatGrid
+        columns={4}
+        items={[
+          {
+            label: 'Active Contracts',
+            value: employee.smartCounts?.contracts ?? 0,
+            subtext: 'Binding agreement records',
+          },
+          {
+            label: 'Attendance Punches',
+            value: employee.smartCounts?.attendance ?? 0,
+            subtext: 'Monthly biometric logs',
+          },
+          {
+            label: 'Time Off Requests',
+            value: employee.smartCounts?.timeOff ?? 0,
+            subtext: 'Leave & absence filings',
+          },
+          {
+            label: 'Payslips',
+            value: employee.smartCounts?.payslips ?? 0,
+            subtext: 'Computed salary settlements',
+          },
+        ]}
+      />
 
       {/* Organization Context Card */}
       <div className="bg-bg border border-line rounded-2xl p-6 sm:p-8">

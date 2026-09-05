@@ -75,53 +75,6 @@ export const EmploymentDetailsTab: React.FC<EmploymentDetailsTabProps> = ({ empl
           </div>
         </div>
       </div>
-
-      {/* Operational Modules & Context Summary */}
-      <div className="bg-bg border border-line rounded-2xl p-6 sm:p-8">
-        <h3 className="font-serif text-lg font-semibold text-ink mb-6 pb-3 border-b border-line">
-          Associated Operations Summary
-        </h3>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 rounded-xl border border-line bg-bg-raised/40">
-            <span className="text-xs text-ink-soft block">Active Contracts</span>
-            <span className="font-serif text-2xl font-bold text-ink mt-1 block">
-              {employee.smartCounts?.contracts ?? 0}
-            </span>
-            <span className="text-[11px] text-ink-soft mt-1 block">Binding agreement records</span>
-          </div>
-
-          <div className="p-4 rounded-xl border border-line bg-bg-raised/40">
-            <span className="text-xs text-ink-soft block">Attendance Punches</span>
-            <span className="font-serif text-2xl font-bold text-ink mt-1 block">
-              {employee.smartCounts?.attendance ?? 0}
-            </span>
-            <span className="text-[11px] text-ink-soft mt-1 block">
-              Recorded daily time entries
-            </span>
-          </div>
-
-          <div className="p-4 rounded-xl border border-line bg-bg-raised/40">
-            <span className="text-xs text-ink-soft block">Time Off Requests</span>
-            <span className="font-serif text-2xl font-bold text-ink mt-1 block">
-              {employee.smartCounts?.timeOff ?? 0}
-            </span>
-            <span className="text-[11px] text-ink-soft mt-1 block">
-              Submitted leave applications
-            </span>
-          </div>
-
-          <div className="p-4 rounded-xl border border-line bg-bg-raised/40">
-            <span className="text-xs text-ink-soft block">Payslips Generated</span>
-            <span className="font-serif text-2xl font-bold text-ink mt-1 block">
-              {employee.smartCounts?.payslips ?? 0}
-            </span>
-            <span className="text-[11px] text-ink-soft mt-1 block">
-              Settled compensation records
-            </span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

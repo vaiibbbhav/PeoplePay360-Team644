@@ -63,10 +63,6 @@ export const EmployeeDirectoryPage: React.FC = () => {
         {/* Page Title & Intro */}
         <div className="mb-6">
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink">Employee Directory</h1>
-          <p className="text-xs sm:text-sm text-ink-soft mt-1">
-            Master operational registry. Click any employee to view their full profile, personal
-            records, and employment terms.
-          </p>
         </div>
 
         {/* Toolbar & Filter Controls */}
@@ -180,13 +176,12 @@ export const EmployeeDirectoryPage: React.FC = () => {
                       </div>
 
                       <span
-                        className={`text-[11px] font-medium px-2 py-0.5 rounded-full border border-line ${
-                          emp.employment_status === 'active'
+                        className={`text-[11px] font-medium px-2 py-0.5 rounded-full border border-line ${emp.employment_status === 'active'
                             ? 'bg-bg-raised text-ink'
                             : emp.employment_status === 'on_leave'
                               ? 'bg-accent-soft text-accent'
                               : 'bg-bg-raised text-ink-soft'
-                        }`}
+                          }`}
                       >
                         {emp.employment_status.replace('_', ' ')}
                       </span>

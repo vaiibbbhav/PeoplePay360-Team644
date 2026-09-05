@@ -45,6 +45,14 @@ router.get(
   }),
 );
 
+router.get(
+  '/:id/payslips',
+  asyncHandler(async (req, res) => {
+    const payslips = await hrService.getEmployeePayslips(req.params.id);
+    res.json(payslips);
+  }),
+);
+
 router.post(
   '/',
   asyncHandler(async (req, res) => {

@@ -173,3 +173,63 @@ export const useDeleteEmployee = () => {
     },
   });
 };
+
+export type EmployeePayslip = {
+  id: string;
+  payrun_id: string;
+  period_start: string;
+  period_end: string;
+  worked_days: string;
+  basic_salary: string;
+  gross_salary: string;
+  total_deductions: string;
+  net_salary: string;
+  status: 'draft' | 'computed' | 'validated' | 'paid';
+  warnings: any[];
+  created_at: string;
+};
+
+export const fetchEmployeePayslips = async (employeeId: string): Promise<EmployeePayslip[]> => {
+  const response = await api.get<EmployeePayslip[]>(`/employees/${employeeId}/payslips`);
+  return response.data;
+};
+
+export const useEmployeePayslips = (employeeId: string) => {
+  return useQuery({
+    queryKey: ['employees', employeeId, 'payslips'],
+    queryFn: () => fetchEmployeePayslips(employeeId),
+    enabled: Boolean(employeeId),
+  });
+};
+
+export type EmployeeContract = {
+  id: string;
+  employee_id: string;
+  name: string;
+  wage: string;
+  wage_type: string;
+  salary_structure_id: string;
+  salary_structure_name?: string | null;
+  department_id?: string | null;
+  job_position_id?: string | null;
+  start_date: string;
+  end_date?: string | null;
+  status: 'draft' | 'active' | 'expired' | 'terminated';
+  notes?: string | null;
+  created_at?: string;
+};
+
+export const fetchEmployeeContracts = async (employeeId: string): Promise<EmployeeContract[]> => {
+  const { data } = await api.get<EmployeeContract[]>('/contracts', { params: { employeeId } });
+  return data;
+};
+
+export const useEmployeeContracts = (employeeId: string) => {
+  return useQuery({
+    queryKey: ['employees', employeeId, 'contracts'],
+    queryFn: () => fetchEmployeeContracts(employeeId),
+    enabled: Boolean(employeeId),
+  });
+};
+
+

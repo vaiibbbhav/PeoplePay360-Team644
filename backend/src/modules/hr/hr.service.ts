@@ -92,3 +92,7 @@ export async function getMetadataOptions() {
     })),
   };
 }
+export async function getEmployeePayslips(employeeId: string) {
+  await getEmployeeById(employeeId);
+  return await hrRepo.findPayslipsByEmployeeId(employeeId);
+}

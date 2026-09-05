@@ -67,7 +67,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Profile',
-      path: '#profile',
+      path: '/profile',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -396,10 +396,16 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="text-xs text-ink-soft hidden md:block">{currentUser.email}</div>
-            <div className="w-7 h-7 rounded-full bg-accent/20 text-accent font-semibold flex items-center justify-center text-[11px]">
-              {currentUser.employee?.firstName?.[0] || currentUser.email[0]?.toUpperCase() || 'E'}
+            <div className="text-xs text-ink-soft hidden md:block">
+              {currentUser.email}
             </div>
+            <Link
+              to="/profile"
+              title="View your profile"
+              className="w-7 h-7 rounded-full bg-accent/20 text-accent font-semibold flex items-center justify-center text-[11px] hover:ring-2 hover:ring-accent/40 transition-all no-underline"
+            >
+              {currentUser.employee?.firstName?.[0] || currentUser.email[0]?.toUpperCase() || 'E'}
+            </Link>
           </div>
         </header>
 

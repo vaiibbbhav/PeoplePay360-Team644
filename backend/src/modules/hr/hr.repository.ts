@@ -197,3 +197,23 @@ export async function findAllJobPositions() {
 export async function findAllWorkingSchedules() {
   return await db.select().from(workingSchedules).orderBy(workingSchedules.name);
 }
+export async function findPayslipsByEmployeeId(employeeId: string) {
+  return await db
+    .select({
+      id: payslips.id,
+      payrun_id: payslips.payrunId,
+      period_start: payslips.periodStart,
+      period_end: payslips.periodEnd,
+      worked_days: payslips.workedDays,
+      basic_salary: payslips.basicSalary,
+      gross_salary: payslips.grossSalary,
+      total_deductions: payslips.totalDeductions,
+      net_salary: payslips.netSalary,
+      status: payslips.status,
+      warnings: payslips.warnings,
+      created_at: payslips.createdAt,
+    })
+    .from(payslips)
+    .where(eq(payslips.employeeId, employeeId))
+    .orderBy(desc(payslips.periodStart));
+}

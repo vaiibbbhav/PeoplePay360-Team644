@@ -40,8 +40,8 @@ export const EmployeeDashboardPage: React.FC = () => {
       title: 'Profile & Documents',
       desc: 'Personal details, emergency contacts, and employment history.',
       tag: 'Account',
-      link: '#profile',
-      isDirectLink: false,
+      link: '/profile',
+      isDirectLink: true,
     },
     {
       id: 'time-management',
