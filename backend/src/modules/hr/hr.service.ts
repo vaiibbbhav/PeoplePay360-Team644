@@ -75,8 +75,16 @@ export async function getMetadataOptions() {
 
   return {
     departments: departmentsList.map((d) => ({ id: d.id, name: d.name })),
-    jobPositions: jobPositionsList.map((j) => ({ id: j.id, title: j.title, departmentId: j.departmentId })),
-    workingSchedules: schedulesList.map((s) => ({ id: s.id, name: s.name, weeklyHours: s.weeklyHours })),
+    jobPositions: jobPositionsList.map((j) => ({
+      id: j.id,
+      title: j.title,
+      departmentId: j.departmentId,
+    })),
+    workingSchedules: schedulesList.map((s) => ({
+      id: s.id,
+      name: s.name,
+      weeklyHours: s.weeklyHours,
+    })),
     managers: employeesList.map((e) => ({
       id: e.id,
       name: `${e.first_name} ${e.last_name}`,
@@ -84,4 +92,3 @@ export async function getMetadataOptions() {
     })),
   };
 }
-

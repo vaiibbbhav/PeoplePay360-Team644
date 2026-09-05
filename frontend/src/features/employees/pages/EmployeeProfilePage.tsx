@@ -78,10 +78,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
       {/* Main Container */}
       <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8">
         {/* Template Hero Banner */}
-        <EmployeeHeaderCard
-          employee={employee}
-          onEdit={() => setIsEditModalOpen(true)}
-        />
+        <EmployeeHeaderCard employee={employee} onEdit={() => setIsEditModalOpen(true)} />
 
         {/* Primary Sub-Navigation Tabs matching template */}
         <div className="flex items-center gap-8 border-b border-line mb-6">
@@ -191,7 +188,10 @@ export const EmployeeProfilePage: React.FC = () => {
     return (
       <div className="min-h-screen bg-bg text-ink flex flex-col items-center justify-center p-8 text-center">
         <p className="text-xs text-ink-soft mb-4">No employee identifier specified.</p>
-        <Link to="/employees" className="px-4 py-2 text-xs font-medium bg-accent text-accent-ink rounded-lg no-underline">
+        <Link
+          to="/employees"
+          className="px-4 py-2 text-xs font-medium bg-accent text-accent-ink rounded-lg no-underline"
+        >
           Return to Directory
         </Link>
       </div>
@@ -199,7 +199,9 @@ export const EmployeeProfilePage: React.FC = () => {
   }
 
   return (
-    <ErrorBoundary fallback={(error, reset) => <ProfileErrorFallback error={error} reset={reset} />}>
+    <ErrorBoundary
+      fallback={(error, reset) => <ProfileErrorFallback error={error} reset={reset} />}
+    >
       <Suspense fallback={<ProfileLoadingFallback />}>
         <EmployeeProfileContent employeeId={id} />
       </Suspense>

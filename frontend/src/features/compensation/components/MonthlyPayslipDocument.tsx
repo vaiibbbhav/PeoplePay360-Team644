@@ -10,8 +10,26 @@ export type MonthlyPayslipDocumentProps = {
 function numberToWords(num: number): string {
   if (!num || isNaN(num)) return 'Zero Rupees Only';
   const a = [
-    '', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ',
-    'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen ',
+    '',
+    'One ',
+    'Two ',
+    'Three ',
+    'Four ',
+    'Five ',
+    'Six ',
+    'Seven ',
+    'Eight ',
+    'Nine ',
+    'Ten ',
+    'Eleven ',
+    'Twelve ',
+    'Thirteen ',
+    'Fourteen ',
+    'Fifteen ',
+    'Sixteen ',
+    'Seventeen ',
+    'Eighteen ',
+    'Nineteen ',
   ];
   const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
 
@@ -85,7 +103,12 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
               className="px-3.5 py-1.5 rounded text-xs font-semibold bg-purple-800 text-white hover:bg-purple-900 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                />
               </svg>
               <span>Print / Download PDF</span>
             </button>
@@ -96,7 +119,12 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
               aria-label="Close"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -118,11 +146,10 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
                   Anchorage Technologies Pvt. Ltd.
                 </h1>
                 <p className="text-[11px] leading-relaxed text-neutral-800 mt-1 mb-0.5">
-                  <b>Office Address :</b> 3rd Floor, Le Parc Richmonde, Richmond Rd, Shanthala Nagar, Bengaluru, Karnataka 560025, Bangalore , Karnataka, India
+                  <b>Office Address :</b> 3rd Floor, Le Parc Richmonde, Richmond Rd, Shanthala
+                  Nagar, Bengaluru, Karnataka 560025, Bangalore , Karnataka, India
                 </p>
-                <p className="text-[11px] font-bold text-black m-0">
-                  Business Unit : NA
-                </p>
+                <p className="text-[11px] font-bold text-black m-0">Business Unit : NA</p>
               </div>
             </div>
 
@@ -157,14 +184,20 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
                 </div>
                 <div className="col-span-6 p-1.5 pl-2">
                   <span>Duration: </span>
-                  <b>1st {monthName}, {yearNum} to 31st {monthName}, {yearNum}</b>
+                  <b>
+                    1st {monthName}, {yearNum} to 31st {monthName}, {yearNum}
+                  </b>
                 </div>
               </div>
 
               <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
                 <div className="col-span-6 p-1.5 pl-2">
                   <span>Department: </span>
-                  <b>{payslip.department_name ? payslip.department_name.toUpperCase() : 'ENGINEERING'}</b>
+                  <b>
+                    {payslip.department_name
+                      ? payslip.department_name.toUpperCase()
+                      : 'ENGINEERING'}
+                  </b>
                 </div>
                 <div className="col-span-6 p-1.5 pl-2">
                   <span>No of Days in the Month: </span>

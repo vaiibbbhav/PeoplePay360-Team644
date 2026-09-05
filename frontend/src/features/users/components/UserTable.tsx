@@ -14,11 +14,16 @@ interface UserTableProps {
 }
 
 const roleBadgeColors: Record<string, string> = {
-  Admin: 'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800/40',
-  'HR Manager': 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800/40',
-  'HR Payroll Manager': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/40',
-  'HR Payroll User': 'bg-teal-100 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300 border-teal-200 dark:border-teal-800/40',
-  Employee: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-700',
+  Admin:
+    'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-800/40',
+  'HR Manager':
+    'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-800/40',
+  'HR Payroll Manager':
+    'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/40',
+  'HR Payroll User':
+    'bg-teal-100 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300 border-teal-200 dark:border-teal-800/40',
+  Employee:
+    'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300 border-gray-200 dark:border-gray-700',
 };
 
 export const UserTable: React.FC<UserTableProps> = ({
@@ -103,11 +108,23 @@ export const UserTable: React.FC<UserTableProps> = ({
           </div>
         ) : users.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 p-6 text-center text-ink-soft">
-            <svg className="w-12 h-12 text-ink-soft/40 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            <svg
+              className="w-12 h-12 text-ink-soft/40 mb-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              />
             </svg>
             <p className="text-sm font-medium text-ink">No matching user accounts</p>
-            <p className="text-xs text-ink-soft mt-1">Try adjusting your search criteria or create a new user.</p>
+            <p className="text-xs text-ink-soft mt-1">
+              Try adjusting your search criteria or create a new user.
+            </p>
           </div>
         ) : (
           <table className="w-full text-left border-collapse">
@@ -132,9 +149,7 @@ export const UserTable: React.FC<UserTableProps> = ({
                     key={u.id}
                     onClick={() => onSelectUser(u)}
                     className={`cursor-pointer transition-colors ${
-                      isSelected
-                        ? 'bg-accent/10 hover:bg-accent/15'
-                        : 'hover:bg-bg-raised/60'
+                      isSelected ? 'bg-accent/10 hover:bg-accent/15' : 'hover:bg-bg-raised/60'
                     }`}
                   >
                     {/* User info */}
@@ -165,7 +180,9 @@ export const UserTable: React.FC<UserTableProps> = ({
                           </div>
                         </div>
                       ) : (
-                        <span className="text-ink-soft/70 italic text-[11px]">Unlinked (System Admin)</span>
+                        <span className="text-ink-soft/70 italic text-[11px]">
+                          Unlinked (System Admin)
+                        </span>
                       )}
                     </td>
 

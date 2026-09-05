@@ -7,12 +7,11 @@ export type PayPackageTabProps = {
   showValues: boolean;
 };
 
-export const PayPackageTab: React.FC<PayPackageTabProps> = ({
-  employeeId,
-  showValues,
-}) => {
+export const PayPackageTab: React.FC<PayPackageTabProps> = ({ employeeId, showValues }) => {
   const { data: contracts = [], isLoading, isError, refetch } = useEmployeeContracts(employeeId);
-  const [selectedContractForBreakdown, setSelectedContractForBreakdown] = useState<any | null>(null);
+  const [selectedContractForBreakdown, setSelectedContractForBreakdown] = useState<any | null>(
+    null,
+  );
 
   if (isLoading) {
     return (
@@ -52,9 +51,7 @@ export const PayPackageTab: React.FC<PayPackageTabProps> = ({
   return (
     <div className="space-y-6 pt-2">
       <div className="flex justify-between items-center">
-        <h2 className="font-serif text-lg sm:text-xl font-semibold text-ink">
-          Pay Package
-        </h2>
+        <h2 className="font-serif text-lg sm:text-xl font-semibold text-ink">Pay Package</h2>
         <span className="text-xs text-ink-soft font-mono">FY 2026-27</span>
       </div>
 
@@ -156,39 +153,63 @@ export const PayPackageTab: React.FC<PayPackageTabProps> = ({
                 <div className="divide-y divide-line p-2">
                   <div className="grid grid-cols-3 py-2 px-1 text-ink">
                     <span>Basic Salary (50%)</span>
-                    <span className="text-right font-mono">{formatCurrency(basic, showValues)}</span>
-                    <span className="text-right font-mono">{formatCurrency(basic * 12, showValues)}</span>
+                    <span className="text-right font-mono">
+                      {formatCurrency(basic, showValues)}
+                    </span>
+                    <span className="text-right font-mono">
+                      {formatCurrency(basic * 12, showValues)}
+                    </span>
                   </div>
                   <div className="grid grid-cols-3 py-2 px-1 text-ink">
                     <span>House Rent Allowance (HRA)</span>
                     <span className="text-right font-mono">{formatCurrency(hra, showValues)}</span>
-                    <span className="text-right font-mono">{formatCurrency(hra * 12, showValues)}</span>
+                    <span className="text-right font-mono">
+                      {formatCurrency(hra * 12, showValues)}
+                    </span>
                   </div>
                   <div className="grid grid-cols-3 py-2 px-1 text-ink">
                     <span>Special Allowance</span>
-                    <span className="text-right font-mono">{formatCurrency(specialAllowance, showValues)}</span>
-                    <span className="text-right font-mono">{formatCurrency(specialAllowance * 12, showValues)}</span>
+                    <span className="text-right font-mono">
+                      {formatCurrency(specialAllowance, showValues)}
+                    </span>
+                    <span className="text-right font-mono">
+                      {formatCurrency(specialAllowance * 12, showValues)}
+                    </span>
                   </div>
                   <div className="grid grid-cols-3 py-2 px-1 text-ink">
                     <span>Conveyance Allowance</span>
-                    <span className="text-right font-mono">{formatCurrency(conveyance, showValues)}</span>
-                    <span className="text-right font-mono">{formatCurrency(conveyance * 12, showValues)}</span>
+                    <span className="text-right font-mono">
+                      {formatCurrency(conveyance, showValues)}
+                    </span>
+                    <span className="text-right font-mono">
+                      {formatCurrency(conveyance * 12, showValues)}
+                    </span>
                   </div>
                   <div className="grid grid-cols-3 py-2 px-1 text-ink">
                     <span>Medical Allowance</span>
-                    <span className="text-right font-mono">{formatCurrency(medical, showValues)}</span>
-                    <span className="text-right font-mono">{formatCurrency(medical * 12, showValues)}</span>
+                    <span className="text-right font-mono">
+                      {formatCurrency(medical, showValues)}
+                    </span>
+                    <span className="text-right font-mono">
+                      {formatCurrency(medical * 12, showValues)}
+                    </span>
                   </div>
                   <div className="grid grid-cols-3 py-2 px-1 text-ink-soft italic">
                     <span>Provident Fund Employer (Retirals)</span>
                     <span className="text-right font-mono">{formatCurrency(pf, showValues)}</span>
-                    <span className="text-right font-mono">{formatCurrency(pf * 12, showValues)}</span>
+                    <span className="text-right font-mono">
+                      {formatCurrency(pf * 12, showValues)}
+                    </span>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 bg-bg-raised p-3 font-bold text-ink border-t border-line text-sm">
                   <span>Total CTC</span>
-                  <span className="text-right font-mono text-accent">{formatCurrency(monthlyWage, showValues)}</span>
-                  <span className="text-right font-mono text-accent">{formatCurrency(annualCtc, showValues)}</span>
+                  <span className="text-right font-mono text-accent">
+                    {formatCurrency(monthlyWage, showValues)}
+                  </span>
+                  <span className="text-right font-mono text-accent">
+                    {formatCurrency(annualCtc, showValues)}
+                  </span>
                 </div>
               </div>
             </div>

@@ -71,7 +71,13 @@ const createUserApi = async (input: CreateUserInput): Promise<UserItem> => {
   return data.user;
 };
 
-const updateUserApi = async ({ id, input }: { id: string; input: UpdateUserInput }): Promise<UserItem> => {
+const updateUserApi = async ({
+  id,
+  input,
+}: {
+  id: string;
+  input: UpdateUserInput;
+}): Promise<UserItem> => {
   const { data } = await api.put<{ user: UserItem }>(`/users/${id}`, input);
   return data.user;
 };

@@ -73,9 +73,6 @@ export const YearlyPayslipDocument: React.FC<YearlyPayslipDocumentProps> = ({
             <span className="font-sans text-xs sm:text-sm font-bold text-neutral-800">
               Yearly Salary Slips Summary (FY {financialYear})
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-semibold">
-              Annual Statement
-            </span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -85,7 +82,12 @@ export const YearlyPayslipDocument: React.FC<YearlyPayslipDocumentProps> = ({
               className="px-3.5 py-1.5 rounded text-xs font-semibold bg-purple-800 text-white hover:bg-purple-900 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                />
               </svg>
               <span>Print / Download PDF</span>
             </button>
@@ -96,7 +98,12 @@ export const YearlyPayslipDocument: React.FC<YearlyPayslipDocumentProps> = ({
               aria-label="Close"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -104,7 +111,10 @@ export const YearlyPayslipDocument: React.FC<YearlyPayslipDocumentProps> = ({
 
         {/* Printable Paper Document (Pure B&W Table Structure matching Image 1) */}
         <div className="p-4 sm:p-6 overflow-y-auto flex-1 bg-white text-black font-sans text-xs">
-          <div id="yearly-salary-slip" className="border border-black w-full mx-auto overflow-x-auto">
+          <div
+            id="yearly-salary-slip"
+            className="border border-black w-full mx-auto overflow-x-auto"
+          >
             {/* Top Company Header */}
             <div className="grid grid-cols-12 border-b border-black">
               <div className="col-span-2 border-r border-black p-4 flex items-center justify-center">
@@ -117,7 +127,8 @@ export const YearlyPayslipDocument: React.FC<YearlyPayslipDocumentProps> = ({
                   Anchorage Technologies Pvt. Ltd.
                 </h1>
                 <p className="text-[11px] leading-relaxed text-neutral-800 mt-1 m-0">
-                  <b>Office Address :</b> 3rd Floor, Le Parc Richmonde, Richmond Rd, Shanthala Nagar, Bengaluru, Karnataka 560025, Bangalore , Karnataka, India
+                  <b>Office Address :</b> 3rd Floor, Le Parc Richmonde, Richmond Rd, Shanthala
+                  Nagar, Bengaluru, Karnataka 560025, Bangalore , Karnataka, India
                 </p>
               </div>
             </div>

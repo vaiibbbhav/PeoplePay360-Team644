@@ -68,10 +68,7 @@ export const seedDatabase = async (): Promise<void> => {
       if (existingDept.length > 0) {
         deptMap[name] = existingDept[0].id;
       } else {
-        const [inserted] = await db
-          .insert(schema.departments)
-          .values({ name })
-          .returning();
+        const [inserted] = await db.insert(schema.departments).values({ name }).returning();
         deptMap[name] = inserted.id;
       }
     }
@@ -399,9 +396,8 @@ export const seedDatabase = async (): Promise<void> => {
 
       if (existingPayrun.length === 0) {
         const empIds = employeeList.map((e) => e.id);
-        const { createPayrunWizard, validatePayrun, markPayrunPaid } = await import(
-          '../modules/payroll/payroll.service'
-        );
+        const { createPayrunWizard, validatePayrun, markPayrunPaid } =
+          await import('../modules/payroll/payroll.service');
 
         const created = await createPayrunWizard({
           name: p.name,
@@ -418,7 +414,9 @@ export const seedDatabase = async (): Promise<void> => {
       }
     }
 
-    console.info(`✅ Seeded ${sampleEmployees.length} sample employee accounts (password: ${staffPassword})`);
+    console.info(
+      `✅ Seeded ${sampleEmployees.length} sample employee accounts (password: ${staffPassword})`,
+    );
     console.info('🎉 Seeding completed successfully!');
   } catch (error) {
     console.error('❌ Seeding failed:', error);

@@ -47,17 +47,25 @@ export const PersonalDetailsTab: React.FC<PersonalDetailsTabProps> = ({ employee
 
           <div>
             <span className="text-xs text-ink-soft block mb-1">Date Of Birth</span>
-            <span className="text-sm font-medium text-ink">{formatDate(employee.date_of_birth)}</span>
+            <span className="text-sm font-medium text-ink">
+              {formatDate(employee.date_of_birth)}
+            </span>
           </div>
 
           <div>
             <span className="text-xs text-ink-soft block mb-1">Gender</span>
-            <span className="text-sm font-medium text-ink capitalize">{employee.gender || '—'}</span>
+            <span className="text-sm font-medium text-ink capitalize">
+              {employee.gender || '—'}
+            </span>
           </div>
 
           <div>
-            <span className="text-xs text-ink-soft block mb-1">Identification Number (Tax ID / SSN)</span>
-            <span className="text-sm font-medium text-ink">{employee.identification_number || '—'}</span>
+            <span className="text-xs text-ink-soft block mb-1">
+              Identification Number (Tax ID / SSN)
+            </span>
+            <span className="text-sm font-medium text-ink">
+              {employee.identification_number || '—'}
+            </span>
           </div>
         </div>
       </div>
@@ -74,7 +82,9 @@ export const PersonalDetailsTab: React.FC<PersonalDetailsTabProps> = ({ employee
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8">
           <div>
             <span className="text-xs text-ink-soft block mb-1">Bank Name</span>
-            <span className="text-sm font-medium text-ink">{employee.bank_name || 'Not configured'}</span>
+            <span className="text-sm font-medium text-ink">
+              {employee.bank_name || 'Not configured'}
+            </span>
           </div>
 
           <div>
@@ -87,8 +97,12 @@ export const PersonalDetailsTab: React.FC<PersonalDetailsTabProps> = ({ employee
           </div>
 
           <div>
-            <span className="text-xs text-ink-soft block mb-1">Bank Routing Code / IFSC / SWIFT</span>
-            <span className="text-sm font-medium text-ink">{employee.bank_routing_code || 'Not configured'}</span>
+            <span className="text-xs text-ink-soft block mb-1">
+              Bank Routing Code / IFSC / SWIFT
+            </span>
+            <span className="text-sm font-medium text-ink">
+              {employee.bank_routing_code || 'Not configured'}
+            </span>
           </div>
         </div>
       </div>

@@ -147,10 +147,14 @@ export const EmployeeDashboardPage: React.FC = () => {
         <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-xs text-ink-soft font-medium">Linked Profile</span>
           <div className="text-base font-semibold text-ink mt-1 truncate">
-            {currentUser.employee ? `${currentUser.employee.firstName} ${currentUser.employee.lastName}` : 'Employee Account'}
+            {currentUser.employee
+              ? `${currentUser.employee.firstName} ${currentUser.employee.lastName}`
+              : 'Employee Account'}
           </div>
           <span className="text-[11px] text-ink-soft mt-1 block truncate">
-            {currentUser.employeeId ? `ID: ${currentUser.employeeId.substring(0, 8)}...` : 'Linked Member ID'}
+            {currentUser.employeeId
+              ? `ID: ${currentUser.employeeId.substring(0, 8)}...`
+              : 'Linked Member ID'}
           </span>
         </div>
       </div>

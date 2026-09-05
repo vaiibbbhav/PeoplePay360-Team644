@@ -52,7 +52,9 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
     employee?.employment_status || 'active',
   );
   const [dateOfJoining, setDateOfJoining] = useState(
-    employee?.date_of_joining ? employee.date_of_joining.slice(0, 10) : new Date().toISOString().slice(0, 10),
+    employee?.date_of_joining
+      ? employee.date_of_joining.slice(0, 10)
+      : new Date().toISOString().slice(0, 10),
   );
 
   const [formError, setFormError] = useState<string | null>(null);
@@ -216,7 +218,9 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-ink-soft mb-1">Date of Birth</label>
+                  <label className="block text-xs font-medium text-ink-soft mb-1">
+                    Date of Birth
+                  </label>
                   <input
                     type="date"
                     value={dateOfBirth}
@@ -259,7 +263,9 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-ink-soft mb-1">Bank Name</label>
+                    <label className="block text-xs font-medium text-ink-soft mb-1">
+                      Bank Name
+                    </label>
                     <input
                       type="text"
                       value={bankName}

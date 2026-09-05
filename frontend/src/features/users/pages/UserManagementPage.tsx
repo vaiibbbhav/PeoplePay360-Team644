@@ -21,10 +21,7 @@ export const UserManagementPage: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<UserItem | null>(null);
 
   // Queries
-  const {
-    data: users = [],
-    isLoading: isUsersLoading,
-  } = useUsersList({
+  const { data: users = [], isLoading: isUsersLoading } = useUsersList({
     search: search.trim() || undefined,
     role: roleFilter || undefined,
   });
@@ -91,7 +88,12 @@ export const UserManagementPage: React.FC = () => {
               className="inline-flex items-center gap-1.5 text-xs text-ink-soft hover:text-ink transition-colors no-underline"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
               </svg>
               Dashboard
             </Link>
@@ -125,7 +127,8 @@ export const UserManagementPage: React.FC = () => {
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft mt-1 max-w-3xl">
             Grant role-based credentials across Employee, HR, Payroll, and Administrative scopes.
-            Each account can be tied directly to an employee profile for attendance tracking and payslip delivery.
+            Each account can be tied directly to an employee profile for attendance tracking and
+            payslip delivery.
           </p>
         </div>
 

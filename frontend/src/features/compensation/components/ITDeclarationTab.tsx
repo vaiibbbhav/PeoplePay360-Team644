@@ -15,7 +15,8 @@ export const ITDeclarationTab: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-ink-soft mt-1">
-              Go Ahead with New Tax Regime (No Tax Exemption / Deductions Under Section 202(1)) : <b className="text-ink">NEW</b>
+              Go Ahead with New Tax Regime (No Tax Exemption / Deductions Under Section 202(1)) :{' '}
+              <b className="text-ink">NEW</b>
             </p>
           </div>
 
@@ -37,13 +38,17 @@ export const ITDeclarationTab: React.FC = () => {
 
         {/* Sub sections pills */}
         <div className="flex flex-wrap gap-2 pt-4">
-          {['HRA & Others (U/S 10)', 'House Property (U/S 24(b))', 'Investment Declaration (U/S 80C & Others)', 'Others', 'Previous Employment (Form 12B)'].map((p, idx) => (
+          {[
+            'HRA & Others (U/S 10)',
+            'House Property (U/S 24(b))',
+            'Investment Declaration (U/S 80C & Others)',
+            'Others',
+            'Previous Employment (Form 12B)',
+          ].map((p, idx) => (
             <span
               key={p}
               className={`text-xs px-3 py-1.5 rounded-full border border-line transition-colors ${
-                idx === 0
-                  ? 'bg-ink text-bg font-medium'
-                  : 'bg-bg text-ink-soft hover:text-ink'
+                idx === 0 ? 'bg-ink text-bg font-medium' : 'bg-bg text-ink-soft hover:text-ink'
               }`}
             >
               {p}
@@ -52,7 +57,9 @@ export const ITDeclarationTab: React.FC = () => {
         </div>
 
         <div className="mt-6 border border-amber-200 dark:border-amber-900/50 bg-amber-50/60 dark:bg-amber-950/20 rounded-lg p-3 text-xs text-amber-900 dark:text-amber-300">
-          <b>Note:</b> Investment declaration window for FY 2026-27 is currently closed for submission. New submissions will reopen during the mid-year POI (Proof of Investment) cycle.
+          <b>Note:</b> Investment declaration window for FY 2026-27 is currently closed for
+          submission. New submissions will reopen during the mid-year POI (Proof of Investment)
+          cycle.
         </div>
       </div>
     </div>

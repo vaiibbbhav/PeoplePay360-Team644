@@ -27,7 +27,12 @@ export type AuthResponse = {
   token: string;
 };
 
-const generateToken = (user: { id: string; email: string; role: UserRole; employeeId?: string | null }): string => {
+const generateToken = (user: {
+  id: string;
+  email: string;
+  role: UserRole;
+  employeeId?: string | null;
+}): string => {
   const payload: AuthUser = {
     id: user.id,
     email: user.email,
@@ -45,7 +50,9 @@ export const login = async (input: LoginInput): Promise<AuthResponse> => {
   }
 
   if (!user.isActive) {
-    throw new UnauthorizedError('Account is deactivated. Please contact your system administrator.');
+    throw new UnauthorizedError(
+      'Account is deactivated. Please contact your system administrator.',
+    );
   }
 
   const isMatch = await bcrypt.compare(input.password, user.passwordHash);
@@ -119,7 +126,9 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedError('Account is deactivated. Please contact your system administrator.');
+      throw new UnauthorizedError(
+        'Account is deactivated. Please contact your system administrator.',
+      );
     }
 
     let employeeData = null;

@@ -24,10 +24,7 @@ const TABS: Array<{ id: CompensationTab; label: string; badge?: string }> = [
   { id: 'payroll-docs', label: 'Payroll Documents' },
 ];
 
-export const CompensationTabs: React.FC<CompensationTabsProps> = ({
-  activeTab,
-  onTabChange,
-}) => {
+export const CompensationTabs: React.FC<CompensationTabsProps> = ({ activeTab, onTabChange }) => {
   return (
     <div className="border-b border-line overflow-x-auto scrollbar-none">
       <nav className="flex space-x-6 min-w-max" aria-label="Compensation sub-navigation">

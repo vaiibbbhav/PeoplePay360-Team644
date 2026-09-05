@@ -86,8 +86,8 @@ export const LandingPage: React.FC = () => {
                 Past fragmented HR records, for real operational enterprise teams.
               </div>
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-[54px] font-semibold text-ink leading-[1.12] max-w-[16ch] m-0">
-                An HR & Payroll engine that{' '}
-                <span className="text-accent">unifies, computes,</span> and reconciles itself.
+                An HR & Payroll engine that <span className="text-accent">unifies, computes,</span>{' '}
+                and reconciles itself.
               </h1>
               <p className="mt-6 text-base sm:text-lg text-ink-soft max-w-[46ch] leading-relaxed">
                 Employee master records, period-specific contracts, attendance exceptions, and
@@ -187,9 +187,10 @@ export const LandingPage: React.FC = () => {
                   A unified operational engine instead
                 </div>
                 <p className="text-ink-soft text-sm sm:text-base m-0 leading-relaxed">
-                  Every payroll batch enforces period-specific contract matching. Worked hours compare
-                  directly against working schedule lines, approved leaves automatically decrement
-                  allocations, and salary rules execute sequentially with full auditability.
+                  Every payroll batch enforces period-specific contract matching. Worked hours
+                  compare directly against working schedule lines, approved leaves automatically
+                  decrement allocations, and salary rules execute sequentially with full
+                  auditability.
                 </p>
               </div>
             </div>
@@ -361,8 +362,9 @@ export const LandingPage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               <div>
                 <p className="text-ink-soft text-sm sm:text-base leading-relaxed m-0 mb-4">
-                  A payrun should never execute blindly. Our system verifies employee master readiness,
-                  active period contracts, attendance integrity, and duplicate slip risks.
+                  A payrun should never execute blindly. Our system verifies employee master
+                  readiness, active period contracts, attendance integrity, and duplicate slip
+                  risks.
                 </p>
                 <div className="border-l-2 border-accent pl-4.5 font-serif italic text-lg text-ink my-6">
                   "One missing bank routing number or unconfirmed attendance edit flags the payrun
@@ -518,8 +520,14 @@ export const LandingPage: React.FC = () => {
 
             <div className="border border-line rounded-2xl px-7 py-2 bg-bg-raised divide-y divide-line">
               {[
-                { title: 'Working Full-Stack Platform', desc: 'React 19 + Express + Neon Postgres' },
-                { title: 'Live Demonstration Flow', desc: 'Employee to Payslip & Leave Allocation' },
+                {
+                  title: 'Working Full-Stack Platform',
+                  desc: 'React 19 + Express + Neon Postgres',
+                },
+                {
+                  title: 'Live Demonstration Flow',
+                  desc: 'Employee to Payslip & Leave Allocation',
+                },
                 { title: 'Interactive Wireframe Prototype', desc: 'Excalidraw mockup verified' },
                 { title: 'Modular Architecture', desc: '4-layer backend & feature-driven UI' },
               ].map((row) => (

@@ -1,7 +1,12 @@
 import bcrypt from 'bcryptjs';
 import { ConflictError, NotFoundError, ValidationError } from '../../shared/errors';
 import * as usersRepository from './users.repository';
-import { CreateUserInput, UpdateUserInput, UserQueryInput, passwordSchema } from './users.validators';
+import {
+  CreateUserInput,
+  UpdateUserInput,
+  UserQueryInput,
+  passwordSchema,
+} from './users.validators';
 import { UserRole } from '../../shared/auth-middleware';
 
 export const listUsers = async (query: UserQueryInput) => {
@@ -32,7 +37,7 @@ export const createUser = async (input: CreateUserInput) => {
   if (!validation.success) {
     throw new ValidationError(
       validation.error.errors[0]?.message ||
-        'Password must be at least 8 characters, with 1 uppercase, 1 number, and 1 symbol'
+        'Password must be at least 8 characters, with 1 uppercase, 1 number, and 1 symbol',
     );
   }
 
@@ -78,7 +83,7 @@ export const updateUser = async (id: string, input: UpdateUserInput) => {
     if (!validation.success) {
       throw new ValidationError(
         validation.error.errors[0]?.message ||
-          'Password must be at least 8 characters, with 1 uppercase, 1 number, and 1 symbol'
+          'Password must be at least 8 characters, with 1 uppercase, 1 number, and 1 symbol',
       );
     }
     const salt = await bcrypt.genSalt(10);

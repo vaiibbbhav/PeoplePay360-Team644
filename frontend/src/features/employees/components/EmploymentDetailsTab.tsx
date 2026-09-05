@@ -96,7 +96,9 @@ export const EmploymentDetailsTab: React.FC<EmploymentDetailsTabProps> = ({ empl
             <span className="font-serif text-2xl font-bold text-ink mt-1 block">
               {employee.smartCounts?.attendance ?? 0}
             </span>
-            <span className="text-[11px] text-ink-soft mt-1 block">Recorded daily time entries</span>
+            <span className="text-[11px] text-ink-soft mt-1 block">
+              Recorded daily time entries
+            </span>
           </div>
 
           <div className="p-4 rounded-xl border border-line bg-bg-raised/40">
@@ -104,7 +106,9 @@ export const EmploymentDetailsTab: React.FC<EmploymentDetailsTabProps> = ({ empl
             <span className="font-serif text-2xl font-bold text-ink mt-1 block">
               {employee.smartCounts?.timeOff ?? 0}
             </span>
-            <span className="text-[11px] text-ink-soft mt-1 block">Submitted leave applications</span>
+            <span className="text-[11px] text-ink-soft mt-1 block">
+              Submitted leave applications
+            </span>
           </div>
 
           <div className="p-4 rounded-xl border border-line bg-bg-raised/40">
@@ -112,7 +116,9 @@ export const EmploymentDetailsTab: React.FC<EmploymentDetailsTabProps> = ({ empl
             <span className="font-serif text-2xl font-bold text-ink mt-1 block">
               {employee.smartCounts?.payslips ?? 0}
             </span>
-            <span className="text-[11px] text-ink-soft mt-1 block">Settled compensation records</span>
+            <span className="text-[11px] text-ink-soft mt-1 block">
+              Settled compensation records
+            </span>
           </div>
         </div>
       </div>

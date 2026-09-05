@@ -76,7 +76,12 @@ export const PayslipsTable: React.FC<PayslipsTableProps> = ({
             onClick={onOpenYearlyPayslips}
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
             <span>Yearly Pay Slips (FY 2026-27)</span>
           </button>
@@ -103,7 +108,8 @@ export const PayslipsTable: React.FC<PayslipsTableProps> = ({
             No Payslips Available
           </h3>
           <p className="text-xs text-ink-soft max-w-md mx-auto">
-            Payslips will appear here as soon as monthly payruns are computed and published by the payroll administrator.
+            Payslips will appear here as soon as monthly payruns are computed and published by the
+            payroll administrator.
           </p>
         </div>
       ) : (
@@ -136,10 +142,7 @@ export const PayslipsTable: React.FC<PayslipsTableProps> = ({
                 const estimatedTds = deductionsNum > 2700 ? 2500 : 0;
 
                 return (
-                  <tr
-                    key={ps.id}
-                    className="hover:bg-bg-raised/60 transition-colors group"
-                  >
+                  <tr key={ps.id} className="hover:bg-bg-raised/60 transition-colors group">
                     <td className="py-3.5 px-4">
                       <input
                         type="checkbox"

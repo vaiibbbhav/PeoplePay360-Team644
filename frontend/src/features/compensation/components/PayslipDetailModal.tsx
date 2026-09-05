@@ -12,8 +12,26 @@ export type PayslipDetailModalProps = {
 function numberToWords(num: number): string {
   if (!num || isNaN(num)) return 'Zero Rupees Only';
   const a = [
-    '', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ',
-    'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '
+    '',
+    'One ',
+    'Two ',
+    'Three ',
+    'Four ',
+    'Five ',
+    'Six ',
+    'Seven ',
+    'Eight ',
+    'Nine ',
+    'Ten ',
+    'Eleven ',
+    'Twelve ',
+    'Thirteen ',
+    'Fourteen ',
+    'Fifteen ',
+    'Sixteen ',
+    'Seventeen ',
+    'Eighteen ',
+    'Nineteen ',
   ];
   const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
 
@@ -66,9 +84,7 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
         {/* Modal Top Bar (Hidden on print) */}
         <div className="flex items-center justify-between px-6 py-3.5 border-b border-line bg-bg-raised print:hidden">
           <div className="flex items-center gap-2">
-            <span className="font-serif text-sm font-bold text-ink">
-              Payslip Document Preview
-            </span>
+            <span className="font-serif text-sm font-bold text-ink">Payslip Document Preview</span>
             <span className="text-[11px] px-2 py-0.5 rounded bg-accent-soft text-accent font-medium">
               Verified
             </span>
@@ -81,7 +97,12 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
               className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity flex items-center gap-1.5 cursor-pointer"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                />
               </svg>
               <span>Print / Download PDF</span>
             </button>
@@ -92,7 +113,12 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
               aria-label="Close dialog"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -121,7 +147,8 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
                     PeoplePay<span className="text-accent">360</span> Inc.
                   </h2>
                   <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                    Tech Park, Financial District, Bangalore, KA 560100<br />
+                    Tech Park, Financial District, Bangalore, KA 560100
+                    <br />
                     GSTIN: 29AABCP3600E1Z9 · CIN: U72200KA2026PTC123456
                   </p>
                 </div>
@@ -150,11 +177,15 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
                   </div>
                   <div>
                     <span className="text-ink-soft block mb-0.5">Department</span>
-                    <span className="text-ink font-medium">{payslip.department_name || 'Engineering'}</span>
+                    <span className="text-ink font-medium">
+                      {payslip.department_name || 'Engineering'}
+                    </span>
                   </div>
                   <div>
                     <span className="text-ink-soft block mb-0.5">Designation</span>
-                    <span className="text-ink font-medium">{payslip.job_position_title || 'Software Engineer'}</span>
+                    <span className="text-ink font-medium">
+                      {payslip.job_position_title || 'Software Engineer'}
+                    </span>
                   </div>
                   <div>
                     <span className="text-ink-soft block mb-0.5">Bank Name</span>
@@ -202,7 +233,9 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
                       ))}
                     <div className="pt-3 border-t-2 border-line font-bold flex justify-between text-ink text-sm">
                       <span>Gross Earnings</span>
-                      <span className="font-mono">{formatCurrency(payslip.gross_salary, showValues)}</span>
+                      <span className="font-mono">
+                        {formatCurrency(payslip.gross_salary, showValues)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -261,7 +294,8 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
                     This is a computer-generated document and does not require a physical signature.
                   </p>
                   <p className="m-0 text-[11px] text-ink-soft/80 mt-0.5">
-                    PeoplePay360 HR & Payroll Engine · Generated on {new Date(payslip.created_at).toLocaleDateString()}
+                    PeoplePay360 HR & Payroll Engine · Generated on{' '}
+                    {new Date(payslip.created_at).toLocaleDateString()}
                   </p>
                 </div>
 

@@ -2,11 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { publicApi, api } from '@/api/apiClient';
 
 export type UserRole =
-  | 'Employee'
-  | 'HR Manager'
-  | 'HR Payroll User'
-  | 'HR Payroll Manager'
-  | 'Admin';
+  'Employee' | 'HR Manager' | 'HR Payroll User' | 'HR Payroll Manager' | 'Admin';
 
 export type User = {
   id: string;

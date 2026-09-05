@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  useEmployeesList,
-  useEmployeeMeta,
-  useCreateEmployee,
-  type EmployeeListItem,
-} from '../queries/useEmployees';
+import { useEmployeesList, useEmployeeMeta, useCreateEmployee } from '../queries/useEmployees';
 import { EmployeeFormModal } from '../components/EmployeeFormModal';
 
 export const EmployeeDirectoryPage: React.FC = () => {
@@ -26,7 +21,8 @@ export const EmployeeDirectoryPage: React.FC = () => {
       !search ||
       fullName.includes(search.toLowerCase()) ||
       emp.email.toLowerCase().includes(search.toLowerCase()) ||
-      (emp.job_position_title && emp.job_position_title.toLowerCase().includes(search.toLowerCase()));
+      (emp.job_position_title &&
+        emp.job_position_title.toLowerCase().includes(search.toLowerCase()));
 
     const matchesDept = !departmentFilter || emp.department_id === departmentFilter;
     const matchesStatus = !statusFilter || emp.employment_status === statusFilter;
@@ -66,11 +62,10 @@ export const EmployeeDirectoryPage: React.FC = () => {
       <main className="max-w-7xl mx-auto w-full flex-1 px-6 sm:px-8 py-8">
         {/* Page Title & Intro */}
         <div className="mb-6">
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink">
-            Employee Directory
-          </h1>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink">Employee Directory</h1>
           <p className="text-xs sm:text-sm text-ink-soft mt-1">
-            Master operational registry. Click any employee to view their full profile, personal records, and employment terms.
+            Master operational registry. Click any employee to view their full profile, personal
+            records, and employment terms.
           </p>
         </div>
 
@@ -90,7 +85,12 @@ export const EmployeeDirectoryPage: React.FC = () => {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+              />
             </svg>
           </div>
 
@@ -160,7 +160,11 @@ export const EmployeeDirectoryPage: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-xl bg-accent-soft text-accent font-serif font-bold text-base flex items-center justify-center shrink-0 overflow-hidden">
                           {emp.avatar_url ? (
-                            <img src={emp.avatar_url} alt={fullName} className="w-full h-full object-cover" />
+                            <img
+                              src={emp.avatar_url}
+                              alt={fullName}
+                              className="w-full h-full object-cover"
+                            />
                           ) : (
                             <span>{initials}</span>
                           )}
@@ -180,8 +184,8 @@ export const EmployeeDirectoryPage: React.FC = () => {
                           emp.employment_status === 'active'
                             ? 'bg-bg-raised text-ink'
                             : emp.employment_status === 'on_leave'
-                            ? 'bg-accent-soft text-accent'
-                            : 'bg-bg-raised text-ink-soft'
+                              ? 'bg-accent-soft text-accent'
+                              : 'bg-bg-raised text-ink-soft'
                         }`}
                       >
                         {emp.employment_status.replace('_', ' ')}
@@ -199,7 +203,9 @@ export const EmployeeDirectoryPage: React.FC = () => {
                       </div>
                       <div className="flex justify-between">
                         <span>Work Schedule:</span>
-                        <span className="font-medium text-ink">{emp.working_schedule_name || 'Standard 40h'}</span>
+                        <span className="font-medium text-ink">
+                          {emp.working_schedule_name || 'Standard 40h'}
+                        </span>
                       </div>
                     </div>
                   </div>

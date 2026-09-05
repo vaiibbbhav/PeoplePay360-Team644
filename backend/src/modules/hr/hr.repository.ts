@@ -197,4 +197,3 @@ export async function findAllJobPositions() {
 export async function findAllWorkingSchedules() {
   return await db.select().from(workingSchedules).orderBy(workingSchedules.name);
 }
-

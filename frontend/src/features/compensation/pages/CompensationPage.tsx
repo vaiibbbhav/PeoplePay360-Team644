@@ -53,9 +53,7 @@ export const CompensationPage: React.FC = () => {
 
           <span className="text-line">/</span>
 
-          <span className="font-serif text-sm font-semibold text-ink">
-            Compensation Hub
-          </span>
+          <span className="font-serif text-sm font-semibold text-ink">Compensation Hub</span>
 
           {user?.role && (
             <span className="text-[11px] px-2 py-0.5 rounded bg-accent-soft text-accent font-medium">
@@ -75,9 +73,7 @@ export const CompensationPage: React.FC = () => {
           <div className="h-4 w-px bg-line hidden sm:block" />
 
           {user && (
-            <span className="text-xs text-ink-soft hidden md:inline-block">
-              {user.email}
-            </span>
+            <span className="text-xs text-ink-soft hidden md:inline-block">{user.email}</span>
           )}
 
           <button
@@ -100,10 +96,7 @@ export const CompensationPage: React.FC = () => {
         />
 
         {/* Navigation Tabs */}
-        <CompensationTabs
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+        <CompensationTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* Tab Content Display */}
         <div className="pt-2">
@@ -121,29 +114,23 @@ export const CompensationPage: React.FC = () => {
           )}
 
           {activeTab === 'pay-package' && (
-            <PayPackageTab
-              employeeId={targetEmployeeId}
-              showValues={showValues}
-            />
+            <PayPackageTab employeeId={targetEmployeeId} showValues={showValues} />
           )}
 
-          {activeTab === 'tax-sheet' && (
-            <TaxSheetTab
-              showValues={showValues}
-            />
-          )}
+          {activeTab === 'tax-sheet' && <TaxSheetTab showValues={showValues} />}
 
-          {activeTab === 'it-declaration' && (
-            <ITDeclarationTab />
-          )}
+          {activeTab === 'it-declaration' && <ITDeclarationTab />}
 
-          {(activeTab === 'extra-payments' || activeTab === 'loans' || activeTab === 'payroll-docs') && (
+          {(activeTab === 'extra-payments' ||
+            activeTab === 'loans' ||
+            activeTab === 'payroll-docs') && (
             <div className="py-14 border border-line rounded-xl bg-bg-raised text-center p-8">
               <h3 className="font-serif text-base font-semibold text-ink mb-1">
                 No Records for FY {financialYear}
               </h3>
               <p className="text-xs text-ink-soft max-w-sm mx-auto">
-                No active entries, claims, or attachments found under this section for the selected financial year.
+                No active entries, claims, or attachments found under this section for the selected
+                financial year.
               </p>
             </div>
           )}

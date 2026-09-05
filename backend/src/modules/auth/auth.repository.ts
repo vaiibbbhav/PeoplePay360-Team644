@@ -53,7 +53,10 @@ export const createEmployeeForUser = async (data: {
 };
 
 export const findEmployeeByEmail = async (email: string): Promise<EmployeeRecord | undefined> => {
-  const [employee] = await db.select().from(employees).where(eq(employees.email, email.toLowerCase().trim()));
+  const [employee] = await db
+    .select()
+    .from(employees)
+    .where(eq(employees.email, email.toLowerCase().trim()));
   return employee;
 };
 

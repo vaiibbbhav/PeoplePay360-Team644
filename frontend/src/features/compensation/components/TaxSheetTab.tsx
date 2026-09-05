@@ -6,8 +6,18 @@ export type TaxSheetTabProps = {
 };
 
 const MONTHS = [
-  'April', 'May', 'June', 'July', 'August', 'September',
-  'October', 'November', 'December', 'January', 'February', 'March'
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+  'January',
+  'February',
+  'March',
 ];
 
 export const TaxSheetTab: React.FC<TaxSheetTabProps> = ({ showValues }) => {
@@ -93,9 +103,7 @@ export const TaxSheetTab: React.FC<TaxSheetTabProps> = ({ showValues }) => {
                     {m.slice(0, 3)}
                   </th>
                 ))}
-                <th className="py-2.5 px-3 text-right font-bold text-ink min-w-[90px]">
-                  Total
-                </th>
+                <th className="py-2.5 px-3 text-right font-bold text-ink min-w-[90px]">Total</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -117,7 +125,9 @@ export const TaxSheetTab: React.FC<TaxSheetTabProps> = ({ showValues }) => {
                 </td>
               </tr>
               <tr className="hover:bg-bg-raised/50 font-medium">
-                <td className="py-2 px-3 text-ink font-bold sticky left-0 bg-bg">Gross Salary (A)</td>
+                <td className="py-2 px-3 text-ink font-bold sticky left-0 bg-bg">
+                  Gross Salary (A)
+                </td>
                 {MONTHS.map((m) => (
                   <td key={m} className="py-2 px-3 text-right font-mono text-ink font-semibold">
                     {formatCurrency(monthlyGross, showValues)}
@@ -157,9 +167,14 @@ export const TaxSheetTab: React.FC<TaxSheetTabProps> = ({ showValues }) => {
                 </td>
               </tr>
               <tr className="hover:bg-bg-raised/50 font-medium">
-                <td className="py-2 px-3 text-ink font-bold sticky left-0 bg-bg">Total Deductions (B)</td>
+                <td className="py-2 px-3 text-ink font-bold sticky left-0 bg-bg">
+                  Total Deductions (B)
+                </td>
                 {MONTHS.map((m) => (
-                  <td key={m} className="py-2 px-3 text-right font-mono text-over-red font-semibold">
+                  <td
+                    key={m}
+                    className="py-2 px-3 text-right font-mono text-over-red font-semibold"
+                  >
                     {formatCurrency(monthlyDeductions, showValues)}
                   </td>
                 ))}
@@ -198,9 +213,13 @@ export const TaxSheetTab: React.FC<TaxSheetTabProps> = ({ showValues }) => {
             <tbody className="divide-y divide-line text-xs">
               <tr className="hover:bg-bg-raised/50 font-semibold text-ink">
                 <td className="py-3 px-4">Gross Salary (Current Employer)</td>
-                <td className="py-3 px-4 text-right font-mono">{formatCurrency(totalGross, showValues)}</td>
+                <td className="py-3 px-4 text-right font-mono">
+                  {formatCurrency(totalGross, showValues)}
+                </td>
                 <td className="py-3 px-4 text-right font-mono">₹0.00</td>
-                <td className="py-3 px-4 text-right font-mono font-bold">{formatCurrency(totalGross, showValues)}</td>
+                <td className="py-3 px-4 text-right font-mono font-bold">
+                  {formatCurrency(totalGross, showValues)}
+                </td>
               </tr>
               <tr className="hover:bg-bg-raised/50">
                 <td className="py-2.5 px-4 text-ink-soft">Less: CTC Reimbursements</td>

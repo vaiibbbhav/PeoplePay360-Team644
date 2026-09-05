@@ -1,4 +1,4 @@
-import React, { Component, type ReactNode, type ErrorInfo } from 'react';
+import { Component, type ReactNode, type ErrorInfo } from 'react';
 
 export type ErrorBoundaryProps = {
   children: ReactNode;
@@ -53,7 +53,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           </div>
           <h3 className="font-serif text-lg font-bold text-ink mb-1">Something went wrong</h3>
           <p className="text-xs text-ink-soft max-w-md mb-4">
-            {this.state.error.message || 'An unexpected runtime error occurred while rendering this section.'}
+            {this.state.error.message ||
+              'An unexpected runtime error occurred while rendering this section.'}
           </p>
           <button
             onClick={this.reset}
