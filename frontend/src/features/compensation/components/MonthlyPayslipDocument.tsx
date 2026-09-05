@@ -137,7 +137,7 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
             <div className="grid grid-cols-12 border-b border-black">
               <div className="col-span-3 border-r border-black p-4 flex items-center justify-center">
                 {/* Logo Box */}
-                <div className="w-16 h-16 border border-neutral-300 rounded flex items-center justify-center text-center text-[10px] text-neutral-500 font-serif font-bold p-1">
+                <div className="w-16 h-16 border border-neutral-300 rounded flex items-center justify-center text-center text-[10px] text-neutral-500 font-sans font-bold p-1">
                   PeoplePay 360
                 </div>
               </div>

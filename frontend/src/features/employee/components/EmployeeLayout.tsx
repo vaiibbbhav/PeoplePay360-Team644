@@ -281,7 +281,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
         {/* Brand Header */}
         <div className="h-16 px-5 border-b border-line flex items-center justify-between">
           <Link to="/employee/dashboard" className="flex items-center gap-2 no-underline">
-            <span className="font-serif text-lg font-bold tracking-tight text-ink">
+            <span className="font-sans text-lg font-bold tracking-tight text-ink">
               PeoplePay<span className="text-accent">360</span>
             </span>
           </Link>

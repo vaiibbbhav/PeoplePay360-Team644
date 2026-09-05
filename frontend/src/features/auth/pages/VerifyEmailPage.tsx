@@ -53,7 +53,7 @@ export const VerifyEmailPage: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-bg text-ink font-sans">
       {/* Header */}
       <header className="border-b border-line px-8 py-4 flex justify-between items-center bg-bg">
-        <Link to="/" className="font-serif text-xl font-bold tracking-tight text-ink no-underline">
+        <Link to="/" className="font-sans text-xl font-bold tracking-tight text-ink no-underline">
           PeoplePay<span className="text-accent">360</span>
         </Link>
       </header>
@@ -64,7 +64,7 @@ export const VerifyEmailPage: React.FC = () => {
           {status === 'loading' && (
             <div className="py-8 flex flex-col items-center gap-4">
               <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-              <h2 className="font-serif text-xl font-semibold text-ink">Verifying Email...</h2>
+              <h2 className="font-sans text-xl font-semibold text-ink">Verifying Email...</h2>
               <p className="text-xs text-ink-soft max-w-xs leading-relaxed">
                 Please wait while we confirm your verification link with the server.
               </p>
@@ -77,7 +77,7 @@ export const VerifyEmailPage: React.FC = () => {
                 ✓
               </div>
               <div>
-                <h2 className="font-serif text-2xl font-bold text-ink">Email Verified!</h2>
+                <h2 className="font-sans text-2xl font-bold text-ink">Email Verified!</h2>
                 <p className="text-xs text-ink-soft mt-1.5 leading-relaxed">
                   Your email address <span className="font-medium text-ink font-mono">{email}</span>{' '}
                   has been confirmed. Your account is now active and ready.
@@ -104,7 +104,7 @@ export const VerifyEmailPage: React.FC = () => {
                 !
               </div>
               <div>
-                <h2 className="font-serif text-2xl font-bold text-ink">Verification Failed</h2>
+                <h2 className="font-sans text-2xl font-bold text-ink">Verification Failed</h2>
                 <p className="text-xs text-ink-soft mt-1.5 leading-relaxed">{errorMessage}</p>
               </div>
 

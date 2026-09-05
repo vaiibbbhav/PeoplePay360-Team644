@@ -162,7 +162,7 @@ export const ContractFormDrawer: React.FC<ContractFormDrawerProps> = ({
               <span className="text-[11px] font-semibold uppercase tracking-wider text-accent">
                 {initialData ? 'Update Terms' : 'New Employment Contract'}
               </span>
-              <h2 className="font-serif text-xl font-bold text-ink mt-0.5 mb-0">
+              <h2 className="font-sans text-xl font-bold text-ink mt-0.5 mb-0">
                 {initialData ? initialData.name : 'Draft Contract Agreement'}
               </h2>
             </div>

@@ -21,7 +21,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ employee }) => {
     <div className="space-y-6">
       {/* Profile Summary Panel */}
       <div className="bg-bg border border-line rounded-2xl p-6 sm:p-8">
-        <h3 className="font-serif text-lg font-semibold text-ink mb-6 pb-3 border-b border-line">
+        <h3 className="font-sans text-lg font-semibold text-ink mb-6 pb-3 border-b border-line">
           Profile Summary
         </h3>
 
@@ -119,12 +119,12 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ employee }) => {
       {/* Organization Context Card */}
       <div className="bg-bg border border-line rounded-2xl p-6 sm:p-8">
         <div className="flex items-center justify-between pb-3 border-b border-line mb-6">
-          <h3 className="font-serif text-lg font-semibold text-ink">Organization Hierarchy</h3>
+          <h3 className="font-sans text-lg font-semibold text-ink">Organization Hierarchy</h3>
           <span className="text-xs text-ink-soft">Direct Reporting Line</span>
         </div>
 
         <div className="flex items-center gap-4 p-4 rounded-xl border border-line bg-bg-raised/50">
-          <div className="w-10 h-10 rounded-xl bg-accent-soft text-accent font-serif font-bold flex items-center justify-center text-sm">
+          <div className="w-10 h-10 rounded-xl bg-accent-soft text-accent font-sans font-bold flex items-center justify-center text-sm">
             {employee.manager_name ? employee.manager_name[0] : '—'}
           </div>
           <div>

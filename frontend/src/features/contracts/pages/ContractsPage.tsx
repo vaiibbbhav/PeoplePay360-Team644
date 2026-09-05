@@ -172,7 +172,7 @@ export const ContractsPage: React.FC = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div className="border border-line rounded-2xl p-16 text-center bg-bg">
-            <h3 className="font-serif text-lg font-bold text-ink mb-1">No contracts found</h3>
+            <h3 className="font-sans text-lg font-bold text-ink mb-1">No contracts found</h3>
             <p className="text-xs text-ink-soft mb-4">
               {search || statusFilter !== 'all'
                 ? 'Try adjusting your search criteria'

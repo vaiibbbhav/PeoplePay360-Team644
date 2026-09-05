@@ -105,7 +105,7 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
             {/* State 1: Present Rate */}
             <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
               <span className="text-[11px] font-medium text-ink-soft block">Attendance Rate</span>
-              <div className="text-xl sm:text-2xl font-bold font-serif text-ink mt-1 flex items-baseline gap-1.5">
+              <div className="text-xl sm:text-2xl font-bold font-sans text-ink mt-1 flex items-baseline gap-1.5">
                 <span>{attendanceRate}%</span>
                 <span className="text-xs font-sans font-normal text-ink-soft">
                   ({presentRecords.length} / {totalRecords} days)
@@ -120,7 +120,7 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
             {/* State 2: Total Hours */}
             <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
               <span className="text-[11px] font-medium text-ink-soft block">Total Worked Hours</span>
-              <div className="text-xl sm:text-2xl font-bold font-serif text-accent mt-1">
+              <div className="text-xl sm:text-2xl font-bold font-sans text-accent mt-1">
                 {totalWorkedHours.toFixed(1)}{' '}
                 <span className="text-xs font-sans font-normal text-ink-soft">hrs</span>
               </div>
@@ -132,7 +132,7 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
             {/* State 3: Late Punches */}
             <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
               <span className="text-[11px] font-medium text-ink-soft block">Late Arrivals</span>
-              <div className="text-xl sm:text-2xl font-bold font-serif text-ink mt-1">
+              <div className="text-xl sm:text-2xl font-bold font-sans text-ink mt-1">
                 {lateRecords.length}
               </div>
               <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-1 block">
@@ -143,7 +143,7 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
             {/* State 4: Biometric & Manual Audits */}
             <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
               <span className="text-[11px] font-medium text-ink-soft block">Audit & Edits</span>
-              <div className="text-xl sm:text-2xl font-bold font-serif text-ink mt-1">
+              <div className="text-xl sm:text-2xl font-bold font-sans text-ink mt-1">
                 {manualEdits.length}{' '}
                 <span className="text-xs font-sans font-normal text-ink-soft">manual</span>
               </div>

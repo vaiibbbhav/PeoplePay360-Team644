@@ -87,6 +87,18 @@ export const useEmployeePayslips = (employeeId?: string) => {
   });
 };
 
+export const useAllCompanyPayslips = (payrunId?: string) => {
+  return useQuery({
+    queryKey: ['payslips', 'company-all', payrunId || 'all'],
+    queryFn: async () => {
+      const params = payrunId ? { payrunId } : {};
+      const { data } = await api.get<EmployeePayslip[]>('/payslips', { params });
+      return data;
+    },
+    staleTime: 30 * 1000,
+  });
+};
+
 export const usePayslipDetail = (id?: string | null) => {
   return useQuery({
     queryKey: ['payslip', id],

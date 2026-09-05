@@ -28,7 +28,7 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
             </span>
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-serif text-ink font-normal mt-2 tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-sans text-ink font-normal mt-2 tracking-tight">
             Organization View & Hierarchy
           </h1>
           <p className="text-sm text-ink-soft mt-1 max-w-2xl leading-relaxed">
@@ -103,7 +103,7 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
           <span className="text-[11px] font-mono text-ink-faint uppercase tracking-wider block">
             Total Headcount
           </span>
-          <span className="text-xl font-serif font-bold text-ink mt-0.5 block">
+          <span className="text-xl font-sans font-bold text-ink mt-0.5 block">
             {totalEmployees}
           </span>
         </div>
@@ -111,7 +111,7 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
           <span className="text-[11px] font-mono text-ink-faint uppercase tracking-wider block">
             Departments
           </span>
-          <span className="text-xl font-serif font-bold text-ink mt-0.5 block">
+          <span className="text-xl font-sans font-bold text-ink mt-0.5 block">
             {totalDepartments}
           </span>
         </div>
@@ -119,7 +119,7 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
           <span className="text-[11px] font-mono text-ink-faint uppercase tracking-wider block">
             People Managers
           </span>
-          <span className="text-xl font-serif font-bold text-ink mt-0.5 block">
+          <span className="text-xl font-sans font-bold text-ink mt-0.5 block">
             {totalManagers}
           </span>
         </div>

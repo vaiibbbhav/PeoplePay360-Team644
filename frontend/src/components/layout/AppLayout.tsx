@@ -367,11 +367,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   };
 
   // Build nav groups tailored to role
-  const isHRManagerOnly = user.role === 'HR Manager';
+  const isHRManager = user.role === 'HR Manager';
   const canAccessPayroll =
     user.role === 'Admin' ||
     user.role === 'HR Payroll Manager' ||
     user.role === 'HR Payroll User';
+  const canAccessPayslips = canAccessPayroll || isHRManager;
 
   const navGroups: NavGroup[] = [
     {
@@ -398,13 +399,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         { label: 'Time Off Requests', path: '/time-off', icon: TimeOffIcon },
       ],
     },
-    ...(canAccessPayroll && !isHRManagerOnly
+    ...(canAccessPayslips
       ? [
           {
             title: 'Payroll',
             items: [
-              { label: 'Payruns', path: '/payruns', icon: PayrunIcon },
-              { label: 'Payslips', path: '/compensation', icon: AnalyticsIcon },
+              ...(canAccessPayroll ? [{ label: 'Payruns', path: '/payruns', icon: PayrunIcon }] : []),
+              { label: 'Payslips', path: '/payslips', icon: AnalyticsIcon },
             ],
           },
         ]
@@ -435,7 +436,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         {/* Brand — click goes to landing page */}
         <div className={`h-16 px-4 border-b border-line flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'}`}>
           <Link to="/" className="flex items-center gap-2 no-underline overflow-hidden">
-            <span className="font-serif text-lg font-bold tracking-tight text-ink whitespace-nowrap">
+            <span className="font-sans text-lg font-bold tracking-tight text-ink whitespace-nowrap">
               {sidebarCollapsed ? (
                 <>P<span className="text-accent">360</span></>
               ) : (
@@ -527,7 +528,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 )}
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
-                    const isActive = location.pathname === item.path;
+                    const isActive =
+                      location.pathname === item.path ||
+                      (item.path !== '/' && location.pathname.startsWith(`${item.path}/`));
                     return (
                       <Link
                         key={item.label}

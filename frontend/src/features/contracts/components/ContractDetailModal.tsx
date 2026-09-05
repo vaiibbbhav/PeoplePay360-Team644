@@ -39,7 +39,7 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
         {/* Header */}
         <div className="px-6 py-5 border-b border-line flex items-center justify-between bg-bg-raised/30">
           <div>
-            <h2 className="font-serif text-xl font-bold text-ink mt-0.5 mb-0">
+            <h2 className="font-sans text-xl font-bold text-ink mt-0.5 mb-0">
               {contract.name}
             </h2>
           </div>

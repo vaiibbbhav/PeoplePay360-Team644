@@ -118,7 +118,7 @@ export const YearlyPayslipDocument: React.FC<YearlyPayslipDocumentProps> = ({
             {/* Top Company Header */}
             <div className="grid grid-cols-12 border-b border-black">
               <div className="col-span-2 border-r border-black p-4 flex items-center justify-center">
-                <div className="w-14 h-14 border border-neutral-300 rounded flex items-center justify-center text-center text-[10px] text-neutral-500 font-serif font-bold p-1">
+                <div className="w-14 h-14 border border-neutral-300 rounded flex items-center justify-center text-center text-[10px] text-neutral-500 font-sans font-bold p-1">
                   PeoplePay 360
                 </div>
               </div>

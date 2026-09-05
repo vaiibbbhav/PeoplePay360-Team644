@@ -97,7 +97,7 @@ export const AttendanceTerminalPage: React.FC = () => {
       <header className="h-16 border-b border-line px-6 sm:px-10 flex items-center justify-between bg-bg-raised/30 backdrop-blur-md sticky top-0 z-20">
         <div className="flex items-center gap-3">
           <Link to="/" className="flex items-center gap-2 no-underline">
-            <span className="font-serif text-lg font-bold tracking-tight text-ink">
+            <span className="font-sans text-lg font-bold tracking-tight text-ink">
               PeoplePay<span className="text-accent">360</span>
             </span>
           </Link>
@@ -131,7 +131,7 @@ export const AttendanceTerminalPage: React.FC = () => {
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             Live Biometric Punch Station
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+          <h1 className="font-sans text-3xl sm:text-4xl font-bold tracking-tight text-ink">
             Attendance Terminal
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft">
@@ -241,7 +241,7 @@ export const AttendanceTerminalPage: React.FC = () => {
                           ✓
                         </div>
                         <div>
-                          <h2 className="text-xl sm:text-2xl font-serif font-bold text-ink tracking-tight">
+                          <h2 className="text-xl sm:text-2xl font-sans font-bold text-ink tracking-tight">
                             {punchResult.action === 'PUNCH_IN'
                               ? `Welcome, ${punchResult.employeeName}!`
                               : `Goodbye, ${punchResult.employeeName}!`}
@@ -291,7 +291,7 @@ export const AttendanceTerminalPage: React.FC = () => {
                       ✕
                     </div>
                     <div className="space-y-1">
-                      <h2 className="text-xl sm:text-2xl font-serif font-bold text-rose-600 dark:text-rose-400 tracking-tight">
+                      <h2 className="text-xl sm:text-2xl font-sans font-bold text-rose-600 dark:text-rose-400 tracking-tight">
                         No user exists
                       </h2>
                       <p className="text-xs text-ink-soft">

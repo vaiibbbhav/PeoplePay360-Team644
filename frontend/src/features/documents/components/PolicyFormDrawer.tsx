@@ -113,7 +113,7 @@ export const PolicyFormDrawer: React.FC<PolicyFormDrawerProps> = ({
               <span className="text-[11px] font-semibold uppercase tracking-wider text-accent">
                 {initialData ? 'Edit Document' : 'New Policy'}
               </span>
-              <h2 className="font-serif text-xl font-bold text-ink mt-0.5 mb-0">
+              <h2 className="font-sans text-xl font-bold text-ink mt-0.5 mb-0">
                 {initialData ? initialData.title : 'Publish Company Policy'}
               </h2>
             </div>

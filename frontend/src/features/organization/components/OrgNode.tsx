@@ -72,7 +72,7 @@ export const OrgNode: React.FC<NodeProps<OrgCustomNode>> = memo(({ data }) => {
             )}
           </div>
 
-          <h4 className="text-sm font-serif font-medium text-ink truncate tracking-tight mt-1">
+          <h4 className="text-sm font-sans font-medium text-ink truncate tracking-tight mt-1">
             {employee.first_name} {employee.last_name}
           </h4>
 

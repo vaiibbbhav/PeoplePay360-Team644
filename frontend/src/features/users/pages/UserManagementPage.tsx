@@ -125,7 +125,7 @@ export const UserManagementPage: React.FC = () => {
       <div className="max-w-6xl mx-auto w-full px-6 sm:px-8 py-8">
         {/* ── Page heading ── */}
         <div className="mb-1">
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+          <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
             User Management
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft mt-1">

@@ -19,12 +19,19 @@ import { ContractsPage } from './features/contracts/pages/ContractsPage';
 import { SchedulesPage } from './features/schedules/pages/SchedulesPage';
 import { TimeOffPage } from './features/timeoff/pages/TimeOffPage';
 import { PayrunsPage } from './features/payroll/pages/PayrunsPage';
+import { PayslipsPage } from './features/payroll/pages/PayslipsPage';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 
 type UserRole = 'Employee' | 'HR Manager' | 'HR Payroll User' | 'HR Payroll Manager' | 'Admin';
 
 const canAccessPayroll = (role: UserRole) =>
   role === 'Admin' || role === 'HR Payroll Manager' || role === 'HR Payroll User';
+
+const canAccessPayslips = (role: UserRole) =>
+  role === 'Admin' ||
+  role === 'HR Payroll Manager' ||
+  role === 'HR Payroll User' ||
+  role === 'HR Manager';
 
 export function App() {
   return (
@@ -50,7 +57,6 @@ export function App() {
             <Route path="/timeoff" element={<TimeOffPage />} />
             <Route path="/leaves" element={<TimeOffPage />} />
             <Route path="/compensation" element={<CompensationPage />} />
-            <Route path="/payslips" element={<CompensationPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
             <Route path="/policies" element={<DocumentsPage />} />
             <Route path="/employee/docs" element={<DocumentsPage />} />
@@ -63,10 +69,17 @@ export function App() {
             <Route path="/schedules" element={<SchedulesPage />} />
             <Route path="/working-schedules" element={<SchedulesPage />} />
             <Route path="/employees" element={<EmployeeDirectoryPage />} />
+            <Route path="/employee/profile" element={<EmployeeProfilePage />} />
             <Route path="/employees/:id" element={<EmployeeProfilePage />} />
             <Route path="/profile" element={<EmployeeProfilePage />} />
+            <Route path="/employee/:id" element={<EmployeeProfilePage />} />
             {/* Analytics alias: redirect to dashboard */}
             <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
+          </Route>
+
+          {/* Payslips registry — HR Manager, Payroll roles, Admin */}
+          <Route element={<ProtectedRoute allow={canAccessPayslips} />}>
+            <Route path="/payslips" element={<PayslipsPage />} />
           </Route>
 
           {/* Payroll routes — payroll roles + admin only */}

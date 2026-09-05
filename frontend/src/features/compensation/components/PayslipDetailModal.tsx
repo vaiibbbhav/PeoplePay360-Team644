@@ -84,7 +84,7 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
         {/* Modal Top Bar (Hidden on print) */}
         <div className="flex items-center justify-between px-6 py-3.5 border-b border-line bg-bg-raised print:hidden">
           <div className="flex items-center gap-2">
-            <span className="font-serif text-sm font-bold text-ink">Payslip Document Preview</span>
+            <span className="font-sans text-sm font-bold text-ink">Payslip Document Preview</span>
             <span className="text-[11px] px-2 py-0.5 rounded bg-accent-soft text-accent font-medium">
               Verified
             </span>
@@ -143,7 +143,7 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
               {/* Official Header */}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between border-b border-line pb-5 gap-4">
                 <div>
-                  <h2 className="font-serif text-2xl font-bold tracking-tight text-ink">
+                  <h2 className="font-sans text-2xl font-bold tracking-tight text-ink">
                     PeoplePay<span className="text-accent">360</span> Inc.
                   </h2>
                   <p className="text-xs text-ink-soft mt-1 leading-relaxed">
@@ -216,7 +216,7 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Earnings */}
                 <div className="border border-line rounded-lg overflow-hidden">
-                  <div className="px-4 py-2 bg-bg-raised border-b border-line font-serif text-xs font-bold text-ink uppercase tracking-wider flex justify-between">
+                  <div className="px-4 py-2 bg-bg-raised border-b border-line font-sans text-xs font-bold text-ink uppercase tracking-wider flex justify-between">
                     <span>Earnings</span>
                     <span>Amount (INR)</span>
                   </div>
@@ -242,7 +242,7 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
 
                 {/* Deductions */}
                 <div className="border border-line rounded-lg overflow-hidden">
-                  <div className="px-4 py-2 bg-bg-raised border-b border-line font-serif text-xs font-bold text-ink uppercase tracking-wider flex justify-between">
+                  <div className="px-4 py-2 bg-bg-raised border-b border-line font-sans text-xs font-bold text-ink uppercase tracking-wider flex justify-between">
                     <span>Deductions</span>
                     <span>Amount (INR)</span>
                   </div>

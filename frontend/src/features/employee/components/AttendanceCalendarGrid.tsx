@@ -49,7 +49,7 @@ export const AttendanceCalendarGrid: React.FC<AttendanceCalendarGridProps> = ({
       {/* Calendar Header Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-line">
         <div className="flex items-center gap-3">
-          <h3 className="font-serif text-lg sm:text-xl font-bold text-ink m-0 tracking-tight">
+          <h3 className="font-sans text-lg sm:text-xl font-bold text-ink m-0 tracking-tight">
             {monthLabel}
           </h3>
           <button

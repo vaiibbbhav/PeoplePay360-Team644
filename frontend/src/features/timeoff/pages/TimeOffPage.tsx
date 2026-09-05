@@ -102,7 +102,7 @@ export const TimeOffPage: React.FC = () => {
             <span className="text-xs font-mono uppercase tracking-widest text-accent font-semibold">
               Time & Absence Management
             </span>
-            <h1 className="text-2xl lg:text-3xl font-serif font-medium text-ink tracking-tight mt-1">
+            <h1 className="text-2xl lg:text-3xl font-sans font-medium text-ink tracking-tight mt-1">
               Time Off & Leaves
             </h1>
             <p className="text-xs text-ink-soft mt-1 max-w-2xl">

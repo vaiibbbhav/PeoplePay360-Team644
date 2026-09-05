@@ -46,7 +46,7 @@ export const TeamApprovalsSection: React.FC<TeamApprovalsSectionProps> = ({
         <div className="w-12 h-12 rounded-2xl bg-bg-raised border border-line flex items-center justify-center mx-auto mb-3 text-ink-soft">
           <Users className="w-6 h-6 text-accent" />
         </div>
-        <h4 className="font-serif text-base font-medium text-ink">All Team Requests Reviewed</h4>
+        <h4 className="font-sans text-base font-medium text-ink">All Team Requests Reviewed</h4>
         <p className="text-xs text-ink-soft max-w-sm mx-auto mt-1">
           You have 0 pending leave requests from your direct reports. New requests will appear here
           for review and approval.

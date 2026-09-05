@@ -178,7 +178,7 @@ const ProfileErrorFallback: React.FC<{ error: Error; reset: () => void }> = ({ e
         />
       </svg>
     </div>
-    <h2 className="font-serif text-2xl font-bold text-ink mb-2">Employee Record Not Found</h2>
+    <h2 className="font-sans text-2xl font-bold text-ink mb-2">Employee Record Not Found</h2>
     <p className="text-xs text-ink-soft max-w-sm mb-4">
       {error.message || 'The requested employee identifier could not be retrieved.'}
     </p>
@@ -209,7 +209,7 @@ export const EmployeeProfilePage: React.FC = () => {
     return (
       <div className="min-h-screen bg-bg text-ink flex flex-col items-center justify-center p-8 text-center font-sans">
         <div className="max-w-md p-6 rounded-2xl border border-line bg-bg-raised">
-          <h2 className="font-serif text-xl font-bold text-ink mb-2">No Profile Linked</h2>
+          <h2 className="font-sans text-xl font-bold text-ink mb-2">No Profile Linked</h2>
           <p className="text-xs text-ink-soft mb-4">
             Your user account is not linked to an employee profile record yet.
           </p>

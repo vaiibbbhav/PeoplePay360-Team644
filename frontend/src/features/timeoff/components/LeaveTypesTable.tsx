@@ -44,7 +44,7 @@ export const LeaveTypesTable: React.FC<LeaveTypesTableProps> = ({ canManage }) =
           <div className="w-12 h-12 rounded-2xl bg-bg-raised border border-line flex items-center justify-center mx-auto mb-3 text-ink-soft">
             <Settings className="w-6 h-6" />
           </div>
-          <h4 className="font-serif text-base font-medium text-ink">No Policies Defined</h4>
+          <h4 className="font-sans text-base font-medium text-ink">No Policies Defined</h4>
           <p className="text-xs text-ink-soft max-w-sm mx-auto mt-1">
             Create standard leave types such as Paid Vacation, Sick Leave, or Parental Leave.
           </p>

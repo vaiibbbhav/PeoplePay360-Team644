@@ -187,7 +187,7 @@ export const SchedulesPage: React.FC = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div className="border border-line rounded-2xl p-16 text-center bg-bg">
-            <h3 className="font-serif text-lg font-bold text-ink mb-1">No schedules found</h3>
+            <h3 className="font-sans text-lg font-bold text-ink mb-1">No schedules found</h3>
             <p className="text-xs text-ink-soft mb-4">
               {search || filterActive !== 'all'
                 ? 'Try adjusting your search or filters'
@@ -228,7 +228,7 @@ export const SchedulesPage: React.FC = () => {
       {deletingSchedule && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div className="bg-bg border border-line rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
-            <h3 className="font-serif text-lg font-bold text-ink m-0">
+            <h3 className="font-sans text-lg font-bold text-ink m-0">
               Delete Working Schedule?
             </h3>
             <p className="text-xs text-ink-soft leading-relaxed m-0">

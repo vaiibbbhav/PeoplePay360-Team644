@@ -81,7 +81,7 @@ export const LandingPage: React.FC = () => {
         <div className="flex items-center justify-between px-6 sm:px-8 py-4.5 max-w-6xl mx-auto">
           <a
             href="#top"
-            className="font-serif text-xl font-bold tracking-tight text-ink no-underline"
+            className="font-sans text-xl font-bold tracking-tight text-ink no-underline"
           >
             PeoplePay<span className="text-accent">360</span>
           </a>
@@ -259,7 +259,7 @@ export const LandingPage: React.FC = () => {
         <section className="py-20 border-b border-line">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <div className="max-w-[56ch] mb-11">
-              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink m-0">
+              <h2 className="font-sans text-2xl sm:text-3xl font-semibold text-ink m-0">
                 Most basic HR tools stop at isolated CRUD tables.
               </h2>
             </div>
@@ -294,7 +294,7 @@ export const LandingPage: React.FC = () => {
         <section id="flow" className="py-20 border-b border-line">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <div className="max-w-[56ch] mb-11">
-              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink m-0">
+              <h2 className="font-sans text-2xl sm:text-3xl font-semibold text-ink m-0">
                 The complete operational lifecycle
               </h2>
             </div>
@@ -342,7 +342,7 @@ export const LandingPage: React.FC = () => {
         <section id="modules" className="py-20 border-b border-line">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <div className="max-w-[56ch] mb-11">
-              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink m-0">
+              <h2 className="font-sans text-2xl sm:text-3xl font-semibold text-ink m-0">
                 Two sides, one unified data model
               </h2>
             </div>
@@ -351,7 +351,7 @@ export const LandingPage: React.FC = () => {
                 <span className="text-xs text-accent font-semibold mb-4 block">
                   Configuration & Policies
                 </span>
-                <h3 className="font-serif text-xl sm:text-2xl font-semibold mb-5 text-ink m-0">
+                <h3 className="font-sans text-xl sm:text-2xl font-semibold mb-5 text-ink m-0">
                   HR Backend Management
                 </h3>
                 <ul className="list-none m-0 p-0 divide-y divide-line">
@@ -396,7 +396,7 @@ export const LandingPage: React.FC = () => {
                 <span className="text-xs text-accent font-semibold mb-4 block">
                   Operational Experience
                 </span>
-                <h3 className="font-serif text-xl sm:text-2xl font-semibold mb-5 text-ink m-0">
+                <h3 className="font-sans text-xl sm:text-2xl font-semibold mb-5 text-ink m-0">
                   HR & Payroll Operations
                 </h3>
                 <ul className="list-none m-0 p-0 divide-y divide-line">
@@ -444,7 +444,7 @@ export const LandingPage: React.FC = () => {
         <section id="validation" className="py-20 border-b border-line">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <div className="max-w-[56ch] mb-11">
-              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink m-0">
+              <h2 className="font-sans text-2xl sm:text-3xl font-semibold text-ink m-0">
                 Pre-computation payroll validation
               </h2>
               <p className="mt-3 text-ink-soft text-sm sm:text-base leading-relaxed">
@@ -520,7 +520,7 @@ export const LandingPage: React.FC = () => {
         <section id="roles" className="py-20 border-b border-line">
           <div className="max-w-6xl mx-auto px-6 sm:px-8">
             <div className="max-w-[56ch] mb-11">
-              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink m-0">
+              <h2 className="font-sans text-2xl sm:text-3xl font-semibold text-ink m-0">
                 Five roles, one unified ledger
               </h2>
             </div>
@@ -573,7 +573,7 @@ export const LandingPage: React.FC = () => {
                 },
               ].map((card) => (
                 <div key={card.role} className="border border-line rounded-xl p-5 bg-bg">
-                  <h4 className="font-serif text-base font-semibold pb-2.5 mb-3 border-b border-line text-ink m-0">
+                  <h4 className="font-sans text-base font-semibold pb-2.5 mb-3 border-b border-line text-ink m-0">
                     {card.role}
                   </h4>
                   <ul className="list-none m-0 p-0 text-ink-soft text-xs space-y-2">
@@ -594,7 +594,7 @@ export const LandingPage: React.FC = () => {
         <section className="py-20">
           <div className="max-w-6xl mx-auto px-6 sm:px-8 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-14 items-center">
             <div>
-              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink max-w-[16ch] m-0">
+              <h2 className="font-sans text-2xl sm:text-3xl font-semibold text-ink max-w-[16ch] m-0">
                 Operational integrity ready for demonstration
               </h2>
               <p className="text-ink-soft mt-4 max-w-[42ch] text-sm sm:text-base leading-relaxed">

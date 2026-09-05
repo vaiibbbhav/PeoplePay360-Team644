@@ -78,7 +78,7 @@ export const PayslipViewPage: React.FC = () => {
   if (error || !payslip) {
     return (
       <div className="min-h-screen bg-bg text-ink flex flex-col items-center justify-center p-8 text-center">
-        <h2 className="font-serif text-xl font-bold text-ink mb-2">Salary Slip Not Found</h2>
+        <h2 className="font-sans text-xl font-bold text-ink mb-2">Salary Slip Not Found</h2>
         <p className="text-xs text-ink-soft max-w-sm mb-4">
           The requested payslip record identifier does not exist or has been removed.
         </p>
@@ -111,7 +111,7 @@ export const PayslipViewPage: React.FC = () => {
       {/* Top Document Controls Bar (Hidden during Print) */}
       <header className="sticky top-0 z-40 bg-white border-b border-line px-6 py-3 flex items-center justify-between shadow-2xs print:hidden">
         <div className="flex items-center gap-3">
-          <span className="font-serif text-base font-bold text-ink">
+          <span className="font-sans text-base font-bold text-ink">
             PeoplePay<span className="text-accent">360</span>
           </span>
           <span className="text-line">/</span>
@@ -153,7 +153,7 @@ export const PayslipViewPage: React.FC = () => {
           {/* Top Company Header */}
           <div className="grid grid-cols-12 border-b border-black">
             <div className="col-span-3 border-r border-black p-4 flex items-center justify-center">
-              <div className="w-16 h-16 border border-neutral-300 rounded flex items-center justify-center text-center text-[10px] text-neutral-500 font-serif font-bold p-1">
+              <div className="w-16 h-16 border border-neutral-300 rounded flex items-center justify-center text-center text-[10px] text-neutral-500 font-sans font-bold p-1">
                 PeoplePay 360
               </div>
             </div>

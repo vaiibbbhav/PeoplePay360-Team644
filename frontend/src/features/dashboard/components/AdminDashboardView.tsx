@@ -41,7 +41,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
       {/* Welcome Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">
+          <h1 className="font-sans text-3xl font-bold tracking-tight text-ink">
             System Administration Console
           </h1>
           <p className="text-ink-soft text-xs sm:text-sm mt-1">
@@ -111,7 +111,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
       <div className="bg-bg border border-line rounded-2xl p-6">
         <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
           <div>
-            <h3 className="font-serif text-base font-semibold text-ink">
+            <h3 className="font-sans text-base font-semibold text-ink">
               System Roles & Access Control
             </h3>
             <p className="text-xs text-ink-soft mt-0.5">

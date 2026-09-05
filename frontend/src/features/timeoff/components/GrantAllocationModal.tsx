@@ -86,7 +86,7 @@ export const GrantAllocationModal: React.FC<GrantAllocationModalProps> = ({
               <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
                 HR Allocation Quota
               </span>
-              <h2 className="text-xl font-serif font-medium text-ink mt-0.5">
+              <h2 className="text-xl font-sans font-medium text-ink mt-0.5">
                 Grant Leave Allocation
               </h2>
             </div>

@@ -32,7 +32,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
     <div className="max-w-6xl mx-auto space-y-8 font-sans">
       {/* Welcome Banner */}
       <div>
-        <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">
+        <h1 className="font-sans text-3xl font-bold tracking-tight text-ink">
           HR Management Console
         </h1>
         <p className="text-ink-soft text-xs sm:text-sm mt-1">
@@ -87,7 +87,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
       <div className="bg-bg border border-line rounded-2xl p-6">
         <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
           <div>
-            <h3 className="font-serif text-base font-semibold text-ink">
+            <h3 className="font-sans text-base font-semibold text-ink">
               Biometric Punch & Attendance Exceptions
             </h3>
             <p className="text-xs text-ink-soft mt-0.5">
@@ -113,31 +113,31 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
             <>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
                 <span className="text-[11px] text-ink-soft block">Present</span>
-                <span className="text-xl font-serif font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
+                <span className="text-xl font-sans font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
                   {attendance.present}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
                 <span className="text-[11px] text-ink-soft block">Late Arrival</span>
-                <span className="text-xl font-serif font-bold text-amber-600 dark:text-amber-400 mt-1 block">
+                <span className="text-xl font-sans font-bold text-amber-600 dark:text-amber-400 mt-1 block">
                   {attendance.late}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
                 <span className="text-[11px] text-ink-soft block">Absent</span>
-                <span className="text-xl font-serif font-bold text-red-600 dark:text-red-400 mt-1 block">
+                <span className="text-xl font-sans font-bold text-red-600 dark:text-red-400 mt-1 block">
                   {attendance.absent}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
                 <span className="text-[11px] text-ink-soft block">Overtime</span>
-                <span className="text-xl font-serif font-bold text-accent mt-1 block">
+                <span className="text-xl font-sans font-bold text-accent mt-1 block">
                   {attendance.overtime}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
                 <span className="text-[11px] text-ink-soft block">Manual Edits</span>
-                <span className="text-xl font-serif font-bold text-ink mt-1 block">
+                <span className="text-xl font-sans font-bold text-ink mt-1 block">
                   {attendance.manualEdits}
                 </span>
               </div>
@@ -153,7 +153,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <div>
-                <h3 className="font-serif text-base font-semibold text-ink">
+                <h3 className="font-sans text-base font-semibold text-ink">
                   Employment Contracts
                 </h3>
                 <p className="text-xs text-ink-soft mt-0.5">
@@ -172,19 +172,19 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
             <div className="grid grid-cols-3 gap-3 mb-4">
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
                 <span className="text-[11px] text-ink-soft block">Active</span>
-                <span className="text-lg font-serif font-bold text-accent mt-0.5 block">
+                <span className="text-lg font-sans font-bold text-accent mt-0.5 block">
                   {dashboard?.contracts?.active ?? 0}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
                 <span className="text-[11px] text-ink-soft block">Draft</span>
-                <span className="text-lg font-serif font-bold text-ink mt-0.5 block">
+                <span className="text-lg font-sans font-bold text-ink mt-0.5 block">
                   {dashboard?.contracts?.draft ?? 0}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
                 <span className="text-[11px] text-ink-soft block">Expired</span>
-                <span className="text-lg font-serif font-bold text-amber-600 dark:text-amber-400 mt-0.5 block">
+                <span className="text-lg font-sans font-bold text-amber-600 dark:text-amber-400 mt-0.5 block">
                   {dashboard?.contracts?.expired ?? 0}
                 </span>
               </div>
@@ -238,7 +238,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <div>
-                <h3 className="font-serif text-base font-semibold text-ink">
+                <h3 className="font-sans text-base font-semibold text-ink">
                   Working Schedules
                 </h3>
                 <p className="text-xs text-ink-soft mt-0.5">
@@ -257,13 +257,13 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
                 <span className="text-[11px] text-ink-soft block">Active Shift Models</span>
-                <span className="text-lg font-serif font-bold text-accent mt-0.5 block">
+                <span className="text-lg font-sans font-bold text-accent mt-0.5 block">
                   {dashboard?.schedules?.active ?? 0}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
                 <span className="text-[11px] text-ink-soft block">Avg Weekly Commitment</span>
-                <span className="text-lg font-serif font-bold text-ink mt-0.5 block">
+                <span className="text-lg font-sans font-bold text-ink mt-0.5 block">
                   {dashboard?.schedules?.avgWeeklyHours ?? 40} hrs
                 </span>
               </div>

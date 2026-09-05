@@ -98,7 +98,7 @@ export const ContractTable: React.FC<ContractTableProps> = ({
                         className="w-8 h-8 rounded-full object-cover border border-line"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-accent-soft border border-accent/20 text-accent font-serif font-bold text-xs flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-accent-soft border border-accent/20 text-accent font-sans font-bold text-xs flex items-center justify-center">
                         {(contract.employee_name || 'E').slice(0, 2).toUpperCase()}
                       </div>
                     )}

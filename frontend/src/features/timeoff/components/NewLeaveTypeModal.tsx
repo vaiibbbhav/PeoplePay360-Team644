@@ -73,7 +73,7 @@ export const NewLeaveTypeModal: React.FC<NewLeaveTypeModalProps> = ({ isOpen, on
               <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
                 HR Policy Definition
               </span>
-              <h2 className="text-xl font-serif font-medium text-ink mt-0.5">
+              <h2 className="text-xl font-sans font-medium text-ink mt-0.5">
                 New Leave Policy
               </h2>
             </div>

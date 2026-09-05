@@ -47,7 +47,7 @@ export const EmployeeQuickModal: React.FC<EmployeeQuickModalProps> = ({
             <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-accent block">
               {employee.department_name || 'General Staff'}
             </span>
-            <h3 className="text-xl font-serif text-ink font-medium tracking-tight mt-0.5 truncate">
+            <h3 className="text-xl font-sans text-ink font-medium tracking-tight mt-0.5 truncate">
               {employee.first_name} {employee.last_name}
             </h3>
             <p className="text-xs text-ink-soft truncate mt-0.5">

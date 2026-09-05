@@ -44,7 +44,7 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
         <div className="flex flex-col pt-4 px-6 sm:flex-row sm:items-end justify-between gap-4 -mt-10 mb-4">
           <div className="flex items-end gap-4">
             {/* Avatar */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-bg bg-accent-soft text-accent font-serif text-2xl font-bold flex items-center justify-center relative shadow-xs overflow-hidden shrink-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-bg bg-accent-soft text-accent font-sans text-2xl font-bold flex items-center justify-center relative shadow-xs overflow-hidden shrink-0">
               {employee.avatar_url ? (
                 <img
                   src={employee.avatar_url}
@@ -58,7 +58,7 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
 
             <div className="pt-2">
               <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink leading-tight">
+                <h1 className="font-sans text-2xl sm:text-3xl font-bold text-ink leading-tight">
                   {fullName}
                 </h1>
               </div>

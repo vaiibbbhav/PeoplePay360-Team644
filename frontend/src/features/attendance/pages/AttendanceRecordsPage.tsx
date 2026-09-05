@@ -108,7 +108,7 @@ export const AttendanceRecordsPage: React.FC = () => {
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
               <span className="text-[11px] text-ink-soft">Live Operations Ledger</span>
             </div>
-            <h1 className="text-2xl lg:text-3xl font-serif font-medium text-ink">
+            <h1 className="text-2xl lg:text-3xl font-sans font-medium text-ink">
               Attendance Records
             </h1>
             <p className="text-xs text-ink-soft mt-1">

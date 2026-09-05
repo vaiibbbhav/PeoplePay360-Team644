@@ -51,7 +51,7 @@ export const PayPackageTab: React.FC<PayPackageTabProps> = ({ employeeId, showVa
   return (
     <div className="space-y-6 pt-2">
       <div className="flex justify-between items-center">
-        <h2 className="font-serif text-lg sm:text-xl font-semibold text-ink">Pay Package</h2>
+        <h2 className="font-sans text-lg sm:text-xl font-semibold text-ink">Pay Package</h2>
         <span className="text-xs text-ink-soft font-mono">FY 2026-27</span>
       </div>
 
@@ -127,7 +127,7 @@ export const PayPackageTab: React.FC<PayPackageTabProps> = ({ employeeId, showVa
           <div className="bg-bg border border-line rounded-xl max-w-xl w-full p-6 shadow-xl animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between border-b border-line pb-4 mb-4">
               <div>
-                <h3 className="font-serif text-lg font-bold text-ink">
+                <h3 className="font-sans text-lg font-bold text-ink">
                   CTC Compensation Structure Breakdown
                 </h3>
                 <p className="text-xs text-ink-soft mt-0.5">

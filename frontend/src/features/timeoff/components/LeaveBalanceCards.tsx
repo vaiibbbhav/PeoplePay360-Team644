@@ -68,7 +68,7 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
             <Calendar className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-serif font-medium text-ink">No Active Leave Allocations</h4>
+            <h4 className="text-sm font-sans font-medium text-ink">No Active Leave Allocations</h4>
             <p className="text-xs text-ink-soft">
               Contact your HR administrator to set up your annual vacation, sick, and casual leave quotas.
             </p>
@@ -125,7 +125,7 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
                     <span className="text-[10px] font-mono uppercase tracking-widest text-ink-soft">
                       {item.typeCode}
                     </span>
-                    <h4 className="text-base font-serif font-medium text-ink leading-tight">
+                    <h4 className="text-base font-sans font-medium text-ink leading-tight">
                       {item.typeName}
                     </h4>
                   </div>
@@ -143,7 +143,7 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
 
                 {/* Remaining Amount */}
                 <div className="mt-3 flex items-baseline gap-1.5">
-                  <span className="text-2xl lg:text-3xl font-serif font-bold text-ink tracking-tight">
+                  <span className="text-2xl lg:text-3xl font-sans font-bold text-ink tracking-tight">
                     {item.requiresAllocation ? item.remaining.toFixed(1) : '∞'}
                   </span>
                   <span className="text-xs text-ink-soft font-medium">

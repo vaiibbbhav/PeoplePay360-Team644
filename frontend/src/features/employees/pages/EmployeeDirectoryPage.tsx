@@ -50,7 +50,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
       <main className="max-w-7xl mx-auto w-full flex-1 px-6 sm:px-8 py-8">
         {/* Page Title & Intro */}
         <div className="mb-6">
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink">Employee Directory</h1>
+          <h1 className="font-sans text-2xl sm:text-3xl font-bold text-ink">Employee Directory</h1>
         </div>
 
         {/* Toolbar & Filter Controls */}
@@ -114,7 +114,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
           </div>
         ) : filteredEmployees.length === 0 ? (
           <div className="bg-bg border border-line rounded-2xl p-16 text-center">
-            <h3 className="font-serif text-lg font-semibold text-ink mb-1">No employees found</h3>
+            <h3 className="font-sans text-lg font-semibold text-ink mb-1">No employees found</h3>
             <p className="text-xs text-ink-soft mb-4">
               {search || departmentFilter || statusFilter
                 ? 'Try adjusting your search criteria or clear your active filters.'
@@ -144,7 +144,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
                   <div>
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-accent-soft text-accent font-serif font-bold text-base flex items-center justify-center shrink-0 overflow-hidden">
+                        <div className="w-12 h-12 rounded-xl bg-accent-soft text-accent font-sans font-bold text-base flex items-center justify-center shrink-0 overflow-hidden">
                           {emp.avatar_url ? (
                             <img
                               src={emp.avatar_url}
@@ -156,7 +156,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
                           )}
                         </div>
                         <div>
-                          <h3 className="font-serif text-base font-bold text-ink leading-tight">
+                          <h3 className="font-sans text-base font-bold text-ink leading-tight">
                             {fullName}
                           </h3>
                           <span className="text-xs text-ink-soft block mt-0.5">

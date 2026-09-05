@@ -67,7 +67,7 @@ export const PolicyCard: React.FC<PolicyCardProps> = ({
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-serif font-medium text-ink tracking-tight mb-2 leading-snug">
+        <h3 className="text-lg font-sans font-medium text-ink tracking-tight mb-2 leading-snug">
           {policy.title}
         </h3>
 

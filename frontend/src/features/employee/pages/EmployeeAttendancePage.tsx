@@ -123,7 +123,7 @@ export const EmployeeAttendancePage: React.FC = () => {
         {/* Page Title */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+            <h1 className="font-sans text-3xl sm:text-4xl font-bold tracking-tight text-ink">
               Time & Attendance
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1">
