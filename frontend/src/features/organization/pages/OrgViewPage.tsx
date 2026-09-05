@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { EmployeeLayout } from '@/features/employee/components/EmployeeLayout';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { useEmployeesList, type EmployeeListItem } from '@/features/employees/queries/useEmployees';
 import { OrgStatsBanner } from '../components/OrgStatsBanner';
 import { OrgFlowChart } from '../components/OrgFlowChart';
@@ -69,7 +69,7 @@ export const OrgViewPage: React.FC = () => {
   }, [employees]);
 
   return (
-    <EmployeeLayout title="Org View & Hierarchy">
+    <AppLayout title="Org View & Hierarchy">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 font-sans">
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -226,6 +226,6 @@ export const OrgViewPage: React.FC = () => {
           </>
         )}
       </div>
-    </EmployeeLayout>
+    </AppLayout>
   );
 };

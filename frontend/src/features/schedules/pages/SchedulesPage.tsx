@@ -11,12 +11,15 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { StatGrid } from '@/components/ui/StatCard';
 import { ScheduleCard } from '../components/ScheduleCard';
 import { ScheduleFormDrawer } from '../components/ScheduleFormDrawer';
+import { useCurrentUser } from '@/features/auth/queries/useAuth';
 
 export const SchedulesPage: React.FC = () => {
   const { data: schedules = [], isLoading, error } = useSchedulesList();
   const createScheduleMutation = useCreateSchedule();
   const updateScheduleMutation = useUpdateSchedule();
   const deleteScheduleMutation = useDeleteSchedule();
+  const { data: user } = useCurrentUser();
+  const canWrite = user?.role !== 'Employee';
 
   const [search, setSearch] = useState('');
   const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
@@ -80,13 +83,15 @@ export const SchedulesPage: React.FC = () => {
     <AppLayout
       title="Work Schedules"
       actions={
-        <button
-          type="button"
-          onClick={handleOpenCreate}
-          className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
-        >
-          <span>+</span> New Schedule
-        </button>
+        canWrite ? (
+          <button
+            type="button"
+            onClick={handleOpenCreate}
+            className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
+          >
+            <span>+</span> New Schedule
+          </button>
+        ) : undefined
       }
     >
       <main className="max-w-6xl mx-auto w-full flex-1 md:px-6 py-8 space-y-8">

@@ -17,7 +17,14 @@ import { DocumentsPage } from './features/documents/pages/DocumentsPage';
 import { OrgViewPage } from './features/organization/pages/OrgViewPage';
 import { ContractsPage } from './features/contracts/pages/ContractsPage';
 import { SchedulesPage } from './features/schedules/pages/SchedulesPage';
+import { TimeOffPage } from './features/timeoff/pages/TimeOffPage';
+import { PayrunsPage } from './features/payroll/pages/PayrunsPage';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
+
+type UserRole = 'Employee' | 'HR Manager' | 'HR Payroll User' | 'HR Payroll Manager' | 'Admin';
+
+const canAccessPayroll = (role: UserRole) =>
+  role === 'Admin' || role === 'HR Payroll Manager' || role === 'HR Payroll User';
 
 export function App() {
   return (
@@ -29,7 +36,7 @@ export function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
 
-          {/* Protected routes */}
+          {/* Protected routes — all authenticated users */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/dashboard/:section" element={<DashboardPage />} />
@@ -38,6 +45,8 @@ export function App() {
             <Route path="/attendance" element={<AttendanceRecordsPage />} />
             <Route path="/employee/attendance" element={<EmployeeAttendancePage />} />
             <Route path="/attendance/terminal" element={<AttendanceTerminalPage />} />
+            <Route path="/time-off" element={<TimeOffPage />} />
+            <Route path="/leaves" element={<TimeOffPage />} />
             <Route path="/compensation" element={<CompensationPage />} />
             <Route path="/payslips" element={<CompensationPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
@@ -54,6 +63,13 @@ export function App() {
             <Route path="/employees" element={<EmployeeDirectoryPage />} />
             <Route path="/employees/:id" element={<EmployeeProfilePage />} />
             <Route path="/profile" element={<EmployeeProfilePage />} />
+            {/* Analytics alias: redirect to dashboard */}
+            <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
+          </Route>
+
+          {/* Payroll routes — payroll roles + admin only */}
+          <Route element={<ProtectedRoute allow={canAccessPayroll} />}>
+            <Route path="/payruns" element={<PayrunsPage />} />
           </Route>
 
           {/* Admin only route */}
@@ -61,7 +77,8 @@ export function App() {
             <Route path="/users" element={<UserManagementPage />} />
           </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Fallback: send unauthenticated users to login, authenticated to dashboard */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

@@ -12,11 +12,14 @@ import { StatGrid } from '@/components/ui/StatCard';
 import { ContractTable } from '../components/ContractTable';
 import { ContractDetailModal } from '../components/ContractDetailModal';
 import { ContractFormDrawer } from '../components/ContractFormDrawer';
+import { useCurrentUser } from '@/features/auth/queries/useAuth';
 
 export const ContractsPage: React.FC = () => {
   const { data: contracts = [], isLoading, error } = useContractsList();
   const createContractMutation = useCreateContract();
   const updateContractMutation = useUpdateContract();
+  const { data: user } = useCurrentUser();
+  const canWrite = user?.role !== 'Employee';
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ContractStatus | 'all'>('all');
@@ -76,13 +79,15 @@ export const ContractsPage: React.FC = () => {
     <AppLayout
       title="Contracts"
       actions={
-        <button
-          type="button"
-          onClick={handleOpenCreate}
-          className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
-        >
-          <span>+</span> New Contract
-        </button>
+        canWrite ? (
+          <button
+            type="button"
+            onClick={handleOpenCreate}
+            className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
+          >
+            <span>+</span> New Contract
+          </button>
+        ) : undefined
       }
     >
       <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8 space-y-8">
