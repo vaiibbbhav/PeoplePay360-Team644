@@ -16,8 +16,9 @@ public class FingerprintCryptoServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Test with a 256-bit hex key
-        String testKey = "e4b2d189a7f3c65089e1b4a37f5d92c81e6a0b4d7c8f2a1e3b5c7d9e0f2a4b6c";
+        byte[] randomBytes = new byte[32];
+        new java.security.SecureRandom().nextBytes(randomBytes);
+        String testKey = Base64.getEncoder().encodeToString(randomBytes);
         cryptoService = new FingerprintCryptoService(testKey);
     }
 
@@ -69,5 +70,15 @@ public class FingerprintCryptoServiceTest {
         assertThrows(RuntimeException.class, () -> {
             cryptoService.decrypt(tamperedBase64, enc.ivBase64(), enc.keyVersion());
         }, "GCM authentication tag must reject tampered ciphertext");
+    }
+
+    @Test
+    void testMissingKeyThrowsIllegalStateException() {
+        assertThrows(IllegalStateException.class, () -> {
+            new FingerprintCryptoService(null);
+        });
+        assertThrows(IllegalStateException.class, () -> {
+            new FingerprintCryptoService("   ");
+        });
     }
 }

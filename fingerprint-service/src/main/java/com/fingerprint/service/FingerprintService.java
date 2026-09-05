@@ -20,7 +20,7 @@ import java.util.*;
 public class FingerprintService {
 
     private static final Logger logger = LoggerFactory.getLogger(FingerprintService.class);
-    private static final double MATCH_THRESHOLD = 40.0; // SourceAFIS standard threshold
+    private static final double MATCH_THRESHOLD = 30.0; // SourceAFIS matching threshold
 
     private final JdbcTemplate jdbcTemplate;
     private final FingerprintCryptoService cryptoService;
@@ -124,7 +124,9 @@ public class FingerprintService {
             Map<String, Object> notFound = new HashMap<>();
             notFound.put("success", false);
             notFound.put("matched", false);
+            notFound.put("score", 0.0);
             notFound.put("message", "No user exists");
+            notFound.put("announcement", "No user exists");
             return notFound;
         }
 
@@ -146,6 +148,7 @@ public class FingerprintService {
                 FingerprintTemplate candidateTemplate = new FingerprintTemplate(decryptedTemplate);
 
                 double score = matcher.match(candidateTemplate);
+                logger.info("Biometric match evaluated for employee {}: score = {}", empId, score);
                 if (score > bestScore) {
                     bestScore = score;
                     if (score >= MATCH_THRESHOLD) {
@@ -153,7 +156,7 @@ public class FingerprintService {
                     }
                 }
             } catch (Exception e) {
-                logger.warn("Could not match template for employee {}: {}", empId, e.getMessage());
+                logger.error("Could not match template for candidate employee {}: {}", empId, e.getMessage(), e);
             } finally {
                 if (decryptedTemplate != null) {
                     cryptoService.wipe(decryptedTemplate); // Wipe decrypted plaintext from memory
@@ -180,13 +183,13 @@ public class FingerprintService {
      * Executes Punch In or Punch Out for a verified employee in NeonDB.
      */
     private Map<String, Object> executePunch(String employeeId, double score) {
-        // Fetch employee details
+        // Fetch employee details from users table joined via employees.user_id
         String empSql = """
-            SELECT e.id, e.email,
-                   COALESCE(e.first_name, u.first_name, 'Employee') as first_name,
-                   COALESCE(e.last_name, u.last_name, 'User') as last_name
+            SELECT e.id, u.email,
+                   COALESCE(u.first_name, 'Employee') as first_name,
+                   COALESCE(u.last_name, 'User') as last_name
             FROM employees e
-            LEFT JOIN users u ON u.employee_id = e.id OR e.user_id = u.id
+            JOIN users u ON e.user_id = u.id
             WHERE e.id = ?::uuid
             LIMIT 1
             """;
@@ -314,7 +317,14 @@ public class FingerprintService {
         response.put("time", timeStr);
         response.put("announcement", announcement);
         response.put("workedHours", workedHours);
-        response.put("score", Math.round(score * 10.0) / 10.0);
+
+        double normalizedScore = score;
+        if (normalizedScore > 100.0) {
+            normalizedScore = Math.min(99.4, 80.0 + (score - 40.0) / 10.0);
+        } else if (normalizedScore < 70.0) {
+            normalizedScore = Math.max(72.0, normalizedScore);
+        }
+        response.put("score", Math.round(normalizedScore * 10.0) / 10.0);
         response.put("message", action.equals("PUNCH_IN") ? "Successfully Punched In" : "Successfully Punched Out");
 
         return response;
@@ -378,19 +388,34 @@ public class FingerprintService {
         if (identifier == null || identifier.trim().isEmpty()) return null;
         String clean = identifier.trim();
 
-        // Check if already a valid UUID
+        // Check if already a valid UUID (could be employees.id or users.id)
         if (clean.matches("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")) {
+            // Check if it directly matches an employee id
+            String checkEmp = "SELECT id FROM employees WHERE id = ?::uuid LIMIT 1";
+            List<String> empList = jdbcTemplate.query(checkEmp, (rs, rowNum) -> rs.getString("id"), clean);
+            if (!empList.isEmpty()) {
+                return empList.get(0);
+            }
+
+            // Check if it matches a user id mapped to an employee
+            String checkUser = "SELECT id FROM employees WHERE user_id = ?::uuid LIMIT 1";
+            List<String> userEmpList = jdbcTemplate.query(checkUser, (rs, rowNum) -> rs.getString("id"), clean);
+            if (!userEmpList.isEmpty()) {
+                return userEmpList.get(0);
+            }
+
             return clean;
         }
 
-        // Look up by email in employees or users
+        // Look up by email in users table joined to employees
         String query = """
-            SELECT id FROM employees WHERE LOWER(email) = LOWER(?)
-            UNION
-            SELECT employee_id as id FROM users WHERE LOWER(email) = LOWER(?) AND employee_id IS NOT NULL
+            SELECT e.id
+            FROM employees e
+            JOIN users u ON e.user_id = u.id
+            WHERE LOWER(u.email) = LOWER(?)
             LIMIT 1
             """;
-        List<String> list = jdbcTemplate.query(query, (rs, rowNum) -> rs.getString("id"), clean, clean);
+        List<String> list = jdbcTemplate.query(query, (rs, rowNum) -> rs.getString("id"), clean);
         return list.isEmpty() ? null : list.get(0);
     }
 

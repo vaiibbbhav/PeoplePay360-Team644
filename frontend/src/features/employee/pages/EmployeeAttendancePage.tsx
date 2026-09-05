@@ -114,7 +114,7 @@ export const EmployeeAttendancePage: React.FC = () => {
 
           <div className="flex items-center gap-2.5">
             <Link
-              to="/attendance"
+              to="/attendance/terminal"
               className="px-3.5 py-2 rounded-lg text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline inline-flex items-center gap-2 shadow-xs"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

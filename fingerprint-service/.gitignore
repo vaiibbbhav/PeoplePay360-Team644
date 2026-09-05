@@ -5,6 +5,7 @@
 .env
 *.env
 .env.*
+!.env.example
 
 # Biometric data & storage files
 data/

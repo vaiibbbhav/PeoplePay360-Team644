@@ -28,9 +28,10 @@ export function App() {
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/attendance" element={<EmployeeAttendancePage />} />
+          <Route path="/attendance/terminal" element={<AttendanceTerminalPage />} />
+          <Route path="/terminal" element={<AttendanceTerminalPage />} />
           <Route path="/employee/dashboard" element={<Navigate to="/dashboard" replace />} />
           <Route path="/employee/attendance" element={<Navigate to="/attendance" replace />} />
-          <Route path="/attendance" element={<AttendanceTerminalPage />} />
           <Route path="/users" element={<UserManagementPage />} />
           <Route path="/compensation" element={<CompensationPage />} />
           <Route path="/payslips" element={<CompensationPage />} />

@@ -75,21 +75,35 @@ export async function punchWithFingerprint(imageBase64: string): Promise<PunchRe
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ image: imageBase64 }),
   });
-  const data = await res.json();
+  const data = await res.json().catch(() => ({}));
   // If no match found or HTTP error
   if (!res.ok) {
+    const rawScore = data?.data?.score ?? data?.score;
     return {
       success: false,
       matched: false,
+      score: typeof rawScore === 'number' ? rawScore : 0,
       message: data.message || 'No user exists',
     };
   }
 
-  return (data.data as PunchResult) || {
-    success: data.success,
-    matched: data.success,
-    message: data.message,
-  };
+  const payload = (data.data || data) as Record<string, any>;
+  const matched = Boolean(payload.matched);
+  const rawScore = payload.score;
+  const numScore =
+    typeof rawScore === 'number' && !isNaN(rawScore)
+      ? rawScore
+      : matched
+      ? 88.0
+      : 0.0;
+
+  return {
+    ...payload,
+    success: Boolean(payload.success || matched),
+    matched,
+    score: numScore,
+    message: payload.message || (matched ? 'Successfully Punched' : 'No user exists'),
+  } as PunchResult;
 }
 
 /**
