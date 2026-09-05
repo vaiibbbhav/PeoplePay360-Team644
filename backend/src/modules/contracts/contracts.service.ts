@@ -13,7 +13,11 @@ export async function getContractById(id: string) {
   return contract;
 }
 
-export async function getActiveContractForPeriod(employeeId: string, periodStart: string, periodEnd: string) {
+export async function getActiveContractForPeriod(
+  employeeId: string,
+  periodStart: string,
+  periodEnd: string,
+) {
   return await contractsRepo.findActiveContractForPeriod(employeeId, periodStart, periodEnd);
 }
 
@@ -22,10 +26,12 @@ export async function createContract(data: Record<string, unknown>) {
     const overlapping = await contractsRepo.findOverlappingActiveContracts(
       data.employeeId as string,
       data.startDate as string,
-      (data.endDate as string) || null
+      (data.endDate as string) || null,
     );
     if (overlapping.length > 0) {
-      throw new ConflictError('An active contract already exists for this employee in the specified period');
+      throw new ConflictError(
+        'An active contract already exists for this employee in the specified period',
+      );
     }
   }
 
@@ -48,10 +54,12 @@ export async function updateContract(id: string, data: Record<string, unknown>) 
       existing.employee_id,
       newStart,
       newEnd,
-      id
+      id,
     );
     if (overlapping.length > 0) {
-      throw new ConflictError('An active contract already exists for this employee in the specified period');
+      throw new ConflictError(
+        'An active contract already exists for this employee in the specified period',
+      );
     }
   }
 

@@ -10,7 +10,6 @@ import {
   integer,
   text,
   jsonb,
-  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -40,7 +39,9 @@ export const workingSchedules = pgTable('working_schedules', {
 
 export const workingScheduleLines = pgTable('working_schedule_lines', {
   id: uuid('id').defaultRandom().primaryKey(),
-  scheduleId: uuid('schedule_id').notNull().references(() => workingSchedules.id, { onDelete: 'cascade' }),
+  scheduleId: uuid('schedule_id')
+    .notNull()
+    .references(() => workingSchedules.id, { onDelete: 'cascade' }),
   dayOfWeek: varchar('day_of_week', { length: 15 }).notNull(),
   startTime: time('start_time').notNull().default('09:00:00'),
   endTime: time('end_time').notNull().default('17:00:00'),
@@ -55,11 +56,17 @@ export const employees = pgTable('employees', {
   email: varchar('email', { length: 150 }).notNull().unique(),
   phone: varchar('phone', { length: 30 }),
   departmentId: uuid('department_id').references(() => departments.id, { onDelete: 'set null' }),
-  jobPositionId: uuid('job_position_id').references(() => jobPositions.id, { onDelete: 'set null' }),
+  jobPositionId: uuid('job_position_id').references(() => jobPositions.id, {
+    onDelete: 'set null',
+  }),
   managerId: uuid('manager_id'),
-  workingScheduleId: uuid('working_schedule_id').references(() => workingSchedules.id, { onDelete: 'set null' }),
+  workingScheduleId: uuid('working_schedule_id').references(() => workingSchedules.id, {
+    onDelete: 'set null',
+  }),
   employmentStatus: varchar('employment_status', { length: 30 }).notNull().default('active'),
-  dateOfJoining: date('date_of_joining').notNull().default(sql`CURRENT_DATE`),
+  dateOfJoining: date('date_of_joining')
+    .notNull()
+    .default(sql`CURRENT_DATE`),
   dateOfBirth: date('date_of_birth'),
   gender: varchar('gender', { length: 20 }),
   identificationNumber: varchar('identification_number', { length: 50 }),
@@ -95,7 +102,9 @@ export const salaryStructures = pgTable('salary_structures', {
 
 export const salaryRules = pgTable('salary_rules', {
   id: uuid('id').defaultRandom().primaryKey(),
-  structureId: uuid('structure_id').notNull().references(() => salaryStructures.id, { onDelete: 'cascade' }),
+  structureId: uuid('structure_id')
+    .notNull()
+    .references(() => salaryStructures.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 100 }).notNull(),
   code: varchar('code', { length: 50 }).notNull(),
   category: varchar('category', { length: 30 }).notNull(),
@@ -112,14 +121,22 @@ export const salaryRules = pgTable('salary_rules', {
 // 6. Contracts
 export const contracts = pgTable('contracts', {
   id: uuid('id').defaultRandom().primaryKey(),
-  employeeId: uuid('employee_id').notNull().references(() => employees.id, { onDelete: 'cascade' }),
+  employeeId: uuid('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 150 }).notNull(),
   wage: numeric('wage', { precision: 12, scale: 2 }).notNull(),
   wageType: varchar('wage_type', { length: 20 }).notNull().default('monthly'),
-  salaryStructureId: uuid('salary_structure_id').references(() => salaryStructures.id, { onDelete: 'restrict' }),
-  workingScheduleId: uuid('working_schedule_id').references(() => workingSchedules.id, { onDelete: 'set null' }),
+  salaryStructureId: uuid('salary_structure_id').references(() => salaryStructures.id, {
+    onDelete: 'restrict',
+  }),
+  workingScheduleId: uuid('working_schedule_id').references(() => workingSchedules.id, {
+    onDelete: 'set null',
+  }),
   departmentId: uuid('department_id').references(() => departments.id, { onDelete: 'set null' }),
-  jobPositionId: uuid('job_position_id').references(() => jobPositions.id, { onDelete: 'set null' }),
+  jobPositionId: uuid('job_position_id').references(() => jobPositions.id, {
+    onDelete: 'set null',
+  }),
   startDate: date('start_date').notNull(),
   endDate: date('end_date'),
   status: varchar('status', { length: 30 }).notNull().default('draft'),
@@ -131,7 +148,9 @@ export const contracts = pgTable('contracts', {
 // 7. Attendance
 export const attendance = pgTable('attendance', {
   id: uuid('id').defaultRandom().primaryKey(),
-  employeeId: uuid('employee_id').notNull().references(() => employees.id, { onDelete: 'cascade' }),
+  employeeId: uuid('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
   date: date('date').notNull(),
   checkIn: timestamp('check_in', { withTimezone: true }),
   checkOut: timestamp('check_out', { withTimezone: true }),
@@ -158,8 +177,12 @@ export const timeOffTypes = pgTable('time_off_types', {
 
 export const timeOffAllocations = pgTable('time_off_allocations', {
   id: uuid('id').defaultRandom().primaryKey(),
-  employeeId: uuid('employee_id').notNull().references(() => employees.id, { onDelete: 'cascade' }),
-  timeOffTypeId: uuid('time_off_type_id').notNull().references(() => timeOffTypes.id, { onDelete: 'cascade' }),
+  employeeId: uuid('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+  timeOffTypeId: uuid('time_off_type_id')
+    .notNull()
+    .references(() => timeOffTypes.id, { onDelete: 'cascade' }),
   allocatedAmount: numeric('allocated_amount', { precision: 6, scale: 2 }).notNull(),
   takenAmount: numeric('taken_amount', { precision: 6, scale: 2 }).notNull().default('0.0'),
   remainingAmount: numeric('remaining_amount', { precision: 6, scale: 2 }).notNull(),
@@ -173,8 +196,12 @@ export const timeOffAllocations = pgTable('time_off_allocations', {
 
 export const timeOffRequests = pgTable('time_off_requests', {
   id: uuid('id').defaultRandom().primaryKey(),
-  employeeId: uuid('employee_id').notNull().references(() => employees.id, { onDelete: 'cascade' }),
-  timeOffTypeId: uuid('time_off_type_id').notNull().references(() => timeOffTypes.id, { onDelete: 'cascade' }),
+  employeeId: uuid('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+  timeOffTypeId: uuid('time_off_type_id')
+    .notNull()
+    .references(() => timeOffTypes.id, { onDelete: 'cascade' }),
   startDate: date('start_date').notNull(),
   endDate: date('end_date').notNull(),
   duration: numeric('duration', { precision: 6, scale: 2 }).notNull(),
@@ -191,7 +218,9 @@ export const timeOffRequests = pgTable('time_off_requests', {
 export const payruns = pgTable('payruns', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: varchar('name', { length: 150 }).notNull(),
-  salaryStructureId: uuid('salary_structure_id').notNull().references(() => salaryStructures.id, { onDelete: 'restrict' }),
+  salaryStructureId: uuid('salary_structure_id')
+    .notNull()
+    .references(() => salaryStructures.id, { onDelete: 'restrict' }),
   periodStart: date('period_start').notNull(),
   periodEnd: date('period_end').notNull(),
   status: varchar('status', { length: 30 }).notNull().default('draft'),
@@ -208,16 +237,26 @@ export const payruns = pgTable('payruns', {
 
 export const payslips = pgTable('payslips', {
   id: uuid('id').defaultRandom().primaryKey(),
-  payrunId: uuid('payrun_id').notNull().references(() => payruns.id, { onDelete: 'cascade' }),
-  employeeId: uuid('employee_id').notNull().references(() => employees.id, { onDelete: 'cascade' }),
-  contractId: uuid('contract_id').notNull().references(() => contracts.id, { onDelete: 'restrict' }),
-  structureId: uuid('structure_id').notNull().references(() => salaryStructures.id, { onDelete: 'restrict' }),
+  payrunId: uuid('payrun_id')
+    .notNull()
+    .references(() => payruns.id, { onDelete: 'cascade' }),
+  employeeId: uuid('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+  contractId: uuid('contract_id')
+    .notNull()
+    .references(() => contracts.id, { onDelete: 'restrict' }),
+  structureId: uuid('structure_id')
+    .notNull()
+    .references(() => salaryStructures.id, { onDelete: 'restrict' }),
   periodStart: date('period_start').notNull(),
   periodEnd: date('period_end').notNull(),
   workedDays: numeric('worked_days', { precision: 5, scale: 2 }).notNull().default('22.0'),
   basicSalary: numeric('basic_salary', { precision: 12, scale: 2 }).notNull().default('0.0'),
   grossSalary: numeric('gross_salary', { precision: 12, scale: 2 }).notNull().default('0.0'),
-  totalDeductions: numeric('total_deductions', { precision: 12, scale: 2 }).notNull().default('0.0'),
+  totalDeductions: numeric('total_deductions', { precision: 12, scale: 2 })
+    .notNull()
+    .default('0.0'),
   netSalary: numeric('net_salary', { precision: 12, scale: 2 }).notNull().default('0.0'),
   status: varchar('status', { length: 30 }).notNull().default('draft'),
   warnings: jsonb('warnings').default(sql`'[]'::jsonb`),
@@ -227,7 +266,9 @@ export const payslips = pgTable('payslips', {
 
 export const payslipLines = pgTable('payslip_lines', {
   id: uuid('id').defaultRandom().primaryKey(),
-  payslipId: uuid('payslip_id').notNull().references(() => payslips.id, { onDelete: 'cascade' }),
+  payslipId: uuid('payslip_id')
+    .notNull()
+    .references(() => payslips.id, { onDelete: 'cascade' }),
   ruleId: uuid('rule_id').references(() => salaryRules.id, { onDelete: 'set null' }),
   code: varchar('code', { length: 50 }).notNull(),
   name: varchar('name', { length: 100 }).notNull(),

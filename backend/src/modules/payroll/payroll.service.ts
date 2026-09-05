@@ -46,7 +46,11 @@ export async function getEligibleEmployeesForPeriod(periodStart: string, periodE
   const eligible = [];
 
   for (const emp of allEmployees) {
-    const contract = await contractsService.getActiveContractForPeriod(emp.id, periodStart, periodEnd);
+    const contract = await contractsService.getActiveContractForPeriod(
+      emp.id,
+      periodStart,
+      periodEnd,
+    );
     const hasActiveContract = Boolean(contract);
     const hasBankDetails = Boolean(emp.bank_account_number && emp.bank_name);
 
@@ -81,12 +85,20 @@ export async function createPayrunWizard(data: {
   let totalGross = 0;
   let totalDeductions = 0;
   let totalNet = 0;
-  const payrunWarnings: Array<{ employeeId: string; message: string; severity: 'warning' | 'blocking' }> = [];
+  const payrunWarnings: Array<{
+    employeeId: string;
+    message: string;
+    severity: 'warning' | 'blocking';
+  }> = [];
   const employeePayslips = [];
 
   for (const employeeId of data.employeeIds) {
     const employee = await hrService.getEmployeeById(employeeId);
-    const contract = await contractsService.getActiveContractForPeriod(employeeId, data.periodStart, data.periodEnd);
+    const contract = await contractsService.getActiveContractForPeriod(
+      employeeId,
+      data.periodStart,
+      data.periodEnd,
+    );
 
     const empWarnings: Array<{ message: string; severity: 'warning' | 'blocking' }> = [];
 
@@ -104,7 +116,11 @@ export async function createPayrunWizard(data: {
       });
     }
 
-    const existingPayslip = await payrollRepo.findExistingPayslip(employeeId, data.periodStart, data.periodEnd);
+    const existingPayslip = await payrollRepo.findExistingPayslip(
+      employeeId,
+      data.periodStart,
+      data.periodEnd,
+    );
     if (existingPayslip) {
       empWarnings.push({
         message: `Duplicate payslip detected for period ${data.periodStart} to ${data.periodEnd}`,
@@ -113,7 +129,11 @@ export async function createPayrunWizard(data: {
     }
 
     const wage = contract ? parseFloat(contract.wage) : 0;
-    const workedDays = await attendanceService.getWorkedDaysInPeriod(employeeId, data.periodStart, data.periodEnd);
+    const workedDays = await attendanceService.getWorkedDaysInPeriod(
+      employeeId,
+      data.periodStart,
+      data.periodEnd,
+    );
     const effectiveWorkedDays = workedDays > 0 ? workedDays : 22;
 
     const context = {
@@ -189,7 +209,7 @@ export async function createPayrunWizard(data: {
       net: roundToTwoDecimals(totalNet),
       count: data.employeeIds.length,
       warnings: payrunWarnings,
-    }
+    },
   );
 
   return await getPayrunById(payrun.id);
@@ -201,9 +221,13 @@ export async function validatePayrun(id: string) {
     throw new ValidationError(`Cannot validate payrun with status '${payrun.status}'`);
   }
 
-  const blockingWarnings = (payrun.warnings as any[] || []).filter((w) => w.severity === 'blocking');
+  const blockingWarnings = ((payrun.warnings as any[]) || []).filter(
+    (w) => w.severity === 'blocking',
+  );
   if (blockingWarnings.length > 0) {
-    throw new ValidationError(`Cannot validate payrun: ${blockingWarnings.length} blocking warning(s) found`);
+    throw new ValidationError(
+      `Cannot validate payrun: ${blockingWarnings.length} blocking warning(s) found`,
+    );
   }
 
   return await payrollRepo.updatePayrunStatus(id, 'validated');

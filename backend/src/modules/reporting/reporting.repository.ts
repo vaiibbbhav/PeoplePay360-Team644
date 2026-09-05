@@ -1,6 +1,13 @@
 import { db } from '../../shared/db';
-import { payruns, timeOffRequests, attendance, employees, departments, contracts } from '../../db/schema';
-import { eq, and, sql, sum, count } from 'drizzle-orm';
+import {
+  payruns,
+  timeOffRequests,
+  attendance,
+  employees,
+  departments,
+  contracts,
+} from '../../db/schema';
+import { eq, and, sql, count } from 'drizzle-orm';
 
 export async function getPayrollKpis() {
   const [res] = await db
@@ -67,7 +74,10 @@ export async function getSalaryCostByDepartment() {
     })
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))
-    .leftJoin(contracts, and(eq(employees.id, contracts.employeeId), eq(contracts.status, 'active')))
+    .leftJoin(
+      contracts,
+      and(eq(employees.id, contracts.employeeId), eq(contracts.status, 'active')),
+    )
     .groupBy(departments.name);
 }
 

@@ -51,14 +51,16 @@ export async function createRequest(data: Record<string, unknown>) {
     const allocation = await timeoffRepo.findValidAllocation(
       data.employeeId as string,
       type.id,
-      data.startDate as string
+      data.startDate as string,
     );
     if (!allocation) {
       throw new ValidationError('No active approved allocation found for this period');
     }
     const remaining = parseFloat(allocation.remainingAmount);
     if (remaining < duration) {
-      throw new ValidationError(`Insufficient leave balance. Remaining: ${remaining}, Requested: ${duration}`);
+      throw new ValidationError(
+        `Insufficient leave balance. Remaining: ${remaining}, Requested: ${duration}`,
+      );
     }
   }
 
@@ -79,7 +81,7 @@ export async function approveRequest(id: string, approverId?: string) {
     const allocation = await timeoffRepo.findValidAllocation(
       request.employee_id,
       request.time_off_type_id,
-      request.start_date
+      request.start_date,
     );
     if (!allocation) {
       throw new ValidationError('No valid approved allocation available to deduct from');

@@ -14,7 +14,11 @@ export async function getAttendanceById(id: string) {
   return record;
 }
 
-export async function getWorkedDaysInPeriod(employeeId: string, startDate: string, endDate: string): Promise<number> {
+export async function getWorkedDaysInPeriod(
+  employeeId: string,
+  startDate: string,
+  endDate: string,
+): Promise<number> {
   return await attendanceRepo.countWorkedDaysForPeriod(employeeId, startDate, endDate);
 }
 

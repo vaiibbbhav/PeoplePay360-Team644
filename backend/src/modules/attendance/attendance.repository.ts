@@ -73,9 +73,11 @@ export async function upsertAttendance(data: Record<string, any>) {
       .set({
         checkIn: data.checkIn ? new Date(data.checkIn) : existing.checkIn,
         checkOut: data.checkOut ? new Date(data.checkOut) : existing.checkOut,
-        workedHours: data.workedHours !== undefined ? String(data.workedHours) : existing.workedHours,
+        workedHours:
+          data.workedHours !== undefined ? String(data.workedHours) : existing.workedHours,
         status: data.status || existing.status,
-        exceptionNote: data.exceptionNote !== undefined ? data.exceptionNote : existing.exceptionNote,
+        exceptionNote:
+          data.exceptionNote !== undefined ? data.exceptionNote : existing.exceptionNote,
         isManualEdit: data.isManualEdit ?? existing.isManualEdit,
         updatedAt: new Date(),
       })
@@ -100,7 +102,11 @@ export async function upsertAttendance(data: Record<string, any>) {
   return created;
 }
 
-export async function countWorkedDaysForPeriod(employeeId: string, startDate: string, endDate: string) {
+export async function countWorkedDaysForPeriod(
+  employeeId: string,
+  startDate: string,
+  endDate: string,
+) {
   const [res] = await db
     .select({ val: count() })
     .from(attendance)
@@ -109,8 +115,8 @@ export async function countWorkedDaysForPeriod(employeeId: string, startDate: st
         eq(attendance.employeeId, employeeId),
         gte(attendance.date, startDate),
         lte(attendance.date, endDate),
-        inArray(attendance.status, ['Present', 'Late', 'Overtime', 'Half-day'])
-      )
+        inArray(attendance.status, ['Present', 'Late', 'Overtime', 'Half-day']),
+      ),
     );
 
   return res?.val ?? 0;

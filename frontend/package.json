@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "format": "prettier --write --ignore-path ../.prettierignore .",
+    "format:check": "prettier --check --ignore-path ../.prettierignore .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -23,6 +25,7 @@
     "@vitejs/plugin-react": "^6.1.0",
     "babel-plugin-react-compiler": "^1.0.0",
     "oxlint": "^1.79.0",
+    "prettier": "^3.9.6",
     "typescript": "~6.0.2",
     "vite": "^8.2.2"
   }

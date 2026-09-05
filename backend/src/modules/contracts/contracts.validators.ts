@@ -11,7 +11,11 @@ export const createContractSchema = z.object({
   departmentId: z.string().uuid().optional().nullable(),
   jobPositionId: z.string().uuid().optional().nullable(),
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid start date format (YYYY-MM-DD)'),
-  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid end date format (YYYY-MM-DD)').optional().nullable(),
+  endDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid end date format (YYYY-MM-DD)')
+    .optional()
+    .nullable(),
   status: z.enum(['draft', 'active', 'expired', 'cancelled']).default('draft'),
   notes: z.string().optional().nullable(),
 });
