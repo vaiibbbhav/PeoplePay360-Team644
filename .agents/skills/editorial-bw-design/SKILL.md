@@ -37,7 +37,12 @@ description: Design system for PeoplePay360. Editorial monochrome with Playfair 
 - **NO drop shadows, NO gradient cards.**
 - Buttons: Primary uses `var(--accent)` with `var(--accent-ink)`. Ghost uses transparent background with `var(--line)` border.
 
-## 4. Implementation with Tailwind CSS
+## 4. Simplicity & Modular Component Design
+- Keep UI components simple, focused, and free of visual clutter.
+- Do NOT add unnecessary decorative elements, excessive colors, or busy backgrounds.
+- Modularize complex layouts into clear, single-purpose UI blocks (tables, forms, stats cards, filter bars).
+
+## 5. Implementation with Tailwind CSS
 - ALWAYS use Tailwind CSS utility classes (`className="..."`).
 - NEVER use inline styles (`style={{ ... }}`) or vanilla CSS classes unless strictly required for dynamic calculations.
 - Use utility tokens: `bg-bg`, `bg-bg-raised`, `text-ink`, `text-ink-soft`, `border-line`, `text-accent`, `bg-accent`, `bg-accent-soft`, `text-over-red`, `font-serif`, `font-sans`.

@@ -17,7 +17,21 @@ Never skip layers.
 - `<module>.repository.ts`: Drizzle queries using `db` from `@/shared/db`. No business logic.
 - `<module>.validators.ts`: Zod schemas.
 
-## 2. Mandatory Rules
+## 2. Simplicity, Straightforward Logic & Modularity Mandate
+
+- **Keep Logic Extremely Simple:** Do not create bloated helper wrappers, overly complex class hierarchies, or convoluted abstractions.
+- **Straightforward Linear Flow:** Each service function must read top-to-bottom in plain, logical steps:
+  1. Validate prerequisites (throw specific `ValidationError`, `NotFoundError`, etc.)
+  2. Execute core logic or calculations
+  3. Persist state via repository
+  4. Return straightforward typed data
+- **Structure & Modularity:**
+  - Keep modules strictly self-contained within `src/modules/<module-name>/`.
+  - Extract reusable calculation logic into dedicated, clean utility functions.
+  - Keep functions focused: one function per distinct business operation.
+  - Keep repository queries simple and direct without overly nested subqueries where simple joins or separate indexed lookups suffice.
+
+## 3. Mandatory Rules
 
 1. **Use `type` over `interface`:**
    ```typescript

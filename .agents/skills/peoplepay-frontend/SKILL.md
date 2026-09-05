@@ -14,7 +14,18 @@ features/<feature-name>/
 └── queries/             # Colocated API calls + React Query hooks + types
 ```
 
-## 2. Mandatory Rules
+## 2. Simplicity, Straightforward Logic & Modularity Mandate
+
+- **Keep UI & Logic Extremely Simple:** Write declarative, easy-to-follow React code. Avoid over-complicated custom hook cascades, unnecessary Context providers, or convoluted state reducers when simple React `useState` / React Query suffices.
+- **Structured & Modular Components:**
+  - Split large views (> 200 lines) into small, focused sub-components in `components/` (e.g., `UserTable.tsx`, `UserFormPanel.tsx`).
+  - Keep each component's responsibility strictly focused on its visual piece and immediate user interactions.
+- **Straightforward Data Flow:**
+  - Query hooks in `queries/` fetch or mutate data with direct, predictable response types.
+  - Components consume hooks directly, rendering Loading, Error, and Content states cleanly.
+  - Pass callbacks cleanly between parent layouts and child panels.
+
+## 3. Mandatory Rules
 
 1. **Colocated Queries & Types:**
    - Put request/response `type` declarations, private Axios fetch functions, and exported React Query hooks (`useQuery` / `useMutation`) in the same file inside `queries/`.
