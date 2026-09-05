@@ -1,93 +1,107 @@
-import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
+import { queryClient } from './queryClient';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+
+const PUBLIC_PAGES = [
+  '/',
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+];
+
+export const isAuthPage = (): boolean =>
+  PUBLIC_PAGES.some((path) => window.location.pathname === path || window.location.pathname.startsWith(`${path}/`));
 
 /**
- * Public API client for endpoints that do NOT require authentication
- * (e.g. login, register, public landing data)
+ * Public client for unauthenticated endpoints (login, register, public landing).
  */
 export const publicApi = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_URL,
   withCredentials: true,
   timeout: 30000,
 });
 
 
 /**
- * Refresh token request using cookie-based credentials
+ * Primary authenticated client for protected operations.
  */
+export const api = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+  timeout: 60000,
+});
+
+// Single-flight refresh promise lock
+let refreshPromise: Promise<void> | null = null;
+
 export const refreshToken = async (): Promise<void> => {
   await publicApi.post('/auth/refresh');
 };
 
-/**
- * Standard authenticated API client for protected endpoints.
- * Includes automatic 401 interception with queue-locking and refresh flow.
- */
-export const api = axios.create({
-  baseURL: BASE_URL,
-  withCredentials: true,
-  timeout: 12000000,
-});
-
-let isRefreshing = false;
-let failedQueue: Array<{
-  resolve: (value?: any) => void;
-  reject: (reason?: any) => void;
-}> = [];
-
-const processQueue = (error: Error | null) => {
-  failedQueue.forEach(({ resolve, reject }) => {
-    if (error) {
-      return reject(error);
-    }
-    return resolve();
-  });
-  failedQueue = [];
+const getRefreshPromise = (): Promise<void> => {
+  if (!refreshPromise) {
+    refreshPromise = refreshToken().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
 };
 
+// Response interceptor for rate-limiting (429) & error handling
+const handleResponseSuccess = (response: AxiosResponse) => response;
+
+const handleRateLimitAndErrors = async (error: AxiosError<{ error?: string }>) => {
+  const status = error.response?.status;
+
+  if (status === 429) {
+    const message =
+      error.response?.data?.error || 'Too many requests. Please try again later.';
+    console.warn('[RateLimit]', message);
+
+    if (!isAuthPage()) {
+      queryClient.clear();
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+
+  return Promise.reject(error);
+};
+
+// 401 automatic refresh and retry interceptor for authenticated calls
 api.interceptors.response.use(
-  (response) => response,
-  async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & {
-      _retry?: boolean;
-    };
+  handleResponseSuccess,
+  async (error: AxiosError<{ error?: string }>) => {
+    const originalRequest = error.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
 
-    const isAuthError =
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      window.location.pathname !== '/login' &&
-      window.location.pathname !== '/register' &&
-      window.location.pathname !== '/';
+    if (!originalRequest) {
+      return handleRateLimitAndErrors(error);
+    }
 
-    if (isAuthError) {
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then(() => api(originalRequest))
-          .catch((err) => Promise.reject(err));
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isAuthPage()) {
+        return Promise.reject(error);
       }
 
       originalRequest._retry = true;
-      isRefreshing = true;
 
       try {
-        await refreshToken();
-        isRefreshing = false;
-        processQueue(null);
+        await getRefreshPromise();
         return api(originalRequest);
-      } catch (refreshError) {
-        processQueue(refreshError as Error);
-        isRefreshing = false;
-        window.location.href = '/login';
-        return Promise.reject(error);
+      } catch (refreshErr) {
+        if (!isAuthPage()) {
+          queryClient.clear();
+          window.location.href = '/login';
+        }
+        return Promise.reject(refreshErr);
       }
     }
 
-    return Promise.reject(error as AxiosError);
+    return handleRateLimitAndErrors(error);
   }
 );
 
-// Backward-compatible alias
-export const apiClient = api;
+publicApi.interceptors.response.use(handleResponseSuccess, handleRateLimitAndErrors);
+
