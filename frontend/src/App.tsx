@@ -6,6 +6,7 @@ import { LoginPage } from './features/auth/pages/LoginPage';
 import { VerifyEmailPage } from './features/auth/pages/VerifyEmailPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { EmployeeAttendancePage } from './features/employee/pages/EmployeeAttendancePage';
+import { AttendanceRecordsPage } from './features/attendance/pages/AttendanceRecordsPage';
 import { AttendanceTerminalPage } from './features/attendance/pages/AttendanceTerminalPage';
 import { UserManagementPage } from './features/users/pages/UserManagementPage';
 import { EmployeeDirectoryPage } from './features/employees/pages/EmployeeDirectoryPage';
@@ -34,7 +35,7 @@ export function App() {
             <Route path="/dashboard/:section" element={<DashboardPage />} />
             <Route path="/employee/dashboard" element={<DashboardPage />} />
             <Route path="/employee/dashboard/:section" element={<DashboardPage />} />
-            <Route path="/attendance" element={<EmployeeAttendancePage />} />
+            <Route path="/attendance" element={<AttendanceRecordsPage />} />
             <Route path="/employee/attendance" element={<EmployeeAttendancePage />} />
             <Route path="/attendance/terminal" element={<AttendanceTerminalPage />} />
             <Route path="/compensation" element={<CompensationPage />} />
