@@ -5,17 +5,17 @@ import { UserRole } from '../../shared/auth-middleware';
 
 export type UserWithEmployee = {
   id: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: UserRole;
   isActive: boolean;
-  employeeId: string | null;
+  isEmailVerified: boolean;
   createdAt: Date | null;
   updatedAt: Date | null;
   employee: {
     id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
+    employmentStatus: string;
   } | null;
 };
 
@@ -39,30 +39,30 @@ export const listUsers = async (filters: {
     conditions.push(
       or(
         ilike(schema.users.email, term),
-        ilike(schema.employees.firstName, term),
-        ilike(schema.employees.lastName, term)
-      )
+        ilike(schema.users.firstName, term),
+        ilike(schema.users.lastName, term),
+      ),
     );
   }
 
   const rows = await db
     .select({
       id: schema.users.id,
+      firstName: schema.users.firstName,
+      lastName: schema.users.lastName,
       email: schema.users.email,
       role: schema.users.role,
       isActive: schema.users.isActive,
-      employeeId: schema.users.employeeId,
+      isEmailVerified: schema.users.isEmailVerified,
       createdAt: schema.users.createdAt,
       updatedAt: schema.users.updatedAt,
       employee: {
         id: schema.employees.id,
-        firstName: schema.employees.firstName,
-        lastName: schema.employees.lastName,
-        email: schema.employees.email,
+        employmentStatus: schema.employees.employmentStatus,
       },
     })
     .from(schema.users)
-    .leftJoin(schema.employees, eq(schema.users.employeeId, schema.employees.id))
+    .leftJoin(schema.employees, eq(schema.employees.userId, schema.users.id))
     .where(conditions.length > 0 ? and(...conditions) : undefined)
     .orderBy(desc(schema.users.createdAt));
 
@@ -77,21 +77,21 @@ export const findUserById = async (id: string): Promise<UserWithEmployee | null>
   const rows = await db
     .select({
       id: schema.users.id,
+      firstName: schema.users.firstName,
+      lastName: schema.users.lastName,
       email: schema.users.email,
       role: schema.users.role,
       isActive: schema.users.isActive,
-      employeeId: schema.users.employeeId,
+      isEmailVerified: schema.users.isEmailVerified,
       createdAt: schema.users.createdAt,
       updatedAt: schema.users.updatedAt,
       employee: {
         id: schema.employees.id,
-        firstName: schema.employees.firstName,
-        lastName: schema.employees.lastName,
-        email: schema.employees.email,
+        employmentStatus: schema.employees.employmentStatus,
       },
     })
     .from(schema.users)
-    .leftJoin(schema.employees, eq(schema.users.employeeId, schema.employees.id))
+    .leftJoin(schema.employees, eq(schema.employees.userId, schema.users.id))
     .where(eq(schema.users.id, id))
     .limit(1);
 
@@ -114,43 +114,75 @@ export const findUserByEmail = async (email: string) => {
 };
 
 export const createUser = async (data: {
+  firstName: string;
+  lastName: string;
   email: string;
   passwordHash: string;
   role: UserRole;
-  employeeId?: string | null;
   isActive?: boolean;
 }): Promise<UserWithEmployee> => {
-  const [created] = await db
-    .insert(schema.users)
-    .values({
-      email: data.email.toLowerCase().trim(),
-      passwordHash: data.passwordHash,
-      role: data.role,
-      employeeId: data.employeeId || null,
-      isActive: data.isActive ?? true,
-    })
-    .returning();
+  const result = await db.transaction(async (tx) => {
+    const [createdUser] = await tx
+      .insert(schema.users)
+      .values({
+        firstName: data.firstName.trim(),
+        lastName: data.lastName.trim(),
+        email: data.email.toLowerCase().trim(),
+        passwordHash: data.passwordHash,
+        role: data.role,
+        isActive: data.isActive ?? true,
+      })
+      .returning();
 
-  const fullUser = await findUserById(created.id);
-  return fullUser!;
+    const [createdEmployee] = await tx
+      .insert(schema.employees)
+      .values({
+        userId: createdUser.id,
+        employmentStatus: 'incomplete',
+      })
+      .returning();
+
+    return {
+      id: createdUser.id,
+      firstName: createdUser.firstName,
+      lastName: createdUser.lastName,
+      email: createdUser.email,
+      role: createdUser.role as UserRole,
+      isActive: createdUser.isActive,
+      isEmailVerified: createdUser.isEmailVerified,
+      createdAt: createdUser.createdAt,
+      updatedAt: createdUser.updatedAt,
+      employee: {
+        id: createdEmployee.id,
+        employmentStatus: createdEmployee.employmentStatus,
+      },
+    };
+  });
+
+  return result;
 };
 
 export const updateUser = async (
   id: string,
   data: {
+    firstName?: string;
+    lastName?: string;
     role?: UserRole;
-    employeeId?: string | null;
     isActive?: boolean;
     passwordHash?: string;
-  }
+  },
 ): Promise<UserWithEmployee> => {
-  await db
-    .update(schema.users)
-    .set({
-      ...data,
-      updatedAt: new Date(),
-    })
-    .where(eq(schema.users.id, id));
+  const updatePayload: Record<string, any> = {
+    updatedAt: new Date(),
+  };
+
+  if (data.firstName !== undefined) updatePayload.firstName = data.firstName.trim();
+  if (data.lastName !== undefined) updatePayload.lastName = data.lastName.trim();
+  if (data.role !== undefined) updatePayload.role = data.role;
+  if (data.isActive !== undefined) updatePayload.isActive = data.isActive;
+  if (data.passwordHash !== undefined) updatePayload.passwordHash = data.passwordHash;
+
+  await db.update(schema.users).set(updatePayload).where(eq(schema.users.id, id));
 
   const updated = await findUserById(id);
   return updated!;
@@ -160,10 +192,19 @@ export const listEmployeesForSelection = async () => {
   return db
     .select({
       id: schema.employees.id,
-      firstName: schema.employees.firstName,
-      lastName: schema.employees.lastName,
-      email: schema.employees.email,
+      firstName: schema.users.firstName,
+      lastName: schema.users.lastName,
+      email: schema.users.email,
     })
     .from(schema.employees)
-    .orderBy(schema.employees.firstName);
+    .innerJoin(schema.users, eq(schema.employees.userId, schema.users.id))
+    .orderBy(schema.users.firstName);
+};
+
+export const deleteUser = async (id: string): Promise<boolean> => {
+  const result = await db
+    .delete(schema.users)
+    .where(eq(schema.users.id, id))
+    .returning({ id: schema.users.id });
+  return result.length > 0;
 };

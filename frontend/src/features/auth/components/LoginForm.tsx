@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLoginMutation } from '../queries/useAuth';
 
 interface QuickRole {
@@ -18,9 +18,13 @@ const QUICK_ROLES: QuickRole[] = [
 
 export const LoginForm: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const loginMutation = useLoginMutation();
 
-  const [email, setEmail] = useState('');
+  const isVerified = searchParams.get('verified') === 'true';
+  const initialEmail = searchParams.get('email') || '';
+
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeRoleLogin, setActiveRoleLogin] = useState<string | null>(null);
@@ -35,10 +39,14 @@ export const LoginForm: React.FC = () => {
     }
 
     try {
-      await loginMutation.mutateAsync({ email, password });
-      navigate('/dashboard');
+      const res = await loginMutation.mutateAsync({ email, password });
+      navigate(res.user.role === 'Admin' ? '/users' : '/dashboard');
     } catch (err: any) {
-      const msg = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to sign in';
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to sign in';
       setErrorMessage(msg);
     }
   };
@@ -50,10 +58,14 @@ export const LoginForm: React.FC = () => {
     setActiveRoleLogin(acc.role);
 
     try {
-      await loginMutation.mutateAsync({ email: acc.email, password: acc.pass });
-      navigate('/dashboard');
+      const res = await loginMutation.mutateAsync({ email: acc.email, password: acc.pass });
+      navigate(res.user.role === 'Admin' ? '/users' : '/dashboard');
     } catch (err: any) {
-      const msg = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to sign in';
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to sign in';
       setErrorMessage(msg);
       setActiveRoleLogin(null);
     }
@@ -67,6 +79,13 @@ export const LoginForm: React.FC = () => {
           Enter your credentials to access PeoplePay360
         </p>
       </div>
+
+      {isVerified && (
+        <div className="px-3.5 py-3 rounded-lg border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-xs mb-5 bg-emerald-500/10 flex items-center gap-2 font-medium">
+          <span>✓</span>
+          <span>Email verified successfully. Please enter your password to sign in.</span>
+        </div>
+      )}
 
       {errorMessage && (
         <div className="px-3.5 py-3 rounded-lg border border-red-500/30 text-red-600 dark:text-red-400 text-xs mb-5 bg-red-500/10">
@@ -137,7 +156,8 @@ export const LoginForm: React.FC = () => {
       </div>
 
       <div className="mt-5 pt-4 border-t border-line text-center text-[11px] text-ink-soft leading-relaxed">
-        Accounts are provisioned by your system administrator. Contact your HR or IT department to request access.
+        Accounts are provisioned by your system administrator. Contact your HR or IT department to
+        request access.
       </div>
     </div>
   );

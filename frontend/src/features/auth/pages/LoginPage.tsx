@@ -6,10 +6,7 @@ export const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-bg text-ink">
       <header className="border-b border-line px-8 py-4 flex justify-between items-center bg-bg">
-        <Link
-          to="/"
-          className="font-serif text-xl font-bold tracking-tight text-ink no-underline"
-        >
+        <Link to="/" className="font-serif text-xl font-bold tracking-tight text-ink no-underline">
           PeoplePay<span className="text-accent">360</span>
         </Link>
       </header>

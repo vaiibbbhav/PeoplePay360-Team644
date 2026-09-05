@@ -2,78 +2,87 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/api/apiClient';
 import type { UserRole } from '@/features/auth/queries/useAuth';
 
-export interface UserItem {
+export type UserItem = {
   id: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: UserRole;
   isActive: boolean;
-  employeeId: string | null;
+  isEmailVerified: boolean;
   createdAt: string;
   updatedAt: string;
-  employee: {
+  employee?: {
     id: string;
-    employeeNumber: string;
-    firstName: string;
-    lastName: string;
-    workEmail: string;
-    department: {
-      id: string;
-      name: string;
-    } | null;
+    employmentStatus: string;
   } | null;
-}
+};
 
-export interface EmployeeOption {
+export type EmployeeOption = {
   id: string;
-  employeeNumber: string;
   firstName: string;
   lastName: string;
-  workEmail: string;
-  jobTitle: string;
-  departmentName: string | null;
-  hasUserAccount: boolean;
-}
+  email: string;
+  employeeNumber?: string;
+  hasUserAccount?: boolean;
+};
 
-export interface CreateUserInput {
+export type CreateUserInput = {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   role: UserRole;
-  employeeId?: string | null;
   isActive?: boolean;
-}
+};
 
-export interface UpdateUserInput {
+export type UpdateUserInput = {
+  firstName?: string;
+  lastName?: string;
   password?: string;
   role?: UserRole;
-  employeeId?: string | null;
   isActive?: boolean;
-}
+};
 
-export interface UserQueryParams {
+export type UserQueryParams = {
   search?: string;
   role?: string;
   isActive?: boolean;
-}
+};
 
 // Fetchers
 const fetchUsers = async (params?: UserQueryParams): Promise<UserItem[]> => {
-  const { data } = await api.get<{ users: UserItem[] }>('/users', { params });
-  return data.users;
+  const { data } = await api.get<any>('/users', { params });
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.users)) return data.users;
+  return [];
 };
 
 const fetchEmployeeOptions = async (): Promise<EmployeeOption[]> => {
-  const { data } = await api.get<{ employees: EmployeeOption[] }>('/users/employees-options');
-  return data.employees;
+  const { data } = await api.get<any>('/users/employees-options');
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.employees)) return data.employees;
+  return [];
 };
 
 const createUserApi = async (input: CreateUserInput): Promise<UserItem> => {
-  const { data } = await api.post<{ user: UserItem }>('/users', input);
-  return data.user;
+  const { data } = await api.post<any>('/users', input);
+  return data?.user ?? data;
 };
 
-const updateUserApi = async ({ id, input }: { id: string; input: UpdateUserInput }): Promise<UserItem> => {
-  const { data } = await api.put<{ user: UserItem }>(`/users/${id}`, input);
-  return data.user;
+const updateUserApi = async ({
+  id,
+  input,
+}: {
+  id: string;
+  input: UpdateUserInput;
+}): Promise<UserItem> => {
+  const { data } = await api.put<any>(`/users/${id}`, input);
+  return data?.user ?? data;
+};
+
+const deleteUserApi = async (id: string): Promise<void> => {
+  await api.delete(`/users/${id}`);
 };
 
 // React Query Hooks
@@ -107,6 +116,16 @@ export const useUpdateUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateUserApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+  });
+};
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteUserApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },

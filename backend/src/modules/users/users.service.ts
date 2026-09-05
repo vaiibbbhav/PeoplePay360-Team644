@@ -1,8 +1,15 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { ConflictError, NotFoundError, ValidationError } from '../../shared/errors';
 import * as usersRepository from './users.repository';
-import { CreateUserInput, UpdateUserInput, UserQueryInput, passwordSchema } from './users.validators';
+import {
+  CreateUserInput,
+  UpdateUserInput,
+  UserQueryInput,
+  passwordSchema,
+} from './users.validators';
 import { UserRole } from '../../shared/auth-middleware';
+import { sendWelcomeCredentialsEmail } from '../../shared/mailer';
 
 export const listUsers = async (query: UserQueryInput) => {
   return usersRepository.listUsers({
@@ -32,20 +39,50 @@ export const createUser = async (input: CreateUserInput) => {
   if (!validation.success) {
     throw new ValidationError(
       validation.error.errors[0]?.message ||
-        'Password must be at least 8 characters, with 1 uppercase, 1 number, and 1 symbol'
+        'Password must be at least 8 characters, with 1 uppercase, 1 number, and 1 symbol',
     );
   }
 
   const salt = await bcrypt.genSalt(10);
   const passwordHash = await bcrypt.hash(input.password, salt);
 
-  return usersRepository.createUser({
+  const user = await usersRepository.createUser({
+    firstName: input.firstName,
+    lastName: input.lastName,
     email: normalizedEmail,
     passwordHash,
     role: input.role as UserRole,
-    employeeId: input.employeeId || null,
     isActive: input.isActive ?? true,
   });
+
+  // Dispatch welcome email with credentials & verification link asynchronously/gracefully
+  try {
+    const employeeName = `${user.firstName} ${user.lastName}`.trim();
+
+    const JWT_SECRET = process.env.JWT_SECRET || 'peoplepay360-hackathon-super-secret-jwt-key';
+    const verificationToken = jwt.sign(
+      { userId: user.id, email: user.email, purpose: 'email-verification' },
+      JWT_SECRET,
+      { expiresIn: '7d' },
+    );
+
+    sendWelcomeCredentialsEmail({
+      toEmail: normalizedEmail,
+      temporaryPassword: input.password,
+      role: input.role,
+      employeeName,
+      verificationToken,
+    }).catch((err) => {
+      console.error(
+        '[USERS_SERVICE] Non-blocking error sending welcome email:',
+        err?.message || err,
+      );
+    });
+  } catch (err: any) {
+    console.error('[USERS_SERVICE] Non-blocking error signing token:', err?.message || err);
+  }
+
+  return user;
 };
 
 export const updateUser = async (id: string, input: UpdateUserInput) => {
@@ -55,18 +92,23 @@ export const updateUser = async (id: string, input: UpdateUserInput) => {
   }
 
   const updateData: {
+    firstName?: string;
+    lastName?: string;
     role?: UserRole;
-    employeeId?: string | null;
     isActive?: boolean;
     passwordHash?: string;
   } = {};
 
-  if (input.role !== undefined) {
-    updateData.role = input.role as UserRole;
+  if (input.firstName !== undefined) {
+    updateData.firstName = input.firstName;
   }
 
-  if (input.employeeId !== undefined) {
-    updateData.employeeId = input.employeeId;
+  if (input.lastName !== undefined) {
+    updateData.lastName = input.lastName;
+  }
+
+  if (input.role !== undefined) {
+    updateData.role = input.role as UserRole;
   }
 
   if (input.isActive !== undefined) {
@@ -78,7 +120,7 @@ export const updateUser = async (id: string, input: UpdateUserInput) => {
     if (!validation.success) {
       throw new ValidationError(
         validation.error.errors[0]?.message ||
-          'Password must be at least 8 characters, with 1 uppercase, 1 number, and 1 symbol'
+          'Password must be at least 8 characters, with 1 uppercase, 1 number, and 1 symbol',
       );
     }
     const salt = await bcrypt.genSalt(10);
@@ -90,4 +132,15 @@ export const updateUser = async (id: string, input: UpdateUserInput) => {
 
 export const getEmployeeOptions = async () => {
   return usersRepository.listEmployeesForSelection();
+};
+
+export const deleteUser = async (id: string, currentUserId?: string) => {
+  if (currentUserId && id === currentUserId) {
+    throw new ValidationError('You cannot delete your own user account');
+  }
+  const user = await usersRepository.findUserById(id);
+  if (!user) {
+    throw new NotFoundError('User account not found');
+  }
+  return usersRepository.deleteUser(id);
 };

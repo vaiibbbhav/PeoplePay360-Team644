@@ -48,12 +48,28 @@ export const workingScheduleLines = pgTable('working_schedule_lines', {
   breakMinutes: integer('break_minutes').notNull().default(60),
 });
 
-// 3. Employees
-export const employees = pgTable('employees', {
+// 3. Users (Authentication & Canonical Identity)
+export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
   firstName: varchar('first_name', { length: 100 }).notNull(),
   lastName: varchar('last_name', { length: 100 }).notNull(),
   email: varchar('email', { length: 150 }).notNull().unique(),
+  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+  role: varchar('role', { length: 50 }).notNull(),
+  isActive: boolean('is_active').notNull().default(true),
+  isEmailVerified: boolean('is_email_verified').notNull().default(false),
+  emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+});
+
+// 4. Employees (HR Operational Extension)
+export const employees = pgTable('employees', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id')
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: 'cascade' }),
   phone: varchar('phone', { length: 30 }),
   departmentId: uuid('department_id').references(() => departments.id, { onDelete: 'set null' }),
   jobPositionId: uuid('job_position_id').references(() => jobPositions.id, {
@@ -63,7 +79,7 @@ export const employees = pgTable('employees', {
   workingScheduleId: uuid('working_schedule_id').references(() => workingSchedules.id, {
     onDelete: 'set null',
   }),
-  employmentStatus: varchar('employment_status', { length: 30 }).notNull().default('active'),
+  employmentStatus: varchar('employment_status', { length: 30 }).notNull().default('incomplete'),
   dateOfJoining: date('date_of_joining')
     .notNull()
     .default(sql`CURRENT_DATE`),
@@ -74,18 +90,6 @@ export const employees = pgTable('employees', {
   bankAccountNumber: varchar('bank_account_number', { length: 50 }),
   bankRoutingCode: varchar('bank_routing_code', { length: 50 }),
   avatarUrl: text('avatar_url'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
-});
-
-// 4. Users (Authentication & RBAC)
-export const users = pgTable('users', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  email: varchar('email', { length: 150 }).notNull().unique(),
-  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
-  role: varchar('role', { length: 50 }).notNull(),
-  employeeId: uuid('employee_id').references(() => employees.id, { onDelete: 'set null' }),
-  isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });

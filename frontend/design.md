@@ -20,33 +20,34 @@ Colors are defined as CSS custom properties on `:root`, overridden on `html.dark
 
 ### Light mode (default)
 
-| Token | Hex | Usage |
-|---|---|---|
-| `--bg` | `#FAFAF8` | Page background |
-| `--bg-raised` | `#F1EFEA` | Panels one step above the page: hero diagram, module list backgrounds, risk card |
-| `--ink` | `#131211` | Primary text, headlines |
-| `--ink-soft` | `#55524C` | Secondary text, body copy, captions |
-| `--line` | `#DEDAD1` | All borders, dividers, table rules |
-| `--accent` | `#6A3FA0` | Links, buttons, active dots, bar fills, flagged states |
-| `--accent-ink` | `#FFFFFF` | Text/icon color placed on top of `--accent` |
-| `--accent-soft` | `#EDE4F7` | Reserved for accent-tinted fills (badges, selected rows) |
-| `--over-red` | `#A4483B` | The single semantic exception — an over-limit discount line |
+| Token           | Hex       | Usage                                                                            |
+| --------------- | --------- | -------------------------------------------------------------------------------- |
+| `--bg`          | `#FAFAF8` | Page background                                                                  |
+| `--bg-raised`   | `#F1EFEA` | Panels one step above the page: hero diagram, module list backgrounds, risk card |
+| `--ink`         | `#131211` | Primary text, headlines                                                          |
+| `--ink-soft`    | `#55524C` | Secondary text, body copy, captions                                              |
+| `--line`        | `#DEDAD1` | All borders, dividers, table rules                                               |
+| `--accent`      | `#6A3FA0` | Links, buttons, active dots, bar fills, flagged states                           |
+| `--accent-ink`  | `#FFFFFF` | Text/icon color placed on top of `--accent`                                      |
+| `--accent-soft` | `#EDE4F7` | Reserved for accent-tinted fills (badges, selected rows)                         |
+| `--over-red`    | `#A4483B` | The single semantic exception — an over-limit discount line                      |
 
 ### Dark mode
 
-| Token | Hex | Usage |
-|---|---|---|
-| `--bg` | `#0C0B0D` | Page background — near-black, not pure black |
-| `--bg-raised` | `#17151A` | Raised panels |
-| `--ink` | `#F3F1EC` | Primary text — warm off-white, not pure white |
-| `--ink-soft` | `#A6A29B` | Secondary text |
-| `--line` | `#2B2831` | Borders, dividers |
-| `--accent` | `#B08FE0` | Lightened violet — kept legible at low luminance rather than reusing the light-mode accent |
-| `--accent-ink` | `#0C0B0D` | Text on top of accent buttons |
-| `--accent-soft` | `#241E33` | Accent-tinted fills |
-| `--over-red` | `#D97C6C` | Lightened warning red, same logic as the accent |
+| Token           | Hex       | Usage                                                                                      |
+| --------------- | --------- | ------------------------------------------------------------------------------------------ |
+| `--bg`          | `#0C0B0D` | Page background — near-black, not pure black                                               |
+| `--bg-raised`   | `#17151A` | Raised panels                                                                              |
+| `--ink`         | `#F3F1EC` | Primary text — warm off-white, not pure white                                              |
+| `--ink-soft`    | `#A6A29B` | Secondary text                                                                             |
+| `--line`        | `#2B2831` | Borders, dividers                                                                          |
+| `--accent`      | `#B08FE0` | Lightened violet — kept legible at low luminance rather than reusing the light-mode accent |
+| `--accent-ink`  | `#0C0B0D` | Text on top of accent buttons                                                              |
+| `--accent-soft` | `#241E33` | Accent-tinted fills                                                                        |
+| `--over-red`    | `#D97C6C` | Lightened warning red, same logic as the accent                                            |
 
 **Rules:**
+
 - Never pair `--ink` text on `--bg-raised` at less than body-text size without checking contrast — both are close in value by design (subtle elevation), so small/light text needs `--ink-soft` or larger weight to stay legible.
 - The accent is never used as a full-bleed background for large areas — only for buttons, dots, thin bars, and 1–2px rules. Backgrounds stay neutral.
 - `--over-red` is the only additional hue in the entire system. It appears exactly once in concept (an over-limit discount) and should not be reused for generic "error" states elsewhere without reconsidering whether that state is truly the same category of problem.
@@ -65,18 +66,18 @@ Two families only. No monospace anywhere — the product has no code-like data (
 
 ### Type scale
 
-| Role | Size | Weight | Family | Line-height | Notes |
-|---|---|---|---|---|---|
-| Hero H1 | 58px / 38px mobile | 600 | Playfair Display | 1.12 | Max-width 15ch so it wraps deliberately |
-| Section H2 | 34px | 600 | Playfair Display | 1.12 | Max-width 56ch alongside its supporting line |
-| Sub H2 (CTA) | 32px | 600 | Playfair Display | 1.12 | |
-| Module H3 | 22px | 600 | Playfair Display | 1.12 | |
-| Risk callout | 18px, italic | 500 | Playfair Display | 1.4 | The one intentional italic serif moment in the page |
-| Wordmark | 21px | 700 | Playfair Display | 1 | "360" set in accent color, not italic or bold-only tricks |
-| Body / hero sub | 16–17.5px | 400 | IBM Plex Sans | 1.6 | Max-width ~46ch |
-| List item / card text | 14–15.5px | 400 | IBM Plex Sans | 1.5 | |
-| Label / caption / eyebrow-equivalent | 13–13.5px | 500–600 | IBM Plex Sans | 1.4 | Sentence case, never uppercase or letter-spaced |
-| Micro (footer, status) | 12.5–14px | 400 | IBM Plex Sans | 1.4 | |
+| Role                                 | Size               | Weight  | Family           | Line-height | Notes                                                     |
+| ------------------------------------ | ------------------ | ------- | ---------------- | ----------- | --------------------------------------------------------- |
+| Hero H1                              | 58px / 38px mobile | 600     | Playfair Display | 1.12        | Max-width 15ch so it wraps deliberately                   |
+| Section H2                           | 34px               | 600     | Playfair Display | 1.12        | Max-width 56ch alongside its supporting line              |
+| Sub H2 (CTA)                         | 32px               | 600     | Playfair Display | 1.12        |                                                           |
+| Module H3                            | 22px               | 600     | Playfair Display | 1.12        |                                                           |
+| Risk callout                         | 18px, italic       | 500     | Playfair Display | 1.4         | The one intentional italic serif moment in the page       |
+| Wordmark                             | 21px               | 700     | Playfair Display | 1           | "360" set in accent color, not italic or bold-only tricks |
+| Body / hero sub                      | 16–17.5px          | 400     | IBM Plex Sans    | 1.6         | Max-width ~46ch                                           |
+| List item / card text                | 14–15.5px          | 400     | IBM Plex Sans    | 1.5         |                                                           |
+| Label / caption / eyebrow-equivalent | 13–13.5px          | 500–600 | IBM Plex Sans    | 1.4         | Sentence case, never uppercase or letter-spaced           |
+| Micro (footer, status)               | 12.5–14px          | 400     | IBM Plex Sans    | 1.4         |                                                           |
 
 ### Rules
 
@@ -98,17 +99,17 @@ Two families only. No monospace anywhere — the product has no code-like data (
 
 ### Section-internal spacing
 
-| Element | Value |
-|---|---|
-| Section head → content | 48px |
-| Section head heading → supporting line | 14px |
-| Card internal padding (module pane) | 34px sides, 30–34px top/bottom |
-| Card internal padding (risk card) | 28px |
-| List item vertical padding | 13px, divided by 1px `--line` rules (not gaps/cards) |
-| Grid gap, two-column layouts | 48–64px |
+| Element                                   | Value                                                                            |
+| ----------------------------------------- | -------------------------------------------------------------------------------- |
+| Section head → content                    | 48px                                                                             |
+| Section head heading → supporting line    | 14px                                                                             |
+| Card internal padding (module pane)       | 34px sides, 30–34px top/bottom                                                   |
+| Card internal padding (risk card)         | 28px                                                                             |
+| List item vertical padding                | 13px, divided by 1px `--line` rules (not gaps/cards)                             |
+| Grid gap, two-column layouts              | 48–64px                                                                          |
 | Grid gap, module panes (hairline-divided) | 1px (the gap itself is the divider — background color shows through as the rule) |
-| Button padding | 13px vertical, 22px horizontal |
-| Nav vertical padding | 20px |
+| Button padding                            | 13px vertical, 22px horizontal                                                   |
+| Nav vertical padding                      | 20px                                                                             |
 
 ### Breakpoint
 
@@ -137,24 +138,31 @@ Two families only. No monospace anywhere — the product has no code-like data (
 ## 7. Components
 
 ### Navigation
+
 Sticky, `blur(10px)` backdrop over a semi-transparent background (`color-mix` with the page background), bottom-bordered with `--line`. Wordmark in Playfair (with "360" in accent). Links in sans, `--ink-soft`, hover to `--ink` — no underline, no background pill.
 
 ### Buttons
+
 Two variants only:
+
 - **Primary:** solid `--accent` fill, `--accent-ink` text, no border.
 - **Ghost:** transparent fill, `--line` border, `--ink` text.
-No shadow, no scale-on-hover. Hover states shift only opacity/border color (see §8).
+  No shadow, no scale-on-hover. Hover states shift only opacity/border color (see §8).
 
 ### Hero flow diagram
+
 A vertical, connected-dot list inside a raised panel — the one diagrammatic element on the page, reused visually (in flatter form) as the horizontal flow-strip lower down. Filled dots indicate stages already covered by the product narrative; the last (unfilled) dot marks the outcome state.
 
 ### Module panes
+
 Two-column, hairline-divided (`1px` gap on a `--line`-colored grid background, simulating a shared rule between panes). Each list item is a label (`--ink`, 500) plus a short description (`--ink-soft`), separated by top-border rules rather than card-in-card boxes.
 
 ### Discount-risk card
+
 A raised panel containing per-line bars: track (`--line`), fill (`--accent`, or `--over-red` when over limit), and a tick mark showing the category ceiling. This is the only place in the UI where color (red) carries meaning beyond the accent — used exactly once, deliberately.
 
 ### Deliverables list
+
 A bordered, raised list of label/value rows, right-aligned value text in `--ink-soft` — styled identically to the module-pane list pattern for consistency, not as a separate "card kit."
 
 ---
@@ -163,21 +171,26 @@ A bordered, raised list of label/value rows, right-aligned value text in `--ink-
 
 The system uses motion only to respond to something the person just did — never on scroll, never staggered, never decorative.
 
-| Interaction | Behavior |
-|---|---|
-| Theme toggle | Knob slides `18px` via `transform`, `0.25s ease`; page background/text/border colors cross-fade via `transition: background 0.35s ease, color 0.35s ease` on `body` |
-| Link / nav hover | Instant color change, `--ink-soft` → `--ink` (no transition duration specified — treated as a state, not an animated event) |
-| Anchor navigation | `scroll-behavior: smooth` on `html` for in-page jumps (Modules, Flow, Discount score, Roles) |
-| Buttons | No hover animation beyond native browser focus/active states — kept deliberately quiet so the toggle remains the page's one "moment" |
+| Interaction       | Behavior                                                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Theme toggle      | Knob slides `18px` via `transform`, `0.25s ease`; page background/text/border colors cross-fade via `transition: background 0.35s ease, color 0.35s ease` on `body` |
+| Link / nav hover  | Instant color change, `--ink-soft` → `--ink` (no transition duration specified — treated as a state, not an animated event)                                         |
+| Anchor navigation | `scroll-behavior: smooth` on `html` for in-page jumps (Modules, Flow, Discount score, Roles)                                                                        |
+| Buttons           | No hover animation beyond native browser focus/active states — kept deliberately quiet so the toggle remains the page's one "moment"                                |
 
 **What this system explicitly avoids:** fade-and-slide-up section reveals, staggered card entrances, hover-lift/shadow-pop on cards, animated counters, parallax. If a future iteration wants one orchestrated moment, it should be a single page-load sequence (e.g., the hero dots filling in sequence once) — not a per-section pattern repeated throughout.
 
 **Reduced motion:** all transitions above are cosmetic, not functional — wrap them in a
+
 ```css
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; scroll-behavior: auto !important; }
+  * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
 ```
+
 block so the page is fully usable and static for anyone who has that preference set.
 
 ---

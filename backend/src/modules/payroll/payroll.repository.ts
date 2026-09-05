@@ -6,6 +6,7 @@ import {
   payslips,
   payslipLines,
   employees,
+  users,
 } from '../../db/schema';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { PayslipLine, SalaryRule } from './rule-engine';
@@ -139,8 +140,8 @@ export async function findPayslipsByPayrunId(payrunId: string) {
       id: payslips.id,
       payrun_id: payslips.payrunId,
       employee_id: payslips.employeeId,
-      employee_name: sql<string>`CONCAT(${employees.firstName}, ' ', ${employees.lastName})`,
-      employee_email: employees.email,
+      employee_name: sql<string>`CONCAT(${users.firstName}, ' ', ${users.lastName})`,
+      employee_email: users.email,
       structure_id: payslips.structureId,
       structure_name: salaryStructures.name,
       period_start: payslips.periodStart,
@@ -156,6 +157,7 @@ export async function findPayslipsByPayrunId(payrunId: string) {
     })
     .from(payslips)
     .leftJoin(employees, eq(payslips.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id))
     .leftJoin(salaryStructures, eq(payslips.structureId, salaryStructures.id))
     .where(eq(payslips.payrunId, payrunId));
 }
@@ -166,8 +168,8 @@ export async function findPayslipById(id: string) {
       id: payslips.id,
       payrun_id: payslips.payrunId,
       employee_id: payslips.employeeId,
-      employee_name: sql<string>`CONCAT(${employees.firstName}, ' ', ${employees.lastName})`,
-      employee_email: employees.email,
+      employee_name: sql<string>`CONCAT(${users.firstName}, ' ', ${users.lastName})`,
+      employee_email: users.email,
       structure_id: payslips.structureId,
       structure_name: salaryStructures.name,
       period_start: payslips.periodStart,
@@ -183,6 +185,7 @@ export async function findPayslipById(id: string) {
     })
     .from(payslips)
     .leftJoin(employees, eq(payslips.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id))
     .leftJoin(salaryStructures, eq(payslips.structureId, salaryStructures.id))
     .where(eq(payslips.id, id))
     .limit(1);

@@ -1,5 +1,9 @@
 import * as hrRepo from './hr.repository';
 import { NotFoundError, ConflictError } from '../../shared/errors';
+import { db } from '../../shared/db';
+import { users } from '../../db/schema';
+import { eq } from 'drizzle-orm';
+import bcrypt from 'bcryptjs';
 
 export async function listEmployees() {
   return await hrRepo.findAllEmployees();
@@ -27,12 +31,40 @@ export async function getEmployeeHubDetails(id: string) {
   };
 }
 
-export async function createEmployee(data: Record<string, unknown>) {
-  const existing = await hrRepo.findEmployeeByEmail(data.email as string);
+export async function createEmployee(data: Record<string, any>) {
+  const email = (data.email as string).toLowerCase().trim();
+  const existing = await hrRepo.findEmployeeByEmail(email);
   if (existing) {
-    throw new ConflictError(`Employee with email ${data.email} already exists`);
+    throw new ConflictError(`Employee with email ${email} already exists`);
   }
-  return await hrRepo.insertEmployee(data);
+
+  let userId = data.userId as string | undefined;
+  if (!userId) {
+    const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    if (existingUser[0]) {
+      userId = existingUser[0].id;
+    } else {
+      const salt = await bcrypt.genSalt(10);
+      const defaultPasswordHash = await bcrypt.hash('Employee@123', salt);
+      const [newUser] = await db
+        .insert(users)
+        .values({
+          firstName: data.firstName || 'New',
+          lastName: data.lastName || 'Employee',
+          email,
+          passwordHash: defaultPasswordHash,
+          role: 'Employee',
+          isActive: true,
+        })
+        .returning();
+      userId = newUser.id;
+    }
+  }
+
+  return await hrRepo.insertEmployee({
+    ...data,
+    userId,
+  });
 }
 
 export async function updateEmployee(id: string, data: Record<string, unknown>) {

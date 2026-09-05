@@ -34,23 +34,50 @@ export const seedDatabase = async (): Promise<void> => {
       .limit(1);
 
     if (existingAdmin.length === 0) {
-      await db.insert(schema.users).values({
-        email: adminEmail,
-        passwordHash: adminPasswordHash,
-        role: 'Admin',
-        isActive: true,
+      const [adminUser] = await db
+        .insert(schema.users)
+        .values({
+          firstName: 'System',
+          lastName: 'Admin',
+          email: adminEmail,
+          passwordHash: adminPasswordHash,
+          role: 'Admin',
+          isActive: true,
+          isEmailVerified: true,
+        })
+        .returning();
+
+      await db.insert(schema.employees).values({
+        userId: adminUser.id,
+        employmentStatus: 'active',
       });
       console.info(`✅ Admin user created: ${adminEmail} (password: ${adminRawPassword})`);
     } else {
       await db
         .update(schema.users)
         .set({
+          firstName: 'System',
+          lastName: 'Admin',
           passwordHash: adminPasswordHash,
           role: 'Admin',
           isActive: true,
+          isEmailVerified: true,
           updatedAt: new Date(),
         })
         .where(eq(schema.users.id, existingAdmin[0].id));
+
+      const existingEmp = await db
+        .select()
+        .from(schema.employees)
+        .where(eq(schema.employees.userId, existingAdmin[0].id))
+        .limit(1);
+
+      if (existingEmp.length === 0) {
+        await db.insert(schema.employees).values({
+          userId: existingAdmin[0].id,
+          employmentStatus: 'active',
+        });
+      }
       console.info(`✅ Admin user updated: ${adminEmail} (password: ${adminRawPassword})`);
     }
 
@@ -68,10 +95,7 @@ export const seedDatabase = async (): Promise<void> => {
       if (existingDept.length > 0) {
         deptMap[name] = existingDept[0].id;
       } else {
-        const [inserted] = await db
-          .insert(schema.departments)
-          .values({ name })
-          .returning();
+        const [inserted] = await db.insert(schema.departments).values({ name }).returning();
         deptMap[name] = inserted.id;
       }
     }
@@ -148,32 +172,8 @@ export const seedDatabase = async (): Promise<void> => {
     const staffPasswordHash = await bcrypt.hash(staffPassword, salt);
 
     for (const emp of sampleEmployees) {
-      // Find or create employee
-      let employeeId: string;
-      const existingEmp = await db
-        .select()
-        .from(schema.employees)
-        .where(eq(schema.employees.email, emp.email))
-        .limit(1);
-
-      if (existingEmp.length > 0) {
-        employeeId = existingEmp[0].id;
-      } else {
-        const [newEmp] = await db
-          .insert(schema.employees)
-          .values({
-            firstName: emp.firstName,
-            lastName: emp.lastName,
-            email: emp.email,
-            departmentId: emp.departmentId,
-            workingScheduleId: scheduleId,
-            employmentStatus: 'active',
-          })
-          .returning();
-        employeeId = newEmp.id;
-      }
-
-      // Upsert User linked to employee
+      // 1. Find or create user
+      let userId: string;
       const existingUser = await db
         .select()
         .from(schema.users)
@@ -181,27 +181,64 @@ export const seedDatabase = async (): Promise<void> => {
         .limit(1);
 
       if (existingUser.length === 0) {
-        await db.insert(schema.users).values({
-          email: emp.email,
-          passwordHash: staffPasswordHash,
-          role: emp.role,
-          employeeId,
-          isActive: true,
-        });
+        const [newUser] = await db
+          .insert(schema.users)
+          .values({
+            firstName: emp.firstName,
+            lastName: emp.lastName,
+            email: emp.email,
+            passwordHash: staffPasswordHash,
+            role: emp.role,
+            isActive: true,
+            isEmailVerified: true,
+          })
+          .returning();
+        userId = newUser.id;
       } else {
+        userId = existingUser[0].id;
         await db
           .update(schema.users)
           .set({
+            firstName: emp.firstName,
+            lastName: emp.lastName,
             role: emp.role,
-            employeeId,
             isActive: true,
+            isEmailVerified: true,
             updatedAt: new Date(),
           })
-          .where(eq(schema.users.id, existingUser[0].id));
+          .where(eq(schema.users.id, userId));
+      }
+
+      // 2. Find or create employee linked to user
+      const existingEmp = await db
+        .select()
+        .from(schema.employees)
+        .where(eq(schema.employees.userId, userId))
+        .limit(1);
+
+      if (existingEmp.length === 0) {
+        await db.insert(schema.employees).values({
+          userId,
+          departmentId: emp.departmentId,
+          workingScheduleId: scheduleId,
+          employmentStatus: 'active',
+        });
+      } else {
+        await db
+          .update(schema.employees)
+          .set({
+            departmentId: emp.departmentId,
+            workingScheduleId: scheduleId,
+            employmentStatus: 'active',
+            updatedAt: new Date(),
+          })
+          .where(eq(schema.employees.id, existingEmp[0].id));
       }
     }
 
-    console.info(`✅ Seeded ${sampleEmployees.length} sample employee accounts (password: ${staffPassword})`);
+    console.info(
+      `✅ Seeded ${sampleEmployees.length} sample employee accounts (password: ${staffPassword})`,
+    );
     console.info('🎉 Seeding completed successfully!');
   } catch (error) {
     console.error('❌ Seeding failed:', error);

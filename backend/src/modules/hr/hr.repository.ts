@@ -1,5 +1,6 @@
 import { db } from '../../shared/db';
 import {
+  users,
   employees,
   departments,
   jobPositions,
@@ -14,9 +15,10 @@ export async function findAllEmployees() {
   return await db
     .select({
       id: employees.id,
-      first_name: employees.firstName,
-      last_name: employees.lastName,
-      email: employees.email,
+      user_id: employees.userId,
+      first_name: users.firstName,
+      last_name: users.lastName,
+      email: users.email,
       phone: employees.phone,
       department_id: employees.departmentId,
       department_name: departments.name,
@@ -35,6 +37,7 @@ export async function findAllEmployees() {
       created_at: employees.createdAt,
     })
     .from(employees)
+    .leftJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
     .orderBy(desc(employees.createdAt));
@@ -44,9 +47,10 @@ export async function findEmployeeById(id: string) {
   const rows = await db
     .select({
       id: employees.id,
-      first_name: employees.firstName,
-      last_name: employees.lastName,
-      email: employees.email,
+      user_id: employees.userId,
+      first_name: users.firstName,
+      last_name: users.lastName,
+      email: users.email,
       phone: employees.phone,
       department_id: employees.departmentId,
       department_name: departments.name,
@@ -65,6 +69,7 @@ export async function findEmployeeById(id: string) {
       created_at: employees.createdAt,
     })
     .from(employees)
+    .leftJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
     .where(eq(employees.id, id))
@@ -74,7 +79,24 @@ export async function findEmployeeById(id: string) {
 }
 
 export async function findEmployeeByEmail(email: string) {
-  const rows = await db.select().from(employees).where(eq(employees.email, email)).limit(1);
+  const rows = await db
+    .select({
+      id: employees.id,
+      user_id: employees.userId,
+      first_name: users.firstName,
+      last_name: users.lastName,
+      email: users.email,
+      employment_status: employees.employmentStatus,
+    })
+    .from(employees)
+    .innerJoin(users, eq(employees.userId, users.id))
+    .where(eq(users.email, email.toLowerCase().trim()))
+    .limit(1);
+  return rows[0] || null;
+}
+
+export async function findEmployeeByUserId(userId: string) {
+  const rows = await db.select().from(employees).where(eq(employees.userId, userId)).limit(1);
   return rows[0] || null;
 }
 
@@ -82,15 +104,13 @@ export async function insertEmployee(data: Record<string, any>) {
   const [created] = await db
     .insert(employees)
     .values({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
+      userId: data.userId,
       phone: data.phone,
       departmentId: data.departmentId,
       jobPositionId: data.jobPositionId,
       managerId: data.managerId,
       workingScheduleId: data.workingScheduleId,
-      employmentStatus: data.employmentStatus || 'active',
+      employmentStatus: data.employmentStatus || 'incomplete',
       dateOfJoining: data.dateOfJoining,
       dateOfBirth: data.dateOfBirth,
       gender: data.gender,
@@ -105,11 +125,16 @@ export async function insertEmployee(data: Record<string, any>) {
 }
 
 export async function updateEmployeeById(id: string, data: Record<string, any>) {
+  const emp = await findEmployeeById(id);
+  if (emp && emp.user_id && (data.firstName !== undefined || data.lastName !== undefined)) {
+    const userUpdate: Record<string, any> = { updatedAt: new Date() };
+    if (data.firstName !== undefined) userUpdate.firstName = data.firstName;
+    if (data.lastName !== undefined) userUpdate.lastName = data.lastName;
+    await db.update(users).set(userUpdate).where(eq(users.id, emp.user_id));
+  }
+
   const values: Record<string, any> = {};
   const mapping: Record<string, keyof typeof employees.$inferInsert> = {
-    firstName: 'firstName',
-    lastName: 'lastName',
-    email: 'email',
     phone: 'phone',
     departmentId: 'departmentId',
     jobPositionId: 'jobPositionId',

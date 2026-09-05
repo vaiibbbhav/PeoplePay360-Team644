@@ -12,14 +12,15 @@
 
 ```
 departments ──┬──< jobPositions
-              ├──< employees ──┬──< users (auth & RBAC)
-              │                ├──< contracts ──> salaryStructures ──< salaryRules
-              │                ├──< attendance
-              │                ├──< timeOffAllocations ──> timeOffTypes
-              │                ├──< timeOffRequests   ──> timeOffTypes
-              │                └──< payslips ──┬──> payruns
-              │                                └──< payslipLines ──> salaryRules
               └──< workingSchedules ──< workingScheduleLines
+
+users (canonical identity & auth) ──1:1── employees (HR operational extension)
+                                            ├──< contracts ──> salaryStructures ──< salaryRules
+                                            ├──< attendance
+                                            ├──< timeOffAllocations ──> timeOffTypes
+                                            ├──< timeOffRequests   ──> timeOffTypes
+                                            └──< payslips ──┬──> payruns
+                                                            └──< payslipLines ──> salaryRules
 ```
 
 ---
@@ -71,22 +72,36 @@ Individual daily time blocks within a schedule.
 
 ---
 
-## 3. Employee Master & System Users
+## 3. Users & Employees (Canonical Identity & Operational Extension)
+
+### `users`
+Canonical identity layer: authentication credentials, personal name, and Role-Based Access Control.
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique user ID |
+| `firstName` | `VARCHAR(100)` | `NOT NULL` | First name |
+| `lastName` | `VARCHAR(100)` | `NOT NULL` | Last name |
+| `email` | `VARCHAR(150)` | `NOT NULL`, `UNIQUE` | User work login email |
+| `passwordHash` | `VARCHAR(255)` | `NOT NULL` | Bcrypt hashed password |
+| `role` | `VARCHAR(50)` | `NOT NULL` | `Employee`, `HR Manager`, `HR Payroll User`, `HR Payroll Manager`, `Admin` |
+| `isActive` | `BOOLEAN` | `NOT NULL`, default `true` | Account active status |
+| `isEmailVerified` | `BOOLEAN` | `NOT NULL`, default `false` | Email verification status |
+| `emailVerifiedAt` | `TIMESTAMPTZ` | Nullable | Email verification timestamp |
+| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
+| `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
 
 ### `employees`
-Central operational entity of the platform.
+HR operational extension for employment lifecycle, payroll bindings, and banking details.
 | Column | Type | Constraints | Description |
 |---|---|---|---|
 | `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique employee ID |
-| `firstName` | `VARCHAR(100)` | `NOT NULL` | First name |
-| `lastName` | `VARCHAR(100)` | `NOT NULL` | Last name |
-| `email` | `VARCHAR(150)` | `NOT NULL`, `UNIQUE` | Work email |
+| `userId` | `UUID` | `NOT NULL`, `UNIQUE`, FK `users.id` (`CASCADE`) | Linked user identity account |
 | `phone` | `VARCHAR(30)` | Nullable | Contact number |
 | `departmentId` | `UUID` | FK `departments.id` (`SET NULL`) | Department binding |
 | `jobPositionId` | `UUID` | FK `jobPositions.id` (`SET NULL`) | Job role binding |
 | `managerId` | `UUID` | Nullable | Reporting manager employee ID |
 | `workingScheduleId`| `UUID` | FK `working_schedules.id` (`SET NULL`) | Assigned schedule |
-| `employmentStatus` | `VARCHAR(30)` | `NOT NULL`, default `'active'` | `active`, `onboarding`, `terminated` |
+| `employmentStatus` | `VARCHAR(30)` | `NOT NULL`, default `'incomplete'` | `incomplete`, `active`, `on_leave`, `inactive`, `terminated` |
 | `dateOfJoining` | `DATE` | `NOT NULL`, default `CURRENT_DATE` | Date hired |
 | `dateOfBirth` | `DATE` | Nullable | Birth date |
 | `gender` | `VARCHAR(20)` | Nullable | Gender identity |
@@ -95,19 +110,6 @@ Central operational entity of the platform.
 | `bankAccountNumber` | `VARCHAR(50)` | Nullable | Bank account number |
 | `bankRoutingCode` | `VARCHAR(50)` | Nullable | IFSC / Swift / Routing code |
 | `avatarUrl` | `TEXT` | Nullable | Profile picture URL |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-| `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-
-### `users`
-Authentication credentials and Role-Based Access Control.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique user ID |
-| `email` | `VARCHAR(150)` | `NOT NULL`, `UNIQUE` | User login email |
-| `passwordHash` | `VARCHAR(255)` | `NOT NULL` | Bcrypt hashed password |
-| `role` | `VARCHAR(50)` | `NOT NULL` | `Employee`, `HR Manager`, `HR Payroll User`, `HR Payroll Manager`, `Admin` |
-| `employeeId` | `UUID` | FK `employees.id` (`SET NULL`) | Optional link to employee profile |
-| `isActive` | `BOOLEAN` | `NOT NULL`, default `true` | Account active status |
 | `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
 | `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
 

@@ -54,3 +54,17 @@ export const me = asyncHandler(async (req: Request, res: Response): Promise<void
   const user = await authService.getCurrentUser(req.user.id);
   res.json(user);
 });
+
+export const verifyEmail = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const token = (req.body?.token || req.query?.token) as string;
+  if (!token) {
+    res.status(400).json({ error: 'Verification token is required' });
+    return;
+  }
+  const result = await authService.verifyEmail(token);
+  res.json({
+    success: true,
+    email: result.email,
+    message: 'Email verified successfully',
+  });
+});

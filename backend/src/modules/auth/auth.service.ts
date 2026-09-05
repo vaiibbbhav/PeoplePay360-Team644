@@ -10,15 +10,16 @@ const TOKEN_EXPIRY = '7d';
 
 export type UserPayload = {
   id: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: UserRole;
   isActive: boolean;
+  isEmailVerified: boolean;
   employeeId?: string | null;
   employee?: {
     id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
+    employmentStatus: string;
   } | null;
 };
 
@@ -27,7 +28,12 @@ export type AuthResponse = {
   token: string;
 };
 
-const generateToken = (user: { id: string; email: string; role: UserRole; employeeId?: string | null }): string => {
+const generateToken = (user: {
+  id: string;
+  email: string;
+  role: UserRole;
+  employeeId?: string | null;
+}): string => {
   const payload: AuthUser = {
     id: user.id,
     email: user.email,
@@ -45,7 +51,9 @@ export const login = async (input: LoginInput): Promise<AuthResponse> => {
   }
 
   if (!user.isActive) {
-    throw new UnauthorizedError('Account is deactivated. Please contact your system administrator.');
+    throw new UnauthorizedError(
+      'Account is deactivated. Please contact your system administrator.',
+    );
   }
 
   const isMatch = await bcrypt.compare(input.password, user.passwordHash);
@@ -53,28 +61,27 @@ export const login = async (input: LoginInput): Promise<AuthResponse> => {
     throw new UnauthorizedError('Invalid email or password');
   }
 
-  let employeeData = null;
-  if (user.employeeId) {
-    const employee = await authRepository.findEmployeeById(user.employeeId);
-    if (employee) {
-      employeeData = {
+  const employee = await authRepository.findEmployeeByUserId(user.id);
+  const employeeData = employee
+    ? {
         id: employee.id,
-        firstName: employee.firstName,
-        lastName: employee.lastName,
-        email: employee.email,
-      };
-    }
-  }
+        employmentStatus: employee.employmentStatus,
+      }
+    : null;
+  const employeeId = employee?.id || null;
 
-  const token = generateToken({ ...user, role: user.role as UserRole });
+  const token = generateToken({ ...user, role: user.role as UserRole, employeeId });
 
   return {
     user: {
       id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       role: user.role as UserRole,
       isActive: user.isActive,
-      employeeId: user.employeeId,
+      isEmailVerified: user.isEmailVerified,
+      employeeId,
       employee: employeeData,
     },
     token,
@@ -87,25 +94,24 @@ export const getCurrentUser = async (userId: string): Promise<UserPayload> => {
     throw new NotFoundError('User not found');
   }
 
-  let employeeData = null;
-  if (user.employeeId) {
-    const employee = await authRepository.findEmployeeById(user.employeeId);
-    if (employee) {
-      employeeData = {
+  const employee = await authRepository.findEmployeeByUserId(user.id);
+  const employeeData = employee
+    ? {
         id: employee.id,
-        firstName: employee.firstName,
-        lastName: employee.lastName,
-        email: employee.email,
-      };
-    }
-  }
+        employmentStatus: employee.employmentStatus,
+      }
+    : null;
+  const employeeId = employee?.id || null;
 
   return {
     id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
     email: user.email,
     role: user.role as UserRole,
     isActive: user.isActive,
-    employeeId: user.employeeId,
+    isEmailVerified: user.isEmailVerified,
+    employeeId,
     employee: employeeData,
   };
 };
@@ -119,36 +125,65 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedError('Account is deactivated. Please contact your system administrator.');
+      throw new UnauthorizedError(
+        'Account is deactivated. Please contact your system administrator.',
+      );
     }
 
-    let employeeData = null;
-    if (user.employeeId) {
-      const employee = await authRepository.findEmployeeById(user.employeeId);
-      if (employee) {
-        employeeData = {
+    const employee = await authRepository.findEmployeeByUserId(user.id);
+    const employeeData = employee
+      ? {
           id: employee.id,
-          firstName: employee.firstName,
-          lastName: employee.lastName,
-          email: employee.email,
-        };
-      }
-    }
+          employmentStatus: employee.employmentStatus,
+        }
+      : null;
+    const employeeId = employee?.id || null;
 
-    const token = generateToken({ ...user, role: user.role as UserRole });
+    const token = generateToken({ ...user, role: user.role as UserRole, employeeId });
 
     return {
       user: {
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         role: user.role as UserRole,
         isActive: user.isActive,
-        employeeId: user.employeeId,
+        isEmailVerified: user.isEmailVerified,
+        employeeId,
         employee: employeeData,
       },
       token,
     };
   } catch {
     throw new UnauthorizedError('Invalid or expired token');
+  }
+};
+
+export const verifyEmail = async (token: string): Promise<{ email: string }> => {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as {
+      userId: string;
+      email: string;
+      purpose: string;
+    };
+
+    if (decoded.purpose !== 'email-verification') {
+      throw new UnauthorizedError('Invalid verification token');
+    }
+
+    const user = await authRepository.findUserById(decoded.userId);
+    if (!user) {
+      throw new NotFoundError('User account not found');
+    }
+
+    await authRepository.markEmailVerified(user.id);
+
+    return { email: user.email };
+  } catch (err: any) {
+    if (err instanceof UnauthorizedError || err instanceof NotFoundError) {
+      throw err;
+    }
+    throw new UnauthorizedError('Verification token is invalid or has expired');
   }
 };

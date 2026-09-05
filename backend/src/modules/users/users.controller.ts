@@ -26,7 +26,14 @@ export const updateUser = asyncHandler(async (req: Request, res: Response): Prom
   res.json(user);
 });
 
-export const getEmployeeOptions = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
-  const employees = await usersService.getEmployeeOptions();
-  res.json(employees);
+export const getEmployeeOptions = asyncHandler(
+  async (_req: Request, res: Response): Promise<void> => {
+    const employees = await usersService.getEmployeeOptions();
+    res.json(employees);
+  },
+);
+
+export const deleteUser = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  await usersService.deleteUser(req.params.id, req.user?.id);
+  res.status(204).send();
 });

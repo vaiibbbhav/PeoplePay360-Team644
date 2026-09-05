@@ -11,10 +11,12 @@ export const listAttendance = asyncHandler(async (req: Request, res: Response): 
   res.json(records);
 });
 
-export const getAttendanceById = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const record = await attendanceService.getAttendanceById(req.params.id);
-  res.json(record);
-});
+export const getAttendanceById = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const record = await attendanceService.getAttendanceById(req.params.id);
+    res.json(record);
+  },
+);
 
 export const recordCheckIn = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { employeeId, checkIn } = checkInSchema.parse(req.body);
@@ -28,8 +30,10 @@ export const recordCheckOut = asyncHandler(async (req: Request, res: Response): 
   res.json(record);
 });
 
-export const saveManualAttendance = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const validated = validateAttendanceRecord(req.body);
-  const record = await attendanceService.saveManualAttendance(validated);
-  res.status(201).json(record);
-});
+export const saveManualAttendance = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const validated = validateAttendanceRecord(req.body);
+    const record = await attendanceService.saveManualAttendance(validated);
+    res.status(201).json(record);
+  },
+);
