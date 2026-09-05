@@ -1,5 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import authRoutes from './modules/auth/auth.routes';
 import hrRoutes from './modules/hr/hr.routes';
 import contractsRoutes from './modules/contracts/contracts.routes';
 import attendanceRoutes from './modules/attendance/attendance.routes';
@@ -12,8 +14,12 @@ export const createApp = (): Express => {
   const app = express();
 
   // Middleware
-  app.use(cors());
+  app.use(cors({
+    origin: true,
+    credentials: true,
+  }));
   app.use(express.json());
+  app.use(cookieParser());
 
   // Health check
   app.get('/api/health', (_req: Request, res: Response) => {
@@ -25,6 +31,7 @@ export const createApp = (): Express => {
   });
 
   // Resource-oriented API Module routes
+  app.use('/api/auth', authRoutes);
   app.use('/api/employees', hrRoutes);
   app.use('/api/contracts', contractsRoutes);
   app.use('/api/attendance', attendanceRoutes);

@@ -1,0 +1,20 @@
+# PeoplePay360 Cursor Rules
+
+## Backend Architecture
+- Strict 4-layer chain: `routes` → `controllers` → `services` → `repositories` → `db`.
+- Routes `<module>.routes.ts` only map path + verb to controller. No validation or logic.
+- Controllers `<module>.controller.ts` parse with Zod, invoke ONE service method, wrap with `asyncHandler`.
+- Services `<module>.service.ts` contain all business logic. Pure functions, no `req`/`res`.
+- Repositories `<module>.repository.ts` execute Drizzle queries using `@/shared/db`.
+- Single central database in `src/shared/db.ts` and `src/db/schema.ts` (Neon Postgres).
+- SCHEMA SYNC MANDATE: Any schema update MUST also update `DATABASE_SCHEMA.md`.
+
+## Frontend Architecture
+- Feature-driven modules in `src/features/<feature>/` with `components/`, `pages/`, `queries/`.
+- Colocated queries: Request/response types, private fetcher, and exported React Query hook live together in `queries/`.
+- No separate `types.ts` per feature. No `index.ts` barrel files. Direct imports are standard.
+- Global network client in `@/api/apiClient` with 401 refresh queue.
+
+## Strict Language Rules
+- ALWAYS use `type` instead of `interface` across all TypeScript files.
+- Strictly adhere to `DESIGN.md`: Editorial B&W, Playfair Display serif headlines, IBM Plex Sans body, single violet accent `#6A3FA0`, hairline borders, no shadows/gradients.

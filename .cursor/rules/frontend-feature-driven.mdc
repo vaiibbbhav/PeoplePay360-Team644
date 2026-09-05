@@ -1,0 +1,10 @@
+---
+description: Feature-driven frontend architecture rules for PeoplePay360
+globs: frontend/src/**/*
+---
+# Frontend Feature-Driven Rules
+- Modules live in `src/features/<feature>/` with `components/`, `pages/`, `queries/`.
+- Queries colocated: Types + Axios fetcher + React Query hook in `queries/`.
+- No separate `types.ts` per feature. No `index.ts` barrel files. Direct imports standard.
+- Always use `type` instead of `interface`.
+- Consume network requests only via hooks in `queries/`, never raw Axios inside components.

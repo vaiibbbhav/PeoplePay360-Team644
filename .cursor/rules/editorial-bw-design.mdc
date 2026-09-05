@@ -1,0 +1,9 @@
+---
+description: Editorial black-and-white design system rules for PeoplePay360
+globs: frontend/src/**/*
+---
+# Design System Rules
+- Colors: `--bg: #FAFAF8`, `--bg-raised: #F1EFEA`, `--ink: #131211`, `--line: #DEDAD1`, `--accent: #6A3FA0`, `--over-red: #A4483B`.
+- Dark mode: `--bg: #0C0B0D`, `--ink: #F3F1EC`, `--accent: #B08FE0`.
+- Typography: `Playfair Display` serif for headlines (`h1`, `h2`, `h3`, wordmark). `IBM Plex Sans` for body and UI. No all-caps.
+- Surfaces: Flat hairline 1px borders. No drop shadows, no gradient cards.

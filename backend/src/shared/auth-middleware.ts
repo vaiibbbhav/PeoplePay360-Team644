@@ -4,12 +4,12 @@ import { UnauthorizedError, ForbiddenError } from './errors';
 
 export type UserRole = 'Employee' | 'HR Manager' | 'HR Payroll User' | 'HR Payroll Manager' | 'Admin';
 
-export interface AuthUser {
+export type AuthUser = {
   id: string;
   email: string;
   role: UserRole;
   employeeId?: string;
-}
+};
 
 declare global {
   namespace Express {
@@ -69,9 +69,18 @@ const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
   'Admin': ['*'], // Wildcard: full access
 };
 
+export const getCookieValue = (req: Request, name: string): string | undefined => {
+  const cookieHeader = req.headers.cookie;
+  if (!cookieHeader) return undefined;
+  const match = cookieHeader.split(';').find((c) => c.trim().startsWith(`${name}=`));
+  return match ? decodeURIComponent(match.trim().slice(name.length + 1)) : undefined;
+};
+
 export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const bearerToken = authHeader && authHeader.split(' ')[1];
+  const cookieToken = req.cookies?.token || getCookieValue(req, 'token');
+  const token = cookieToken || bearerToken;
 
   if (!token) {
     throw new UnauthorizedError('No authentication token provided');

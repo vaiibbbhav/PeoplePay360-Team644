@@ -1,0 +1,11 @@
+---
+description: Backend 4-layer architecture rules for PeoplePay360
+globs: backend/src/**/*
+---
+# Backend Rules
+- Routes (`<module>.routes.ts`): Binds paths to controllers. No validation or logic.
+- Controllers (`<module>.controller.ts`): Zod parsing, one service call, `asyncHandler`.
+- Services (`<module>.service.ts`): Pure logic, zero Express imports.
+- Repositories (`<module>.repository.ts`): Drizzle queries with shared `db`.
+- Always use `type` instead of `interface`.
+- Update `DATABASE_SCHEMA.md` on any schema change.
