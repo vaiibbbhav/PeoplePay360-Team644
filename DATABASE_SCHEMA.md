@@ -107,8 +107,10 @@ Authentication credentials and Role-Based Access Control.
 | `passwordHash` | `VARCHAR(255)` | `NOT NULL` | Bcrypt hashed password |
 | `role` | `VARCHAR(50)` | `NOT NULL` | `Employee`, `HR Manager`, `HR Payroll User`, `HR Payroll Manager`, `Admin` |
 | `employeeId` | `UUID` | FK `employees.id` (`SET NULL`) | Optional link to employee profile |
+| `isActive` | `BOOLEAN` | `NOT NULL`, default `true` | Account active status |
 | `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
 | `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
+
 
 ---
 

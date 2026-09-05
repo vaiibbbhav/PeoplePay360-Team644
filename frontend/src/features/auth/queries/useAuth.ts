@@ -12,6 +12,7 @@ export type User = {
   id: string;
   email: string;
   role: UserRole;
+  isActive?: boolean;
   employeeId?: string | null;
   employee?: {
     id: string;
@@ -26,14 +27,6 @@ export type LoginInput = {
   password: string;
 };
 
-export type RegisterInput = {
-  email: string;
-  password: string;
-  role: UserRole;
-  firstName?: string;
-  lastName?: string;
-};
-
 export type AuthResponse = {
   user: User;
   token: string;
@@ -43,11 +36,6 @@ export type AuthResponse = {
 // Public endpoints use publicApi
 const loginApi = async (input: LoginInput): Promise<AuthResponse> => {
   const { data } = await publicApi.post<AuthResponse>('/auth/login', input);
-  return data;
-};
-
-const registerApi = async (input: RegisterInput): Promise<AuthResponse> => {
-  const { data } = await publicApi.post<AuthResponse>('/auth/register', input);
   return data;
 };
 
@@ -75,16 +63,6 @@ export const useLoginMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: loginApi,
-    onSuccess: (data) => {
-      queryClient.setQueryData(['auth', 'me'], data.user);
-    },
-  });
-};
-
-export const useRegisterMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: registerApi,
     onSuccess: (data) => {
       queryClient.setQueryData(['auth', 'me'], data.user);
     },

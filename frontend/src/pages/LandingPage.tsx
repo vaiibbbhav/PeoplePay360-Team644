@@ -69,15 +69,9 @@ export const LandingPage: React.FC = () => {
 
             <Link
               to="/login"
-              className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs font-medium border border-line bg-transparent text-ink hover:bg-bg-raised transition-colors no-underline cursor-pointer"
-            >
-              Sign in
-            </Link>
-            <Link
-              to="/register"
               className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline cursor-pointer"
             >
-              Register
+              Sign in
             </Link>
           </div>
         </div>
@@ -514,16 +508,10 @@ export const LandingPage: React.FC = () => {
               </p>
               <div className="mt-7 flex gap-3.5 flex-wrap">
                 <Link
-                  to="/register"
+                  to="/login"
                   className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline cursor-pointer"
                 >
-                  Create Platform Account
-                </Link>
-                <Link
-                  to="/login"
-                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium border border-line bg-transparent text-ink hover:bg-bg-raised transition-colors no-underline cursor-pointer"
-                >
-                  Sign in
+                  Access Platform Console
                 </Link>
               </div>
             </div>

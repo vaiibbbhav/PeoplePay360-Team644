@@ -2,6 +2,7 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoutes from './modules/auth/auth.routes';
+import usersRoutes from './modules/users/users.routes';
 import hrRoutes from './modules/hr/hr.routes';
 import contractsRoutes from './modules/contracts/contracts.routes';
 import attendanceRoutes from './modules/attendance/attendance.routes';
@@ -32,6 +33,7 @@ export const createApp = (): Express => {
 
   // Resource-oriented API Module routes
   app.use('/api/auth', authRoutes);
+  app.use('/api/users', usersRoutes);
   app.use('/api/employees', hrRoutes);
   app.use('/api/contracts', contractsRoutes);
   app.use('/api/attendance', attendanceRoutes);

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../shared/async-handler';
-import { registerSchema, loginSchema } from './auth.validators';
+import { loginSchema } from './auth.validators';
 import * as authService from './auth.service';
 import { UnauthorizedError } from '../../shared/errors';
 import { getCookieValue } from '../../shared/auth-middleware';
@@ -15,13 +15,6 @@ const setTokenCookie = (res: Response, token: string) => {
     path: '/',
   });
 };
-
-export const register = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const validated = registerSchema.parse(req.body);
-  const result = await authService.register(validated);
-  setTokenCookie(res, result.token);
-  res.status(201).json(result);
-});
 
 export const login = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const validated = loginSchema.parse(req.body);
