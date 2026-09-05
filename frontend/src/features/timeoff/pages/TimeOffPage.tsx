@@ -14,6 +14,14 @@ import { LeaveRequestsTable } from '../components/LeaveRequestsTable';
 import { TeamApprovalsSection } from '../components/TeamApprovalsSection';
 import { AllocationsTable } from '../components/AllocationsTable';
 import { LeaveTypesTable } from '../components/LeaveTypesTable';
+import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 import {
   Calendar,
   Clock,
@@ -21,7 +29,6 @@ import {
   Users,
   ShieldCheck,
   Settings,
-  Filter,
 } from 'lucide-react';
 
 export const TimeOffPage: React.FC = () => {
@@ -256,30 +263,28 @@ export const TimeOffPage: React.FC = () => {
             <TimeOffSummaryCards requests={allRequests} isLoading={isAllRequestsLoading} />
 
             {/* Filter Toolbar */}
-            <div className="p-4 rounded-2xl border border-line bg-bg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-              <div className="flex items-center gap-3 flex-1">
-                <input
-                  type="text"
-                  placeholder="Filter by employee name, department, or leave type..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full md:max-w-md px-3 py-2 text-xs border border-line rounded-xl bg-bg text-ink focus:outline-none focus:border-accent"
-                />
-              </div>
+            <div className="p-4 rounded-2xl border border-line bg-bg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+              <SearchInput
+                placeholder="Filter by employee name, department, or leave type..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
 
-              <div className="flex items-center gap-2">
-                <Filter className="w-3.5 h-3.5 text-ink-soft" />
-                <span className="text-xs text-ink-soft">Status:</span>
-                <select
+              <div className="w-full md:w-auto">
+                <Select
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-3 py-1.5 text-xs border border-line rounded-xl bg-bg text-ink focus:outline-none focus:border-accent"
+                  onValueChange={(val) => setStatusFilter(val)}
                 >
-                  <option value="all">All Requests</option>
-                  <option value="pending">Pending Review</option>
-                  <option value="approved">Approved</option>
-                  <option value="refused">Refused</option>
-                </select>
+                  <SelectTrigger className="w-full md:w-44">
+                    <SelectValue placeholder="All Requests" />
+                  </SelectTrigger>
+                  <SelectContent align="end">
+                    <SelectItem value="all">All Requests</SelectItem>
+                    <SelectItem value="pending">Pending Review</SelectItem>
+                    <SelectItem value="approved">Approved</SelectItem>
+                    <SelectItem value="refused">Refused</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

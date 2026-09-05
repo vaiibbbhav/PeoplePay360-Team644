@@ -1,6 +1,14 @@
 import React from 'react';
 
 import { getTodayIST } from '@/lib/formatters';
+import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 
 export type AttendanceFilterState = {
   search: string;
@@ -59,44 +67,32 @@ export const AttendanceFilterToolbar: React.FC<AttendanceFilterToolbarProps> = (
     <div className="space-y-3 p-4 rounded-2xl border border-line bg-bg font-sans">
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
         {/* Search input */}
-        <div className="relative flex-1 min-w-[240px]">
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-soft pointer-events-none"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search by employee name or email..."
-            value={filter.search}
-            onChange={(e) => setField('search', e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-line bg-bg text-ink placeholder:text-ink-soft focus:outline-hidden focus:border-accent"
-          />
-        </div>
+        <SearchInput
+          placeholder="Search by employee name or email..."
+          value={filter.search}
+          onChange={(e) => setField('search', e.target.value)}
+          wrapperClassName="min-w-[240px]"
+        />
 
         {/* Date inputs & Status */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Status filter */}
-          <select
-            value={filter.status}
-            onChange={(e) => setField('status', e.target.value)}
-            className="px-3 py-2 text-xs rounded-xl border border-line bg-bg text-ink focus:outline-hidden focus:border-accent"
+          <Select
+            value={filter.status || 'all'}
+            onValueChange={(val) => setField('status', val === 'all' ? '' : val)}
           >
-            <option value="all">All Statuses</option>
-            <option value="Present">Present</option>
-            <option value="Late">Late</option>
-            <option value="Half-day">Half-day</option>
-            <option value="Overtime">Overtime</option>
-            <option value="Absent">Absent</option>
-          </select>
+            <SelectTrigger className="w-full sm:w-36">
+              <SelectValue placeholder="All Statuses" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="Present">Present</SelectItem>
+              <SelectItem value="Late">Late</SelectItem>
+              <SelectItem value="Half-day">Half-day</SelectItem>
+              <SelectItem value="Overtime">Overtime</SelectItem>
+              <SelectItem value="Absent">Absent</SelectItem>
+            </SelectContent>
+          </Select>
 
           {/* Date range */}
           <div className="flex items-center gap-1.5 text-xs text-ink-soft">
