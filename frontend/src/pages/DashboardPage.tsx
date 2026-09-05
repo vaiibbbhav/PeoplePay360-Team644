@@ -40,6 +40,15 @@ export const DashboardPage: React.FC = () => {
           <span className="text-xs px-2 py-0.5 rounded bg-accent-soft text-accent font-semibold">
             {user.role}
           </span>
+          <Link
+            to="/compensation"
+            className="text-xs px-2.5 py-1 rounded-md bg-accent-soft text-accent font-medium hover:opacity-80 transition-opacity no-underline flex items-center gap-1.5"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Compensation & Payslips
+          </Link>
           {user.role === 'Admin' && (
             <Link
               to="/users"
@@ -80,6 +89,13 @@ export const DashboardPage: React.FC = () => {
         {/* Action Modules Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
           {[
+            {
+              title: 'My Compensation & Payslips',
+              desc: 'View active CTC packages, download monthly verified payslips, and inspect income tax computation.',
+              tag: 'Self-Service',
+              link: '/compensation',
+              isDirectLink: true,
+            },
             ...(user.role === 'Admin'
               ? [
                   {

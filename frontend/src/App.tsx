@@ -6,6 +6,8 @@ import { LoginPage } from './features/auth/pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { UserManagementPage } from './features/users/pages/UserManagementPage';
 
+import { CompensationPage } from './features/compensation/pages/CompensationPage';
+
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -15,6 +17,8 @@ export function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/users" element={<UserManagementPage />} />
+          <Route path="/compensation" element={<CompensationPage />} />
+          <Route path="/payslips" element={<CompensationPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
