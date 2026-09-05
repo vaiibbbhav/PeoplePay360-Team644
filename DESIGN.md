@@ -63,3 +63,17 @@ Colors are defined as CSS custom properties on `:root`, overridden on `html.dark
 - **Content container:** `max-width: 1120px`, centered, `32px` horizontal padding (`20px` on mobile).
 - **Section rhythm:** `84px` top/bottom padding on desktop, `56px` on mobile.
 - **Hairline Rule:** Avoid drop shadows. Surfaces and cards are separated by a flat 1px `--line` border.
+
+---
+
+## 5. Implementation Standard: Strict Tailwind CSS Usage
+
+- **Rule:** Always use Tailwind CSS utility classes (`className="..."`) for all UI styling.
+- **Rule:** Never use inline CSS (`style={{ ... }}`) or custom vanilla CSS classes unless an extreme dynamic runtime calculation requires it.
+- **Utility Tokens:**
+  - Backgrounds: `bg-bg`, `bg-bg-raised`
+  - Text: `text-ink`, `text-ink-soft`
+  - Borders: `border-line`, `border-accent`
+  - Accent Fills: `bg-accent`, `bg-accent-soft`
+  - Fonts: `font-serif` (Playfair Display), `font-sans` (IBM Plex Sans)
+

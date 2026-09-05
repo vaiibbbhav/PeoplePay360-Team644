@@ -8,3 +8,5 @@ globs: frontend/src/**/*
 - No separate `types.ts` per feature. No `index.ts` barrel files. Direct imports standard.
 - Always use `type` instead of `interface`.
 - Consume network requests only via hooks in `queries/`, never raw Axios inside components.
+- ALWAYS use Tailwind CSS utility classes (`className="..."`). NEVER use inline CSS (`style={{ ... }}`) or vanilla CSS classes unless an extreme dynamic calculation demands it.
+

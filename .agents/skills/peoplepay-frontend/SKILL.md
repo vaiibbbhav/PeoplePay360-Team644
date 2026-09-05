@@ -27,3 +27,7 @@ features/<feature-name>/
    - Global network client lives in `@/api/apiClient` (Axios with credentials and 401 refresh queue).
    - Generic presentational primitives live in `@/components/ui/`.
    - Data fetching is strictly done inside `queries/` hooks — never call Axios directly inside a component.
+5. **Strict Tailwind CSS Standard:**
+   - ALWAYS style components using Tailwind CSS utility classes (`className="..."`).
+   - NEVER use vanilla CSS or inline `style={{ ... }}` unless an extreme dynamic runtime calculation strictly requires it.
+

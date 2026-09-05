@@ -7,3 +7,5 @@ globs: frontend/src/**/*
 - Dark mode: `--bg: #0C0B0D`, `--ink: #F3F1EC`, `--accent: #B08FE0`.
 - Typography: `Playfair Display` serif for headlines (`h1`, `h2`, `h3`, wordmark). `IBM Plex Sans` for body and UI. No all-caps.
 - Surfaces: Flat hairline 1px borders. No drop shadows, no gradient cards.
+- Styling: ALWAYS use Tailwind CSS utility classes (`className="..."`). NEVER write inline styles (`style={{ ... }}`) or vanilla CSS classes.
+

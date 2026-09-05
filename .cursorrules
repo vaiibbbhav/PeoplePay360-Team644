@@ -17,4 +17,6 @@
 
 ## Strict Language Rules
 - ALWAYS use `type` instead of `interface` across all TypeScript files.
+- ALWAYS use Tailwind CSS utility classes (`className="..."`) for all UI styling. NEVER use vanilla CSS classes or inline `style={{ ... }}` unless an extreme dynamic runtime calculation requires it.
 - Strictly adhere to `DESIGN.md`: Editorial B&W, Playfair Display serif headlines, IBM Plex Sans body, single violet accent `#6A3FA0`, hairline borders, no shadows/gradients.
+

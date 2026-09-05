@@ -128,3 +128,18 @@ export const useCheckInMutation = () => {
   1. **Loading** (clean monochrome skeleton or spinner)
   2. **Error** (clear diagnostic callout)
   3. **Empty** (thoughtfully presented empty state)
+
+---
+
+## 5. Strict Styling Rule: Always Tailwind CSS, Never Vanilla CSS or Inline Styles
+
+- **Strict Mandate:** ALWAYS style components using Tailwind CSS utility classes (`className="..."`).
+- **Prohibited:** NEVER use vanilla CSS classes in stylesheets or inline React styles (`style={{ ... }}`) unless an explicit runtime dynamic calculation (e.g. dynamic canvas coordinate or drag transform matrix) strictly demands it.
+- **Theme Utility Tokens:**
+  - Backgrounds: `bg-bg` (canvas), `bg-bg-raised` (panels/cards)
+  - Text: `text-ink` (primary high-contrast), `text-ink-soft` (secondary/muted)
+  - Borders: `border-line` (hairline dividers/cards)
+  - Accents: `text-accent`, `bg-accent`, `bg-accent-soft`, `border-accent`
+  - Status: `text-over-red` (critical/errors)
+  - Fonts: `font-serif` (Playfair Display headlines), `font-sans` (IBM Plex Sans body)
+
