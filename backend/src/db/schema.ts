@@ -10,6 +10,7 @@ import {
   integer,
   text,
   jsonb,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -167,6 +168,17 @@ export const attendance = pgTable('attendance', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
+// 7b. Fingerprint
+export const fingerprint = pgTable('fingerprint', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  employeeId: uuid('employee_id')
+    .notNull()
+    .references(() => employees.id, { onDelete: 'cascade' }),
+  encrytedTemplate: text('encryted_template').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+});
+
 // 8. Time Off Types, Allocations, and Requests
 export const timeOffTypes = pgTable('time_off_types', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -282,3 +294,39 @@ export const payslipLines = pgTable('payslip_lines', {
   amount: numeric('amount', { precision: 12, scale: 2 }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
+
+// 12. Company Policies & Document Compliance
+export const companyPolicies = pgTable('company_policies', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  code: varchar('code', { length: 60 }).notNull().unique(),
+  category: varchar('category', { length: 50 }).notNull(), // 'compliance', 'security', 'workplace', 'hr'
+  version: varchar('version', { length: 20 }).notNull().default('1.0'),
+  summary: text('summary').notNull(),
+  content: text('content').notNull(),
+  isMandatory: boolean('is_mandatory').notNull().default(true),
+  effectiveDate: date('effective_date'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+});
+
+export const policyAcceptances = pgTable(
+  'policy_acceptances',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    policyId: uuid('policy_id')
+      .notNull()
+      .references(() => companyPolicies.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    employeeId: uuid('employee_id').references(() => employees.id, { onDelete: 'set null' }),
+    policyVersion: varchar('policy_version', { length: 20 }).notNull(),
+    acceptedAt: timestamp('accepted_at', { withTimezone: true }).defaultNow(),
+    ipAddress: varchar('ip_address', { length: 50 }),
+    userAgent: text('user_agent'),
+  },
+  (table) => [
+    uniqueIndex('policy_user_version_idx').on(table.policyId, table.userId, table.policyVersion),
+  ],
+);

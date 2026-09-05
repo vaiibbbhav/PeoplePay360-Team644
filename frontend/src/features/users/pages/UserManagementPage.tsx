@@ -38,7 +38,7 @@ export const UserManagementPage: React.FC = () => {
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState('');
 
-  // ─ Data ─
+  // ─ Queries ─
   const { data: users = [], isLoading: isUsersLoading } = useUsersList({
     search: search.trim() || undefined,
     role: roleFilter || undefined,

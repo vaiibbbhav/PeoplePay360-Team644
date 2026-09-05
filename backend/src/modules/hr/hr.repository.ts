@@ -4,12 +4,17 @@ import {
   employees,
   departments,
   jobPositions,
+  workingSchedules,
   contracts,
   attendance,
   timeOffRequests,
   payslips,
 } from '../../db/schema';
-import { eq, desc, count } from 'drizzle-orm';
+import { eq, desc, count, sql } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
+
+const managers = alias(employees, 'managers');
+const managerUsers = alias(users, 'manager_users');
 
 export async function findAllEmployees() {
   return await db
@@ -25,6 +30,9 @@ export async function findAllEmployees() {
       job_position_id: employees.jobPositionId,
       job_position_title: jobPositions.title,
       manager_id: employees.managerId,
+      manager_name: sql<string | null>`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
+      working_schedule_id: employees.workingScheduleId,
+      working_schedule_name: workingSchedules.name,
       employment_status: employees.employmentStatus,
       date_of_joining: employees.dateOfJoining,
       date_of_birth: employees.dateOfBirth,
@@ -40,6 +48,9 @@ export async function findAllEmployees() {
     .leftJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
+    .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))
+    .leftJoin(managers, eq(employees.managerId, managers.id))
+    .leftJoin(managerUsers, eq(managers.userId, managerUsers.id))
     .orderBy(desc(employees.createdAt));
 }
 
@@ -57,6 +68,10 @@ export async function findEmployeeById(id: string) {
       job_position_id: employees.jobPositionId,
       job_position_title: jobPositions.title,
       manager_id: employees.managerId,
+      manager_name: sql<string | null>`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
+      working_schedule_id: employees.workingScheduleId,
+      working_schedule_name: workingSchedules.name,
+      weekly_hours: workingSchedules.weeklyHours,
       employment_status: employees.employmentStatus,
       date_of_joining: employees.dateOfJoining,
       date_of_birth: employees.dateOfBirth,
@@ -72,6 +87,9 @@ export async function findEmployeeById(id: string) {
     .leftJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
+    .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))
+    .leftJoin(managers, eq(employees.managerId, managers.id))
+    .leftJoin(managerUsers, eq(managers.userId, managerUsers.id))
     .where(eq(employees.id, id))
     .limit(1);
 
@@ -194,4 +212,36 @@ export async function getEmployeeStats(employeeId: string) {
     time_off_count: timeOffRes?.val ?? 0,
     payslip_count: payslipRes?.val ?? 0,
   };
+}
+
+export async function findAllDepartments() {
+  return await db.select().from(departments).orderBy(departments.name);
+}
+
+export async function findAllJobPositions() {
+  return await db.select().from(jobPositions).orderBy(jobPositions.title);
+}
+
+export async function findAllWorkingSchedules() {
+  return await db.select().from(workingSchedules).orderBy(workingSchedules.name);
+}
+export async function findPayslipsByEmployeeId(employeeId: string) {
+  return await db
+    .select({
+      id: payslips.id,
+      payrun_id: payslips.payrunId,
+      period_start: payslips.periodStart,
+      period_end: payslips.periodEnd,
+      worked_days: payslips.workedDays,
+      basic_salary: payslips.basicSalary,
+      gross_salary: payslips.grossSalary,
+      total_deductions: payslips.totalDeductions,
+      net_salary: payslips.netSalary,
+      status: payslips.status,
+      warnings: payslips.warnings,
+      created_at: payslips.createdAt,
+    })
+    .from(payslips)
+    .where(eq(payslips.employeeId, employeeId))
+    .orderBy(desc(payslips.periodStart));
 }

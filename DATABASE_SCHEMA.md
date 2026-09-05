@@ -1,10 +1,6 @@
-# PeoplePay360: Database Schema Reference
-**Target: Neon Serverless Postgres with Drizzle ORM**
+# PeoplePay360 Database Schema
 
-> [!IMPORTANT]
-> **SCHEMA SYNCHRONIZATION MANDATE:**
-> Whenever any developer or agent modifies, adds, or deletes a table, column, enum, or constraint in `backend/src/db/schema.ts`, you **MUST** update this `DATABASE_SCHEMA.md` file in the exact same task/commit.
-> Keeping this file in lockstep with the Drizzle schema ensures cross-agent and cross-team architectural consistency.
+Comprehensive documentation of all database tables, columns, constraints, and relationships in the centralized PostgreSQL schema (`backend/src/db/schema.ts`).
 
 ---
 
@@ -28,47 +24,34 @@ users (canonical identity & auth) ──1:1── employees (HR operational exte
 ## 1. Organization & Job Architecture
 
 ### `departments`
-Stores organizational units and department hierarchy.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique department ID |
-| `name` | `VARCHAR(100)` | `NOT NULL`, `UNIQUE` | Department title (e.g. Engineering) |
-| `managerId` | `UUID` | Nullable | Employee ID of department head |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Audit creation timestamp |
+- `id` (UUID, Primary Key, default random)
+- `name` (VARCHAR(100), NOT NULL, UNIQUE)
+- `manager_id` (UUID, nullable)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 
 ### `jobPositions`
-Specific role titles associated with a department.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique job position ID |
-| `title` | `VARCHAR(100)` | `NOT NULL` | Position title (e.g. SDE II) |
-| `departmentId` | `UUID` | Foreign Key `departments.id` (`ON DELETE SET NULL`) | Parent department |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Creation timestamp |
+- `id` (UUID, Primary Key, default random)
+- `title` (VARCHAR(100), NOT NULL)
+- `department_id` (UUID, references `departments.id` ON DELETE SET NULL)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 
 ---
 
-## 2. Working Schedules
+## 2. Work Schedules
 
 ### `working_schedules`
-Defines working hour policies and schedule containers.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique schedule ID |
-| `name` | `VARCHAR(100)` | `NOT NULL` | Schedule label (e.g. Standard 40h) |
-| `weeklyHours` | `NUMERIC(5, 2)` | `NOT NULL`, default `40.00` | Calculated weekly total hours |
-| `isActive` | `BOOLEAN` | `NOT NULL`, default `true` | Active status flag |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Creation timestamp |
+- `id` (UUID, Primary Key, default random)
+- `name` (VARCHAR(100), NOT NULL)
+- `totalWeeklyHours` (NUMERIC(5, 2), NOT NULL, default '40.0')
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 
 ### `working_schedule_lines`
-Individual daily time blocks within a schedule.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique schedule line ID |
-| `scheduleId` | `UUID` | `NOT NULL`, FK `working_schedules.id` (`CASCADE`) | Parent schedule |
-| `dayOfWeek` | `VARCHAR(15)` | `NOT NULL` | Monday, Tuesday, etc. |
-| `startTime` | `TIME` | `NOT NULL`, default `09:00:00` | Planned shift start |
-| `endTime` | `TIME` | `NOT NULL`, default `17:00:00` | Planned shift end |
-| `breakMinutes` | `INTEGER` | `NOT NULL`, default `60` | Scheduled break duration in mins |
+- `id` (UUID, Primary Key, default random)
+- `schedule_id` (UUID, NOT NULL, references `working_schedules.id` ON DELETE CASCADE)
+- `dayOfWeek` (VARCHAR(20), NOT NULL)
+- `startTime` (TIME, NOT NULL)
+- `endTime` (TIME, NOT NULL)
+- `breakDurationHours` (NUMERIC(4, 2), NOT NULL, default '1.0')
 
 ---
 
@@ -113,185 +96,178 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 | `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
 | `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
 
-
 ---
 
-## 4. Compensation: Contracts & Salary Rules
-
-### `salary_structures`
-Containers grouping collections of salary calculation rules.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique structure ID |
-| `name` | `VARCHAR(100)` | `NOT NULL` | Structure name (e.g. Standard Salaried) |
-| `code` | `VARCHAR(50)` | `NOT NULL`, `UNIQUE` | Short code (e.g. `REG_SAL`) |
-| `description` | `TEXT` | Nullable | Contextual details |
-| `isActive` | `BOOLEAN` | `NOT NULL`, default `true` | Active status |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-| `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-
-### `salary_rules`
-Atomic computational logic applied sequentially to compute payslips.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique rule ID |
-| `structureId` | `UUID` | `NOT NULL`, FK `salary_structures.id` (`CASCADE`) | Parent structure |
-| `name` | `VARCHAR(100)` | `NOT NULL` | Rule title (e.g. Basic Salary) |
-| `code` | `VARCHAR(50)` | `NOT NULL` | Reference code (e.g. `BASIC`, `HRA`, `PF`) |
-| `category` | `VARCHAR(30)` | `NOT NULL` | `basic`, `allowance`, `gross`, `deduction`, `net` |
-| `sequence` | `INTEGER` | `NOT NULL`, default `1` | Execution priority order |
-| `computationMethod` | `VARCHAR(20)` | `NOT NULL` | `fixed`, `percentage`, `formula` |
-| `amount` | `NUMERIC(12, 2)` | Default `0.00` | Fixed amount (if fixed method) |
-| `percentageOfCode` | `VARCHAR(50)` | Nullable | Target rule code (if percentage) |
-| `percentage` | `NUMERIC(6, 2)` | Nullable | Percentage value (e.g. `12.00` for 12%) |
-| `formula` | `TEXT` | Nullable | JavaScript/math expression (if formula) |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-| `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
+## 4. Contracts
 
 ### `contracts`
-Employment terms and compensation agreement per employee.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique contract ID |
-| `employeeId` | `UUID` | `NOT NULL`, FK `employees.id` (`CASCADE`) | Contract owner |
-| `name` | `VARCHAR(150)` | `NOT NULL` | Contract reference name |
-| `wage` | `NUMERIC(12, 2)` | `NOT NULL` | Base contractual compensation |
-| `wageType` | `VARCHAR(20)` | `NOT NULL`, default `'monthly'` | `monthly`, `hourly`, `annual` |
-| `salaryStructureId` | `UUID` | FK `salary_structures.id` (`RESTRICT`) | Bound salary structure |
-| `workingScheduleId` | `UUID` | FK `working_schedules.id` (`SET NULL`) | Schedule override |
-| `departmentId` | `UUID` | FK `departments.id` (`SET NULL`) | Department override |
-| `jobPositionId` | `UUID` | FK `jobPositions.id` (`SET NULL`) | Position override |
-| `startDate` | `DATE` | `NOT NULL` | Valid from date |
-| `endDate` | `DATE` | Nullable | Expiration date |
-| `status` | `VARCHAR(30)` | `NOT NULL`, default `'draft'` | `draft`, `active`, `expired`, `cancelled` |
-| `notes` | `TEXT` | Nullable | Internal remarks |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-| `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
+- `id` (UUID, Primary Key, default random)
+- `employee_id` (UUID, NOT NULL, references `employees.id` ON DELETE CASCADE)
+- `name` (VARCHAR(150), NOT NULL)
+- `wage` (NUMERIC(12, 2), NOT NULL)
+- `wage_type` (VARCHAR(20), NOT NULL, default 'monthly')
+- `salary_structure_id` (UUID, references `salary_structures.id` ON DELETE RESTRICT)
+- `working_schedule_id` (UUID, references `working_schedules.id` ON DELETE SET NULL)
+- `department_id` (UUID, references `departments.id` ON DELETE SET NULL)
+- `job_position_id` (UUID, references `jobPositions.id` ON DELETE SET NULL)
+- `start_date` (DATE, NOT NULL)
+- `end_date` (DATE)
+- `status` (VARCHAR(30), NOT NULL, default 'draft')
+- `notes` (TEXT)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+- `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
 
 ---
 
-## 5. Operations: Attendance & Time Off
+## 5. Attendance & Biometrics
 
 ### `attendance`
-Daily presence punches and worked hours logs.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique record ID |
-| `employeeId` | `UUID` | `NOT NULL`, FK `employees.id` (`CASCADE`) | Employee punch owner |
-| `date` | `DATE` | `NOT NULL` | Work date |
-| `checkIn` | `TIMESTAMPTZ` | Nullable | Check-in timestamp |
-| `checkOut` | `TIMESTAMPTZ` | Nullable | Check-out timestamp |
-| `workedHours` | `NUMERIC(5, 2)` | Default `0.00` | Net worked hours |
-| `status` | `VARCHAR(30)` | `NOT NULL`, default `'Present'` | `Present`, `Late`, `Absent`, `Half-Day` |
-| `exceptionNote` | `TEXT` | Nullable | Reason for anomaly / override |
-| `isManualEdit` | `BOOLEAN` | `NOT NULL`, default `false` | True if corrected by HR |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-| `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
+- `id` (UUID, Primary Key, default random)
+- `employee_id` (UUID, NOT NULL, references `employees.id` ON DELETE CASCADE)
+- `check_in` (TIMESTAMP WITH TIME ZONE, NOT NULL)
+- `check_out` (TIMESTAMP WITH TIME ZONE)
+- `worked_hours` (NUMERIC(5, 2))
+- `status` (VARCHAR(30), NOT NULL, default 'present')
+- `is_manual_edit` (BOOLEAN, NOT NULL, default false)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+- `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
 
-### `time_off_types`
-Leave policies (Paid Time Off, Sick Leave, Unpaid Leave).
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique leave type ID |
-| `name` | `VARCHAR(100)` | `NOT NULL`, `UNIQUE` | Type name (e.g. Annual Leave) |
-| `code` | `VARCHAR(30)` | `NOT NULL`, `UNIQUE` | Code (e.g. `AL`, `SL`) |
-| `unit` | `VARCHAR(10)` | `NOT NULL`, default `'days'` | `'days'` or `'hours'` |
-| `requiresAllocation` | `BOOLEAN`| `NOT NULL`, default `true` | Must have pre-granted balance |
-| `approvalType` | `VARCHAR(30)` | `NOT NULL`, default `'hr_only'` | Approval hierarchy |
-| `isPaid` | `BOOLEAN` | `NOT NULL`, default `true` | Affects payroll deduction |
-| `isActive` | `BOOLEAN` | `NOT NULL`, default `true` | Active status |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-
-### `time_off_allocations`
-Accrued and granted balances per employee per leave type.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique allocation ID |
-| `employeeId` | `UUID` | `NOT NULL`, FK `employees.id` (`CASCADE`) | Employee |
-| `timeOffTypeId` | `UUID` | `NOT NULL`, FK `time_off_types.id` (`CASCADE`) | Bound leave type |
-| `allocatedAmount` | `NUMERIC(6, 2)` | `NOT NULL` | Total units granted |
-| `takenAmount` | `NUMERIC(6, 2)` | `NOT NULL`, default `0.00` | Total units consumed |
-| `remainingAmount` | `NUMERIC(6, 2)` | `NOT NULL` | Current usable balance |
-| `validFrom` | `DATE` | `NOT NULL` | Validity start |
-| `validTo` | `DATE` | `NOT NULL` | Validity expiration |
-| `status` | `VARCHAR(30)` | `NOT NULL`, default `'draft'` | `draft`, `approved`, `refused` |
-| `approvedBy` | `UUID` | FK `users.id` (`SET NULL`) | Approver ID |
-| `approvedAt` | `TIMESTAMPTZ` | Nullable | Timestamp |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-
-### `time_off_requests`
-Individual employee leave applications and review states.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique request ID |
-| `employeeId` | `UUID` | `NOT NULL`, FK `employees.id` (`CASCADE`) | Requesting employee |
-| `timeOffTypeId` | `UUID` | `NOT NULL`, FK `time_off_types.id` (`CASCADE`) | Requested leave type |
-| `startDate` | `DATE` | `NOT NULL` | Leave start |
-| `endDate` | `DATE` | `NOT NULL` | Leave end |
-| `duration` | `NUMERIC(6, 2)` | `NOT NULL` | Days/hours requested |
-| `reason` | `TEXT` | Nullable | Employee justification |
-| `status` | `VARCHAR(30)` | `NOT NULL`, default `'pending'` | `pending`, `approved`, `refused` |
-| `approvedBy` | `UUID` | FK `users.id` (`SET NULL`) | Reviewing manager ID |
-| `approvedAt` | `TIMESTAMPTZ` | Nullable | Timestamp |
-| `refusedReason` | `TEXT` | Nullable | Rejection rationale |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-| `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
+### `fingerprint`
+- `id` (UUID, Primary Key, default random)
+- `employee_id` (UUID, NOT NULL, references `employees.id` ON DELETE CASCADE)
+- `encryted_template` (TEXT, NOT NULL)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+- `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
 
 ---
 
-## 6. Payroll: Batches & Payslips
+## 6. Time Off
+
+### `time_off_types`
+- `id` (UUID, Primary Key, default random)
+- `name` (VARCHAR(100), NOT NULL)
+- `unit` (VARCHAR(20), NOT NULL, default 'days')
+- `requires_allocation` (BOOLEAN, NOT NULL, default true)
+- `approval_workflow` (VARCHAR(50), NOT NULL, default 'manager_only')
+- `payroll_integration` (BOOLEAN, NOT NULL, default true)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+
+### `time_off_allocations`
+- `id` (UUID, Primary Key, default random)
+- `employee_id` (UUID, NOT NULL, references `employees.id` ON DELETE CASCADE)
+- `type_id` (UUID, NOT NULL, references `time_off_types.id` ON DELETE RESTRICT)
+- `days_allocated` (NUMERIC(5, 2), NOT NULL)
+- `days_remaining` (NUMERIC(5, 2), NOT NULL)
+- `valid_from` (DATE, NOT NULL)
+- `valid_to` (DATE, NOT NULL)
+- `status` (VARCHAR(30), NOT NULL, default 'draft')
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+
+### `time_off_requests`
+- `id` (UUID, Primary Key, default random)
+- `employee_id` (UUID, NOT NULL, references `employees.id` ON DELETE CASCADE)
+- `type_id` (UUID, NOT NULL, references `time_off_types.id` ON DELETE RESTRICT)
+- `start_date` (DATE, NOT NULL)
+- `end_date` (DATE, NOT NULL)
+- `duration` (NUMERIC(5, 2), NOT NULL)
+- `status` (VARCHAR(30), NOT NULL, default 'pending')
+- `reason` (TEXT)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+- `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
+
+---
+
+## 7. Payroll & Salary Rules
+
+### `salary_structures`
+- `id` (UUID, Primary Key, default random)
+- `name` (VARCHAR(150), NOT NULL)
+- `code` (VARCHAR(50), NOT NULL, UNIQUE)
+- `is_active` (BOOLEAN, NOT NULL, default true)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+
+### `salary_rules`
+- `id` (UUID, Primary Key, default random)
+- `structure_id` (UUID, NOT NULL, references `salary_structures.id` ON DELETE CASCADE)
+- `code` (VARCHAR(50), NOT NULL)
+- `name` (VARCHAR(150), NOT NULL)
+- `category` (VARCHAR(30), NOT NULL) — 'basic', 'allowance', 'gross', 'deduction', 'net'
+- `sequence` (INTEGER, NOT NULL)
+- `computation_method` (VARCHAR(30), NOT NULL) — 'fixed', 'percentage', 'formula'
+- `amount` (NUMERIC(12, 2), default '0.0')
+- `percentage_of_code` (VARCHAR(50))
+- `percentage` (NUMERIC(6, 3))
+- `formula` (TEXT)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 
 ### `payruns`
-Payroll processing batches defined by period and structure.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique payrun ID |
-| `name` | `VARCHAR(150)` | `NOT NULL` | Batch name (e.g. October 2026 Run) |
-| `salaryStructureId`| `UUID` | `NOT NULL`, FK `salary_structures.id` (`RESTRICT`) | Structure |
-| `periodStart` | `DATE` | `NOT NULL` | Pay cycle start |
-| `periodEnd` | `DATE` | `NOT NULL` | Pay cycle end |
-| `status` | `VARCHAR(30)` | `NOT NULL`, default `'draft'` | `draft`, `computed`, `validated`, `paid` |
-| `totalBasic` | `NUMERIC(14, 2)` | Default `0.00` | Aggregate basic sum |
-| `totalGross` | `NUMERIC(14, 2)` | Default `0.00` | Aggregate gross sum |
-| `totalDeductions` | `NUMERIC(14, 2)` | Default `0.00` | Aggregate deduction sum |
-| `totalNet` | `NUMERIC(14, 2)` | Default `0.00` | Total net payout |
-| `payslipCount` | `INTEGER` | Default `0` | Number of payslips in batch |
-| `warnings` | `JSONB` | Default `'[]'::jsonb` | Validation anomalies list |
-| `notes` | `TEXT` | Nullable | Batch notes |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-| `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
+- `id` (UUID, Primary Key, default random)
+- `name` (VARCHAR(150), NOT NULL)
+- `structure_id` (UUID, NOT NULL, references `salary_structures.id` ON DELETE RESTRICT)
+- `period_start` (DATE, NOT NULL)
+- `period_end` (DATE, NOT NULL)
+- `status` (VARCHAR(30), NOT NULL, default 'draft') — 'draft', 'computed', 'validated', 'paid', 'sent'
+- `total_basic` (NUMERIC(14, 2), NOT NULL, default '0.0')
+- `total_gross` (NUMERIC(14, 2), NOT NULL, default '0.0')
+- `total_deductions` (NUMERIC(14, 2), NOT NULL, default '0.0')
+- `total_net` (NUMERIC(14, 2), NOT NULL, default '0.0')
+- `warnings` (JSONB, default '[]')
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+- `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
 
 ### `payslips`
-Individual employee compensation settlement for a payrun.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique payslip ID |
-| `payrunId` | `UUID` | `NOT NULL`, FK `payruns.id` (`CASCADE`) | Parent payrun batch |
-| `employeeId` | `UUID` | `NOT NULL`, FK `employees.id` (`CASCADE`) | Target employee |
-| `contractId` | `UUID` | `NOT NULL`, FK `contracts.id` (`RESTRICT`) | Applicable active contract |
-| `structureId` | `UUID` | `NOT NULL`, FK `salary_structures.id` (`RESTRICT`) | Structure applied |
-| `periodStart` | `DATE` | `NOT NULL` | Start date |
-| `periodEnd` | `DATE` | `NOT NULL` | End date |
-| `workedDays` | `NUMERIC(5, 2)` | `NOT NULL`, default `22.00` | Attended/payable days |
-| `basicSalary` | `NUMERIC(12, 2)` | `NOT NULL`, default `0.00` | Basic calculated |
-| `grossSalary` | `NUMERIC(12, 2)` | `NOT NULL`, default `0.00` | Gross calculated |
-| `totalDeductions` | `NUMERIC(12, 2)`| `NOT NULL`, default `0.00` | Deductions sum |
-| `netSalary` | `NUMERIC(12, 2)` | `NOT NULL`, default `0.00` | Final net payable |
-| `status` | `VARCHAR(30)` | `NOT NULL`, default `'draft'` | `draft`, `computed`, `paid` |
-| `warnings` | `JSONB` | Default `'[]'::jsonb` | Employee specific warnings |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
-| `updatedAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
+- `id` (UUID, Primary Key, default random)
+- `payrun_id` (UUID, NOT NULL, references `payruns.id` ON DELETE CASCADE)
+- `employee_id` (UUID, NOT NULL, references `employees.id` ON DELETE CASCADE)
+- `contract_id` (UUID, NOT NULL, references `contracts.id` ON DELETE RESTRICT)
+- `structure_id` (UUID, NOT NULL, references `salary_structures.id` ON DELETE RESTRICT)
+- `period_start` (DATE, NOT NULL)
+- `period_end` (DATE, NOT NULL)
+- `worked_days` (NUMERIC(5, 2), NOT NULL, default '22.0')
+- `basic_salary` (NUMERIC(12, 2), NOT NULL, default '0.0')
+- `gross_salary` (NUMERIC(12, 2), NOT NULL, default '0.0')
+- `total_deductions` (NUMERIC(12, 2), NOT NULL, default '0.0')
+- `net_salary` (NUMERIC(12, 2), NOT NULL, default '0.0')
+- `status` (VARCHAR(30), NOT NULL, default 'draft')
+- `warnings` (JSONB, default '[]')
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+- `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
 
 ### `payslip_lines`
-Itemized salary computation lines backing a payslip.
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique line ID |
-| `payslipId` | `UUID` | `NOT NULL`, FK `payslips.id` (`CASCADE`) | Parent payslip |
-| `ruleId` | `UUID` | FK `salary_rules.id` (`SET NULL`) | Originating salary rule |
-| `code` | `VARCHAR(50)` | `NOT NULL` | Rule code (e.g. `BASIC`, `PF`) |
-| `name` | `VARCHAR(100)` | `NOT NULL` | Rule title |
-| `category` | `VARCHAR(30)` | `NOT NULL` | Component category |
-| `sequence` | `INTEGER` | `NOT NULL` | Execution sequence order |
-| `amount` | `NUMERIC(12, 2)` | `NOT NULL` | Computed line amount |
-| `createdAt` | `TIMESTAMPTZ` | Default `now()` | Timestamp |
+- `id` (UUID, Primary Key, default random)
+- `payslip_id` (UUID, NOT NULL, references `payslips.id` ON DELETE CASCADE)
+- `rule_id` (UUID, references `salary_rules.id` ON DELETE SET NULL)
+- `code` (VARCHAR(50), NOT NULL)
+- `name` (VARCHAR(100), NOT NULL)
+- `category` (VARCHAR(30), NOT NULL)
+- `sequence` (INTEGER, NOT NULL)
+- `amount` (NUMERIC(12, 2), NOT NULL)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+
+---
+
+## 8. Company Policies & Document Compliance
+
+### `company_policies`
+- `id` (UUID, Primary Key, default random)
+- `title` (VARCHAR(255), NOT NULL)
+- `code` (VARCHAR(60), NOT NULL, UNIQUE)
+- `category` (VARCHAR(50), NOT NULL) — 'compliance', 'security', 'workplace', 'hr'
+- `version` (VARCHAR(20), NOT NULL, default '1.0')
+- `summary` (TEXT, NOT NULL)
+- `content` (TEXT, NOT NULL)
+- `is_mandatory` (BOOLEAN, NOT NULL, default true)
+- `effective_date` (DATE)
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+- `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
+
+### `policy_acceptances`
+- `id` (UUID, Primary Key, default random)
+- `policy_id` (UUID, NOT NULL, references `company_policies.id` ON DELETE CASCADE)
+- `user_id` (UUID, NOT NULL, references `users.id` ON DELETE CASCADE)
+- `employee_id` (UUID, references `employees.id` ON DELETE SET NULL)
+- `policy_version` (VARCHAR(20), NOT NULL)
+- `accepted_at` (TIMESTAMP WITH TIME ZONE, default now)
+- `ip_address` (VARCHAR(50))
+- `user_agent` (TEXT)
+- **Constraint**: `UNIQUE(policy_id, user_id, policy_version)`

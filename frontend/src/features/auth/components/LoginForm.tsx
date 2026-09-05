@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLoginMutation } from '../queries/useAuth';
 
-interface QuickRole {
+type QuickRole = {
   role: string;
   email: string;
   pass: string;
-}
+};
 
 const QUICK_ROLES: QuickRole[] = [
   { role: 'Admin', email: 'admin@peoplepay.com', pass: 'Admin@123' },
@@ -40,7 +40,13 @@ export const LoginForm: React.FC = () => {
 
     try {
       const res = await loginMutation.mutateAsync({ email, password });
-      navigate(res.user.role === 'Admin' ? '/users' : '/dashboard');
+      if (res?.user?.role === 'Admin') {
+        navigate('/users');
+      } else if (res?.user?.role === 'Employee') {
+        navigate('/employee/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       const msg =
         err.response?.data?.error ||
@@ -59,7 +65,13 @@ export const LoginForm: React.FC = () => {
 
     try {
       const res = await loginMutation.mutateAsync({ email: acc.email, password: acc.pass });
-      navigate(res.user.role === 'Admin' ? '/users' : '/dashboard');
+      if (acc.role === 'Admin' || res?.user?.role === 'Admin') {
+        navigate('/users');
+      } else if (acc.role === 'Employee' || res?.user?.role === 'Employee') {
+        navigate('/employee/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       const msg =
         err.response?.data?.error ||

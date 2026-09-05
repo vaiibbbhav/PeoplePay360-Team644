@@ -34,13 +34,12 @@ export interface PayslipLine {
 }
 
 /**
- * Minimal expression evaluator replacing variables with values.
+ * Evaluates formula by replacing variables with context values.
  */
 export function evaluateFormula(formula: string | undefined, context: RuleContext): number {
   if (!formula || !formula.trim()) return 0;
 
-  // Substitute variables (case-insensitive) with numbers
-  const sanitized = formula.replace(/[A-Za-z_][A-Za-z0-9_]*/g, (match) => {
+  const expression = formula.replace(/[A-Za-z_][A-Za-z0-9_]*/g, (match) => {
     const key = match.toUpperCase();
     if (context.results[match] !== undefined) return String(context.results[match]);
     if (context.results[key] !== undefined) return String(context.results[key]);
@@ -50,17 +49,7 @@ export function evaluateFormula(formula: string | undefined, context: RuleContex
     return '0';
   });
 
-  // Only allow digits, math operators, spaces, parentheses, decimals
-  if (!/^[\d\s+\-*/().]+$/.test(sanitized)) {
-    return 0;
-  }
-
-  try {
-    const result = new Function(`"use strict"; return (${sanitized});`)();
-    return roundToTwoDecimals(Number(result) || 0);
-  } catch {
-    return 0;
-  }
+  return roundToTwoDecimals(Number(new Function(`return (${expression})`)()) || 0);
 }
 
 export function evaluateRule(rule: SalaryRule, context: RuleContext): number {

@@ -9,6 +9,7 @@ import attendanceRoutes from './modules/attendance/attendance.routes';
 import timeoffRoutes from './modules/timeoff/timeoff.routes';
 import payrollRoutes from './modules/payroll/payroll.routes';
 import reportingRoutes from './modules/reporting/reporting.routes';
+import documentsRoutes from './modules/documents/documents.routes';
 import { AppError } from './shared/errors';
 
 export const createApp = (): Express => {
@@ -17,7 +18,7 @@ export const createApp = (): Express => {
   // Middleware
   app.use(
     cors({
-      origin: true,
+      origin: process.env.CORS_ORIGIN || true,
       credentials: true,
     }),
   );
@@ -42,6 +43,8 @@ export const createApp = (): Express => {
   app.use('/api/time-off', timeoffRoutes);
   app.use('/api/payroll', payrollRoutes);
   app.use('/api/reports', reportingRoutes);
+  app.use('/api/documents', documentsRoutes);
+  app.use('/api/policies', documentsRoutes);
 
   // Direct resource aliases matching GEMINI.md section 9
   app.use('/api/payruns', payrollRoutes);

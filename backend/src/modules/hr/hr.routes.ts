@@ -14,6 +14,14 @@ router.get(
 );
 
 router.get(
+  '/meta',
+  asyncHandler(async (_req, res) => {
+    const meta = await hrService.getMetadataOptions();
+    res.json(meta);
+  }),
+);
+
+router.get(
   '/kanban',
   asyncHandler(async (_req, res) => {
     const kanban = await hrService.getEmployeesForKanban();
@@ -34,6 +42,14 @@ router.get(
   asyncHandler(async (req, res) => {
     const hubData = await hrService.getEmployeeHubDetails(req.params.id);
     res.json(hubData);
+  }),
+);
+
+router.get(
+  '/:id/payslips',
+  asyncHandler(async (req, res) => {
+    const payslips = await hrService.getEmployeePayslips(req.params.id);
+    res.json(payslips);
   }),
 );
 
