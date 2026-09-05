@@ -16,6 +16,8 @@ import { PayslipsTab } from '../components/PayslipsTab';
 import { EmployeeFormModal } from '../components/EmployeeFormModal';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
+import { AppLayout } from '@/components/layout/AppLayout';
+
 type EmployeeProfileContentProps = {
   employeeId: string;
 };
@@ -47,23 +49,10 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
   };
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col">
-      {/* Top Navbar */}
-      <header className="border-b border-line px-6 sm:px-8 py-4 flex justify-between items-center bg-bg sticky top-0 z-10">
-        <div className="flex items-center gap-6">
-          <Link to="/dashboard" className="font-serif text-xl font-bold text-ink no-underline">
-            PeoplePay<span className="text-accent">360</span>
-          </Link>
-          <div className="h-4 w-px bg-line" />
-          <Link to="/employees" className="text-xs text-ink-soft hover:text-ink no-underline">
-            ← Directory
-          </Link>
-          <span className="text-xs font-medium text-ink hidden sm:inline">
-            / {employee.first_name} {employee.last_name}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3">
+    <AppLayout
+      title={`${employee.first_name} ${employee.last_name}`}
+      actions={
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setIsEditModalOpen(true)}
             className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-bg border border-line text-ink hover:bg-bg-raised transition-colors cursor-pointer"
@@ -78,8 +67,8 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
             {isDeleting ? 'Deleting...' : 'Delete'}
           </button>
         </div>
-      </header>
-
+      }
+    >
       {/* Main Container */}
       <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8">
         {/* Template Hero Banner */}
@@ -164,7 +153,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
           isSaving={updateEmployeeMutation.isPending}
         />
       )}
-    </div>
+    </AppLayout>
   );
 };
 

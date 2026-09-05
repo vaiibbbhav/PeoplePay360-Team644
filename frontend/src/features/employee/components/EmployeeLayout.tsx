@@ -7,6 +7,7 @@ type NavItem = {
   path: string;
   icon: (props: { className?: string }) => React.JSX.Element;
   badge?: string;
+  hasSubmenu?: boolean;
 };
 
 type EmployeeLayoutProps = {
@@ -26,6 +27,8 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
 
   const currentUser: User = user || {
     id: 'emp-session',
+    firstName: 'Employee',
+    lastName: 'User',
     email: 'employee@peoplepay360.com',
     role: 'Employee',
     employee: {

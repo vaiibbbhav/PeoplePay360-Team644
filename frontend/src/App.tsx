@@ -5,10 +5,8 @@ import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { VerifyEmailPage } from './features/auth/pages/VerifyEmailPage';
 import { DashboardPage } from './pages/DashboardPage';
-import { EmployeeDashboardPage } from './features/employee/pages/EmployeeDashboardPage';
 import { EmployeeAttendancePage } from './features/employee/pages/EmployeeAttendancePage';
 import { UserManagementPage } from './features/users/pages/UserManagementPage';
-import { AppLayout } from './components/layout/AppLayout';
 import { EmployeeDirectoryPage } from './features/employees/pages/EmployeeDirectoryPage';
 import { EmployeeProfilePage } from './features/employees/pages/EmployeeProfilePage';
 import { CompensationPage } from './features/compensation/pages/CompensationPage';
@@ -24,16 +22,11 @@ export function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
-
-          {/* Protected routes — rendered inside the AppLayout shell */}
-          <Route element={<AppLayout />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/users" element={<UserManagementPage />} />
-          </Route>
-
-          {/* Feature & Self-Service routes */}
-          <Route path="/employee/dashboard" element={<EmployeeDashboardPage />} />
-          <Route path="/employee/attendance" element={<EmployeeAttendancePage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/attendance" element={<EmployeeAttendancePage />} />
+          <Route path="/employee/dashboard" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/employee/attendance" element={<Navigate to="/attendance" replace />} />
+          <Route path="/users" element={<UserManagementPage />} />
           <Route path="/compensation" element={<CompensationPage />} />
           <Route path="/payslips" element={<CompensationPage />} />
           <Route path="/documents" element={<DocumentsPage />} />

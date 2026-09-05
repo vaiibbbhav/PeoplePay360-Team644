@@ -22,6 +22,7 @@ export type EmployeeListItem = {
   date_of_birth: string | null;
   gender: string | null;
   identification_number: string | null;
+  location: string | null;
   bank_name: string | null;
   bank_account_number: string | null;
   bank_routing_code: string | null;
@@ -60,6 +61,7 @@ export type CreateEmployeeInput = {
   dateOfBirth?: string | null;
   gender?: string | null;
   identificationNumber?: string | null;
+  location?: string | null;
   bankName?: string | null;
   bankAccountNumber?: string | null;
   bankRoutingCode?: string | null;

@@ -48,6 +48,7 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
   const [jobPositionId, setJobPositionId] = useState(employee?.job_position_id || '');
   const [managerId, setManagerId] = useState(employee?.manager_id || '');
   const [workingScheduleId, setWorkingScheduleId] = useState(employee?.working_schedule_id || '');
+  const [location, setLocation] = useState(employee?.location || 'Main Headquarters');
   const [employmentStatus, setEmploymentStatus] = useState<EmploymentStatus>(
     employee?.employment_status || 'active',
   );
@@ -79,6 +80,7 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
         dateOfBirth: dateOfBirth || null,
         gender: gender || null,
         identificationNumber: identificationNumber.trim() || null,
+        location: location.trim() || 'Main Headquarters',
         bankName: bankName.trim() || null,
         bankAccountNumber: bankAccountNumber.trim() || null,
         bankRoutingCode: bankRoutingCode.trim() || null,
@@ -407,6 +409,19 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
                       <option value="terminated">Terminated</option>
                     </select>
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-ink-soft mb-1">
+                    Work Location / Office
+                  </label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="e.g. Main Headquarters, Bengaluru Tech Park, Remote"
+                    className="w-full px-3 py-2 text-xs rounded-lg border border-line bg-bg text-ink focus:outline-none focus:border-accent"
+                  />
                 </div>
               </>
             )}

@@ -12,6 +12,7 @@ export const seedDatabase = async (): Promise<void> => {
     // 1. Ensure schema tables exist
     await client.query(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+      ALTER TABLE employees ADD COLUMN IF NOT EXISTS location VARCHAR(150) DEFAULT 'Main Headquarters';
 
       CREATE TABLE IF NOT EXISTS company_policies (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -164,40 +165,51 @@ export const seedDatabase = async (): Promise<void> => {
       }
     }
 
-    // 6. Seed Sample Employees (from wireframe)
+    // 6. Seed Sample Employees with real Locations and Manager hierarchy
+    // Nisha Rao is Executive/Head; Maya Shah is HR Head; Aarav & Rohan report to Maya/Nisha
     const sampleEmployees = [
       {
-        firstName: 'Aarav',
-        lastName: 'Mehta',
-        email: 'aarav@company.com',
-        departmentId: deptMap['Technology'],
-        role: 'HR Payroll User' as const,
+        firstName: 'Nisha',
+        lastName: 'Rao',
+        email: 'nisha@company.com',
+        departmentId: deptMap['Management'],
+        location: 'Main Headquarters',
+        role: 'HR Payroll Manager' as const,
+        managerEmail: null,
       },
       {
         firstName: 'Maya',
         lastName: 'Shah',
         email: 'maya@company.com',
         departmentId: deptMap['HR & Operations'],
+        location: 'Main Headquarters',
         role: 'HR Manager' as const,
+        managerEmail: 'nisha@company.com',
+      },
+      {
+        firstName: 'Aarav',
+        lastName: 'Mehta',
+        email: 'aarav@company.com',
+        departmentId: deptMap['Technology'],
+        location: 'Bengaluru Tech Hub',
+        role: 'HR Payroll User' as const,
+        managerEmail: 'nisha@company.com',
       },
       {
         firstName: 'Rohan',
         lastName: 'Patel',
         email: 'rohan@company.com',
         departmentId: deptMap['Technology'],
+        location: 'Bengaluru Tech Hub',
         role: 'Employee' as const,
-      },
-      {
-        firstName: 'Nisha',
-        lastName: 'Rao',
-        email: 'nisha@company.com',
-        departmentId: deptMap['Management'],
-        role: 'HR Payroll Manager' as const,
+        managerEmail: 'aarav@company.com',
       },
     ];
 
     const staffPassword = 'Staff@123';
     const staffPasswordHash = await bcrypt.hash(staffPassword, salt);
+
+    const emailToIdMap: Record<string, string> = {};
 
     for (const emp of sampleEmployees) {
       // 1. Find or create user
@@ -238,6 +250,7 @@ export const seedDatabase = async (): Promise<void> => {
       }
 
       // 2. Find or create employee linked to user
+      let employeeId: string;
       const existingEmp = await db
         .select()
         .from(schema.employees)
@@ -245,22 +258,29 @@ export const seedDatabase = async (): Promise<void> => {
         .limit(1);
 
       if (existingEmp.length === 0) {
-        await db.insert(schema.employees).values({
-          userId,
-          departmentId: emp.departmentId,
-          workingScheduleId: scheduleId,
-          employmentStatus: 'active',
-          bankName: 'HDFC Bank',
-          bankAccountNumber: '50100492819283',
-          bankRoutingCode: 'HDFC0001234',
-          identificationNumber: 'ABCDE1234F',
-        });
+        const [newEmp] = await db
+          .insert(schema.employees)
+          .values({
+            userId,
+            departmentId: emp.departmentId,
+            workingScheduleId: scheduleId,
+            location: emp.location,
+            employmentStatus: 'active',
+            bankName: 'HDFC Bank',
+            bankAccountNumber: '50100492819283',
+            bankRoutingCode: 'HDFC0001234',
+            identificationNumber: 'ABCDE1234F',
+          })
+          .returning();
+        employeeId = newEmp.id;
       } else {
+        employeeId = existingEmp[0].id;
         await db
           .update(schema.employees)
           .set({
             departmentId: emp.departmentId,
             workingScheduleId: scheduleId,
+            location: emp.location,
             employmentStatus: 'active',
             bankName: 'HDFC Bank',
             bankAccountNumber: '50100492819283',
@@ -268,7 +288,19 @@ export const seedDatabase = async (): Promise<void> => {
             identificationNumber: 'ABCDE1234F',
             updatedAt: new Date(),
           })
-          .where(eq(schema.employees.id, existingEmp[0].id));
+          .where(eq(schema.employees.id, employeeId));
+      }
+
+      emailToIdMap[emp.email] = employeeId;
+    }
+
+    // Link manager hierarchy
+    for (const emp of sampleEmployees) {
+      if (emp.managerEmail && emailToIdMap[emp.managerEmail]) {
+        await db
+          .update(schema.employees)
+          .set({ managerId: emailToIdMap[emp.managerEmail] })
+          .where(eq(schema.employees.id, emailToIdMap[emp.email]));
       }
     }
 

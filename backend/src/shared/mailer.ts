@@ -1,5 +1,3 @@
-import nodemailer from 'nodemailer';
-
 export type WelcomeEmailOptions = {
   toEmail: string;
   temporaryPassword: string;
@@ -8,7 +6,7 @@ export type WelcomeEmailOptions = {
   verificationToken?: string;
 };
 
-const getTransporter = () => {
+const getTransporter = async () => {
   const host = process.env.SMTP_HOST || 'smtp.gmail.com';
   const port = parseInt(process.env.SMTP_PORT || '587', 10);
   const user = process.env.SMTP_USER;
@@ -18,15 +16,27 @@ const getTransporter = () => {
     return null;
   }
 
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    auth: {
-      user,
-      pass,
-    },
-  });
+  try {
+    // Dynamic import to support environments without nodemailer installed
+    // @ts-ignore
+    const nodemailerModule = await import('nodemailer').catch(() => null);
+    const nodemailer = nodemailerModule?.default || nodemailerModule;
+    if (!nodemailer || !nodemailer.createTransport) {
+      return null;
+    }
+
+    return nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: {
+        user,
+        pass,
+      },
+    });
+  } catch {
+    return null;
+  }
 };
 
 export const sendWelcomeCredentialsEmail = async (
@@ -162,7 +172,7 @@ ${verificationUrl}
 Security Notice: After signing in, you can change your password in your settings.
   `.trim();
 
-  const transporter = getTransporter();
+  const transporter = await getTransporter();
 
   if (!transporter) {
     console.warn(

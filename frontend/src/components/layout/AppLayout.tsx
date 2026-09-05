@@ -137,7 +137,13 @@ const MenuIcon = ({ className }: { className?: string }) => (
 );
 
 // --- Layout ---
-export const AppLayout: React.FC = () => {
+export type AppLayoutProps = {
+  children?: React.ReactNode;
+  title?: string;
+  actions?: React.ReactNode;
+};
+
+export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: user, isLoading, isError } = useCurrentUser();
@@ -353,9 +359,7 @@ export const AppLayout: React.FC = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1">
-          <Outlet />
-        </main>
+        <main className="flex-1">{children ?? <Outlet />}</main>
       </div>
     </div>
   );

@@ -160,8 +160,8 @@ export const EmployeeDashboardPage: React.FC = () => {
               : 'Employee Account'}
           </div>
           <span className="text-[11px] text-ink-soft mt-1 block truncate">
-            {currentUser.employeeId
-              ? `ID: ${currentUser.employeeId.substring(0, 8)}...`
+            {currentUser.employee?.id
+              ? `ID: ${currentUser.employee.id.substring(0, 8)}...`
               : 'Linked Member ID'}
           </span>
         </div>
