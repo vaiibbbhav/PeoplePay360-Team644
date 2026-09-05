@@ -10,6 +10,7 @@ import {
   integer,
   text,
   jsonb,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -48,12 +49,28 @@ export const workingScheduleLines = pgTable('working_schedule_lines', {
   breakMinutes: integer('break_minutes').notNull().default(60),
 });
 
-// 3. Employees
-export const employees = pgTable('employees', {
+// 3. Users (Authentication & Canonical Identity)
+export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
   firstName: varchar('first_name', { length: 100 }).notNull(),
   lastName: varchar('last_name', { length: 100 }).notNull(),
   email: varchar('email', { length: 150 }).notNull().unique(),
+  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
+  role: varchar('role', { length: 50 }).notNull(),
+  isActive: boolean('is_active').notNull().default(true),
+  isEmailVerified: boolean('is_email_verified').notNull().default(false),
+  emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+});
+
+// 4. Employees (HR Operational Extension)
+export const employees = pgTable('employees', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: uuid('user_id')
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: 'cascade' }),
   phone: varchar('phone', { length: 30 }),
   departmentId: uuid('department_id').references(() => departments.id, { onDelete: 'set null' }),
   jobPositionId: uuid('job_position_id').references(() => jobPositions.id, {
@@ -63,29 +80,18 @@ export const employees = pgTable('employees', {
   workingScheduleId: uuid('working_schedule_id').references(() => workingSchedules.id, {
     onDelete: 'set null',
   }),
-  employmentStatus: varchar('employment_status', { length: 30 }).notNull().default('active'),
+  employmentStatus: varchar('employment_status', { length: 30 }).notNull().default('incomplete'),
   dateOfJoining: date('date_of_joining')
     .notNull()
     .default(sql`CURRENT_DATE`),
   dateOfBirth: date('date_of_birth'),
   gender: varchar('gender', { length: 20 }),
   identificationNumber: varchar('identification_number', { length: 50 }),
+  location: varchar('location', { length: 150 }).default('Main Headquarters'),
   bankName: varchar('bank_name', { length: 100 }),
   bankAccountNumber: varchar('bank_account_number', { length: 50 }),
   bankRoutingCode: varchar('bank_routing_code', { length: 50 }),
   avatarUrl: text('avatar_url'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
-});
-
-// 4. Users (Authentication & RBAC)
-export const users = pgTable('users', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  email: varchar('email', { length: 150 }).notNull().unique(),
-  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
-  role: varchar('role', { length: 50 }).notNull(),
-  employeeId: uuid('employee_id').references(() => employees.id, { onDelete: 'set null' }),
-  isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
@@ -292,3 +298,39 @@ export const payslipLines = pgTable('payslip_lines', {
   amount: numeric('amount', { precision: 12, scale: 2 }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
+
+// 12. Company Policies & Document Compliance
+export const companyPolicies = pgTable('company_policies', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  code: varchar('code', { length: 60 }).notNull().unique(),
+  category: varchar('category', { length: 50 }).notNull(), // 'compliance', 'security', 'workplace', 'hr'
+  version: varchar('version', { length: 20 }).notNull().default('1.0'),
+  summary: text('summary').notNull(),
+  content: text('content').notNull(),
+  isMandatory: boolean('is_mandatory').notNull().default(true),
+  effectiveDate: date('effective_date'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+});
+
+export const policyAcceptances = pgTable(
+  'policy_acceptances',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    policyId: uuid('policy_id')
+      .notNull()
+      .references(() => companyPolicies.id, { onDelete: 'cascade' }),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    employeeId: uuid('employee_id').references(() => employees.id, { onDelete: 'set null' }),
+    policyVersion: varchar('policy_version', { length: 20 }).notNull(),
+    acceptedAt: timestamp('accepted_at', { withTimezone: true }).defaultNow(),
+    ipAddress: varchar('ip_address', { length: 50 }),
+    userAgent: text('user_agent'),
+  },
+  (table) => [
+    uniqueIndex('policy_user_version_idx').on(table.policyId, table.userId, table.policyVersion),
+  ],
+);

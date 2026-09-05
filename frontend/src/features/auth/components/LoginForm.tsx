@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useLoginMutation } from '../queries/useAuth';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLoginMutation, useResendVerificationMutation } from '../queries/useAuth';
 
 type QuickRole = {
   role: string;
@@ -18,16 +18,27 @@ const QUICK_ROLES: QuickRole[] = [
 
 export const LoginForm: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const loginMutation = useLoginMutation();
+  const resendMutation = useResendVerificationMutation();
 
-  const [email, setEmail] = useState('');
+  const isVerified = searchParams.get('verified') === 'true';
+  const initialEmail = searchParams.get('email') || '';
+
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isUnverifiedEmail, setIsUnverifiedEmail] = useState(false);
+  const [resendStatus, setResendStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [resendFeedback, setResendFeedback] = useState<string | null>(null);
   const [activeRoleLogin, setActiveRoleLogin] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+    setIsUnverifiedEmail(false);
+    setResendStatus('idle');
+    setResendFeedback(null);
 
     if (!email || !password) {
       setErrorMessage('Please fill in both email and password.');
@@ -36,18 +47,42 @@ export const LoginForm: React.FC = () => {
 
     try {
       const res = await loginMutation.mutateAsync({ email, password });
-      if (res?.user?.role === 'Employee') {
+      if (res?.user?.role === 'Admin') {
+        navigate('/users');
+      } else if (res?.user?.role === 'Employee') {
         navigate('/employee/dashboard');
       } else {
         navigate('/dashboard');
       }
     } catch (err: any) {
+      const errorCode = err.response?.data?.code;
       const msg =
         err.response?.data?.error ||
         err.response?.data?.message ||
         err.message ||
         'Failed to sign in';
+
+      if (errorCode === 'EMAIL_NOT_VERIFIED' || msg.toLowerCase().includes('verify your email')) {
+        setIsUnverifiedEmail(true);
+      }
       setErrorMessage(msg);
+    }
+  };
+
+  const handleResend = async () => {
+    if (!email) {
+      setResendFeedback('Please enter your work email first.');
+      return;
+    }
+    setResendStatus('sending');
+    setResendFeedback(null);
+    try {
+      const res = await resendMutation.mutateAsync(email);
+      setResendStatus('sent');
+      setResendFeedback(res.message || 'Verification link sent! Please check your inbox.');
+    } catch (err: any) {
+      setResendStatus('error');
+      setResendFeedback(err.response?.data?.error || 'Failed to resend verification email.');
     }
   };
 
@@ -55,21 +90,31 @@ export const LoginForm: React.FC = () => {
     setEmail(acc.email);
     setPassword(acc.pass);
     setErrorMessage(null);
+    setIsUnverifiedEmail(false);
+    setResendStatus('idle');
+    setResendFeedback(null);
     setActiveRoleLogin(acc.role);
 
     try {
       const res = await loginMutation.mutateAsync({ email: acc.email, password: acc.pass });
-      if (acc.role === 'Employee' || res?.user?.role === 'Employee') {
+      if (acc.role === 'Admin' || res?.user?.role === 'Admin') {
+        navigate('/users');
+      } else if (acc.role === 'Employee' || res?.user?.role === 'Employee') {
         navigate('/employee/dashboard');
       } else {
         navigate('/dashboard');
       }
     } catch (err: any) {
+      const errorCode = err.response?.data?.code;
       const msg =
         err.response?.data?.error ||
         err.response?.data?.message ||
         err.message ||
         'Failed to sign in';
+
+      if (errorCode === 'EMAIL_NOT_VERIFIED' || msg.toLowerCase().includes('verify your email')) {
+        setIsUnverifiedEmail(true);
+      }
       setErrorMessage(msg);
       setActiveRoleLogin(null);
     }
@@ -84,9 +129,10 @@ export const LoginForm: React.FC = () => {
         </p>
       </div>
 
-      {errorMessage && (
-        <div className="px-3.5 py-3 rounded-lg border border-red-500/30 text-red-600 dark:text-red-400 text-xs mb-5 bg-red-500/10">
-          {errorMessage}
+      {isVerified && (
+        <div className="px-3.5 py-3 rounded-lg border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-xs mb-5 bg-emerald-500/10 flex items-center gap-2 font-medium">
+          <span>✓</span>
+          <span>Email verified successfully. Please enter your password to sign in.</span>
         </div>
       )}
 
@@ -130,6 +176,50 @@ export const LoginForm: React.FC = () => {
         >
           {loginMutation.isPending && !activeRoleLogin ? 'Signing in...' : 'Sign in to Console'}
         </button>
+
+        {isUnverifiedEmail ? (
+          <div className="p-4 rounded-xl border border-amber-500/25 bg-amber-500/5 dark:bg-amber-950/20 text-xs space-y-2">
+            <div className="flex items-start gap-2.5">
+              <span className="text-amber-600 dark:text-amber-400 text-base font-bold leading-none mt-0.5">
+                ✉
+              </span>
+              <div className="flex-1 space-y-1">
+                <h3 className="font-medium text-ink text-xs m-0">Email verification required</h3>
+                <p className="text-ink-soft leading-relaxed text-[11px] m-0">
+                  {errorMessage ||
+                    'Please verify your email before logging in. Check your inbox for the verification link.'}
+                </p>
+              </div>
+            </div>
+            <div className="pt-2 border-t border-amber-500/15 flex flex-wrap items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resendStatus === 'sending'}
+                className="text-xs font-medium text-ink underline hover:text-ink-soft transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {resendStatus === 'sending'
+                  ? 'Sending verification link...'
+                  : 'Resend verification link'}
+              </button>
+              {resendFeedback && (
+                <span
+                  className={`text-[11px] font-medium ${
+                    resendStatus === 'sent'
+                      ? 'text-emerald-700 dark:text-emerald-400'
+                      : 'text-red-600 dark:text-red-400'
+                  }`}
+                >
+                  {resendFeedback}
+                </span>
+              )}
+            </div>
+          </div>
+        ) : errorMessage ? (
+          <div className="px-3.5 py-3 rounded-lg border border-red-500/30 text-red-600 dark:text-red-400 text-xs bg-red-500/10">
+            {errorMessage}
+          </div>
+        ) : null}
       </form>
 
       {/* Simple Direct Role Buttons */}

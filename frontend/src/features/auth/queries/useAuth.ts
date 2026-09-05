@@ -6,15 +6,19 @@ export type UserRole =
 
 export type User = {
   id: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: UserRole;
   isActive?: boolean;
+  isEmailVerified?: boolean;
   employeeId?: string | null;
   employee?: {
     id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
+    employmentStatus?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
   } | null;
 };
 
@@ -45,6 +49,16 @@ const logoutApi = async (): Promise<void> => {
   await api.post('/auth/logout');
 };
 
+const resendVerificationApi = async (
+  email: string,
+): Promise<{ success: boolean; message: string }> => {
+  const { data } = await publicApi.post<{ success: boolean; message: string }>(
+    '/auth/resend-verification',
+    { email },
+  );
+  return data;
+};
+
 // 2. Exported React Query Hooks
 export const useCurrentUser = () => {
   return useQuery({
@@ -62,6 +76,12 @@ export const useLoginMutation = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(['auth', 'me'], data.user);
     },
+  });
+};
+
+export const useResendVerificationMutation = () => {
+  return useMutation({
+    mutationFn: resendVerificationApi,
   });
 };
 

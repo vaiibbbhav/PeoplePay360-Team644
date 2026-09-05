@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { EmployeeLayout } from '../components/EmployeeLayout';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import { useFingerprintStatus } from '@/features/attendance/queries/useFingerprint';
 
@@ -45,8 +45,8 @@ export const EmployeeDashboardPage: React.FC = () => {
       title: 'Profile & Documents',
       desc: 'Personal details, emergency contacts, and employment history.',
       tag: 'Account',
-      link: '#profile',
-      isDirectLink: false,
+      link: '/profile',
+      isDirectLink: true,
     },
     {
       id: 'time-management',
@@ -58,19 +58,27 @@ export const EmployeeDashboardPage: React.FC = () => {
     },
     {
       id: 'team',
-      title: 'Team Directory',
-      desc: 'Department colleagues, reporting manager, and peer directory.',
+      title: 'Org View & Directory',
+      desc: 'Visual reporting hierarchy, leadership tree, and team rosters.',
       tag: 'Organization',
-      link: '#team',
-      isDirectLink: false,
+      link: '/employee/org-view',
+      isDirectLink: true,
     },
     {
       id: 'compensation',
       title: 'Compensation & Slips',
       desc: 'Monthly payslips, wage breakdown, and tax declarations.',
       tag: 'Payroll',
-      link: '#compensation',
-      isDirectLink: false,
+      link: '/compensation',
+      isDirectLink: true,
+    },
+    {
+      id: 'documents',
+      title: 'Policies & Documents',
+      desc: 'Mandatory company policies, code of conduct, and compliance acknowledgments.',
+      tag: 'Compliance',
+      link: '/employee/docs',
+      isDirectLink: true,
     },
     {
       id: 'recruitment',
@@ -123,7 +131,7 @@ export const EmployeeDashboardPage: React.FC = () => {
   ];
 
   return (
-    <EmployeeLayout title="Dashboard Overview">
+    <AppLayout title="Dashboard Overview">
       {/* Welcome Banner */}
       <div className="mb-8">
         <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
@@ -192,8 +200,8 @@ export const EmployeeDashboardPage: React.FC = () => {
               : 'Employee Account'}
           </div>
           <span className="text-[11px] text-ink-soft mt-1 block truncate">
-            {currentUser.employeeId
-              ? `ID: ${currentUser.employeeId.substring(0, 8)}...`
+            {currentUser.employee?.id
+              ? `ID: ${currentUser.employee.id.substring(0, 8)}...`
               : 'Linked Member ID'}
           </span>
         </div>
@@ -242,7 +250,7 @@ export const EmployeeDashboardPage: React.FC = () => {
           ))}
         </div>
       </div>
-    </EmployeeLayout>
+    </AppLayout>
   );
 };
 

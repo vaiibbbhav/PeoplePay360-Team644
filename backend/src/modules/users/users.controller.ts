@@ -32,3 +32,7 @@ export const getEmployeeOptions = asyncHandler(
     res.json(employees);
   },
 );
+export const deleteUser = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  await usersService.deleteUser(req.params.id, req.user?.id);
+  res.status(204).send();
+});

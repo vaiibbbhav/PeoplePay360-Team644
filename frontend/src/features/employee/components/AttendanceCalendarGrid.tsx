@@ -39,7 +39,7 @@ export const AttendanceCalendarGrid: React.FC<AttendanceCalendarGridProps> = ({
   // Today string YYYY-MM-DD
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
-    now.getDate()
+    now.getDate(),
   ).padStart(2, '0')}`;
 
   const formatShortTime = (isoString?: string | null) => {
@@ -79,7 +79,12 @@ export const AttendanceCalendarGrid: React.FC<AttendanceCalendarGridProps> = ({
             aria-label="Previous month"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
           </button>
           <button
@@ -119,7 +124,7 @@ export const AttendanceCalendarGrid: React.FC<AttendanceCalendarGridProps> = ({
           const dayNum = idx + 1;
           const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(
             2,
-            '0'
+            '0',
           )}`;
           const record = recordsMap.get(dateStr);
           const isSelected = selectedDateStr === dateStr;
@@ -145,8 +150,8 @@ export const AttendanceCalendarGrid: React.FC<AttendanceCalendarGridProps> = ({
                     isTodayDate
                       ? 'w-6 h-6 rounded-full bg-accent text-accent-ink flex items-center justify-center font-bold text-[11px]'
                       : isSelected
-                      ? 'text-accent font-bold'
-                      : 'text-ink'
+                        ? 'text-accent font-bold'
+                        : 'text-ink'
                   }`}
                 >
                   {dayNum}
@@ -170,10 +175,10 @@ export const AttendanceCalendarGrid: React.FC<AttendanceCalendarGridProps> = ({
                           record.status === 'Present'
                             ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
                             : record.status === 'Late'
-                            ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400'
-                            : record.status === 'Half-Day'
-                            ? 'bg-blue-500/10 text-blue-700 dark:text-blue-400'
-                            : 'bg-red-500/10 text-red-700 dark:text-red-400'
+                              ? 'bg-amber-500/10 text-amber-700 dark:text-amber-400'
+                              : record.status === 'Half-Day'
+                                ? 'bg-blue-500/10 text-blue-700 dark:text-blue-400'
+                                : 'bg-red-500/10 text-red-700 dark:text-red-400'
                         }`}
                       >
                         {record.status}

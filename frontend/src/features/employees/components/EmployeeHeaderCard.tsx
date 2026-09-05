@@ -7,37 +7,10 @@ type EmployeeHeaderCardProps = {
 };
 
 export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee, onEdit }) => {
-  const fullName = `${employee.first_name} ${employee.last_name}`;
-  const initials = `${employee.first_name[0] || ''}${employee.last_name[0] || ''}`.toUpperCase();
-
-  const statusBadge = () => {
-    switch (employee.employment_status) {
-      case 'active':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium border border-line bg-bg-raised text-ink">
-            Active
-          </span>
-        );
-      case 'on_leave':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium border border-line bg-accent-soft text-accent">
-            On Leave
-          </span>
-        );
-      case 'terminated':
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium border border-line bg-bg-raised text-over-red">
-            Terminated
-          </span>
-        );
-      default:
-        return (
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium border border-line bg-bg-raised text-ink-soft">
-            Inactive
-          </span>
-        );
-    }
-  };
+  const firstName = employee.first_name || '';
+  const lastName = employee.last_name || '';
+  const fullName = `${firstName} ${lastName}`.trim() || 'Unnamed Employee';
+  const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || 'EM';
 
   return (
     <div className="bg-bg border border-line rounded-2xl overflow-hidden mb-6">
@@ -67,11 +40,11 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
       </div>
 
       {/* Profile Header Content */}
-      <div className="px-6 sm:px-8 pb-6 pt-0">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-12 mb-4">
+      <div className=" pb-6 pt-0">
+        <div className="flex flex-col pt-4 px-6 sm:flex-row sm:items-end justify-between gap-4 -mt-10 mb-4">
           <div className="flex items-end gap-4">
             {/* Avatar */}
-            <div className="w-24 h-24 rounded-2xl border-4 border-bg bg-accent-soft text-accent font-serif text-2xl font-bold flex items-center justify-center relative shadow-xs overflow-hidden shrink-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-bg bg-accent-soft text-accent font-serif text-2xl font-bold flex items-center justify-center relative shadow-xs overflow-hidden shrink-0">
               {employee.avatar_url ? (
                 <img
                   src={employee.avatar_url}
@@ -83,10 +56,11 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
               )}
             </div>
 
-            <div className="pb-1">
+            <div className="pt-2">
               <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink">{fullName}</h1>
-                {statusBadge()}
+                <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink leading-tight">
+                  {fullName}
+                </h1>
               </div>
 
               <div className="flex items-center gap-2 text-xs sm:text-sm text-ink-soft mt-1 flex-wrap">
@@ -100,8 +74,8 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
           </div>
         </div>
 
-        {/* Sub-bar Information: Location, Manager, Smart Counts */}
-        <div className="pt-4 border-t border-line flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Sub-bar Information: Location, Manager, Email */}
+        <div className="pt-4 mt-8 px-6 border-t border-line flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-6 text-xs text-ink-soft flex-wrap">
             <div className="flex items-center gap-1.5">
               <svg
@@ -123,7 +97,7 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
                   d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
                 />
               </svg>
-              <span>Main Headquarters</span>
+              <span>{employee.location || 'Main Headquarters'}</span>
             </div>
 
             <div className="flex items-center gap-1.5">
@@ -163,34 +137,6 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
                 />
               </svg>
               <span>{employee.email}</span>
-            </div>
-          </div>
-
-          {/* Operational Smart Counters */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="px-3 py-1 rounded-lg border border-line bg-bg-raised text-[11px] text-ink-soft">
-              Contracts:{' '}
-              <strong className="text-ink font-semibold">
-                {employee.smartCounts?.contracts ?? 0}
-              </strong>
-            </div>
-            <div className="px-3 py-1 rounded-lg border border-line bg-bg-raised text-[11px] text-ink-soft">
-              Attendance:{' '}
-              <strong className="text-ink font-semibold">
-                {employee.smartCounts?.attendance ?? 0}
-              </strong>
-            </div>
-            <div className="px-3 py-1 rounded-lg border border-line bg-bg-raised text-[11px] text-ink-soft">
-              Leaves:{' '}
-              <strong className="text-ink font-semibold">
-                {employee.smartCounts?.timeOff ?? 0}
-              </strong>
-            </div>
-            <div className="px-3 py-1 rounded-lg border border-line bg-bg-raised text-[11px] text-ink-soft">
-              Payslips:{' '}
-              <strong className="text-ink font-semibold">
-                {employee.smartCounts?.payslips ?? 0}
-              </strong>
             </div>
           </div>
         </div>

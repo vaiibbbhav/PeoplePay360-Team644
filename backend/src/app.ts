@@ -9,19 +9,24 @@ import attendanceRoutes from './modules/attendance/attendance.routes';
 import timeoffRoutes from './modules/timeoff/timeoff.routes';
 import payrollRoutes from './modules/payroll/payroll.routes';
 import reportingRoutes from './modules/reporting/reporting.routes';
+import documentsRoutes from './modules/documents/documents.routes';
+import schedulesRoutes from './modules/schedules/schedules.routes';
 import { AppError } from './shared/errors';
+import { securityHeaders } from './shared/security';
 
 export const createApp = (): Express => {
   const app = express();
+  app.disable('x-powered-by');
+  app.use(securityHeaders);
 
   // Middleware
   app.use(
     cors({
-      origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+      origin: process.env.CORS_ORIGIN || true,
       credentials: true,
     }),
   );
-  app.use(express.json());
+  app.use(express.json({ limit: '1mb' }));
   app.use(cookieParser());
 
   // Health check
@@ -42,6 +47,10 @@ export const createApp = (): Express => {
   app.use('/api/time-off', timeoffRoutes);
   app.use('/api/payroll', payrollRoutes);
   app.use('/api/reports', reportingRoutes);
+  app.use('/api/documents', documentsRoutes);
+  app.use('/api/policies', documentsRoutes);
+  app.use('/api/schedules', schedulesRoutes);
+  app.use('/api/working-schedules', schedulesRoutes);
 
   // Direct resource aliases matching GEMINI.md section 9
   app.use('/api/payruns', payrollRoutes);
@@ -59,7 +68,10 @@ export const createApp = (): Express => {
     if (status === 500) {
       console.error(err);
     }
-    res.status(status).json({ error: err.message });
+    res.status(status).json({
+      error: err.message,
+      ...(err.code ? { code: err.code } : {}),
+    });
   });
 
   return app;

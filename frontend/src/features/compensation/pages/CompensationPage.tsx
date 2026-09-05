@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useCurrentUser, useLogout } from '@/features/auth/queries/useAuth';
+import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import { useEmployeePayslips, usePayslipDetail } from '../queries/useEmployeePayslips';
 import { CompensationHeader } from '../components/CompensationHeader';
 import { CompensationTabs, type CompensationTab } from '../components/CompensationTabs';
@@ -10,10 +9,10 @@ import { YearlyPayslipDocument } from '../components/YearlyPayslipDocument';
 import { PayPackageTab } from '../components/PayPackageTab';
 import { TaxSheetTab } from '../components/TaxSheetTab';
 import { ITDeclarationTab } from '../components/ITDeclarationTab';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 export const CompensationPage: React.FC = () => {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
-  const logout = useLogout();
 
   const [activeTab, setActiveTab] = useState<CompensationTab>('pay-slips');
   const [financialYear, setFinancialYear] = useState<string>('2026-27');
@@ -41,50 +40,7 @@ export const CompensationPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg text-ink selection:bg-accent-soft selection:text-accent">
-      {/* Top Application Header */}
-      <header className="border-b border-line px-6 sm:px-8 py-3.5 flex justify-between items-center bg-bg sticky top-0 z-40">
-        <div className="flex items-center gap-5 sm:gap-7">
-          <Link to="/dashboard" className="flex items-center gap-1.5 no-underline">
-            <span className="font-serif text-xl font-bold tracking-tight text-ink">
-              PeoplePay<span className="text-accent">360</span>
-            </span>
-          </Link>
-
-          <span className="text-line">/</span>
-
-          <span className="font-serif text-sm font-semibold text-ink">Compensation Hub</span>
-
-          {user?.role && (
-            <span className="text-[11px] px-2 py-0.5 rounded bg-accent-soft text-accent font-medium">
-              {user.role}
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-4">
-          <Link
-            to="/dashboard"
-            className="text-xs text-ink-soft hover:text-ink transition-colors no-underline hidden sm:inline-block"
-          >
-            ← Back to Dashboard
-          </Link>
-
-          <div className="h-4 w-px bg-line hidden sm:block" />
-
-          {user && (
-            <span className="text-xs text-ink-soft hidden md:inline-block">{user.email}</span>
-          )}
-
-          <button
-            onClick={logout}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium border border-line bg-transparent text-ink hover:bg-bg-raised transition-colors cursor-pointer"
-          >
-            Sign Out
-          </button>
-        </div>
-      </header>
-
+    <AppLayout title="Compensation Hub">
       {/* Main Compensation Content Area */}
       <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6">
         {/* Header with Title and Controls */}
@@ -153,11 +109,6 @@ export const CompensationPage: React.FC = () => {
           onClose={() => setIsYearlyDocumentOpen(false)}
         />
       )}
-
-      {/* Bottom Footer */}
-      <footer className="border-t border-line py-5 px-8 text-center text-xs text-ink-soft mt-12">
-        PeoplePay360 — Integrated HR & Payroll Operations Platform
-      </footer>
-    </div>
+    </AppLayout>
   );
 };

@@ -1,20 +1,34 @@
 import { db } from '../../shared/db';
-import { contracts, employees, salaryStructures } from '../../db/schema';
-import { eq, and, lte, gte, or, isNull, desc, ne } from 'drizzle-orm';
+import {
+  contracts,
+  employees,
+  users,
+  salaryStructures,
+  departments,
+  jobPositions,
+  workingSchedules,
+} from '../../db/schema';
+import { eq, and, lte, gte, or, isNull, desc, ne, sql } from 'drizzle-orm';
 
 export async function findAllContracts(employeeId?: string) {
   const query = db
     .select({
       id: contracts.id,
       employee_id: contracts.employeeId,
+      employee_name: sql<string>`coalesce(${users.firstName} || ' ' || ${users.lastName}, 'Unknown')`,
+      employee_email: users.email,
+      employee_avatar: employees.avatarUrl,
       name: contracts.name,
       wage: contracts.wage,
       wage_type: contracts.wageType,
       salary_structure_id: contracts.salaryStructureId,
       salary_structure_name: salaryStructures.name,
       working_schedule_id: contracts.workingScheduleId,
+      working_schedule_name: workingSchedules.name,
       department_id: contracts.departmentId,
+      department_name: departments.name,
       job_position_id: contracts.jobPositionId,
+      job_position_title: jobPositions.title,
       start_date: contracts.startDate,
       end_date: contracts.endDate,
       status: contracts.status,
@@ -23,7 +37,11 @@ export async function findAllContracts(employeeId?: string) {
     })
     .from(contracts)
     .leftJoin(employees, eq(contracts.employeeId, employees.id))
-    .leftJoin(salaryStructures, eq(contracts.salaryStructureId, salaryStructures.id));
+    .leftJoin(users, eq(employees.userId, users.id))
+    .leftJoin(salaryStructures, eq(contracts.salaryStructureId, salaryStructures.id))
+    .leftJoin(departments, eq(contracts.departmentId, departments.id))
+    .leftJoin(jobPositions, eq(contracts.jobPositionId, jobPositions.id))
+    .leftJoin(workingSchedules, eq(contracts.workingScheduleId, workingSchedules.id));
 
   if (employeeId) {
     return await query
@@ -38,14 +56,20 @@ export async function findContractById(id: string) {
     .select({
       id: contracts.id,
       employee_id: contracts.employeeId,
+      employee_name: sql<string>`coalesce(${users.firstName} || ' ' || ${users.lastName}, 'Unknown')`,
+      employee_email: users.email,
+      employee_avatar: employees.avatarUrl,
       name: contracts.name,
       wage: contracts.wage,
       wage_type: contracts.wageType,
       salary_structure_id: contracts.salaryStructureId,
       salary_structure_name: salaryStructures.name,
       working_schedule_id: contracts.workingScheduleId,
+      working_schedule_name: workingSchedules.name,
       department_id: contracts.departmentId,
+      department_name: departments.name,
       job_position_id: contracts.jobPositionId,
+      job_position_title: jobPositions.title,
       start_date: contracts.startDate,
       end_date: contracts.endDate,
       status: contracts.status,
@@ -53,7 +77,12 @@ export async function findContractById(id: string) {
       created_at: contracts.createdAt,
     })
     .from(contracts)
+    .leftJoin(employees, eq(contracts.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id))
     .leftJoin(salaryStructures, eq(contracts.salaryStructureId, salaryStructures.id))
+    .leftJoin(departments, eq(contracts.departmentId, departments.id))
+    .leftJoin(jobPositions, eq(contracts.jobPositionId, jobPositions.id))
+    .leftJoin(workingSchedules, eq(contracts.workingScheduleId, workingSchedules.id))
     .where(eq(contracts.id, id))
     .limit(1);
 
@@ -161,3 +190,65 @@ export async function updateContract(id: string, data: Record<string, any>) {
   const [updated] = await db.update(contracts).set(values).where(eq(contracts.id, id)).returning();
   return updated || null;
 }
+
+export async function getContractsMetadata() {
+  const [allEmployees, allDepartments, allJobPositions, allStructures, allSchedules] =
+    await Promise.all([
+      db
+        .select({
+          id: employees.id,
+          name: sql<string>`coalesce(${users.firstName} || ' ' || ${users.lastName}, 'Unknown')`,
+          email: users.email,
+          avatarUrl: employees.avatarUrl,
+          departmentId: employees.departmentId,
+          jobPositionId: employees.jobPositionId,
+          workingScheduleId: employees.workingScheduleId,
+          employmentStatus: employees.employmentStatus,
+        })
+        .from(employees)
+        .leftJoin(users, eq(employees.userId, users.id))
+        .orderBy(users.firstName),
+      db
+        .select({ id: departments.id, name: departments.name })
+        .from(departments)
+        .orderBy(departments.name),
+      db
+        .select({
+          id: jobPositions.id,
+          title: jobPositions.title,
+          departmentId: jobPositions.departmentId,
+        })
+        .from(jobPositions)
+        .orderBy(jobPositions.title),
+      db
+        .select({
+          id: salaryStructures.id,
+          name: salaryStructures.name,
+          code: salaryStructures.code,
+        })
+        .from(salaryStructures)
+        .where(eq(salaryStructures.isActive, true))
+        .orderBy(salaryStructures.name),
+      db
+        .select({
+          id: workingSchedules.id,
+          name: workingSchedules.name,
+          weeklyHours: workingSchedules.weeklyHours,
+        })
+        .from(workingSchedules)
+        .where(eq(workingSchedules.isActive, true))
+        .orderBy(workingSchedules.name),
+    ]);
+
+  return {
+    employees: allEmployees,
+    departments: allDepartments,
+    jobPositions: allJobPositions,
+    salaryStructures: allStructures,
+    workingSchedules: allSchedules.map((s) => ({
+      ...s,
+      weeklyHours: Number(s.weeklyHours) || 0,
+    })),
+  };
+}
+

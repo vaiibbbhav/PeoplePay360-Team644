@@ -1,5 +1,6 @@
 import { db } from '../../shared/db';
 import {
+  users,
   employees,
   departments,
   jobPositions,
@@ -13,21 +14,25 @@ import { eq, desc, count, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 const managers = alias(employees, 'managers');
+const managerUsers = alias(users, 'manager_users');
 
 export async function findAllEmployees() {
   return await db
     .select({
       id: employees.id,
-      first_name: employees.firstName,
-      last_name: employees.lastName,
-      email: employees.email,
+      user_id: employees.userId,
+      first_name: users.firstName,
+      last_name: users.lastName,
+      email: users.email,
       phone: employees.phone,
       department_id: employees.departmentId,
       department_name: departments.name,
       job_position_id: employees.jobPositionId,
       job_position_title: jobPositions.title,
       manager_id: employees.managerId,
-      manager_name: sql<string | null>`concat(${managers.firstName}, ' ', ${managers.lastName})`,
+      manager_name: sql<
+        string | null
+      >`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
       working_schedule_id: employees.workingScheduleId,
       working_schedule_name: workingSchedules.name,
       employment_status: employees.employmentStatus,
@@ -35,6 +40,7 @@ export async function findAllEmployees() {
       date_of_birth: employees.dateOfBirth,
       gender: employees.gender,
       identification_number: employees.identificationNumber,
+      location: employees.location,
       bank_name: employees.bankName,
       bank_account_number: employees.bankAccountNumber,
       bank_routing_code: employees.bankRoutingCode,
@@ -42,10 +48,12 @@ export async function findAllEmployees() {
       created_at: employees.createdAt,
     })
     .from(employees)
+    .innerJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
     .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))
     .leftJoin(managers, eq(employees.managerId, managers.id))
+    .leftJoin(managerUsers, eq(managers.userId, managerUsers.id))
     .orderBy(desc(employees.createdAt));
 }
 
@@ -53,16 +61,19 @@ export async function findEmployeeById(id: string) {
   const rows = await db
     .select({
       id: employees.id,
-      first_name: employees.firstName,
-      last_name: employees.lastName,
-      email: employees.email,
+      user_id: employees.userId,
+      first_name: users.firstName,
+      last_name: users.lastName,
+      email: users.email,
       phone: employees.phone,
       department_id: employees.departmentId,
       department_name: departments.name,
       job_position_id: employees.jobPositionId,
       job_position_title: jobPositions.title,
       manager_id: employees.managerId,
-      manager_name: sql<string | null>`concat(${managers.firstName}, ' ', ${managers.lastName})`,
+      manager_name: sql<
+        string | null
+      >`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
       working_schedule_id: employees.workingScheduleId,
       working_schedule_name: workingSchedules.name,
       weekly_hours: workingSchedules.weeklyHours,
@@ -71,6 +82,7 @@ export async function findEmployeeById(id: string) {
       date_of_birth: employees.dateOfBirth,
       gender: employees.gender,
       identification_number: employees.identificationNumber,
+      location: employees.location,
       bank_name: employees.bankName,
       bank_account_number: employees.bankAccountNumber,
       bank_routing_code: employees.bankRoutingCode,
@@ -78,10 +90,12 @@ export async function findEmployeeById(id: string) {
       created_at: employees.createdAt,
     })
     .from(employees)
+    .innerJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
     .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))
     .leftJoin(managers, eq(employees.managerId, managers.id))
+    .leftJoin(managerUsers, eq(managers.userId, managerUsers.id))
     .where(eq(employees.id, id))
     .limit(1);
 
@@ -89,7 +103,24 @@ export async function findEmployeeById(id: string) {
 }
 
 export async function findEmployeeByEmail(email: string) {
-  const rows = await db.select().from(employees).where(eq(employees.email, email)).limit(1);
+  const rows = await db
+    .select({
+      id: employees.id,
+      user_id: employees.userId,
+      first_name: users.firstName,
+      last_name: users.lastName,
+      email: users.email,
+      employment_status: employees.employmentStatus,
+    })
+    .from(employees)
+    .innerJoin(users, eq(employees.userId, users.id))
+    .where(eq(users.email, email.toLowerCase().trim()))
+    .limit(1);
+  return rows[0] || null;
+}
+
+export async function findEmployeeByUserId(userId: string) {
+  const rows = await db.select().from(employees).where(eq(employees.userId, userId)).limit(1);
   return rows[0] || null;
 }
 
@@ -97,19 +128,18 @@ export async function insertEmployee(data: Record<string, any>) {
   const [created] = await db
     .insert(employees)
     .values({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
+      userId: data.userId,
       phone: data.phone,
       departmentId: data.departmentId,
       jobPositionId: data.jobPositionId,
       managerId: data.managerId,
       workingScheduleId: data.workingScheduleId,
-      employmentStatus: data.employmentStatus || 'active',
+      employmentStatus: data.employmentStatus || 'incomplete',
       dateOfJoining: data.dateOfJoining,
       dateOfBirth: data.dateOfBirth,
       gender: data.gender,
       identificationNumber: data.identificationNumber,
+      location: data.location || 'Main Headquarters',
       bankName: data.bankName,
       bankAccountNumber: data.bankAccountNumber,
       bankRoutingCode: data.bankRoutingCode,
@@ -120,11 +150,16 @@ export async function insertEmployee(data: Record<string, any>) {
 }
 
 export async function updateEmployeeById(id: string, data: Record<string, any>) {
+  const emp = await findEmployeeById(id);
+  if (emp && emp.user_id && (data.firstName !== undefined || data.lastName !== undefined)) {
+    const userUpdate: Record<string, any> = { updatedAt: new Date() };
+    if (data.firstName !== undefined) userUpdate.firstName = data.firstName;
+    if (data.lastName !== undefined) userUpdate.lastName = data.lastName;
+    await db.update(users).set(userUpdate).where(eq(users.id, emp.user_id));
+  }
+
   const values: Record<string, any> = {};
   const mapping: Record<string, keyof typeof employees.$inferInsert> = {
-    firstName: 'firstName',
-    lastName: 'lastName',
-    email: 'email',
     phone: 'phone',
     departmentId: 'departmentId',
     jobPositionId: 'jobPositionId',
@@ -135,6 +170,7 @@ export async function updateEmployeeById(id: string, data: Record<string, any>) 
     dateOfBirth: 'dateOfBirth',
     gender: 'gender',
     identificationNumber: 'identificationNumber',
+    location: 'location',
     bankName: 'bankName',
     bankAccountNumber: 'bankAccountNumber',
     bankRoutingCode: 'bankRoutingCode',
@@ -196,4 +232,24 @@ export async function findAllJobPositions() {
 
 export async function findAllWorkingSchedules() {
   return await db.select().from(workingSchedules).orderBy(workingSchedules.name);
+}
+export async function findPayslipsByEmployeeId(employeeId: string) {
+  return await db
+    .select({
+      id: payslips.id,
+      payrun_id: payslips.payrunId,
+      period_start: payslips.periodStart,
+      period_end: payslips.periodEnd,
+      worked_days: payslips.workedDays,
+      basic_salary: payslips.basicSalary,
+      gross_salary: payslips.grossSalary,
+      total_deductions: payslips.totalDeductions,
+      net_salary: payslips.netSalary,
+      status: payslips.status,
+      warnings: payslips.warnings,
+      created_at: payslips.createdAt,
+    })
+    .from(payslips)
+    .where(eq(payslips.employeeId, employeeId))
+    .orderBy(desc(payslips.periodStart));
 }

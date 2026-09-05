@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, LayoutDashboard, LogOut } from 'lucide-react';
+import { useCurrentUser, useLogout } from '@/features/auth/queries/useAuth';
 
 export const LandingPage: React.FC = () => {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') === 'dark';
+    }
+    return false;
+  });
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
+    if (isDark) {
       document.documentElement.classList.add('dark');
-      setIsDark(true);
     } else {
       document.documentElement.classList.remove('dark');
-      setIsDark(false);
     }
-  }, []);
+  }, [isDark]);
 
   const toggleTheme = () => {
     const nextDark = !isDark;
@@ -27,6 +30,49 @@ export const LandingPage: React.FC = () => {
       localStorage.setItem('theme', 'light');
     }
   };
+
+  const { data: user } = useCurrentUser();
+  const logout = useLogout();
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    if (userDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [userDropdownOpen]);
+
+  const displayName = user
+    ? user.firstName && user.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user.employee?.firstName && user.employee?.lastName
+        ? `${user.employee.firstName} ${user.employee.lastName}`
+        : user.email.split('@')[0]
+    : '';
+
+  const initials = user
+    ? user.firstName
+      ? `${user.firstName[0]}${user.lastName ? user.lastName[0] : ''}`.toUpperCase()
+      : user.employee?.firstName
+        ? user.employee.firstName[0].toUpperCase()
+        : user.email[0].toUpperCase()
+    : '';
+
+  const dashboardPath =
+    user?.role === 'Employee'
+      ? '/employee/dashboard'
+      : user?.role === 'Admin'
+        ? '/users'
+        : '/dashboard';
 
   return (
     <div className="min-h-screen bg-bg text-ink">
@@ -67,12 +113,59 @@ export const LandingPage: React.FC = () => {
               {isDark ? <Sun size={17} /> : <Moon size={17} />}
             </button>
 
-            <Link
-              to="/login"
-              className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline cursor-pointer"
-            >
-              Sign in
-            </Link>
+            {user ? (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                  className="w-9.5 h-9.5 rounded-full bg-accent text-accent-ink font-semibold flex items-center justify-center text-xs cursor-pointer border border-line shadow-xs hover:opacity-90 transition-opacity focus:outline-none"
+                  aria-expanded={userDropdownOpen}
+                  aria-haspopup="true"
+                  title={displayName}
+                >
+                  {initials}
+                </button>
+
+                {userDropdownOpen && (
+                  <div className="absolute right-0 mt-2.5 w-max min-w-[160px] rounded-xl border border-line bg-bg-raised shadow-lg py-1.5 z-50 text-left">
+                    <div className="px-3.5 py-2.5 border-b border-line flex flex-col items-start whitespace-nowrap">
+                      <div className="text-xs font-semibold text-ink">{displayName}</div>
+                      <div className="text-[11px] text-ink-soft">{user.email}</div>
+                    </div>
+
+                    <div className="py-1">
+                      <Link
+                        to={dashboardPath}
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-ink hover:bg-black/5 dark:hover:bg-white/5 transition-colors no-underline cursor-pointer text-left whitespace-nowrap"
+                      >
+                        <LayoutDashboard size={14} className="text-ink-soft" />
+                        <span>Dashboard</span>
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer text-left whitespace-nowrap"
+                      >
+                        <LogOut size={14} />
+                        <span>Sign out</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline cursor-pointer"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -101,10 +194,10 @@ export const LandingPage: React.FC = () => {
                   See the full flow
                 </a>
                 <Link
-                  to="/login"
+                  to={user ? dashboardPath : '/login'}
                   className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium border border-line bg-transparent text-ink hover:bg-bg-raised transition-colors no-underline cursor-pointer"
                 >
-                  Access Console
+                  {user ? 'Go to Dashboard' : 'Access Console'}
                 </Link>
               </div>
             </div>
@@ -510,10 +603,10 @@ export const LandingPage: React.FC = () => {
               </p>
               <div className="mt-7 flex gap-3.5 flex-wrap">
                 <Link
-                  to="/login"
+                  to={user ? dashboardPath : '/login'}
                   className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline cursor-pointer"
                 >
-                  Access Platform Console
+                  {user ? 'Go to Dashboard' : 'Access Platform Console'}
                 </Link>
               </div>
             </div>

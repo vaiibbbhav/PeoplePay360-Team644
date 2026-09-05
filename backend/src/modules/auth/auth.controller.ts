@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../shared/async-handler';
-import { loginSchema } from './auth.validators';
+import { loginSchema, resendVerificationSchema } from './auth.validators';
 import * as authService from './auth.service';
 import { UnauthorizedError } from '../../shared/errors';
 import { getCookieValue } from '../../shared/auth-middleware';
@@ -11,7 +11,7 @@ const setTokenCookie = (res: Response, token: string) => {
     httpOnly: true,
     sameSite: 'lax',
     secure: isProd,
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: 15 * 60 * 1000,
     path: '/',
   });
 };
@@ -54,3 +54,25 @@ export const me = asyncHandler(async (req: Request, res: Response): Promise<void
   const user = await authService.getCurrentUser(req.user.id);
   res.json(user);
 });
+
+export const verifyEmail = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const token = (req.body?.token || req.query?.token) as string;
+  if (!token) {
+    res.status(400).json({ error: 'Verification token is required' });
+    return;
+  }
+  const result = await authService.verifyEmail(token);
+  res.json({
+    success: true,
+    email: result.email,
+    message: 'Email verified successfully',
+  });
+});
+
+export const resendVerification = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const validated = resendVerificationSchema.parse(req.body);
+    const result = await authService.resendVerificationEmail(validated.email);
+    res.json(result);
+  },
+);

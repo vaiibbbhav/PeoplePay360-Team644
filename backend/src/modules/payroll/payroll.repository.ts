@@ -6,6 +6,7 @@ import {
   payslips,
   payslipLines,
   employees,
+  users,
   departments,
   jobPositions,
 } from '../../db/schema';
@@ -141,8 +142,8 @@ export async function findPayslipsByPayrunId(payrunId: string) {
       id: payslips.id,
       payrun_id: payslips.payrunId,
       employee_id: payslips.employeeId,
-      employee_name: sql<string>`CONCAT(${employees.firstName}, ' ', ${employees.lastName})`,
-      employee_email: employees.email,
+      employee_name: sql<string>`CONCAT(${users.firstName}, ' ', ${users.lastName})`,
+      employee_email: users.email,
       structure_id: payslips.structureId,
       structure_name: salaryStructures.name,
       period_start: payslips.periodStart,
@@ -158,6 +159,7 @@ export async function findPayslipsByPayrunId(payrunId: string) {
     })
     .from(payslips)
     .leftJoin(employees, eq(payslips.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id))
     .leftJoin(salaryStructures, eq(payslips.structureId, salaryStructures.id))
     .where(eq(payslips.payrunId, payrunId));
 }
@@ -169,8 +171,8 @@ export async function findPayslips(filter?: { employeeId?: string; payrunId?: st
       payrun_id: payslips.payrunId,
       payrun_name: payruns.name,
       employee_id: payslips.employeeId,
-      employee_name: sql<string>`CONCAT(${employees.firstName}, ' ', ${employees.lastName})`,
-      employee_email: employees.email,
+      employee_name: sql<string>`CONCAT(${users.firstName}, ' ', ${users.lastName})`,
+      employee_email: users.email,
       structure_id: payslips.structureId,
       structure_name: salaryStructures.name,
       period_start: payslips.periodStart,
@@ -186,6 +188,7 @@ export async function findPayslips(filter?: { employeeId?: string; payrunId?: st
     })
     .from(payslips)
     .leftJoin(employees, eq(payslips.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id))
     .leftJoin(salaryStructures, eq(payslips.structureId, salaryStructures.id))
     .leftJoin(payruns, eq(payslips.payrunId, payruns.id))
     .$dynamic();
@@ -210,8 +213,8 @@ export async function findPayslipById(id: string) {
       payrun_id: payslips.payrunId,
       payrun_name: payruns.name,
       employee_id: payslips.employeeId,
-      employee_name: sql<string>`CONCAT(${employees.firstName}, ' ', ${employees.lastName})`,
-      employee_email: employees.email,
+      employee_name: sql<string>`CONCAT(${users.firstName}, ' ', ${users.lastName})`,
+      employee_email: users.email,
       employee_phone: employees.phone,
       identification_number: employees.identificationNumber,
       bank_name: employees.bankName,
@@ -234,6 +237,7 @@ export async function findPayslipById(id: string) {
     })
     .from(payslips)
     .leftJoin(employees, eq(payslips.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
     .leftJoin(salaryStructures, eq(payslips.structureId, salaryStructures.id))

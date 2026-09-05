@@ -1,5 +1,6 @@
 import React, { Suspense, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import {
   useSuspenseEmployeeHub,
   useEmployeeMeta,
@@ -10,8 +11,12 @@ import { EmployeeHeaderCard } from '../components/EmployeeHeaderCard';
 import { OverviewTab } from '../components/OverviewTab';
 import { PersonalDetailsTab } from '../components/PersonalDetailsTab';
 import { EmploymentDetailsTab } from '../components/EmploymentDetailsTab';
+import { ContractsTab } from '../components/ContractsTab';
+import { PayslipsTab } from '../components/PayslipsTab';
 import { EmployeeFormModal } from '../components/EmployeeFormModal';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+
+import { AppLayout } from '@/components/layout/AppLayout';
 
 type EmployeeProfileContentProps = {
   employeeId: string;
@@ -24,7 +29,9 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
   const updateEmployeeMutation = useUpdateEmployee();
   const deleteEmployeeMutation = useDeleteEmployee();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'personal' | 'employment'>('overview');
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'personal' | 'employment' | 'contracts' | 'payslips'
+  >('overview');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -42,23 +49,10 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
   };
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col">
-      {/* Top Navbar */}
-      <header className="border-b border-line px-6 sm:px-8 py-4 flex justify-between items-center bg-bg sticky top-0 z-10">
-        <div className="flex items-center gap-6">
-          <Link to="/dashboard" className="font-serif text-xl font-bold text-ink no-underline">
-            PeoplePay<span className="text-accent">360</span>
-          </Link>
-          <div className="h-4 w-px bg-line" />
-          <Link to="/employees" className="text-xs text-ink-soft hover:text-ink no-underline">
-            ← Directory
-          </Link>
-          <span className="text-xs font-medium text-ink hidden sm:inline">
-            / {employee.first_name} {employee.last_name}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3">
+    <AppLayout
+      title={`${employee.first_name} ${employee.last_name}`}
+      actions={
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setIsEditModalOpen(true)}
             className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-bg border border-line text-ink hover:bg-bg-raised transition-colors cursor-pointer"
@@ -73,8 +67,8 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
             {isDeleting ? 'Deleting...' : 'Delete'}
           </button>
         </div>
-      </header>
-
+      }
+    >
       {/* Main Container */}
       <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8">
         {/* Template Hero Banner */}
@@ -97,7 +91,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
             onClick={() => setActiveTab('personal')}
             className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
               activeTab === 'personal'
-                ? 'border-accent text-accent'
+                ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
             }`}
           >
@@ -108,11 +102,33 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
             onClick={() => setActiveTab('employment')}
             className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
               activeTab === 'employment'
-                ? 'border-accent text-accent'
+                ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
             }`}
           >
             Employment Details
+          </button>
+
+          <button
+            onClick={() => setActiveTab('contracts')}
+            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+              activeTab === 'contracts'
+                ? 'border-accent text-accent font-semibold'
+                : 'border-transparent text-ink-soft hover:text-ink'
+            }`}
+          >
+            Contracts
+          </button>
+
+          <button
+            onClick={() => setActiveTab('payslips')}
+            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+              activeTab === 'payslips'
+                ? 'border-accent text-accent font-semibold'
+                : 'border-transparent text-ink-soft hover:text-ink'
+            }`}
+          >
+            Payslips
           </button>
         </div>
 
@@ -120,6 +136,8 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
         {activeTab === 'overview' && <OverviewTab employee={employee} />}
         {activeTab === 'personal' && <PersonalDetailsTab employee={employee} />}
         {activeTab === 'employment' && <EmploymentDetailsTab employee={employee} />}
+        {activeTab === 'contracts' && <ContractsTab employeeId={employee.id} />}
+        {activeTab === 'payslips' && <PayslipsTab employeeId={employee.id} />}
       </main>
 
       {/* Edit Employee Modal */}
@@ -135,7 +153,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
           isSaving={updateEmployeeMutation.isPending}
         />
       )}
-    </div>
+    </AppLayout>
   );
 };
 
@@ -183,17 +201,25 @@ const ProfileErrorFallback: React.FC<{ error: Error; reset: () => void }> = ({ e
 
 export const EmployeeProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { data: user } = useCurrentUser();
 
-  if (!id) {
+  const targetEmployeeId = id || user?.employeeId || user?.employee?.id;
+
+  if (!targetEmployeeId) {
     return (
-      <div className="min-h-screen bg-bg text-ink flex flex-col items-center justify-center p-8 text-center">
-        <p className="text-xs text-ink-soft mb-4">No employee identifier specified.</p>
-        <Link
-          to="/employees"
-          className="px-4 py-2 text-xs font-medium bg-accent text-accent-ink rounded-lg no-underline"
-        >
-          Return to Directory
-        </Link>
+      <div className="min-h-screen bg-bg text-ink flex flex-col items-center justify-center p-8 text-center font-sans">
+        <div className="max-w-md p-6 rounded-2xl border border-line bg-bg-raised">
+          <h2 className="font-serif text-xl font-bold text-ink mb-2">No Profile Linked</h2>
+          <p className="text-xs text-ink-soft mb-4">
+            Your user account is not linked to an employee profile record yet.
+          </p>
+          <Link
+            to="/employee/dashboard"
+            className="px-4 py-2 text-xs font-medium bg-accent text-accent-ink rounded-lg no-underline inline-block"
+          >
+            Return to Dashboard
+          </Link>
+        </div>
       </div>
     );
   }
@@ -203,7 +229,7 @@ export const EmployeeProfilePage: React.FC = () => {
       fallback={(error, reset) => <ProfileErrorFallback error={error} reset={reset} />}
     >
       <Suspense fallback={<ProfileLoadingFallback />}>
-        <EmployeeProfileContent employeeId={id} />
+        <EmployeeProfileContent employeeId={targetEmployeeId} />
       </Suspense>
     </ErrorBoundary>
   );

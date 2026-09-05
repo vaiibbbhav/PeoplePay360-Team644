@@ -18,49 +18,63 @@ export const findUserById = async (id: string): Promise<UserRecord | undefined> 
 };
 
 export const createUser = async (data: {
+  firstName: string;
+  lastName: string;
   email: string;
   passwordHash: string;
   role: UserRole;
-  employeeId?: string | null;
+  isActive?: boolean;
 }): Promise<UserRecord> => {
   const [user] = await db
     .insert(users)
     .values({
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
       email: data.email.toLowerCase().trim(),
       passwordHash: data.passwordHash,
       role: data.role,
-      employeeId: data.employeeId || null,
+      isActive: data.isActive ?? true,
     })
     .returning();
   return user;
 };
 
-export const createEmployeeForUser = async (data: {
-  firstName: string;
-  lastName: string;
-  email: string;
-}): Promise<EmployeeRecord> => {
+export const createEmployeeForUser = async (data: { userId: string }): Promise<EmployeeRecord> => {
   const [employee] = await db
     .insert(employees)
     .values({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email.toLowerCase().trim(),
-      employmentStatus: 'active',
+      userId: data.userId,
+      employmentStatus: 'incomplete',
     })
     .returning();
   return employee;
 };
 
-export const findEmployeeByEmail = async (email: string): Promise<EmployeeRecord | undefined> => {
-  const [employee] = await db
-    .select()
-    .from(employees)
-    .where(eq(employees.email, email.toLowerCase().trim()));
+export const findEmployeeByUserId = async (userId: string): Promise<EmployeeRecord | undefined> => {
+  const [employee] = await db.select().from(employees).where(eq(employees.userId, userId));
   return employee;
+};
+
+export const findEmployeeByEmail = async (email: string): Promise<EmployeeRecord | undefined> => {
+  const [user] = await db.select().from(users).where(eq(users.email, email.toLowerCase().trim()));
+  if (!user) return undefined;
+  return findEmployeeByUserId(user.id);
 };
 
 export const findEmployeeById = async (id: string): Promise<EmployeeRecord | undefined> => {
   const [employee] = await db.select().from(employees).where(eq(employees.id, id));
   return employee;
+};
+
+export const markEmailVerified = async (userId: string): Promise<UserRecord | undefined> => {
+  const [user] = await db
+    .update(users)
+    .set({
+      isEmailVerified: true,
+      emailVerifiedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, userId))
+    .returning();
+  return user;
 };

@@ -1,6 +1,6 @@
 import { db } from '../../shared/db';
-import { attendance, employees } from '../../db/schema';
-import { eq, and, gte, lte, desc, inArray, count } from 'drizzle-orm';
+import { attendance, employees, users } from '../../db/schema';
+import { eq, and, gte, lte, desc, inArray, count, sql } from 'drizzle-orm';
 
 export async function findAllAttendance(employeeId?: string, startDate?: string, endDate?: string) {
   const conditions = [];
@@ -13,7 +13,7 @@ export async function findAllAttendance(employeeId?: string, startDate?: string,
     .select({
       id: attendance.id,
       employee_id: attendance.employeeId,
-      employee_name: employees.firstName,
+      employee_name: sql<string>`CONCAT(${users.firstName}, ' ', ${users.lastName})`,
       date: attendance.date,
       check_in: attendance.checkIn,
       check_out: attendance.checkOut,
@@ -26,6 +26,7 @@ export async function findAllAttendance(employeeId?: string, startDate?: string,
     })
     .from(attendance)
     .leftJoin(employees, eq(attendance.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id))
     .orderBy(desc(attendance.date));
 
   if (conditions.length > 0) {
@@ -123,4 +124,3 @@ export async function countWorkedDaysForPeriod(
 
   return res?.val ?? 0;
 }
-

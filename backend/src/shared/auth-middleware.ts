@@ -20,7 +20,13 @@ declare global {
   }
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'peoplepay360-hackathon-super-secret-jwt-key';
+const getJwtSecret = (): string => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error('JWT_SECRET must be configured with at least 32 characters');
+  }
+  return secret;
+};
 
 // Role hierarchy / permissions map
 const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
@@ -31,6 +37,8 @@ const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     'timeoff.self.create',
     'timeoff.self.read',
     'payslip.self.read',
+    'contracts.read',
+    'employee.read'
   ],
   'HR Manager': [
     // HR Manager has full CRUD on Employees, Attendance, Contracts, Working Schedules, Time Off
@@ -132,7 +140,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as AuthUser;
+    const decoded = jwt.verify(token, getJwtSecret()) as AuthUser;
     req.user = decoded;
     next();
   } catch {
@@ -157,6 +165,20 @@ export const requirePermission = (permission: string) => {
   };
 };
 
+export const requireAnyPermission = (permissionsToCheck: string[]) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    if (!req.user) throw new UnauthorizedError();
+    const permissions = ROLE_PERMISSIONS[req.user.role] || [];
+    if (
+      permissions.includes('*') ||
+      permissionsToCheck.some((permission) => permissions.includes(permission))
+    ) {
+      return next();
+    }
+    throw new ForbiddenError('Insufficient permissions');
+  };
+};
+
 export const requireRole = (allowedRoles: UserRole[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
@@ -169,4 +191,30 @@ export const requireRole = (allowedRoles: UserRole[]) => {
 
     throw new ForbiddenError(`Role '${req.user.role}' does not have access`);
   };
+};
+
+export const assertEmployeeAccess = (req: Request, employeeId: string): void => {
+  if (!req.user) throw new UnauthorizedError();
+  if (req.user.role === 'Employee' && req.user.employeeId !== employeeId) {
+    throw new ForbiddenError('Employees may only access their own records');
+  }
+};
+
+export const requireEmployeeBodyAccess = (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+): void => {
+  if (req.user?.role === 'Employee' && typeof req.body?.employeeId === 'string') {
+    assertEmployeeAccess(req, req.body.employeeId);
+  }
+  next();
+};
+
+export const requireEmployeeRead = (req: Request, res: Response, next: NextFunction): void => {
+  if (req.user?.role === 'Employee') {
+    assertEmployeeAccess(req, req.params.id);
+    return next();
+  }
+  return requirePermission('employee.read')(req, res, next);
 };

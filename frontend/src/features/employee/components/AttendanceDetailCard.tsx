@@ -112,7 +112,12 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
               title="Close details"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           )}
@@ -125,13 +130,17 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-3 rounded-xl border border-line bg-bg">
               <span className="text-[11px] text-ink-soft block mb-1">Check In</span>
-              <div className="text-sm font-semibold text-ink font-mono">{formatTime(record.check_in)}</div>
+              <div className="text-sm font-semibold text-ink font-mono">
+                {formatTime(record.check_in)}
+              </div>
               <span className="text-[10px] text-ink-soft">Morning punch</span>
             </div>
 
             <div className="p-3 rounded-xl border border-line bg-bg">
               <span className="text-[11px] text-ink-soft block mb-1">Check Out</span>
-              <div className="text-sm font-semibold text-ink font-mono">{formatTime(record.check_out)}</div>
+              <div className="text-sm font-semibold text-ink font-mono">
+                {formatTime(record.check_out)}
+              </div>
               <span className="text-[10px] text-ink-soft">Evening punch</span>
             </div>
 
@@ -166,12 +175,16 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
             <div className="divide-y divide-line text-xs">
               <div className="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <span className="text-ink-soft font-medium">id</span>
-                <span className="font-mono text-ink text-[11px] select-all break-all">{record.id}</span>
+                <span className="font-mono text-ink text-[11px] select-all break-all">
+                  {record.id}
+                </span>
               </div>
 
               <div className="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <span className="text-ink-soft font-medium">employee_id</span>
-                <span className="font-mono text-ink text-[11px] select-all break-all">{record.employee_id}</span>
+                <span className="font-mono text-ink text-[11px] select-all break-all">
+                  {record.employee_id}
+                </span>
               </div>
 
               <div className="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
@@ -202,7 +215,9 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
               <div className="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <span className="text-ink-soft font-medium">exception_note</span>
                 <span className="text-ink text-right max-w-sm italic">
-                  {record.exception_note || <span className="text-ink-soft/70">No exception note filed</span>}
+                  {record.exception_note || (
+                    <span className="text-ink-soft/70">No exception note filed</span>
+                  )}
                 </span>
               </div>
 
@@ -210,21 +225,29 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
                 <span className="text-ink-soft font-medium">is_manual_edit</span>
                 <span
                   className={`font-semibold ${
-                    record.is_manual_edit ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600'
+                    record.is_manual_edit
+                      ? 'text-amber-600 dark:text-amber-400'
+                      : 'text-emerald-600'
                   }`}
                 >
-                  {record.is_manual_edit ? 'true (Manual HR Adjustment)' : 'false (Raw Biometric Machine Punch)'}
+                  {record.is_manual_edit
+                    ? 'true (Manual HR Adjustment)'
+                    : 'false (Raw Biometric Machine Punch)'}
                 </span>
               </div>
 
               <div className="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <span className="text-ink-soft font-medium">created_at</span>
-                <span className="font-mono text-ink-soft text-[11px]">{formatTimestamp(record.created_at)}</span>
+                <span className="font-mono text-ink-soft text-[11px]">
+                  {formatTimestamp(record.created_at)}
+                </span>
               </div>
 
               <div className="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <span className="text-ink-soft font-medium">updated_at</span>
-                <span className="font-mono text-ink-soft text-[11px]">{formatTimestamp(record.updated_at)}</span>
+                <span className="font-mono text-ink-soft text-[11px]">
+                  {formatTimestamp(record.updated_at)}
+                </span>
               </div>
             </div>
           </div>
@@ -252,7 +275,12 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
               className="py-2 px-4 rounded-lg bg-accent text-accent-ink text-xs font-medium hover:opacity-90 transition-opacity cursor-pointer inline-flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
               Punch Check-In for Today
             </button>

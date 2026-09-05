@@ -8,6 +8,7 @@ type NavItem = {
   path: string;
   icon: (props: { className?: string }) => React.JSX.Element;
   badge?: string;
+  hasSubmenu?: boolean;
 };
 
 type EmployeeLayoutProps = {
@@ -27,6 +28,8 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
 
   const currentUser: User = user || {
     id: 'emp-session',
+    firstName: 'Employee',
+    lastName: 'User',
     email: 'employee@peoplepay360.com',
     role: 'Employee',
     employee: {
@@ -44,7 +47,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
   const employeeNavItems: NavItem[] = [
     {
       label: 'Dashboard',
-      path: '/employee/dashboard',
+      path: '/dashboard',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -59,6 +62,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     {
       label: 'Task Box',
       path: '#task-box',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -72,7 +76,8 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Profile',
-      path: '#profile',
+      path: '/profile',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -86,7 +91,8 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Time Management',
-      path: '#time-management',
+      path: '/attendance',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -100,7 +106,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Team',
-      path: '#team',
+      path: '/employees',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -129,6 +135,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     {
       label: 'Recruitment',
       path: '#recruitment',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -157,6 +164,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     {
       label: 'Performance',
       path: '#performance',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -171,6 +179,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     {
       label: 'Flows',
       path: '#flows',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -184,7 +193,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Docs',
-      path: '#docs',
+      path: '/documents',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -198,7 +207,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Org View',
-      path: '#org-view',
+      path: '/employee/org-view',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -210,42 +219,62 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
         </svg>
       ),
     },
-    {
-      label: 'Attendance',
-      path: '/employee/attendance',
-      icon: ({ className }) => (
-        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-          />
-        </svg>
-      ),
-    },
   ];
 
   const isItemActive = (itemPath: string) => {
-    if (itemPath === '/employee/dashboard') {
+    if (itemPath === '/dashboard') {
       return (
-        location.pathname === '/employee/dashboard' && (!location.hash || location.hash === '')
+        (location.pathname === '/dashboard' || location.pathname === '/employee/dashboard') &&
+        (!location.hash || location.hash === '')
       );
     }
-    if (itemPath === '/employee/attendance') {
-      return location.pathname === '/employee/attendance';
+    if (itemPath === '/attendance') {
+      return location.pathname === '/attendance' || location.pathname === '/employee/attendance';
+    }
+    if (itemPath === '/profile') {
+      return location.pathname === '/profile' || location.pathname.startsWith('/employees/');
+    }
+    if (itemPath === '/employees') {
+      return location.pathname === '/employees';
+    }
+    if (itemPath === '/compensation') {
+      return location.pathname === '/compensation' || location.pathname.startsWith('/payslip');
+    }
+    if (itemPath === '/documents') {
+      return location.pathname === '/documents' || location.pathname === '/policies';
+    }
+    if (itemPath === '/employee/docs') {
+      return (
+        location.pathname === '/employee/docs' ||
+        location.pathname === '/employee/documents' ||
+        location.pathname === '/documents' ||
+        location.pathname === '/policies'
+      );
+    }
+    if (itemPath === '/employee/org-view') {
+      return (
+        location.pathname === '/employee/org-view' ||
+        location.pathname === '/org-view' ||
+        location.pathname === '/organization'
+      );
+    }
+    if (itemPath === '/compensation') {
+      return location.pathname === '/compensation' || location.pathname === '/payslips';
     }
     if (itemPath.startsWith('#')) {
-      return location.pathname === '/employee/dashboard' && location.hash === itemPath;
+      return (
+        (location.pathname === '/dashboard' || location.pathname === '/employee/dashboard') &&
+        location.hash === itemPath
+      );
     }
     return location.pathname === itemPath;
   };
 
   const getTargetUrl = (itemPath: string) => {
     if (itemPath.startsWith('#')) {
-      return location.pathname === '/employee/dashboard'
-        ? itemPath
-        : `/employee/dashboard${itemPath}`;
+      const isDash =
+        location.pathname === '/dashboard' || location.pathname === '/employee/dashboard';
+      return isDash ? itemPath : `/dashboard${itemPath}`;
     }
     return itemPath;
   };
@@ -428,9 +457,13 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
 
           <div className="flex items-center gap-3">
             <div className="text-xs text-ink-soft hidden md:block">{currentUser.email}</div>
-            <div className="w-7 h-7 rounded-full bg-accent/20 text-accent font-semibold flex items-center justify-center text-[11px]">
+            <Link
+              to="/profile"
+              title="View your profile"
+              className="w-7 h-7 rounded-full bg-accent/20 text-accent font-semibold flex items-center justify-center text-[11px] hover:ring-2 hover:ring-accent/40 transition-all no-underline"
+            >
               {currentUser.employee?.firstName?.[0] || currentUser.email[0]?.toUpperCase() || 'E'}
-            </div>
+            </Link>
           </div>
         </header>
 

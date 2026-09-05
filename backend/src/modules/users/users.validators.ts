@@ -4,16 +4,18 @@ import { userRoleEnum, passwordSchema } from '../auth/auth.validators';
 export { userRoleEnum, passwordSchema };
 
 export const createUserSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
   email: z.string().email('Please enter a valid work email address'),
   password: passwordSchema,
   role: userRoleEnum,
-  employeeId: z.string().uuid('Invalid employee ID').nullable().optional(),
   isActive: z.boolean().default(true),
 });
 
 export const updateUserSchema = z.object({
+  firstName: z.string().min(1, 'First name cannot be empty').optional(),
+  lastName: z.string().min(1, 'Last name cannot be empty').optional(),
   role: userRoleEnum.optional(),
-  employeeId: z.string().uuid('Invalid employee ID').nullable().optional(),
   isActive: z.boolean().optional(),
   password: passwordSchema.optional(),
 });

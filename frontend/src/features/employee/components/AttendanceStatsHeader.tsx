@@ -18,7 +18,7 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
 }) => {
   const totalRecords = records.length;
   const presentRecords = records.filter(
-    (r) => r.status === 'Present' || r.status === 'Late' || r.status === 'Half-Day'
+    (r) => r.status === 'Present' || r.status === 'Late' || r.status === 'Half-Day',
   );
   const lateRecords = records.filter((r) => r.status === 'Late');
   const manualEdits = records.filter((r) => r.is_manual_edit);
@@ -61,7 +61,12 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
             onClick={onOpenFingerprintModal}
             className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-line bg-bg hover:bg-bg-raised text-ink text-xs font-medium transition-colors cursor-pointer shadow-xs"
           >
-            <svg className="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-4 h-4 text-accent shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -70,7 +75,9 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
               />
             </svg>
             <div className="text-left">
-              <span className="block text-xs font-semibold leading-tight text-ink">Change Fingerprint</span>
+              <span className="block text-xs font-semibold leading-tight text-ink">
+                Change Fingerprint
+              </span>
               <span className="text-[10px] text-ink-soft leading-tight">
                 {fingerprint?.encryted_template ? 'Enrolled Key Active' : 'Configure Biometrics'}
               </span>
@@ -100,7 +107,8 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
         <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-[11px] font-medium text-ink-soft block">Total Worked Hours</span>
           <div className="text-xl sm:text-2xl font-bold font-serif text-accent mt-1">
-            {totalWorkedHours.toFixed(1)} <span className="text-xs font-sans font-normal text-ink-soft">hrs</span>
+            {totalWorkedHours.toFixed(1)}{' '}
+            <span className="text-xs font-sans font-normal text-ink-soft">hrs</span>
           </div>
           <span className="text-[10px] text-ink-soft font-medium mt-1 block">
             Avg. {averageHoursPerDay} hrs/shift
@@ -122,7 +130,8 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
         <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-[11px] font-medium text-ink-soft block">Audit & Edits</span>
           <div className="text-xl sm:text-2xl font-bold font-serif text-ink mt-1">
-            {manualEdits.length} <span className="text-xs font-sans font-normal text-ink-soft">manual</span>
+            {manualEdits.length}{' '}
+            <span className="text-xs font-sans font-normal text-ink-soft">manual</span>
           </div>
           <span className="text-[10px] text-accent font-medium mt-1 block truncate">
             {fingerprint?.encryted_template ? 'Hardware Fingerprint Active' : 'Scanner Pending'}

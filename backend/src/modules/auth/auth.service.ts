@@ -1,24 +1,33 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { UnauthorizedError, NotFoundError } from '../../shared/errors';
+import { EmailNotVerifiedError } from './auth.errors';
 import { LoginInput } from './auth.validators';
 import * as authRepository from './auth.repository';
 import { AuthUser, UserRole } from '../../shared/auth-middleware';
+import { sendVerificationEmail } from '../../shared/mailer';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'peoplepay360-hackathon-super-secret-jwt-key';
-const TOKEN_EXPIRY = '7d';
+const getJwtSecret = (): string => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error('JWT_SECRET must be configured with at least 32 characters');
+  }
+  return secret;
+};
+const TOKEN_EXPIRY = '15m';
 
 export type UserPayload = {
   id: string;
+  firstName: string;
+  lastName: string;
   email: string;
   role: UserRole;
   isActive: boolean;
+  isEmailVerified: boolean;
   employeeId?: string | null;
   employee?: {
     id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
+    employmentStatus: string;
   } | null;
 };
 
@@ -39,7 +48,7 @@ const generateToken = (user: {
     role: user.role,
     employeeId: user.employeeId || undefined,
   };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: TOKEN_EXPIRY });
+  return jwt.sign(payload, getJwtSecret(), { expiresIn: TOKEN_EXPIRY });
 };
 
 export const login = async (input: LoginInput): Promise<AuthResponse> => {
@@ -60,28 +69,33 @@ export const login = async (input: LoginInput): Promise<AuthResponse> => {
     throw new UnauthorizedError('Invalid email or password');
   }
 
-  let employeeData = null;
-  if (user.employeeId) {
-    const employee = await authRepository.findEmployeeById(user.employeeId);
-    if (employee) {
-      employeeData = {
-        id: employee.id,
-        firstName: employee.firstName,
-        lastName: employee.lastName,
-        email: employee.email,
-      };
-    }
+  if (!user.isEmailVerified) {
+    throw new EmailNotVerifiedError(
+      'Please verify your email before logging in. Check your inbox for the verification link.',
+    );
   }
 
-  const token = generateToken({ ...user, role: user.role as UserRole });
+  const employee = await authRepository.findEmployeeByUserId(user.id);
+  const employeeData = employee
+    ? {
+        id: employee.id,
+        employmentStatus: employee.employmentStatus,
+      }
+    : null;
+  const employeeId = employee?.id || null;
+
+  const token = generateToken({ ...user, role: user.role as UserRole, employeeId });
 
   return {
     user: {
       id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       role: user.role as UserRole,
       isActive: user.isActive,
-      employeeId: user.employeeId,
+      isEmailVerified: user.isEmailVerified,
+      employeeId,
       employee: employeeData,
     },
     token,
@@ -94,32 +108,33 @@ export const getCurrentUser = async (userId: string): Promise<UserPayload> => {
     throw new NotFoundError('User not found');
   }
 
-  let employeeData = null;
-  if (user.employeeId) {
-    const employee = await authRepository.findEmployeeById(user.employeeId);
-    if (employee) {
-      employeeData = {
+  const employee = await authRepository.findEmployeeByUserId(user.id);
+  const employeeData = employee
+    ? {
         id: employee.id,
-        firstName: employee.firstName,
-        lastName: employee.lastName,
-        email: employee.email,
-      };
-    }
-  }
+        employmentStatus: employee.employmentStatus,
+      }
+    : null;
+  const employeeId = employee?.id || null;
 
   return {
     id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
     email: user.email,
     role: user.role as UserRole,
     isActive: user.isActive,
-    employeeId: user.employeeId,
+    isEmailVerified: user.isEmailVerified,
+    employeeId,
     employee: employeeData,
   };
 };
 
 export const refreshToken = async (currentToken: string): Promise<AuthResponse> => {
   try {
-    const decoded = jwt.verify(currentToken, JWT_SECRET, { ignoreExpiration: true }) as AuthUser;
+    const decoded = jwt.verify(currentToken, getJwtSecret(), {
+      ignoreExpiration: true,
+    }) as AuthUser;
     const user = await authRepository.findUserById(decoded.id);
     if (!user) {
       throw new UnauthorizedError('User does not exist');
@@ -131,33 +146,106 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
       );
     }
 
-    let employeeData = null;
-    if (user.employeeId) {
-      const employee = await authRepository.findEmployeeById(user.employeeId);
-      if (employee) {
-        employeeData = {
-          id: employee.id,
-          firstName: employee.firstName,
-          lastName: employee.lastName,
-          email: employee.email,
-        };
-      }
+    if (!user.isEmailVerified) {
+      throw new EmailNotVerifiedError('Please verify your email before logging in.');
     }
 
-    const token = generateToken({ ...user, role: user.role as UserRole });
+    const employee = await authRepository.findEmployeeByUserId(user.id);
+    const employeeData = employee
+      ? {
+          id: employee.id,
+          employmentStatus: employee.employmentStatus,
+        }
+      : null;
+    const employeeId = employee?.id || null;
+
+    const token = generateToken({ ...user, role: user.role as UserRole, employeeId });
 
     return {
       user: {
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         role: user.role as UserRole,
         isActive: user.isActive,
-        employeeId: user.employeeId,
+        isEmailVerified: user.isEmailVerified,
+        employeeId,
         employee: employeeData,
       },
       token,
     };
-  } catch {
+  } catch (err: any) {
+    if (err instanceof EmailNotVerifiedError || err instanceof UnauthorizedError) {
+      throw err;
+    }
     throw new UnauthorizedError('Invalid or expired token');
   }
+};
+
+export const verifyEmail = async (token: string): Promise<{ email: string }> => {
+  try {
+    const decoded = jwt.verify(token, getJwtSecret()) as {
+      userId: string;
+      email: string;
+      purpose: string;
+    };
+
+    if (decoded.purpose !== 'email-verification') {
+      throw new UnauthorizedError('Invalid verification token');
+    }
+
+    const user = await authRepository.findUserById(decoded.userId);
+    if (!user) {
+      throw new NotFoundError('User account not found');
+    }
+
+    await authRepository.markEmailVerified(user.id);
+
+    return { email: user.email };
+  } catch (err: any) {
+    if (err instanceof UnauthorizedError || err instanceof NotFoundError) {
+      throw err;
+    }
+    throw new UnauthorizedError('Verification token is invalid or has expired');
+  }
+};
+
+export const resendVerificationEmail = async (
+  email: string,
+): Promise<{ success: boolean; message: string }> => {
+  const normalizedEmail = email.toLowerCase().trim();
+  const user = await authRepository.findUserByEmail(normalizedEmail);
+  if (!user) {
+    return {
+      success: true,
+      message: 'If an account exists with this email, a verification link has been sent.',
+    };
+  }
+
+  if (user.isEmailVerified) {
+    return {
+      success: true,
+      message: 'This email is already verified. You can sign in directly.',
+    };
+  }
+
+  const verificationToken = jwt.sign(
+    { userId: user.id, email: user.email, purpose: 'email-verification' },
+    getJwtSecret(),
+    { expiresIn: '7d' },
+  );
+
+  const employeeName = `${user.firstName} ${user.lastName}`.trim();
+
+  await sendVerificationEmail({
+    toEmail: user.email,
+    employeeName,
+    verificationToken,
+  });
+
+  return {
+    success: true,
+    message: 'Verification email has been sent. Please check your inbox.',
+  };
 };

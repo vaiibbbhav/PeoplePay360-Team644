@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { EmployeeLayout } from '../components/EmployeeLayout';
+import { AppLayout } from '@/components/layout/AppLayout';
 import {
   useAttendanceList,
   useCheckIn,
@@ -23,7 +23,7 @@ export const EmployeeAttendancePage: React.FC = () => {
   const [calendarDate, setCalendarDate] = useState(() => new Date());
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
-    now.getDate()
+    now.getDate(),
   ).padStart(2, '0')}`;
 
   const [selectedDateStr, setSelectedDateStr] = useState<string>(todayStr);
@@ -99,7 +99,7 @@ export const EmployeeAttendancePage: React.FC = () => {
   const monthName = calendarDate.toLocaleString('default', { month: 'long' });
 
   return (
-    <EmployeeLayout title="Attendance & Punches">
+    <AppLayout title="Time Management">
       <div className="space-y-8 font-sans">
         {/* Page Title */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -131,7 +131,12 @@ export const EmployeeAttendancePage: React.FC = () => {
                   : 'border-line bg-bg hover:bg-bg-raised text-ink'
               }`}
             >
-              <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-4 h-4 text-accent"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -192,7 +197,9 @@ export const EmployeeAttendancePage: React.FC = () => {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-semibold text-ink">Monthly Punch Calendar</h2>
-            <span className="text-xs text-ink-soft">Click any date card to inspect full statistics</span>
+            <span className="text-xs text-ink-soft">
+              Click any date card to inspect full statistics
+            </span>
           </div>
 
           <AttendanceCalendarGrid
@@ -220,7 +227,7 @@ export const EmployeeAttendancePage: React.FC = () => {
         onClose={() => setIsFingerprintModalOpen(false)}
         employeeId={employeeId}
       />
-    </EmployeeLayout>
+    </AppLayout>
   );
 };
 
