@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import { getTodayIST } from '@/lib/formatters';
 
@@ -126,13 +125,6 @@ export const AttendanceFilterToolbar: React.FC<AttendanceFilterToolbarProps> = (
               <span>+</span> Manual Punch / Edit
             </button>
           )}
-
-          <Link
-            to="/attendance/terminal"
-            className="px-3.5 py-2 rounded-xl text-xs font-medium border border-line bg-bg hover:bg-bg-raised text-ink transition-colors no-underline flex items-center gap-1.5 shrink-0"
-          >
-            <span>📱</span> Hardware Terminal
-          </Link>
         </div>
       </div>
 

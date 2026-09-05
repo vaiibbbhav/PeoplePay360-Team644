@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import {
@@ -14,7 +13,7 @@ import {
 import { AttendanceRecordsTable } from '../components/AttendanceRecordsTable';
 import { ManualAttendanceDrawer } from '../components/ManualAttendanceDrawer';
 import { EmployeeAttendancePage } from '@/features/employee/pages/EmployeeAttendancePage';
-import { Users, User, Fingerprint } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 export const AttendanceRecordsPage: React.FC = () => {
   const { data: user } = useCurrentUser();
@@ -23,11 +22,6 @@ export const AttendanceRecordsPage: React.FC = () => {
   // Role permissions
   const isEmployeeOnly = role === 'Employee';
   const canManage = ['Admin', 'HR Manager', 'HR Payroll Manager'].includes(role);
-
-  // Active view tab: 'company' | 'personal'
-  const [activeTab, setActiveTab] = useState<'company' | 'personal'>(
-    isEmployeeOnly ? 'personal' : 'company',
-  );
 
   // Filter state
   const [filter, setFilter] = useState<AttendanceFilterState>({
@@ -103,7 +97,7 @@ export const AttendanceRecordsPage: React.FC = () => {
 
   return (
     <AppLayout title="Attendance Records">
-      <div className="space-y-6 max-w-7xl mx-auto font-sans">
+      <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 font-sans">
         {/* Page Top Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-5">
           <div>
@@ -122,74 +116,36 @@ export const AttendanceRecordsPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Navigation View Switcher */}
-          <div className="flex items-center gap-2 bg-bg-raised p-1 rounded-xl border border-line">
-            <button
-              type="button"
-              onClick={() => setActiveTab('company')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'company'
-                  ? 'bg-bg text-ink shadow-xs border border-line'
-                  : 'text-ink-soft hover:text-ink'
-              }`}
-            >
-              <Users className="w-3.5 h-3.5" />
+          {/* Company Ledger Status */}
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium bg-bg-raised border border-line text-ink">
+              <Users className="w-3.5 h-3.5 text-accent" />
               <span>Company Ledger</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('personal')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'personal'
-                  ? 'bg-bg text-ink shadow-xs border border-line'
-                  : 'text-ink-soft hover:text-ink'
-              }`}
-            >
-              <User className="w-3.5 h-3.5" />
-              <span>My Personal Punch</span>
-            </button>
-
-            <Link
-              to="/attendance/terminal"
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium text-accent hover:bg-accent-soft transition-all"
-            >
-              <Fingerprint className="w-3.5 h-3.5" />
-              <span>Terminal Scan</span>
-            </Link>
+            </div>
           </div>
         </div>
 
-        {/* Tab 1: Company Ledger View */}
-        {activeTab === 'company' && (
-          <div className="space-y-6">
-            {/* Real-time Summary Cards */}
-            <AttendanceSummaryCards records={filteredRecords} />
+        {/* Company Ledger View */}
+        <div className="space-y-6">
+          {/* Real-time Summary Cards */}
+          <AttendanceSummaryCards records={filteredRecords} />
 
-            {/* Filtering & Actions Toolbar */}
-            <AttendanceFilterToolbar
-              filter={filter}
-              onFilterChange={setFilter}
-              onOpenManualDrawer={handleOpenManual}
-              canManage={canManage}
-            />
+          {/* Filtering & Actions Toolbar */}
+          <AttendanceFilterToolbar
+            filter={filter}
+            onFilterChange={setFilter}
+            onOpenManualDrawer={handleOpenManual}
+            canManage={canManage}
+          />
 
-            {/* Main Attendance Table */}
-            <AttendanceRecordsTable
-              records={filteredRecords}
-              isLoading={isLoading}
-              onEditRecord={handleEditRecord}
-              canManage={canManage}
-            />
-          </div>
-        )}
-
-        {/* Tab 2: Personal Calendar & Punch View */}
-        {activeTab === 'personal' && (
-          <div className="pt-2">
-            <EmployeeAttendancePage />
-          </div>
-        )}
+          {/* Main Attendance Table */}
+          <AttendanceRecordsTable
+            records={filteredRecords}
+            isLoading={isLoading}
+            onEditRecord={handleEditRecord}
+            canManage={canManage}
+          />
+        </div>
 
         {/* Slide-over Drawer for manual edits & adjustments */}
         <ManualAttendanceDrawer
