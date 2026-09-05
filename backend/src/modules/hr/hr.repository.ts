@@ -40,6 +40,7 @@ export async function findAllEmployees() {
       date_of_birth: employees.dateOfBirth,
       gender: employees.gender,
       identification_number: employees.identificationNumber,
+      location: employees.location,
       bank_name: employees.bankName,
       bank_account_number: employees.bankAccountNumber,
       bank_routing_code: employees.bankRoutingCode,
@@ -47,7 +48,7 @@ export async function findAllEmployees() {
       created_at: employees.createdAt,
     })
     .from(employees)
-    .leftJoin(users, eq(employees.userId, users.id))
+    .innerJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
     .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))
@@ -81,6 +82,7 @@ export async function findEmployeeById(id: string) {
       date_of_birth: employees.dateOfBirth,
       gender: employees.gender,
       identification_number: employees.identificationNumber,
+      location: employees.location,
       bank_name: employees.bankName,
       bank_account_number: employees.bankAccountNumber,
       bank_routing_code: employees.bankRoutingCode,
@@ -88,7 +90,7 @@ export async function findEmployeeById(id: string) {
       created_at: employees.createdAt,
     })
     .from(employees)
-    .leftJoin(users, eq(employees.userId, users.id))
+    .innerJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
     .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))
@@ -137,6 +139,7 @@ export async function insertEmployee(data: Record<string, any>) {
       dateOfBirth: data.dateOfBirth,
       gender: data.gender,
       identificationNumber: data.identificationNumber,
+      location: data.location || 'Main Headquarters',
       bankName: data.bankName,
       bankAccountNumber: data.bankAccountNumber,
       bankRoutingCode: data.bankRoutingCode,
@@ -167,6 +170,7 @@ export async function updateEmployeeById(id: string, data: Record<string, any>) 
     dateOfBirth: 'dateOfBirth',
     gender: 'gender',
     identificationNumber: 'identificationNumber',
+    location: 'location',
     bankName: 'bankName',
     bankAccountNumber: 'bankAccountNumber',
     bankRoutingCode: 'bankRoutingCode',

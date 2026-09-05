@@ -25,6 +25,8 @@ const roleBadge: Record<string, string> = {
   Employee: 'bg-bg text-ink-soft border border-line',
 };
 
+import { AppLayout } from '@/components/layout/AppLayout';
+
 export const UserManagementPage: React.FC = () => {
   const navigate = useNavigate();
   const { data: currentUser, isLoading: isAuthLoading } = useCurrentUser();
@@ -63,30 +65,32 @@ export const UserManagementPage: React.FC = () => {
 
   if (!currentUser || currentUser.role !== 'Admin') {
     return (
-      <div className="flex items-center justify-center py-24 px-6">
-        <div className="max-w-md w-full border border-line rounded-xl p-8 text-center bg-bg-raised">
-          <div className="w-10 h-10 rounded-full bg-over-red/10 text-over-red mx-auto flex items-center justify-center mb-4">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
+      <AppLayout title="Access Denied">
+        <div className="flex items-center justify-center py-24 px-6">
+          <div className="max-w-md w-full border border-line rounded-xl p-8 text-center bg-bg-raised">
+            <div className="w-10 h-10 rounded-full bg-over-red/10 text-over-red mx-auto flex items-center justify-center mb-4">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <h2 className="text-base font-semibold text-ink">Admin Access Restricted</h2>
+            <p className="text-xs text-ink-soft mt-2 leading-relaxed">
+              User Management is restricted to system administrators only.
+            </p>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="mt-6 px-4 py-2 text-xs font-medium rounded-lg bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer"
+            >
+              Return to Dashboard
+            </button>
           </div>
-          <h2 className="text-base font-semibold text-ink">Admin Access Restricted</h2>
-          <p className="text-xs text-ink-soft mt-2 leading-relaxed">
-            User Management is restricted to system administrators only.
-          </p>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="mt-6 px-4 py-2 text-xs font-medium rounded-lg bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer"
-          >
-            Return to Dashboard
-          </button>
         </div>
-      </div>
+      </AppLayout>
     );
   }
 
@@ -117,203 +121,205 @@ export const UserManagementPage: React.FC = () => {
   });
 
   return (
-    <div className="max-w-6xl mx-auto w-full px-6 sm:px-8 py-8">
-      {/* ── Page heading ── */}
-      <div className="mb-1">
-        <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
-          User Management
-        </h1>
-        <p className="text-xs sm:text-sm text-ink-soft mt-1">
-          Manage users and their assigned roles within the organization.
-        </p>
-      </div>
-
-      {/* ── Divider ── */}
-      <div className="border-t border-line my-6" />
-
-      {/* ── Toolbar ── */}
-      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between mb-5">
-        {/* Search */}
-        <div className="relative w-full sm:w-1/3">
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-soft pointer-events-none"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-line bg-bg text-ink placeholder:text-ink-soft/60 focus:outline-none focus:border-accent transition-colors"
-          />
+    <AppLayout title="User Management">
+      <div className="max-w-6xl mx-auto w-full px-6 sm:px-8 py-8">
+        {/* ── Page heading ── */}
+        <div className="mb-1">
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+            User Management
+          </h1>
+          <p className="text-xs sm:text-sm text-ink-soft mt-1">
+            Manage users and their assigned roles within the organization.
+          </p>
         </div>
 
-        {/* Right: role filter + add button */}
-        <div className="flex items-center gap-2.5">
-          <select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
-            className="px-3 py-2 text-sm rounded-lg border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer transition-colors"
-          >
-            <option value="">All Roles</option>
-            <option value="Admin">Admin</option>
-            <option value="HR Manager">HR Manager</option>
-            <option value="HR Payroll Manager">HR Payroll Manager</option>
-            <option value="HR Payroll User">HR Payroll User</option>
-            <option value="Employee">Employee</option>
-          </select>
+        {/* ── Divider ── */}
+        <div className="border-t border-line my-6" />
 
-          <button
-            onClick={() => setAddOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* ── Toolbar ── */}
+        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between mb-5">
+          {/* Search */}
+          <div className="relative w-full sm:w-1/3">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-soft pointer-events-none"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M12 4v16m8-8H4"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
-            Add User
-          </button>
+            <input
+              type="text"
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-line bg-bg text-ink placeholder:text-ink-soft/60 focus:outline-none focus:border-accent transition-colors"
+            />
+          </div>
+
+          {/* Right: role filter + add button */}
+          <div className="flex items-center gap-2.5">
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="px-3 py-2 text-sm rounded-lg border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer transition-colors"
+            >
+              <option value="">All Roles</option>
+              <option value="Admin">Admin</option>
+              <option value="HR Manager">HR Manager</option>
+              <option value="HR Payroll Manager">HR Payroll Manager</option>
+              <option value="HR Payroll User">HR Payroll User</option>
+              <option value="Employee">Employee</option>
+            </select>
+
+            <button
+              onClick={() => setAddOpen(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add User
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* ── Table ── */}
-      <div className="border border-line rounded-xl overflow-hidden">
-        <table className="w-full text-sm text-left">
-          <thead>
-            <tr className="bg-bg-raised border-b border-line text-xs font-semibold text-ink-soft uppercase tracking-wider">
-              <th className="py-3 px-4 w-14">S.No.</th>
-              <th className="py-3 px-4">Name</th>
-              <th className="py-3 px-4">Email</th>
-              <th className="py-3 px-4">Role</th>
-              <th className="py-3 px-4">Status</th>
-              <th className="py-3 px-4 w-16 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-line">
-            {isUsersLoading ? (
-              <tr>
-                <td colSpan={6} className="py-16 text-center">
-                  <div className="flex flex-col items-center gap-2 text-ink-soft">
-                    <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-                    <span className="text-xs">Loading users...</span>
-                  </div>
-                </td>
+        {/* ── Table ── */}
+        <div className="border border-line rounded-xl overflow-hidden">
+          <table className="w-full text-sm text-left">
+            <thead>
+              <tr className="bg-bg-raised border-b border-line text-xs font-semibold text-ink-soft uppercase tracking-wider">
+                <th className="py-3 px-4 w-14">S.No.</th>
+                <th className="py-3 px-4">Name</th>
+                <th className="py-3 px-4">Email</th>
+                <th className="py-3 px-4">Role</th>
+                <th className="py-3 px-4">Status</th>
+                <th className="py-3 px-4 w-16 text-right">Actions</th>
               </tr>
-            ) : filteredUsers.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="py-16 text-center">
-                  <p className="text-sm text-ink-soft">
-                    {search ? 'No users found matching your search' : 'No users found'}
-                  </p>
-                </td>
-              </tr>
-            ) : (
-              filteredUsers.map((u, idx) => {
-                const displayName = `${u.firstName || ''} ${u.lastName || ''}`.trim() || '—';
-                return (
-                  <tr key={u.id} className="bg-bg hover:bg-bg-raised/50 transition-colors">
-                    {/* S.No. */}
-                    <td className="py-3 px-4 text-ink-soft text-xs">{idx + 1}.</td>
+            </thead>
+            <tbody className="divide-y divide-line">
+              {isUsersLoading ? (
+                <tr>
+                  <td colSpan={6} className="py-16 text-center">
+                    <div className="flex flex-col items-center gap-2 text-ink-soft">
+                      <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                      <span className="text-xs">Loading users...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-16 text-center">
+                    <p className="text-sm text-ink-soft">
+                      {search ? 'No users found matching your search' : 'No users found'}
+                    </p>
+                  </td>
+                </tr>
+              ) : (
+                filteredUsers.map((u, idx) => {
+                  const displayName = `${u.firstName || ''} ${u.lastName || ''}`.trim() || '—';
+                  return (
+                    <tr key={u.id} className="bg-bg hover:bg-bg-raised/50 transition-colors">
+                      {/* S.No. */}
+                      <td className="py-3 px-4 text-ink-soft text-xs">{idx + 1}.</td>
 
-                    {/* Name */}
-                    <td className="py-3 px-4 font-medium text-ink">{displayName}</td>
+                      {/* Name */}
+                      <td className="py-3 px-4 font-medium text-ink">{displayName}</td>
 
-                    {/* Email */}
-                    <td className="py-3 px-4 text-ink-soft">{u.email}</td>
+                      {/* Email */}
+                      <td className="py-3 px-4 text-ink-soft">{u.email}</td>
 
-                    {/* Role badge */}
-                    <td className="py-3 px-4">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                          roleBadge[u.role] ?? 'bg-bg text-ink-soft border border-line'
-                        }`}
-                      >
-                        {u.role}
-                      </span>
-                    </td>
-
-                    {/* Status */}
-                    <td className="py-3 px-4">
-                      {u.isActive ? (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium text-ink bg-bg-raised border border-line">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          Active
+                      {/* Role badge */}
+                      <td className="py-3 px-4">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                            roleBadge[u.role] ?? 'bg-bg text-ink-soft border border-line'
+                          }`}
+                        >
+                          {u.role}
                         </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium text-ink-soft bg-bg border border-line">
-                          <span className="w-1.5 h-1.5 rounded-full bg-ink-soft/40" />
-                          Inactive
-                        </span>
-                      )}
-                    </td>
+                      </td>
 
-                    {/* Actions dropdown */}
-                    <td className="py-3 px-4 text-right">
-                      <ActionsMenu
-                        onEdit={() => setEditUser(u)}
-                        onDelete={() => {
-                          setDeleteError('');
-                          setDeleteUserId(u.id);
-                        }}
-                        canDelete={u.id !== currentUser?.id}
-                      />
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                      {/* Status */}
+                      <td className="py-3 px-4">
+                        {u.isActive ? (
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium text-ink bg-bg-raised border border-line">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            Active
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium text-ink-soft bg-bg border border-line">
+                            <span className="w-1.5 h-1.5 rounded-full bg-ink-soft/40" />
+                            Inactive
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Actions dropdown */}
+                      <td className="py-3 px-4 text-right">
+                        <ActionsMenu
+                          onEdit={() => setEditUser(u)}
+                          onDelete={() => {
+                            setDeleteError('');
+                            setDeleteUserId(u.id);
+                          }}
+                          canDelete={u.id !== currentUser?.id}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* ── Modals ── */}
+        <UserAddModal
+          isOpen={addOpen}
+          employees={employees}
+          isPending={createMutation.isPending}
+          onClose={() => setAddOpen(false)}
+          onSave={async (data) => {
+            await createMutation.mutateAsync(data);
+            setAddOpen(false);
+          }}
+        />
+
+        <UserEditModal
+          isOpen={Boolean(editUser)}
+          user={editUser}
+          employees={employees}
+          isPending={updateMutation.isPending}
+          onClose={() => setEditUser(null)}
+          onSave={async (id, data) => {
+            await updateMutation.mutateAsync({ id, input: data });
+            setEditUser(null);
+          }}
+        />
+
+        <DeleteConfirmDialog
+          isOpen={Boolean(deleteUserId)}
+          isDeleting={deleteMutation.isPending}
+          error={deleteError}
+          onConfirm={handleDelete}
+          onCancel={() => {
+            setDeleteUserId(null);
+            setDeleteError('');
+          }}
+        />
       </div>
-
-      {/* ── Modals ── */}
-      <UserAddModal
-        isOpen={addOpen}
-        employees={employees}
-        isPending={createMutation.isPending}
-        onClose={() => setAddOpen(false)}
-        onSave={async (data) => {
-          await createMutation.mutateAsync(data);
-          setAddOpen(false);
-        }}
-      />
-
-      <UserEditModal
-        isOpen={Boolean(editUser)}
-        user={editUser}
-        employees={employees}
-        isPending={updateMutation.isPending}
-        onClose={() => setEditUser(null)}
-        onSave={async (id, data) => {
-          await updateMutation.mutateAsync({ id, input: data });
-          setEditUser(null);
-        }}
-      />
-
-      <DeleteConfirmDialog
-        isOpen={Boolean(deleteUserId)}
-        isDeleting={deleteMutation.isPending}
-        error={deleteError}
-        onConfirm={handleDelete}
-        onCancel={() => {
-          setDeleteUserId(null);
-          setDeleteError('');
-        }}
-      />
-    </div>
+    </AppLayout>
   );
 };
 

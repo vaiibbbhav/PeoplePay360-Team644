@@ -53,7 +53,7 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
   }
 
   const totalNet = payslips.reduce((sum, p) => sum + (Number(p.net_salary) || 0), 0);
-  const latestPayslip = payslips[0];
+  const latestPayslip = payslips.length > 0 ? payslips[0] : null;
 
   return (
     <div className="space-y-6">

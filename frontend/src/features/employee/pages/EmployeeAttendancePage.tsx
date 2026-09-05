@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { EmployeeLayout } from '../components/EmployeeLayout';
+import { AppLayout } from '@/components/layout/AppLayout';
 import {
   useAttendanceList,
   useFingerprint,
@@ -89,7 +89,7 @@ export const EmployeeAttendancePage: React.FC = () => {
   const monthName = calendarDate.toLocaleString('default', { month: 'long' });
 
   return (
-    <EmployeeLayout title="Attendance & Punches">
+    <AppLayout title="Time Management">
       <div className="space-y-8 font-sans">
         {/* Page Title */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -179,7 +179,7 @@ export const EmployeeAttendancePage: React.FC = () => {
         onClose={() => setIsFingerprintModalOpen(false)}
         employeeId={employeeId}
       />
-    </EmployeeLayout>
+    </AppLayout>
   );
 };
 

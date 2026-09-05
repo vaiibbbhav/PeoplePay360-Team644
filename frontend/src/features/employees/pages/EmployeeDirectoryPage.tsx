@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEmployeesList, useEmployeeMeta, useCreateEmployee } from '../queries/useEmployees';
 import { EmployeeFormModal } from '../components/EmployeeFormModal';
+import { AppLayout } from '../../../components/layout/AppLayout';
 
 export const EmployeeDirectoryPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,11 +17,14 @@ export const EmployeeDirectoryPage: React.FC = () => {
 
   // Filter logic
   const filteredEmployees = employees.filter((emp) => {
-    const fullName = `${emp.first_name} ${emp.last_name}`.toLowerCase();
+    const firstName = emp.first_name || '';
+    const lastName = emp.last_name || '';
+    const email = emp.email || '';
+    const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
     const matchesSearch =
       !search ||
       fullName.includes(search.toLowerCase()) ||
-      emp.email.toLowerCase().includes(search.toLowerCase()) ||
+      email.toLowerCase().includes(search.toLowerCase()) ||
       (emp.job_position_title &&
         emp.job_position_title.toLowerCase().includes(search.toLowerCase()));
 
@@ -31,33 +35,17 @@ export const EmployeeDirectoryPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col">
-      {/* Top Header */}
-      <header className="border-b border-line px-6 sm:px-8 py-4 flex justify-between items-center bg-bg sticky top-0 z-10">
-        <div className="flex items-center gap-6">
-          <Link to="/dashboard" className="font-serif text-xl font-bold text-ink no-underline">
-            PeoplePay<span className="text-accent">360</span>
-          </Link>
-          <div className="h-4 w-px bg-line" />
-          <span className="font-serif text-sm font-semibold text-ink">Employee Hub</span>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Link
-            to="/dashboard"
-            className="px-3.5 py-1.5 rounded-lg text-xs font-medium border border-line bg-transparent text-ink hover:bg-bg-raised transition-colors no-underline"
-          >
-            ← Back to Console
-          </Link>
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
-          >
-            <span>+</span> Onboard Employee
-          </button>
-        </div>
-      </header>
-
+    <AppLayout
+      title="Employee Directory"
+      actions={
+        <button
+          onClick={() => setIsCreateModalOpen(true)}
+          className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
+        >
+          <span>+</span> Onboard Employee
+        </button>
+      }
+    >
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto w-full flex-1 px-6 sm:px-8 py-8">
         {/* Page Title & Intro */}
@@ -142,8 +130,10 @@ export const EmployeeDirectoryPage: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredEmployees.map((emp) => {
-              const fullName = `${emp.first_name} ${emp.last_name}`;
-              const initials = `${emp.first_name[0] || ''}${emp.last_name[0] || ''}`.toUpperCase();
+              const firstName = emp.first_name || '';
+              const lastName = emp.last_name || '';
+              const fullName = `${firstName} ${lastName}`.trim() || 'Unnamed Employee';
+              const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || 'EM';
 
               return (
                 <div
@@ -229,6 +219,6 @@ export const EmployeeDirectoryPage: React.FC = () => {
           isSaving={createEmployeeMutation.isPending}
         />
       )}
-    </div>
+    </AppLayout>
   );
 };

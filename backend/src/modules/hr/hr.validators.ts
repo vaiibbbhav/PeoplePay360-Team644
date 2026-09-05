@@ -15,6 +15,7 @@ export const createEmployeeSchema = z.object({
   dateOfBirth: z.string().optional().nullable(),
   gender: z.string().optional().nullable(),
   identificationNumber: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
   bankName: z.string().optional().nullable(),
   bankAccountNumber: z.string().optional().nullable(),
   bankRoutingCode: z.string().optional().nullable(),

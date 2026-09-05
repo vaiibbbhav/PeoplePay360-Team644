@@ -87,6 +87,7 @@ export const employees = pgTable('employees', {
   dateOfBirth: date('date_of_birth'),
   gender: varchar('gender', { length: 20 }),
   identificationNumber: varchar('identification_number', { length: 50 }),
+  location: varchar('location', { length: 150 }).default('Main Headquarters'),
   bankName: varchar('bank_name', { length: 100 }),
   bankAccountNumber: varchar('bank_account_number', { length: 50 }),
   bankRoutingCode: varchar('bank_routing_code', { length: 50 }),

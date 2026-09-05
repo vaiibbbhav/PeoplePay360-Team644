@@ -73,6 +73,13 @@ export const EmploymentDetailsTab: React.FC<EmploymentDetailsTabProps> = ({ empl
               {employee.employment_status.replace('_', ' ')}
             </span>
           </div>
+
+          <div>
+            <span className="text-xs text-ink-soft block mb-1">Work Location</span>
+            <span className="text-sm font-medium text-ink">
+              {employee.location || 'Main Headquarters'}
+            </span>
+          </div>
         </div>
       </div>
     </div>

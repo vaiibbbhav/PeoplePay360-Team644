@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { EmployeeLayout } from '@/features/employee/components/EmployeeLayout';
+import { AppLayout } from '@/components/layout/AppLayout';
 import {
   useUserDocuments,
   useAcceptDocument,
@@ -58,11 +58,13 @@ export const DocumentsPage: React.FC = () => {
   }, [policies]);
 
   const handleAcceptSingle = async (policy: Policy) => {
-    await acceptMutation.mutateAsync({ id: policy.id, version: policy.version });
-    if (viewingPolicy?.id === policy.id) {
-      setViewingPolicy((prev) =>
-        prev ? { ...prev, isAccepted: true, acceptedAt: new Date().toISOString() } : null,
-      );
+    try {
+      await acceptMutation.mutateAsync({ id: policy.id, version: policy.version });
+      if (viewingPolicy?.id === policy.id) {
+        setViewingPolicy(null);
+      }
+    } catch {
+      alert(`Failed to submit acknowledgment for ${policy.title}. Please check server connection.`);
     }
   };
 
@@ -72,7 +74,7 @@ export const DocumentsPage: React.FC = () => {
   };
 
   return (
-    <EmployeeLayout title="Policies & Documents">
+    <AppLayout title="Policies & Documents">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 font-sans">
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -168,6 +170,6 @@ export const DocumentsPage: React.FC = () => {
           </>
         )}
       </div>
-    </EmployeeLayout>
+    </AppLayout>
   );
 };
