@@ -47,7 +47,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
   const employeeNavItems: NavItem[] = [
     {
       label: 'Dashboard',
-      path: '/dashboard',
+      path: '/employee/dashboard',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -61,7 +61,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Task Box',
-      path: '#task-box',
+      path: '/employee/dashboard/task-box',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +134,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Recruitment',
-      path: '#recruitment',
+      path: '/employee/dashboard/recruitment',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,7 +149,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Calendar',
-      path: '#calendar',
+      path: '/employee/dashboard/calendar',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -163,7 +163,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Performance',
-      path: '#performance',
+      path: '/employee/dashboard/performance',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,7 +178,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Flows',
-      path: '#flows',
+      path: '/employee/dashboard/flows',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,9 +222,9 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
   ];
 
   const isItemActive = (itemPath: string) => {
-    if (itemPath === '/dashboard') {
+    if (itemPath === '/employee/dashboard' || itemPath === '/dashboard') {
       return (
-        (location.pathname === '/dashboard' || location.pathname === '/employee/dashboard') &&
+        (location.pathname === '/employee/dashboard' || location.pathname === '/dashboard') &&
         (!location.hash || location.hash === '')
       );
     }
@@ -238,17 +238,14 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
       return location.pathname === '/employees';
     }
     if (itemPath === '/compensation') {
-      return location.pathname === '/compensation' || location.pathname.startsWith('/payslip');
+      return location.pathname === '/compensation' || location.pathname.startsWith('/payslip') || location.pathname === '/payslips';
     }
     if (itemPath === '/documents') {
-      return location.pathname === '/documents' || location.pathname === '/policies';
-    }
-    if (itemPath === '/employee/docs') {
       return (
-        location.pathname === '/employee/docs' ||
-        location.pathname === '/employee/documents' ||
         location.pathname === '/documents' ||
-        location.pathname === '/policies'
+        location.pathname === '/policies' ||
+        location.pathname === '/employee/docs' ||
+        location.pathname === '/employee/documents'
       );
     }
     if (itemPath === '/employee/org-view') {
@@ -258,24 +255,10 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
         location.pathname === '/organization'
       );
     }
-    if (itemPath === '/compensation') {
-      return location.pathname === '/compensation' || location.pathname === '/payslips';
-    }
-    if (itemPath.startsWith('#')) {
-      return (
-        (location.pathname === '/dashboard' || location.pathname === '/employee/dashboard') &&
-        location.hash === itemPath
-      );
-    }
     return location.pathname === itemPath;
   };
 
   const getTargetUrl = (itemPath: string) => {
-    if (itemPath.startsWith('#')) {
-      const isDash =
-        location.pathname === '/dashboard' || location.pathname === '/employee/dashboard';
-      return isDash ? itemPath : `/dashboard${itemPath}`;
-    }
     return itemPath;
   };
 

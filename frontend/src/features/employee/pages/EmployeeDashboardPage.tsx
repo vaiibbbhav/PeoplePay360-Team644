@@ -1,16 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { useCurrentUser } from '@/features/auth/queries/useAuth';
+import { useCurrentUser, type User } from '@/features/auth/queries/useAuth';
 import { useFingerprintStatus } from '@/features/attendance/queries/useFingerprint';
 
 export const EmployeeDashboardPage: React.FC = () => {
   const { data: user } = useCurrentUser();
 
-  const currentUser = user || {
+  const currentUser: User = user || {
     id: 'emp-session',
+    firstName: 'Employee',
+    lastName: 'User',
     email: 'employee@peoplepay360.com',
     role: 'Employee',
+    employeeId: 'emp-001',
     employee: {
       id: 'emp-001',
       firstName: 'Employee',
@@ -29,7 +32,7 @@ export const EmployeeDashboardPage: React.FC = () => {
       title: 'Attendance & Punches',
       desc: 'Check-in, check-out logs, and daily attendance history.',
       tag: 'Time & Attendance',
-      link: '/employee/attendance',
+      link: '/attendance',
       isDirectLink: true,
     },
     {
@@ -37,8 +40,8 @@ export const EmployeeDashboardPage: React.FC = () => {
       title: 'Task Box',
       desc: 'Pending tasks, personal action items, and task completions.',
       tag: 'Workspace',
-      link: '#task-box',
-      isDirectLink: false,
+      link: '/employee/dashboard/task-box',
+      isDirectLink: true,
     },
     {
       id: 'profile',
@@ -51,10 +54,10 @@ export const EmployeeDashboardPage: React.FC = () => {
     {
       id: 'time-management',
       title: 'Time Management',
-      desc: 'Work schedule hours, shifts, and time allocation tracking.',
+      desc: 'Work schedule hours, punch clock, shifts, and attendance tracking.',
       tag: 'Schedules',
-      link: '#time-management',
-      isDirectLink: false,
+      link: '/attendance',
+      isDirectLink: true,
     },
     {
       id: 'team',
@@ -85,48 +88,48 @@ export const EmployeeDashboardPage: React.FC = () => {
       title: 'Recruitment & Referrals',
       desc: 'Internal vacancies, candidate referrals, and application status.',
       tag: 'Careers',
-      link: '#recruitment',
-      isDirectLink: false,
+      link: '/employee/dashboard/recruitment',
+      isDirectLink: true,
     },
     {
       id: 'calendar',
       title: 'Company Calendar',
       desc: 'Public holidays, planned leave dates, and company events.',
       tag: 'Planning',
-      link: '#calendar',
-      isDirectLink: false,
+      link: '/employee/dashboard/calendar',
+      isDirectLink: true,
     },
     {
       id: 'performance',
       title: 'Performance & Goals',
       desc: 'Review goals, periodic feedback, and key quarterly milestones.',
       tag: 'Growth',
-      link: '#performance',
-      isDirectLink: false,
+      link: '/employee/dashboard/performance',
+      isDirectLink: true,
     },
     {
       id: 'flows',
       title: 'Workflows & Approvals',
       desc: 'Submit approval requests, review pending flows, and sign-offs.',
       tag: 'Operations',
-      link: '#flows',
-      isDirectLink: false,
+      link: '/employee/dashboard/flows',
+      isDirectLink: true,
     },
     {
       id: 'docs',
       title: 'Docs & Policies',
       desc: 'Employee handbook, compliance documents, and company policies.',
       tag: 'Knowledge',
-      link: '#docs',
-      isDirectLink: false,
+      link: '/documents',
+      isDirectLink: true,
     },
     {
       id: 'org-view',
       title: 'Org View',
       desc: 'Organizational hierarchy, department mapping, and teams structure.',
       tag: 'Company',
-      link: '#org-view',
-      isDirectLink: false,
+      link: '/employee/dashboard/org-view',
+      isDirectLink: true,
     },
   ];
 

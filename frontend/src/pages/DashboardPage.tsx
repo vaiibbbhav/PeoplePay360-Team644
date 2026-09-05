@@ -1,13 +1,24 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import { useDashboardOverview } from '@/features/dashboard/queries/useDashboard';
 import { StatGrid } from '@/components/ui/StatCard';
 import { AppLayout } from '@/components/layout/AppLayout';
 
 export const DashboardPage: React.FC = () => {
+  const { section } = useParams<{ section?: string }>();
   const { data: user } = useCurrentUser();
   const { data: dashboard, isLoading } = useDashboardOverview();
+
+  // Smooth scroll to matching module section if path has section param
+  useEffect(() => {
+    if (section) {
+      const el = document.getElementById(section);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [section]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -168,15 +179,13 @@ export const DashboardPage: React.FC = () => {
                 <div
                   key={card.id}
                   id={card.id}
-                  className={`border border-line rounded-xl p-5 sm:p-6 bg-bg-raised/50 flex flex-col justify-between transition-colors scroll-mt-24 ${
-                    card.isDirectLink ? 'ring-1 ring-accent/30 bg-bg' : ''
-                  }`}
+                  className={`border border-line rounded-xl p-5 sm:p-6 bg-bg-raised/50 flex flex-col justify-between transition-colors scroll-mt-24 ${card.isDirectLink ? 'ring-1 ring-accent/30 bg-bg' : ''
+                    }`}
                 >
                   <div>
                     <span
-                      className={`text-[10px] font-semibold uppercase tracking-wider ${
-                        card.isDirectLink ? 'text-accent' : 'text-ink-soft'
-                      }`}
+                      className={`text-[10px] font-semibold uppercase tracking-wider ${card.isDirectLink ? 'text-accent' : 'text-ink-soft'
+                        }`}
                     >
                       {card.tag}
                     </span>

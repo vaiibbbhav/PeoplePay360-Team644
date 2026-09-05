@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLoginMutation, useResendVerificationMutation } from '../queries/useAuth';
+import { getDefaultPathForRole } from '@/lib/permissions';
 
 type QuickRole = {
   role: string;
@@ -47,12 +48,10 @@ export const LoginForm: React.FC = () => {
 
     try {
       const res = await loginMutation.mutateAsync({ email, password });
-      if (res?.user?.role === 'Admin') {
-        navigate('/users');
-      } else if (res?.user?.role === 'Employee') {
-        navigate('/employee/dashboard');
+      if (res?.user?.role) {
+        navigate(getDefaultPathForRole(res.user.role));
       } else {
-        navigate('/dashboard');
+        navigate('/employee/dashboard');
       }
     } catch (err: any) {
       const errorCode = err.response?.data?.code;
@@ -97,13 +96,8 @@ export const LoginForm: React.FC = () => {
 
     try {
       const res = await loginMutation.mutateAsync({ email: acc.email, password: acc.pass });
-      if (acc.role === 'Admin' || res?.user?.role === 'Admin') {
-        navigate('/users');
-      } else if (acc.role === 'Employee' || res?.user?.role === 'Employee') {
-        navigate('/employee/dashboard');
-      } else {
-        navigate('/dashboard');
-      }
+      const targetRole = res?.user?.role || (acc.role as any);
+      navigate(getDefaultPathForRole(targetRole));
     } catch (err: any) {
       const errorCode = err.response?.data?.code;
       const msg =

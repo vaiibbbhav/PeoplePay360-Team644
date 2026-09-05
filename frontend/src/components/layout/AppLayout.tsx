@@ -149,6 +149,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { data: user, isLoading, isError } = useCurrentUser();
   const logout = useLogout();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('theme') === 'dark';
@@ -218,7 +224,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const employeeNavItems: EmployeeNavItem[] = [
     {
       label: 'Dashboard',
-      path: '/dashboard',
+      path: '/employee/dashboard',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -232,7 +238,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     },
     {
       label: 'Task Box',
-      path: '#task-box',
+      path: '/employee/dashboard/task-box',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -305,7 +311,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     },
     {
       label: 'Recruitment',
-      path: '#recruitment',
+      path: '/employee/dashboard/recruitment',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -320,7 +326,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     },
     {
       label: 'Calendar',
-      path: '#calendar',
+      path: '/employee/dashboard/calendar',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -334,7 +340,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     },
     {
       label: 'Performance',
-      path: '#performance',
+      path: '/employee/dashboard/performance',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -349,7 +355,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     },
     {
       label: 'Flows',
-      path: '#flows',
+      path: '/employee/dashboard/flows',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -378,7 +384,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     },
     {
       label: 'Org View',
-      path: '#org-view',
+      path: '/employee/dashboard/org-view',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -393,9 +399,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   ];
 
   const isEmployeeActive = (itemPath: string) => {
-    if (itemPath === '/dashboard') {
+    if (itemPath === '/employee/dashboard' || itemPath === '/dashboard') {
       return (
-        (location.pathname === '/dashboard' || location.pathname === '/employee/dashboard') &&
+        (location.pathname === '/employee/dashboard' || location.pathname === '/dashboard') &&
         (!location.hash || location.hash === '')
       );
     }
@@ -414,21 +420,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     if (itemPath === '/documents') {
       return location.pathname === '/documents' || location.pathname === '/policies';
     }
-    if (itemPath.startsWith('#')) {
-      return (
-        (location.pathname === '/dashboard' || location.pathname === '/employee/dashboard') &&
-        location.hash === itemPath
-      );
-    }
     return location.pathname === itemPath;
   };
 
   const getEmployeeTargetUrl = (itemPath: string) => {
-    if (itemPath.startsWith('#')) {
-      const isDash =
-        location.pathname === '/dashboard' || location.pathname === '/employee/dashboard';
-      return isDash ? itemPath : `/dashboard${itemPath}`;
-    }
     return itemPath;
   };
 
@@ -484,18 +479,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     <div className="min-h-screen flex bg-bg text-ink font-sans">
       {/* -------- SIDEBAR -------- */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 border-r border-line bg-bg-raised/40 backdrop-blur-md flex flex-col transition-transform duration-200 lg:translate-x-0 ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-40 border-r border-line bg-bg-raised/40 backdrop-blur-md flex flex-col ${sidebarCollapsed ? 'w-16' : 'w-64'
+          } ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* Brand — click goes to landing page */}
-        <div className="h-16 px-5 border-b border-line flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 no-underline">
-            <span className="font-serif text-lg font-bold tracking-tight text-ink">
-              PeoplePay<span className="text-accent">360</span>
+        <div className={`h-16 px-4 border-b border-line flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'}`}>
+          <Link to="/" className="flex items-center gap-2 no-underline overflow-hidden">
+            <span className="font-serif text-lg font-bold tracking-tight text-ink whitespace-nowrap">
+              {sidebarCollapsed ? (
+                <>P<span className="text-accent">360</span></>
+              ) : (
+                <>PeoplePay<span className="text-accent">360</span></>
+              )}
             </span>
           </Link>
-          {isEmployeeRole && (
+          {!sidebarCollapsed && isEmployeeRole && (
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border border-line bg-bg text-ink-soft">
               Employee
             </span>
@@ -503,15 +501,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </div>
 
         {/* Sidebar Nav Items */}
-        <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-1">
+        <nav className="flex-1 px-2.5 py-4 overflow-y-auto space-y-1">
           {isEmployeeRole ? (
-            // ============================================
-            // EMPLOYEE SIDEBAR: 12 SPECIFICATION TABS
-            // ============================================
             <>
-              <div className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-wider text-ink-soft/70">
-                Workspace
-              </div>
+              {!sidebarCollapsed && (
+                <div className={` ${sidebarCollapsed ? 'invisible' : 'block'} px-2.5 mb-2 text-[10px] font-semibold uppercase tracking-wider text-ink-soft/70`}>
+                  Workspace
+                </div>
+              )}
               {employeeNavItems.map((item) => {
                 const active = isEmployeeActive(item.path);
                 const targetUrl = getEmployeeTargetUrl(item.path);
@@ -520,48 +517,49 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <Link
                     key={item.label}
                     to={targetUrl}
+                    title={sidebarCollapsed ? item.label : undefined}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors no-underline ${
-                      active
+                    className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-3'
+                      } py-2 rounded-lg text-xs font-medium no-underline ${active
                         ? 'bg-accent text-accent-ink shadow-xs'
                         : 'text-ink hover:bg-bg-raised hover:text-ink'
-                    }`}
+                      }`}
                   >
-                    <div className="flex items-center gap-2.5 truncate">
+                    <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-2.5'} truncate`}>
                       <item.icon className="w-4 h-4 shrink-0 opacity-80" />
-                      <span className="truncate">{item.label}</span>
+                      {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      {item.badge && (
-                        <span
-                          className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${
-                            active
+                    {!sidebarCollapsed && (
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {item.badge && (
+                          <span
+                            className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${active
                               ? 'bg-accent-ink/20 text-accent-ink'
                               : 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
-                      {item.hasSubmenu && (
-                        <svg
-                          className={`w-3.5 h-3.5 opacity-60 transition-transform ${
-                            active ? 'text-accent-ink' : 'text-ink-soft'
-                          }`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      )}
-                    </div>
+                              }`}
+                          >
+                            {item.badge}
+                          </span>
+                        )}
+                        {item.hasSubmenu && (
+                          <svg
+                            className={`w-3.5 h-3.5 opacity-60 ${active ? 'text-accent-ink' : 'text-ink-soft'
+                              }`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                    )}
                   </Link>
                 );
               })}
@@ -572,9 +570,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             // ============================================
             navGroups.map((group) => (
               <div key={group.title} className="mb-5 last:mb-0">
-                <div className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-wider text-ink-soft/60">
-                  {group.title}
-                </div>
+                {!sidebarCollapsed && (
+                  <div className="px-2.5 mb-2 text-[10px] font-semibold uppercase tracking-wider text-ink-soft/60">
+                    {group.title}
+                  </div>
+                )}
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
                     const isActive = location.pathname === item.path;
@@ -582,15 +582,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       <Link
                         key={item.label}
                         to={item.path}
+                        title={sidebarCollapsed ? item.label : undefined}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors no-underline ${
-                          isActive
+                        className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-2.5 px-3'
+                          } py-2 rounded-lg text-xs font-medium no-underline ${isActive
                             ? 'bg-accent text-accent-ink'
                             : 'text-ink hover:bg-bg-raised hover:text-ink'
-                        }`}
+                          }`}
                       >
                         <item.icon className="w-4 h-4 shrink-0 opacity-80" />
-                        <span className="truncate">{item.label}</span>
+                        {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                       </Link>
                     );
                   })}
@@ -601,25 +602,32 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </nav>
 
         {/* Bottom: User card + Sign Out */}
-        <div className="p-3 border-t border-line space-y-2">
+        <div className="p-2.5 border-t border-line space-y-2">
           {/* User card */}
-          <div className="flex items-center gap-2.5 px-2 py-2">
-            <div className="w-8 h-8 rounded-full bg-accent/15 text-accent font-semibold flex items-center justify-center text-xs shrink-0">
+          <div className={`flex items-center ${sidebarCollapsed ? 'justify-center p-1' : 'gap-2.5 px-2 py-2'}`}>
+            <div
+              title={sidebarCollapsed ? `${displayName} (${user.email})` : undefined}
+              className="w-8 h-8 rounded-full bg-accent/15 text-accent font-semibold flex items-center justify-center text-xs shrink-0"
+            >
               {initials}
             </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-xs font-semibold text-ink truncate">{displayName}</div>
-              <div className="text-[11px] text-ink-soft truncate">{user.email}</div>
-            </div>
+            {!sidebarCollapsed && (
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-semibold text-ink truncate">{displayName}</div>
+                <div className="text-[11px] text-ink-soft truncate">{user.email}</div>
+              </div>
+            )}
           </div>
 
           {/* Sign Out */}
           <button
             onClick={logout}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium border border-line bg-bg hover:bg-bg-raised text-ink transition-colors cursor-pointer"
+            title={sidebarCollapsed ? 'Sign Out' : undefined}
+            className={`w-full flex items-center justify-center ${sidebarCollapsed ? 'p-2' : 'gap-2 px-3 py-2'
+              } rounded-lg text-xs font-medium border border-line bg-bg hover:bg-bg-raised text-ink cursor-pointer`}
           >
             <SignOutIcon className="w-3.5 h-3.5 text-ink-soft" />
-            Sign Out
+            {!sidebarCollapsed && <span>Sign Out</span>}
           </button>
         </div>
       </aside>
@@ -633,21 +641,36 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       )}
 
       {/* -------- MAIN CANVAS -------- */}
-      <div className="flex-1 lg:pl-64 flex flex-col min-h-screen">
-        {/* Top Header — mobile hamburger + theme toggle only */}
-        <header className="h-16 border-b border-line px-6 sm:px-8 flex items-center justify-between bg-bg/80 sticky top-0 z-20 backdrop-blur-md">
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg border border-line bg-bg text-ink cursor-pointer"
-          >
-            <MenuIcon className="w-4 h-4" />
-          </button>
+      <div
+        className={`flex-1 flex flex-col min-h-screen ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'
+          }`}
+      >
+        {/* Top Header */}
+        <header className="h-16 border-b border-line px-4 sm:px-6 flex items-center justify-between bg-bg/80 sticky top-0 z-20 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-lg border border-line bg-bg text-ink cursor-pointer"
+            >
+              <MenuIcon className="w-4 h-4" />
+            </button>
 
-          {/* Empty spacer on desktop so theme toggle stays right-aligned */}
-          <div className="hidden lg:block" />
+            {/* Desktop abrupt sidebar fold/expand toggle */}
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              className="hidden lg:inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-line bg-bg hover:bg-bg-raised text-ink text-xs font-medium cursor-pointer"
+            >
+              <MenuIcon className="w-4 h-4 text-ink-soft" />
+              <span className="text-[11px] text-ink-soft font-mono">
+                {sidebarCollapsed ? 'Expand' : 'Collapse'}
+              </span>
+            </button>
+          </div>
 
-          {/* Theme toggle */}
+          {/* Right controls: Theme toggle */}
           <button
             type="button"
             onClick={toggleTheme}
