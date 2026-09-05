@@ -1,6 +1,6 @@
 import { db } from '../../shared/db';
-import { timeOffTypes, timeOffAllocations, timeOffRequests } from '../../db/schema';
-import { eq, and, lte, gte, gt, desc } from 'drizzle-orm';
+import { timeOffTypes, timeOffAllocations, timeOffRequests, employees, users } from '../../db/schema';
+import { eq, and, lte, gte, gt, desc, sql } from 'drizzle-orm';
 
 export async function findAllTimeOffTypes() {
   return await db.select().from(timeOffTypes).orderBy(timeOffTypes.name);
@@ -32,6 +32,9 @@ export async function findAllAllocations(employeeId?: string) {
     .select({
       id: timeOffAllocations.id,
       employee_id: timeOffAllocations.employeeId,
+      employee_name: sql<string>`coalesce(${users.firstName} || ' ' || ${users.lastName}, 'Unknown')`,
+      employee_email: users.email,
+      employee_avatar: employees.avatarUrl,
       time_off_type_id: timeOffAllocations.timeOffTypeId,
       type_name: timeOffTypes.name,
       type_unit: timeOffTypes.unit,
@@ -46,7 +49,9 @@ export async function findAllAllocations(employeeId?: string) {
       created_at: timeOffAllocations.createdAt,
     })
     .from(timeOffAllocations)
-    .leftJoin(timeOffTypes, eq(timeOffAllocations.timeOffTypeId, timeOffTypes.id));
+    .leftJoin(timeOffTypes, eq(timeOffAllocations.timeOffTypeId, timeOffTypes.id))
+    .leftJoin(employees, eq(timeOffAllocations.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id));
 
   if (employeeId) {
     return await query
@@ -137,35 +142,9 @@ export async function findAllRequests(employeeId?: string) {
     .select({
       id: timeOffRequests.id,
       employee_id: timeOffRequests.employeeId,
-      time_off_type_id: timeOffRequests.timeOffTypeId,
-      type_name: timeOffTypes.name,
-      type_unit: timeOffTypes.unit,
-      start_date: timeOffRequests.startDate,
-      end_date: timeOffRequests.endDate,
-      duration: timeOffRequests.duration,
-      reason: timeOffRequests.reason,
-      status: timeOffRequests.status,
-      approved_by: timeOffRequests.approvedBy,
-      approved_at: timeOffRequests.approvedAt,
-      refused_reason: timeOffRequests.refusedReason,
-      created_at: timeOffRequests.createdAt,
-    })
-    .from(timeOffRequests)
-    .leftJoin(timeOffTypes, eq(timeOffRequests.timeOffTypeId, timeOffTypes.id));
-
-  if (employeeId) {
-    return await query
-      .where(eq(timeOffRequests.employeeId, employeeId))
-      .orderBy(desc(timeOffRequests.startDate));
-  }
-  return await query.orderBy(desc(timeOffRequests.startDate));
-}
-
-export async function findRequestById(id: string) {
-  const rows = await db
-    .select({
-      id: timeOffRequests.id,
-      employee_id: timeOffRequests.employeeId,
+      employee_name: sql<string>`coalesce(${users.firstName} || ' ' || ${users.lastName}, 'Unknown')`,
+      employee_email: users.email,
+      employee_avatar: employees.avatarUrl,
       time_off_type_id: timeOffRequests.timeOffTypeId,
       type_name: timeOffTypes.name,
       type_unit: timeOffTypes.unit,
@@ -181,6 +160,42 @@ export async function findRequestById(id: string) {
     })
     .from(timeOffRequests)
     .leftJoin(timeOffTypes, eq(timeOffRequests.timeOffTypeId, timeOffTypes.id))
+    .leftJoin(employees, eq(timeOffRequests.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id));
+
+  if (employeeId) {
+    return await query
+      .where(eq(timeOffRequests.employeeId, employeeId))
+      .orderBy(desc(timeOffRequests.startDate));
+  }
+  return await query.orderBy(desc(timeOffRequests.startDate));
+}
+
+export async function findRequestById(id: string) {
+  const rows = await db
+    .select({
+      id: timeOffRequests.id,
+      employee_id: timeOffRequests.employeeId,
+      employee_name: sql<string>`coalesce(${users.firstName} || ' ' || ${users.lastName}, 'Unknown')`,
+      employee_email: users.email,
+      employee_avatar: employees.avatarUrl,
+      time_off_type_id: timeOffRequests.timeOffTypeId,
+      type_name: timeOffTypes.name,
+      type_unit: timeOffTypes.unit,
+      start_date: timeOffRequests.startDate,
+      end_date: timeOffRequests.endDate,
+      duration: timeOffRequests.duration,
+      reason: timeOffRequests.reason,
+      status: timeOffRequests.status,
+      approved_by: timeOffRequests.approvedBy,
+      approved_at: timeOffRequests.approvedAt,
+      refused_reason: timeOffRequests.refusedReason,
+      created_at: timeOffRequests.createdAt,
+    })
+    .from(timeOffRequests)
+    .leftJoin(timeOffTypes, eq(timeOffRequests.timeOffTypeId, timeOffTypes.id))
+    .leftJoin(employees, eq(timeOffRequests.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id))
     .where(eq(timeOffRequests.id, id))
     .limit(1);
 
