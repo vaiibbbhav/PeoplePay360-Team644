@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { EmployeeLayout } from '../components/EmployeeLayout';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 
 export const EmployeeDashboardPage: React.FC = () => {
@@ -126,7 +126,7 @@ export const EmployeeDashboardPage: React.FC = () => {
   ];
 
   return (
-    <EmployeeLayout title="Dashboard Overview">
+    <AppLayout title="Dashboard Overview">
       {/* Welcome Banner */}
       <div className="mb-8">
         <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
@@ -210,7 +210,7 @@ export const EmployeeDashboardPage: React.FC = () => {
           ))}
         </div>
       </div>
-    </EmployeeLayout>
+    </AppLayout>
   );
 };
 

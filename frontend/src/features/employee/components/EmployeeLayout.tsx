@@ -42,7 +42,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
   const employeeNavItems: NavItem[] = [
     {
       label: 'Dashboard',
-      path: '/employee/dashboard',
+      path: '/dashboard',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -57,6 +57,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     {
       label: 'Task Box',
       path: '#task-box',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -71,6 +72,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     {
       label: 'Profile',
       path: '/profile',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -84,7 +86,8 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Time Management',
-      path: '#time-management',
+      path: '/attendance',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -98,7 +101,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Team',
-      path: '#team',
+      path: '/employees',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -125,22 +128,9 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
       ),
     },
     {
-      label: 'Policies & Docs',
-      path: '/documents',
-      icon: ({ className }) => (
-        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-          />
-        </svg>
-      ),
-    },
-    {
       label: 'Recruitment',
       path: '#recruitment',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -169,6 +159,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     {
       label: 'Performance',
       path: '#performance',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -183,6 +174,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     {
       label: 'Flows',
       path: '#flows',
+      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -196,7 +188,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Docs',
-      path: '#docs',
+      path: '/documents',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -222,42 +214,44 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
         </svg>
       ),
     },
-    {
-      label: 'Attendance',
-      path: '/employee/attendance',
-      icon: ({ className }) => (
-        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-          />
-        </svg>
-      ),
-    },
   ];
 
   const isItemActive = (itemPath: string) => {
-    if (itemPath === '/employee/dashboard') {
+    if (itemPath === '/dashboard') {
       return (
-        location.pathname === '/employee/dashboard' && (!location.hash || location.hash === '')
+        (location.pathname === '/dashboard' || location.pathname === '/employee/dashboard') &&
+        (!location.hash || location.hash === '')
       );
     }
-    if (itemPath === '/employee/attendance') {
-      return location.pathname === '/employee/attendance';
+    if (itemPath === '/attendance') {
+      return location.pathname === '/attendance' || location.pathname === '/employee/attendance';
+    }
+    if (itemPath === '/profile') {
+      return location.pathname === '/profile' || location.pathname.startsWith('/employees/');
+    }
+    if (itemPath === '/employees') {
+      return location.pathname === '/employees';
+    }
+    if (itemPath === '/compensation') {
+      return location.pathname === '/compensation' || location.pathname.startsWith('/payslip');
+    }
+    if (itemPath === '/documents') {
+      return location.pathname === '/documents' || location.pathname === '/policies';
     }
     if (itemPath.startsWith('#')) {
-      return location.pathname === '/employee/dashboard' && location.hash === itemPath;
+      return (
+        (location.pathname === '/dashboard' || location.pathname === '/employee/dashboard') &&
+        location.hash === itemPath
+      );
     }
     return location.pathname === itemPath;
   };
 
   const getTargetUrl = (itemPath: string) => {
     if (itemPath.startsWith('#')) {
-      return location.pathname === '/employee/dashboard'
-        ? itemPath
-        : `/employee/dashboard${itemPath}`;
+      const isDash =
+        location.pathname === '/dashboard' || location.pathname === '/employee/dashboard';
+      return isDash ? itemPath : `/dashboard${itemPath}`;
     }
     return itemPath;
   };
@@ -334,17 +328,36 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
                   <item.icon className="w-4 h-4 shrink-0 opacity-80" />
                   <span className="truncate">{item.label}</span>
                 </div>
-                {item.badge && (
-                  <span
-                    className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${
-                      active
-                        ? 'bg-accent-ink/20 text-accent-ink'
-                        : 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {item.badge && (
+                    <span
+                      className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${
+                        active
+                          ? 'bg-accent-ink/20 text-accent-ink'
+                          : 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                  {item.hasSubmenu && (
+                    <svg
+                      className={`w-3.5 h-3.5 opacity-60 transition-transform ${
+                        active ? 'text-accent-ink' : 'text-ink-soft'
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  )}
+                </div>
               </Link>
             );
           })}
