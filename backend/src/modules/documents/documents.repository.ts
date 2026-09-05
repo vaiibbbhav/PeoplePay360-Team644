@@ -101,3 +101,105 @@ export async function getComplianceStats(): Promise<{
     totalAcceptances: Number(acceptanceCount?.value || 0),
   };
 }
+
+export async function insertPolicy(data: {
+  title: string;
+  code: string;
+  category: string;
+  version: string;
+  summary: string;
+  content: string;
+  isMandatory?: boolean;
+  effectiveDate?: string | null;
+}): Promise<PolicyRecord> {
+  const [created] = await db
+    .insert(companyPolicies)
+    .values({
+      title: data.title,
+      code: data.code,
+      category: data.category,
+      version: data.version || '1.0',
+      summary: data.summary,
+      content: data.content,
+      isMandatory: data.isMandatory !== undefined ? data.isMandatory : true,
+      effectiveDate: data.effectiveDate || null,
+    })
+    .returning();
+  return created;
+}
+
+export async function updatePolicy(
+  id: string,
+  data: {
+    title?: string;
+    code?: string;
+    category?: string;
+    version?: string;
+    summary?: string;
+    content?: string;
+    isMandatory?: boolean;
+    effectiveDate?: string | null;
+  },
+): Promise<PolicyRecord | null> {
+  const payload: Record<string, any> = {
+    updatedAt: new Date(),
+  };
+
+  if (data.title !== undefined) payload.title = data.title;
+  if (data.code !== undefined) payload.code = data.code;
+  if (data.category !== undefined) payload.category = data.category;
+  if (data.version !== undefined) payload.version = data.version;
+  if (data.summary !== undefined) payload.summary = data.summary;
+  if (data.content !== undefined) payload.content = data.content;
+  if (data.isMandatory !== undefined) payload.isMandatory = data.isMandatory;
+  if (data.effectiveDate !== undefined) payload.effectiveDate = data.effectiveDate;
+
+  const [updated] = await db
+    .update(companyPolicies)
+    .set(payload)
+    .where(eq(companyPolicies.id, id))
+    .returning();
+
+  return updated || null;
+}
+
+export async function deletePolicy(id: string): Promise<boolean> {
+  const result = await db.delete(companyPolicies).where(eq(companyPolicies.id, id));
+  return true;
+}
+
+export async function getCompanyComplianceRoster() {
+  const policies = await findAllPolicies();
+  const allUsers = await db.select().from(users);
+  const allAcceptances = await db.select().from(policyAcceptances);
+
+  // Group acceptances by policyId -> userId
+  const acceptanceKeyMap = new Set<string>();
+  for (const acc of allAcceptances) {
+    acceptanceKeyMap.add(`${acc.policyId}:${acc.userId}:${acc.policyVersion}`);
+  }
+
+  return policies.map((policy) => {
+    let acceptedCount = 0;
+    for (const u of allUsers) {
+      if (acceptanceKeyMap.has(`${policy.id}:${u.id}:${policy.version}`)) {
+        acceptedCount++;
+      }
+    }
+    const totalUsers = allUsers.length;
+    const rate = totalUsers > 0 ? Math.round((acceptedCount / totalUsers) * 100) : 100;
+
+    return {
+      policyId: policy.id,
+      title: policy.title,
+      code: policy.code,
+      version: policy.version,
+      category: policy.category,
+      isMandatory: policy.isMandatory,
+      acceptedCount,
+      totalUsers,
+      complianceRate: rate,
+    };
+  });
+}
+

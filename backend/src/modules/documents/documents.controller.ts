@@ -54,3 +54,31 @@ export const getComplianceStats = asyncHandler(
     res.json(stats);
   },
 );
+
+export const createPolicy = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const validated = documentsService.createPolicy;
+  const { validateCreatePolicy } = await import('./documents.validators');
+  const input = validateCreatePolicy(req.body);
+  const created = await documentsService.createPolicy(input);
+  res.status(201).json(created);
+});
+
+export const updatePolicy = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { validateUpdatePolicy } = await import('./documents.validators');
+  const input = validateUpdatePolicy(req.body);
+  const updated = await documentsService.updatePolicy(req.params.id, input);
+  res.json(updated);
+});
+
+export const deletePolicy = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const result = await documentsService.deletePolicy(req.params.id);
+  res.json(result);
+});
+
+export const getComplianceRoster = asyncHandler(
+  async (_req: Request, res: Response): Promise<void> => {
+    const roster = await documentsService.getCompanyComplianceRoster();
+    res.json(roster);
+  },
+);
+

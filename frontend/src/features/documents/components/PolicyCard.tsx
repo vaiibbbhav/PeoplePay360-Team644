@@ -5,6 +5,7 @@ type PolicyCardProps = {
   policy: Policy;
   onView: (policy: Policy) => void;
   onAccept: (policy: Policy) => void;
+  onEdit?: (policy: Policy) => void;
   isAccepting?: boolean;
 };
 
@@ -12,6 +13,7 @@ export const PolicyCard: React.FC<PolicyCardProps> = ({
   policy,
   onView,
   onAccept,
+  onEdit,
   isAccepting = false,
 }) => {
   const formattedAcceptedDate = policy.acceptedAt
@@ -84,6 +86,14 @@ export const PolicyCard: React.FC<PolicyCardProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
+          {onEdit && (
+            <button
+              onClick={() => onEdit(policy)}
+              className="px-2.5 py-1.5 text-xs font-medium text-ink-soft hover:text-ink border border-line rounded-lg hover:bg-bg-sunken transition-all cursor-pointer"
+            >
+              Edit
+            </button>
+          )}
           <button
             onClick={() => onView(policy)}
             className="px-3 py-1.5 text-xs font-medium text-ink border border-line rounded-lg hover:border-ink hover:bg-bg-sunken transition-all cursor-pointer"

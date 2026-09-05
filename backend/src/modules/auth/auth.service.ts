@@ -7,8 +7,14 @@ import * as authRepository from './auth.repository';
 import { AuthUser, UserRole } from '../../shared/auth-middleware';
 import { sendVerificationEmail } from '../../shared/mailer';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'peoplepay360-hackathon-super-secret-jwt-key';
-const TOKEN_EXPIRY = '7d';
+const getJwtSecret = (): string => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret || secret.length < 32) {
+    throw new Error('JWT_SECRET must be configured with at least 32 characters');
+  }
+  return secret;
+};
+const TOKEN_EXPIRY = '15m';
 
 export type UserPayload = {
   id: string;
@@ -42,7 +48,7 @@ const generateToken = (user: {
     role: user.role,
     employeeId: user.employeeId || undefined,
   };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: TOKEN_EXPIRY });
+  return jwt.sign(payload, getJwtSecret(), { expiresIn: TOKEN_EXPIRY });
 };
 
 export const login = async (input: LoginInput): Promise<AuthResponse> => {
@@ -131,7 +137,9 @@ export const getCurrentUser = async (userId: string): Promise<UserPayload> => {
 
 export const refreshToken = async (currentToken: string): Promise<AuthResponse> => {
   try {
-    const decoded = jwt.verify(currentToken, JWT_SECRET, { ignoreExpiration: true }) as AuthUser;
+    const decoded = jwt.verify(currentToken, getJwtSecret(), {
+      ignoreExpiration: true,
+    }) as AuthUser;
     const user = await authRepository.findUserById(decoded.id);
     if (!user) {
       throw new UnauthorizedError('User does not exist');
@@ -187,7 +195,7 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
 
 export const verifyEmail = async (token: string): Promise<{ email: string }> => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as {
+    const decoded = jwt.verify(token, getJwtSecret()) as {
       userId: string;
       email: string;
       purpose: string;
@@ -234,7 +242,7 @@ export const resendVerificationEmail = async (
 
   const verificationToken = jwt.sign(
     { userId: user.id, email: user.email, purpose: 'email-verification' },
-    JWT_SECRET,
+    getJwtSecret(),
     { expiresIn: '8h' },
   );
 

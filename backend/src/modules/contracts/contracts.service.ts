@@ -65,3 +65,8 @@ export async function updateContract(id: string, data: Record<string, unknown>) 
 
   return await contractsRepo.updateContract(id, data);
 }
+
+export async function getContractsMetadata() {
+  return await contractsRepo.getContractsMetadata();
+}
+

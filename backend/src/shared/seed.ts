@@ -454,6 +454,7 @@ export const seedDatabase = async (): Promise<void> => {
       'maya@company.com': '85000.00',
       'rohan@company.com': '75000.00',
       'nisha@company.com': '120000.00',
+      'vaibhav@odoo.com': '80000.00',
     };
 
     for (const emp of employeeList) {

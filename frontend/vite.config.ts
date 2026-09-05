@@ -14,6 +14,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      '/api/fingerprint': {
+        target: 'http://localhost:8085',
+        changeOrigin: true,
+      },
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,

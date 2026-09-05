@@ -1,4 +1,8 @@
 localhost {
+    handle /api/fingerprint/* {
+        reverse_proxy localhost:8085
+    }
+
     handle /api/* {
         reverse_proxy localhost:3000
     }

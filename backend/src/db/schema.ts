@@ -174,8 +174,11 @@ export const fingerprint = pgTable('fingerprint', {
   id: uuid('id').defaultRandom().primaryKey(),
   employeeId: uuid('employee_id')
     .notNull()
+    .unique()
     .references(() => employees.id, { onDelete: 'cascade' }),
   encrytedTemplate: text('encryted_template').notNull(),
+  iv: varchar('iv', { length: 64 }).notNull(),
+  keyVersion: varchar('key_version', { length: 20 }).notNull().default('v1'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });

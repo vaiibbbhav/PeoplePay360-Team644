@@ -38,9 +38,57 @@ export type CompanyComplianceStats = {
   totalAcceptances: number;
 };
 
+export type CompanyComplianceRosterItem = {
+  policyId: string;
+  title: string;
+  code: string;
+  version: string;
+  category: string;
+  isMandatory: boolean;
+  acceptedCount: number;
+  totalUsers: number;
+  complianceRate: number;
+};
+
+export type CreatePolicyPayload = {
+  title: string;
+  code: string;
+  category: string;
+  version?: string;
+  summary: string;
+  content: string;
+  isMandatory?: boolean;
+  effectiveDate?: string | null;
+};
+
+export type UpdatePolicyPayload = {
+  id: string;
+  data: Partial<CreatePolicyPayload>;
+};
+
 // API Functions
 export async function fetchUserDocuments(): Promise<UserComplianceOverview> {
   const res = await api.get<UserComplianceOverview>('/documents');
+  return res.data;
+}
+
+export async function createPolicy(payload: CreatePolicyPayload): Promise<Policy> {
+  const res = await api.post<Policy>('/documents', payload);
+  return res.data;
+}
+
+export async function updatePolicy(id: string, payload: Partial<CreatePolicyPayload>): Promise<Policy> {
+  const res = await api.put<Policy>(`/documents/${id}`, payload);
+  return res.data;
+}
+
+export async function deletePolicy(id: string): Promise<{ success: boolean; message: string }> {
+  const res = await api.delete<{ success: boolean; message: string }>(`/documents/${id}`);
+  return res.data;
+}
+
+export async function fetchCompanyComplianceRoster(): Promise<CompanyComplianceRosterItem[]> {
+  const res = await api.get<CompanyComplianceRosterItem[]>('/documents/admin/compliance');
   return res.data;
 }
 
@@ -109,3 +157,48 @@ export function useCompanyComplianceStats() {
     queryFn: fetchComplianceStats,
   });
 }
+
+export function useCompanyComplianceRoster() {
+  return useQuery({
+    queryKey: ['company-compliance-roster'],
+    queryFn: fetchCompanyComplianceRoster,
+  });
+}
+
+export function useCreatePolicy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreatePolicyPayload) => createPolicy(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['company-compliance-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['company-compliance-roster'] });
+    },
+  });
+}
+
+export function useUpdatePolicy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: UpdatePolicyPayload) => updatePolicy(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['document-detail'] });
+      queryClient.invalidateQueries({ queryKey: ['company-compliance-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['company-compliance-roster'] });
+    },
+  });
+}
+
+export function useDeletePolicy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deletePolicy(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['company-compliance-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['company-compliance-roster'] });
+    },
+  });
+}
+

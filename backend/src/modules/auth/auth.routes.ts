@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import * as authController from './auth.controller';
 import { authenticateToken } from '../../shared/auth-middleware';
+import { loginRateLimit } from '../../shared/security';
 
 const router = Router();
 
-router.post('/login', authController.login);
+router.post('/login', loginRateLimit, authController.login);
 router.post('/refresh', authController.refresh);
 router.post('/logout', authController.logout);
 router.get('/me', authenticateToken, authController.me);

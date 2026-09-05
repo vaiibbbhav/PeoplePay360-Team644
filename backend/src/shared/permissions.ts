@@ -10,6 +10,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     'timeoff.self.create',
     'timeoff.self.read',
     'payslip.self.read',
+    'contracts.read',
+    'employee.read',
   ],
   'HR Manager': [
     // HR Manager has full CRUD on Employees, Attendance, Contracts, Working Schedules, Time Off
@@ -96,4 +98,12 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
 export const hasPermission = (role: UserRole, permission: string): boolean => {
   const permissions = ROLE_PERMISSIONS[role] || [];
   return permissions.includes('*') || permissions.includes(permission);
+};
+
+export const hasAnyPermission = (role: UserRole, permissionsToCheck: string[]): boolean => {
+  const permissions = ROLE_PERMISSIONS[role] || [];
+  return (
+    permissions.includes('*') ||
+    permissionsToCheck.some((permission) => permissions.includes(permission))
+  );
 };

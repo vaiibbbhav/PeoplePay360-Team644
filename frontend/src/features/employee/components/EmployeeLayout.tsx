@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useCurrentUser, useLogout, type User } from '@/features/auth/queries/useAuth';
+import { useFingerprintStatus } from '@/features/attendance/queries/useFingerprint';
 
 type NavItem = {
   label: string;
@@ -39,10 +40,14 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
   };
 
+  const employeeId = currentUser.employee?.id || currentUser.employeeId || currentUser.id || '';
+  const { data: fpStatus } = useFingerprintStatus(employeeId);
+  const isFingerprintRegistered = fpStatus?.enrolled ?? true; // Defaults to true until loaded to prevent flicker
+
   const employeeNavItems: NavItem[] = [
     {
       label: 'Dashboard',
-      path: '/dashboard',
+      path: '/employee/dashboard',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -56,7 +61,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Task Box',
-      path: '#task-box',
+      path: '/employee/dashboard/task-box',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +134,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Recruitment',
-      path: '#recruitment',
+      path: '/employee/dashboard/recruitment',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,7 +149,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Calendar',
-      path: '#calendar',
+      path: '/employee/dashboard/calendar',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -158,7 +163,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Performance',
-      path: '#performance',
+      path: '/employee/dashboard/performance',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,7 +178,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Flows',
-      path: '#flows',
+      path: '/employee/dashboard/flows',
       hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,7 +207,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Org View',
-      path: '#org-view',
+      path: '/employee/org-view',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -217,9 +222,9 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
   ];
 
   const isItemActive = (itemPath: string) => {
-    if (itemPath === '/dashboard') {
+    if (itemPath === '/employee/dashboard' || itemPath === '/dashboard') {
       return (
-        (location.pathname === '/dashboard' || location.pathname === '/employee/dashboard') &&
+        (location.pathname === '/employee/dashboard' || location.pathname === '/dashboard') &&
         (!location.hash || location.hash === '')
       );
     }
@@ -233,26 +238,27 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
       return location.pathname === '/employees';
     }
     if (itemPath === '/compensation') {
-      return location.pathname === '/compensation' || location.pathname.startsWith('/payslip');
+      return location.pathname === '/compensation' || location.pathname.startsWith('/payslip') || location.pathname === '/payslips';
     }
     if (itemPath === '/documents') {
-      return location.pathname === '/documents' || location.pathname === '/policies';
-    }
-    if (itemPath.startsWith('#')) {
       return (
-        (location.pathname === '/dashboard' || location.pathname === '/employee/dashboard') &&
-        location.hash === itemPath
+        location.pathname === '/documents' ||
+        location.pathname === '/policies' ||
+        location.pathname === '/employee/docs' ||
+        location.pathname === '/employee/documents'
+      );
+    }
+    if (itemPath === '/employee/org-view') {
+      return (
+        location.pathname === '/employee/org-view' ||
+        location.pathname === '/org-view' ||
+        location.pathname === '/organization'
       );
     }
     return location.pathname === itemPath;
   };
 
   const getTargetUrl = (itemPath: string) => {
-    if (itemPath.startsWith('#')) {
-      const isDash =
-        location.pathname === '/dashboard' || location.pathname === '/employee/dashboard';
-      return isDash ? itemPath : `/dashboard${itemPath}`;
-    }
     return itemPath;
   };
 
@@ -328,7 +334,31 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
                   <item.icon className="w-4 h-4 shrink-0 opacity-80" />
                   <span className="truncate">{item.label}</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {item.label === 'Attendance' && !isFingerprintRegistered && (
+                    <span
+                      title="Fingerprint Registration Pending"
+                      className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold border ${
+                        active
+                          ? 'bg-accent-ink/20 text-accent-ink border-accent-ink/40'
+                          : 'bg-accent/15 text-accent border-accent/30'
+                      }`}
+                    >
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span
+                          className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                            active ? 'bg-white' : 'bg-accent'
+                          }`}
+                        />
+                        <span
+                          className={`relative inline-flex rounded-full h-1.5 w-1.5 ${
+                            active ? 'bg-white' : 'bg-accent'
+                          }`}
+                        />
+                      </span>
+                      <span className="hidden sm:inline">Add FP</span>
+                    </span>
+                  )}
                   {item.badge && (
                     <span
                       className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${
@@ -339,23 +369,6 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
                     >
                       {item.badge}
                     </span>
-                  )}
-                  {item.hasSubmenu && (
-                    <svg
-                      className={`w-3.5 h-3.5 opacity-60 transition-transform ${
-                        active ? 'text-accent-ink' : 'text-ink-soft'
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
                   )}
                 </div>
               </Link>
