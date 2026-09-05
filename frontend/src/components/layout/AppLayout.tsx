@@ -427,7 +427,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const isEmployeeRole = user.role === 'Employee';
 
   return (
-    <div className="min-h-screen flex bg-bg text-ink font-sans">
+    <div className="min-h-screen flex bg-bg text-ink font-sans w-full min-w-0 overflow-x-hidden">
       {/* -------- SIDEBAR -------- */}
       <aside
         className={`fixed inset-y-0 left-0 z-40 border-r border-line bg-bg-raised/40 backdrop-blur-md flex flex-col ${sidebarCollapsed ? 'w-16' : 'w-64'
@@ -595,7 +595,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
       {/* -------- MAIN CANVAS -------- */}
       <div
-        className={`flex-1 flex flex-col min-h-screen ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'
+        className={`flex-1 flex flex-col min-h-screen min-w-0 w-full overflow-x-hidden ${sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'
           }`}
       >
         {/* Top Header */}
@@ -635,7 +635,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1">{children ?? <Outlet />}</main>
+        <main className="flex-1 min-w-0 w-full">{children ?? <Outlet />}</main>
       </div>
     </div>
   );

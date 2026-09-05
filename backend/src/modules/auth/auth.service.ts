@@ -14,7 +14,7 @@ const getJwtSecret = (): string => {
   }
   return secret;
 };
-const TOKEN_EXPIRY = '15m';
+const TOKEN_EXPIRY = '7d';
 
 export type UserPayload = {
   id: string;

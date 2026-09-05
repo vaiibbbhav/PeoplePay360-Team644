@@ -29,6 +29,7 @@ export type EmployeePayslip = {
   total_deductions: string | number;
   net_salary: string | number;
   status: string;
+  payrun_status?: string | null;
   warnings?: Array<{ message: string; severity: string }> | null;
   created_at: string;
 };

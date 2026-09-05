@@ -133,6 +133,13 @@ export async function updatePayrunStatus(id: string, status: string) {
     .set({ status, updatedAt: new Date() })
     .where(eq(payruns.id, id))
     .returning();
+
+  // Cascade status to child payslips in this payrun
+  await db
+    .update(payslips)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(payslips.payrunId, id));
+
   return updated || null;
 }
 
@@ -170,6 +177,7 @@ export async function findPayslips(filter?: { employeeId?: string; payrunId?: st
       id: payslips.id,
       payrun_id: payslips.payrunId,
       payrun_name: payruns.name,
+      payrun_status: payruns.status,
       employee_id: payslips.employeeId,
       employee_name: sql<string>`CONCAT(${users.firstName}, ' ', ${users.lastName})`,
       employee_email: users.email,
@@ -325,7 +333,7 @@ export async function executeCreatePayrunTx(
           grossSalary: String(item.payslip.grossSalary),
           totalDeductions: String(item.payslip.totalDeductions),
           netSalary: String(item.payslip.netSalary),
-          status: 'draft',
+          status: 'computed',
           warnings: item.payslip.warnings,
         })
         .returning();

@@ -4,9 +4,16 @@ import { useAllCompanyPayslips, usePayslipDetail } from '@/features/compensation
 import { formatCurrency, formatPeriod } from '@/lib/formatters';
 import { PayslipDetailModal } from '@/features/compensation/components/PayslipDetailModal';
 import { MonthlyPayslipDocument } from '@/features/compensation/components/MonthlyPayslipDocument';
+import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 import {
   FileText,
-  Search,
   Download,
   Printer,
   Eye,
@@ -82,9 +89,16 @@ export const PayslipsPage: React.FC = () => {
         if (selectedStructure !== 'all' && p.structure_id !== selectedStructure) {
           return false;
         }
-        // Status filter
-        if (selectedStatus !== 'all' && p.status?.toLowerCase() !== selectedStatus.toLowerCase()) {
-          return false;
+        // Status filter (resolving effective status from payslip or parent payrun)
+        if (selectedStatus !== 'all') {
+          const effective = (
+            (p.status && p.status.toLowerCase() !== 'draft' ? p.status : p.payrun_status) ||
+            p.status ||
+            'computed'
+          ).toLowerCase();
+          if (effective !== selectedStatus.toLowerCase()) {
+            return false;
+          }
         }
         return true;
       })
@@ -161,33 +175,32 @@ export const PayslipsPage: React.FC = () => {
     setIsPrintModalOpen(true);
   };
 
-  const renderStatusBadge = (status: string) => {
-    const s = (status || '').toLowerCase();
-    switch (s) {
+  const renderStatusBadge = (status?: string | null, payrunStatus?: string | null) => {
+    const raw = (
+      (status && status.toLowerCase() !== 'draft' ? status : payrunStatus) ||
+      status ||
+      'computed'
+    ).toLowerCase();
+    switch (raw) {
       case 'paid':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-            <CheckCircle2 className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/50">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
             Paid
           </span>
         );
       case 'validated':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300">
-            <Clock className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-200/60 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/50">
+            <Clock className="w-3 h-3 text-sky-600 dark:text-sky-400" />
             Validated
           </span>
         );
       case 'computed':
-        return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-            Computed
-          </span>
-        );
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-bg-raised text-ink-soft border border-line">
-            {status || 'Draft'}
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/50">
+            Computed
           </span>
         );
     }
@@ -195,7 +208,7 @@ export const PayslipsPage: React.FC = () => {
 
   return (
     <AppLayout title="All Employee Payslips">
-      <div className="space-y-6 max-w-7xl mx-auto font-sans">
+      <div className="space-y-6 w-full min-w-0 max-w-7xl mx-auto font-sans">
         {/* Editorial Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-6">
           <div>
@@ -237,7 +250,7 @@ export const PayslipsPage: React.FC = () => {
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
           <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs">
             <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-accent" />
+              <Users className="w-3.5 h-3.5 text-ink-soft" />
               Total Payslips
             </span>
             <span className="text-xl font-sans font-bold text-ink mt-1.5 block">
@@ -248,7 +261,7 @@ export const PayslipsPage: React.FC = () => {
 
           <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs">
             <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
-              <DollarSign className="w-3.5 h-3.5 text-accent" />
+              <DollarSign className="w-3.5 h-3.5 text-ink-soft" />
               Total Gross
             </span>
             <span className="text-xl font-bold text-ink mt-1.5 block font-mono">
@@ -259,10 +272,10 @@ export const PayslipsPage: React.FC = () => {
 
           <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs">
             <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
-              <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
+              <AlertTriangle className="w-3.5 h-3.5 text-ink-soft" />
               Total Deductions
             </span>
-            <span className="text-xl font-bold text-rose-600 dark:text-rose-400 mt-1.5 block font-mono">
+            <span className="text-xl font-bold text-ink mt-1.5 block font-mono">
               {formatCurrency(totalDeductions, true)}
             </span>
             <span className="text-[11px] text-ink-soft mt-0.5 block">PF, PT, TDS withheld</span>
@@ -270,10 +283,10 @@ export const PayslipsPage: React.FC = () => {
 
           <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs">
             <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-ink-soft" />
               Net Disbursed
             </span>
-            <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1.5 block font-mono">
+            <span className="text-xl font-bold text-ink mt-1.5 block font-mono">
               {formatCurrency(totalNet, true)}
             </span>
             <span className="text-[11px] text-ink-soft mt-0.5 block">Take-home salary</span>
@@ -281,10 +294,10 @@ export const PayslipsPage: React.FC = () => {
 
           <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs col-span-2 lg:col-span-1">
             <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-accent" />
+              <Layers className="w-3.5 h-3.5 text-ink-soft" />
               Average Net
             </span>
-            <span className="text-xl font-bold text-accent mt-1.5 block font-mono">
+            <span className="text-xl font-bold text-ink mt-1.5 block font-mono">
               {formatCurrency(avgNet, true)}
             </span>
             <span className="text-[11px] text-ink-soft mt-0.5 block">Per employee / cycle</span>
@@ -294,14 +307,11 @@ export const PayslipsPage: React.FC = () => {
         {/* Filter and Search Toolbar */}
         <div className="p-4 rounded-2xl border border-line bg-bg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-2xs">
           {/* Search Box */}
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-ink-soft absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
+          <div className="flex-1 max-w-md">
+            <SearchInput
               placeholder="Search by employee name, email, or payrun..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-xs border border-line rounded-xl bg-bg text-ink placeholder:text-ink-soft focus:outline-none focus:border-accent"
             />
           </div>
 
@@ -309,61 +319,64 @@ export const PayslipsPage: React.FC = () => {
           <div className="flex items-center gap-2.5 flex-wrap">
             {/* Payrun Filter */}
             {uniquePayruns.length > 0 && (
-              <select
-                value={selectedPayrun}
-                onChange={(e) => setSelectedPayrun(e.target.value)}
-                className="px-3 py-2 text-xs border border-line rounded-xl bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer"
-              >
-                <option value="all">All Payruns</option>
-                {uniquePayruns.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.name}
-                  </option>
-                ))}
-              </select>
+              <Select value={selectedPayrun} onValueChange={setSelectedPayrun}>
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="All Payruns" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Payruns</SelectItem>
+                  {uniquePayruns.map((r) => (
+                    <SelectItem key={r.id} value={r.id}>
+                      {r.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
 
             {/* Salary Structure Filter */}
             {uniqueStructures.length > 0 && (
-              <select
-                value={selectedStructure}
-                onChange={(e) => setSelectedStructure(e.target.value)}
-                className="px-3 py-2 text-xs border border-line rounded-xl bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer"
-              >
-                <option value="all">All Structures</option>
-                {uniqueStructures.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
+              <Select value={selectedStructure} onValueChange={setSelectedStructure}>
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="All Structures" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Structures</SelectItem>
+                  {uniqueStructures.map((s) => (
+                    <SelectItem key={s.id} value={s.id}>
+                      {s.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
 
             {/* Status Filter */}
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-3 py-2 text-xs border border-line rounded-xl bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer"
-            >
-              <option value="all">All Statuses</option>
-              <option value="paid">Paid</option>
-              <option value="validated">Validated</option>
-              <option value="computed">Computed</option>
-              <option value="draft">Draft</option>
-            </select>
+            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="paid">Paid</SelectItem>
+                <SelectItem value="validated">Validated</SelectItem>
+                <SelectItem value="computed">Computed</SelectItem>
+              </SelectContent>
+            </Select>
 
             {/* Sort Dropdown */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-2 text-xs border border-line rounded-xl bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer"
-            >
-              <option value="date_desc">Newest Period First</option>
-              <option value="date_asc">Oldest Period First</option>
-              <option value="net_desc">Net Salary: High to Low</option>
-              <option value="net_asc">Net Salary: Low to High</option>
-              <option value="name_asc">Employee Name: A to Z</option>
-            </select>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
+              <SelectTrigger className="w-[170px]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date_desc">Newest Period First</SelectItem>
+                <SelectItem value="date_asc">Oldest Period First</SelectItem>
+                <SelectItem value="net_desc">Net Salary: High to Low</SelectItem>
+                <SelectItem value="net_asc">Net Salary: Low to High</SelectItem>
+                <SelectItem value="name_asc">Employee Name: A to Z</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -394,7 +407,7 @@ export const PayslipsPage: React.FC = () => {
 
         {/* Payslips Table */}
         {!isLoading && !isError && (
-          <div className="border border-line rounded-2xl overflow-hidden bg-bg shadow-2xs">
+          <div className="border border-line rounded-2xl overflow-hidden bg-bg shadow-2xs w-full min-w-0">
             {filteredPayslips.length === 0 ? (
               <div className="p-12 text-center space-y-2">
                 <FileText className="w-8 h-8 text-ink-soft mx-auto opacity-50" />
@@ -419,8 +432,8 @@ export const PayslipsPage: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left border-collapse">
+              <div className="overflow-x-auto w-full min-w-0">
+                <table className="w-full text-xs text-left border-collapse min-w-[850px]">
                   <thead>
                     <tr className="border-b border-line bg-bg-raised/70 text-ink-soft font-semibold">
                       <th className="py-3 px-4">Employee</th>
@@ -498,18 +511,18 @@ export const PayslipsPage: React.FC = () => {
                           </td>
 
                           {/* Deductions */}
-                          <td className="py-3 px-4 text-right whitespace-nowrap font-mono text-rose-600 dark:text-rose-400 font-medium">
+                          <td className="py-3 px-4 text-right whitespace-nowrap font-mono text-ink-soft font-medium">
                             -{formatCurrency(Number(p.total_deductions), true)}
                           </td>
 
                           {/* Net Salary */}
-                          <td className="py-3 px-4 text-right whitespace-nowrap font-mono font-extrabold text-accent text-sm">
+                          <td className="py-3 px-4 text-right whitespace-nowrap font-mono font-bold text-ink text-sm">
                             {formatCurrency(Number(p.net_salary), true)}
                           </td>
 
                           {/* Status */}
                           <td className="py-3 px-3 text-center whitespace-nowrap">
-                            {renderStatusBadge(p.status)}
+                            {renderStatusBadge(p.status, p.payrun_status)}
                           </td>
 
                           {/* Actions */}
