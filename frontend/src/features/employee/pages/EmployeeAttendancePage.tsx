@@ -119,7 +119,7 @@ export const EmployeeAttendancePage: React.FC = () => {
 
   return (
     <AppLayout title="Time Management">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 font-sans">
+      <div className="space-y-8 font-sans px-8 mt-6">
         {/* Page Title */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -144,11 +144,10 @@ export const EmployeeAttendancePage: React.FC = () => {
 
             <button
               onClick={() => setIsFingerprintModalOpen(true)}
-              className={`px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs ${
-                !isEnrolled
-                  ? 'border-accent bg-accent/10 text-accent font-semibold'
-                  : 'border-line bg-bg hover:bg-bg-raised text-ink'
-              }`}
+              className={`px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs ${!isEnrolled
+                ? 'border-accent bg-accent/10 text-accent font-semibold'
+                : 'border-line bg-bg hover:bg-bg-raised text-ink'
+                }`}
             >
               <svg
                 className="w-4 h-4 text-accent"
@@ -172,7 +171,6 @@ export const EmployeeAttendancePage: React.FC = () => {
         {!isEnrolled && (
           <div className="p-4 rounded-xl border border-accent/40 bg-accent/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in">
             <div className="flex items-center gap-3">
-              <span className="w-2.5 h-2.5 rounded-full bg-accent animate-ping" />
               <div>
                 <span className="text-xs font-semibold text-ink block">
                   Fingerprint Not Registered

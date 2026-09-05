@@ -105,11 +105,10 @@ export const FingerprintScannerPad: React.FC<FingerprintScannerPadProps> = ({
           onClick={isScanning ? handleStopScan : handleStartScan}
           disabled={isProcessing}
           aria-label="Scan Fingerprint"
-          className={`relative w-44 h-56 rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-300 cursor-pointer outline-none overflow-hidden bg-black/90 shadow-inner ${
-            isScanning || isProcessing
+          className={`relative w-44 h-56 rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-300 cursor-pointer outline-none overflow-hidden bg-black/90 shadow-inner ${isScanning || isProcessing
               ? 'border-accent ring-2 ring-accent/30'
               : 'border-line hover:border-accent'
-          }`}
+            }`}
         >
           {/* Reticle Corner Crosshair Brackets */}
           <span className="absolute top-2 left-2 w-3.5 h-3.5 border-t-2 border-l-2 border-accent/80 pointer-events-none z-30" />
@@ -161,23 +160,22 @@ export const FingerprintScannerPad: React.FC<FingerprintScannerPadProps> = ({
         {/* Circular indicator pill */}
         <div className="absolute -bottom-2.5 inset-x-0 flex justify-center pointer-events-none z-30">
           <span
-            className={`px-2.5 py-0.5 rounded-full text-[9px] font-semibold border transition-all ${
-              isProcessing
+            className={`px-2.5 py-0.5 rounded-full text-[9px] font-semibold border transition-all ${isProcessing
                 ? 'bg-accent text-accent-ink border-accent shadow-sm'
                 : isScanning
-                ? 'bg-emerald-500 text-white border-emerald-500 animate-pulse shadow-sm'
-                : lastScannedUrl
-                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                : 'bg-bg border-line text-ink-soft'
-            }`}
+                  ? 'bg-emerald-500 text-white border-emerald-500 animate-pulse shadow-sm'
+                  : lastScannedUrl
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                    : 'bg-bg border-line text-ink-soft'
+              }`}
           >
             {isProcessing
               ? 'Matching Minutiae...'
               : isScanning
-              ? 'Sensor Active — Scanning Ridges'
-              : lastScannedUrl
-              ? 'Sample Acquired'
-              : 'Sensor Ready'}
+                ? 'Sensor Active — Scanning Ridges'
+                : lastScannedUrl
+                  ? 'Sample Acquired'
+                  : 'Sensor Ready'}
           </span>
         </div>
       </div>

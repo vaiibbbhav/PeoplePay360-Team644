@@ -37,7 +37,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
   const totalHeadcount = departmentBreakdown.reduce((acc, curr) => acc + (curr.headcount || 0), 0);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 font-sans">
+    <div className="max-w-6xl mx-auto space-y-8 font-sans p-6">
       {/* Welcome Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
