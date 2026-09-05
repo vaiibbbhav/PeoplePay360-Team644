@@ -9,9 +9,28 @@ export const seedDatabase = async (): Promise<void> => {
   try {
     console.info('🌱 Starting PeoplePay360 database seed...');
 
-    // 1. Ensure `is_active` column exists on `users` table
+    // 1. Ensure columns exist on `users` and `employees` tables
     await client.query(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS employee_id UUID REFERENCES employees(id) ON DELETE SET NULL;
+      ALTER TABLE users ALTER COLUMN first_name DROP NOT NULL;
+      ALTER TABLE users ALTER COLUMN last_name DROP NOT NULL;
+      ALTER TABLE employees ADD COLUMN IF NOT EXISTS first_name VARCHAR(100) DEFAULT 'Employee';
+      ALTER TABLE employees ADD COLUMN IF NOT EXISTS last_name VARCHAR(100) DEFAULT 'User';
+      ALTER TABLE employees ALTER COLUMN user_id DROP NOT NULL;
+    `);
+
+    // 1b. Ensure `fingerprint` table exists
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS fingerprint (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        employee_id UUID NOT NULL REFERENCES employees(id) ON DELETE CASCADE UNIQUE,
+        encryted_template TEXT NOT NULL,
+        iv VARCHAR(64) NOT NULL,
+        key_version VARCHAR(20) NOT NULL DEFAULT 'v1',
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+      );
     `);
 
     // 2. Validate admin password criteria
@@ -139,12 +158,24 @@ export const seedDatabase = async (): Promise<void> => {
         departmentId: deptMap['Management'],
         role: 'HR Payroll Manager' as const,
       },
+      {
+        firstName: 'Vaibhav',
+        lastName: 'Patel',
+        email: 'vaibhav@odoo.com',
+        departmentId: deptMap['Technology'],
+        role: 'Employee' as const,
+        customPassword: '12345678',
+      },
     ];
 
     const staffPassword = 'Staff@123';
     const staffPasswordHash = await bcrypt.hash(staffPassword, salt);
 
     for (const emp of sampleEmployees) {
+      const passwordHashToUse = emp.customPassword
+        ? await bcrypt.hash(emp.customPassword, salt)
+        : staffPasswordHash;
+
       // Find or create employee
       let employeeId: string;
       const existingEmp = await db
@@ -194,7 +225,7 @@ export const seedDatabase = async (): Promise<void> => {
       if (existingUser.length === 0) {
         await db.insert(schema.users).values({
           email: emp.email,
-          passwordHash: staffPasswordHash,
+          passwordHash: passwordHashToUse,
           role: emp.role,
           employeeId,
           isActive: true,
@@ -205,6 +236,7 @@ export const seedDatabase = async (): Promise<void> => {
           .set({
             role: emp.role,
             employeeId,
+            passwordHash: passwordHashToUse,
             isActive: true,
             updatedAt: new Date(),
           })
@@ -353,6 +385,7 @@ export const seedDatabase = async (): Promise<void> => {
       'maya@company.com': '85000.00',
       'rohan@company.com': '75000.00',
       'nisha@company.com': '120000.00',
+      'vaibhav@odoo.com': '80000.00',
     };
 
     for (const emp of employeeList) {

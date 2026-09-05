@@ -1,27 +1,20 @@
 package com.fingerprint.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fingerprint.model.StoredTemplate;
+import com.fingerprint.service.FingerprintCryptoService.EncryptedResult;
 import com.machinezoo.sourceafis.FingerprintImage;
 import com.machinezoo.sourceafis.FingerprintMatcher;
 import com.machinezoo.sourceafis.FingerprintTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PostConstruct;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Service
 public class FingerprintService {
@@ -29,229 +22,386 @@ public class FingerprintService {
     private static final Logger logger = LoggerFactory.getLogger(FingerprintService.class);
     private static final double MATCH_THRESHOLD = 40.0; // SourceAFIS standard threshold
 
-    @Value("${fingerprint.storage.file:data/templates.json}")
-    private String storageFilePath;
+    private final JdbcTemplate jdbcTemplate;
+    private final FingerprintCryptoService cryptoService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-    private final ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
-
-    // In-memory cache of stored templates: ID -> StoredTemplate
-    private final Map<String, StoredTemplate> templateCache = new ConcurrentHashMap<>();
-
-    @PostConstruct
-    public void init() {
-        loadTemplatesFromFile();
+    public FingerprintService(JdbcTemplate jdbcTemplate, FingerprintCryptoService cryptoService) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.cryptoService = cryptoService;
     }
 
     /**
-     * Loads templates from the JSON storage file into memory.
+     * Enrolls an employee's fingerprint:
+     * 1. Extracts OpenAFIS template from image.
+     * 2. Encrypts template with AES-256-GCM (secure random IV).
+     * 3. Stores encrypted template + IV + key_version in NeonDB `fingerprint` table.
+     * 4. Plaintext image & template are never stored or logged.
      */
-    public void loadTemplatesFromFile() {
-        rwLock.writeLock().lock();
-        try {
-            File file = new File(storageFilePath);
-            if (!file.exists()) {
-                File parent = file.getParentFile();
-                if (parent != null && !parent.exists()) {
-                    parent.mkdirs();
-                }
-                saveTemplatesToFile(new ArrayList<>());
-            } else {
-                List<StoredTemplate> list = objectMapper.readValue(file, new TypeReference<List<StoredTemplate>>() {});
-                templateCache.clear();
-                for (StoredTemplate st : list) {
-                    if (st.getId() != null && st.getTemplate() != null) {
-                        templateCache.put(st.getId(), st);
-                    }
-                }
-                logger.info("Loaded {} fingerprint templates from {}", templateCache.size(), storageFilePath);
-            }
-        } catch (Exception e) {
-            logger.error("Error loading templates from file: {}", e.getMessage(), e);
-        } finally {
-            rwLock.writeLock().unlock();
+    public Map<String, Object> enroll(String employeeIdentifier, String imageBase64) {
+        if (employeeIdentifier == null || employeeIdentifier.trim().isEmpty()) {
+            throw new IllegalArgumentException("Employee ID or email is required");
         }
-    }
-
-    /**
-     * Persists the current templates to the JSON file.
-     */
-    private void saveTemplatesToFile(List<StoredTemplate> templates) throws IOException {
-        File file = new File(storageFilePath);
-        File parent = file.getParentFile();
-        if (parent != null && !parent.exists()) {
-            parent.mkdirs();
-        }
-        objectMapper.writeValue(file, templates);
-    }
-
-    /**
-     * Extracts an OpenAFIS FingerprintTemplate from an input image base64,
-     * serializes the template, and saves it into templates.json with the given ID.
-     * Note: The raw image is NEVER stored; only the extracted template is stored.
-     */
-    public Map<String, Object> enroll(String id, String imageBase64) {
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("User / Template ID cannot be empty");
-        }
-        id = id.trim();
-
         if (imageBase64 == null || imageBase64.trim().isEmpty()) {
             throw new IllegalArgumentException("Fingerprint image data is required");
         }
 
-        byte[] imageBytes = decodeBase64Image(imageBase64);
-
-        // Extract FingerprintTemplate using OpenAFIS (SourceAFIS)
-        FingerprintImage image = new FingerprintImage().dpi(500).decode(imageBytes);
-        FingerprintTemplate template = new FingerprintTemplate(image);
-
-        // Serialize template to bytes (no image data is retained)
-        byte[] templateBytes = template.toByteArray();
-        String serializedTemplate = Base64.getEncoder().encodeToString(templateBytes);
-
-        String timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
-        StoredTemplate stored = new StoredTemplate(id, serializedTemplate, timestamp, templateBytes.length);
-
-        rwLock.writeLock().lock();
-        try {
-            templateCache.put(id, stored);
-            saveTemplatesToFile(new ArrayList<>(templateCache.values()));
-            logger.info("Successfully enrolled template for ID '{}' into {}", id, storageFilePath);
-        } catch (IOException e) {
-            logger.error("Failed to persist template to JSON file: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to save template to JSON storage: " + e.getMessage());
-        } finally {
-            rwLock.writeLock().unlock();
+        String employeeId = resolveEmployeeId(employeeIdentifier.trim());
+        if (employeeId == null) {
+            throw new IllegalArgumentException("Employee not found for identifier: " + employeeIdentifier);
         }
 
+        byte[] imageBytes = decodeBase64Image(imageBase64);
+
+        // Extract FingerprintTemplate using OpenAFIS
+        FingerprintImage image = new FingerprintImage().dpi(500).decode(imageBytes);
+        FingerprintTemplate template = new FingerprintTemplate(image);
+        byte[] templateBytes = template.toByteArray();
+
+        // Encrypt template using AES-256-GCM
+        EncryptedResult encrypted = cryptoService.encrypt(templateBytes);
+        cryptoService.wipe(templateBytes); // Wipe unencrypted template from memory
+
+        // Store encrypted template into NeonDB
+        String upsertSql = """
+            INSERT INTO fingerprint (employee_id, encryted_template, iv, key_version, updated_at)
+            VALUES (?::uuid, ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT (employee_id) DO UPDATE SET
+                encryted_template = EXCLUDED.encryted_template,
+                iv = EXCLUDED.iv,
+                key_version = EXCLUDED.key_version,
+                updated_at = CURRENT_TIMESTAMP
+            """;
+
+        jdbcTemplate.update(upsertSql, employeeId, encrypted.cipherTextBase64(), encrypted.ivBase64(), encrypted.keyVersion());
+        logger.info("Successfully enrolled AES-256-GCM encrypted fingerprint for employeeId: {}", employeeId);
+
         Map<String, Object> result = new HashMap<>();
-        result.put("id", id);
-        result.put("enrolledAt", timestamp);
-        result.put("templateSizeBytes", templateBytes.length);
-        result.put("totalTemplates", templateCache.size());
+        result.put("employeeId", employeeId);
+        result.put("enrolled", true);
+        result.put("keyVersion", encrypted.keyVersion());
+        result.put("timestamp", Instant.now().toString());
         return result;
     }
 
     /**
-     * Matches a scanned fingerprint against all stored templates in templates.json.
-     * Returns the matched ID and similarity score if matched, or false if not.
+     * Checks whether an employee has a registered fingerprint template in NeonDB.
      */
-    public Map<String, Object> match(String imageBase64) {
+    public boolean hasFingerprint(String employeeIdentifier) {
+        String employeeId = resolveEmployeeId(employeeIdentifier);
+        if (employeeId == null) return false;
+
+        String sql = "SELECT COUNT(*) FROM fingerprint WHERE employee_id = ?::uuid";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, employeeId);
+        return count != null && count > 0;
+    }
+
+    /**
+     * Performs biometric match (1:N) and Punch In / Punch Out:
+     * 1. Decodes probe image and generates probe template.
+     * 2. Reads all encrypted templates from NeonDB.
+     * 3. Decrypts candidate template in-memory strictly for SourceAFIS comparison, wiping buffer immediately.
+     * 4. If matched employee found:
+     *    - If currently punched out → Punch In
+     *    - If currently punched in → Punch Out
+     *    - Updates NeonDB `attendance` table.
+     * 5. If no match found: returns "No user exists".
+     */
+    public Map<String, Object> punchAttendance(String imageBase64) {
         if (imageBase64 == null || imageBase64.trim().isEmpty()) {
             throw new IllegalArgumentException("Fingerprint image data is required for matching");
         }
 
-        byte[] imageBytes = decodeBase64Image(imageBase64);
-
-        // Extract probe template from the acquired scan using OpenAFIS
-        FingerprintImage probeImage = new FingerprintImage().dpi(500).decode(imageBytes);
+        byte[] probeBytes = decodeBase64Image(imageBase64);
+        FingerprintImage probeImage = new FingerprintImage().dpi(500).decode(probeBytes);
         FingerprintTemplate probeTemplate = new FingerprintTemplate(probeImage);
-
-        // Prepare OpenAFIS Matcher
         FingerprintMatcher matcher = new FingerprintMatcher(probeTemplate);
 
-        String bestMatchId = null;
+        // Fetch all enrolled encrypted templates from NeonDB
+        String querySql = "SELECT employee_id, encryted_template, iv, key_version FROM fingerprint";
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(querySql);
+
+        if (rows.isEmpty()) {
+            Map<String, Object> notFound = new HashMap<>();
+            notFound.put("success", false);
+            notFound.put("matched", false);
+            notFound.put("message", "No user exists");
+            return notFound;
+        }
+
+        String matchedEmployeeId = null;
         double bestScore = 0.0;
 
-        rwLock.readLock().lock();
-        try {
-            if (templateCache.isEmpty()) {
-                Map<String, Object> resp = new HashMap<>();
-                resp.put("matched", false);
-                resp.put("id", null);
-                resp.put("score", 0.0);
-                resp.put("message", "No enrolled fingerprint templates exist in database");
-                return resp;
-            }
+        for (Map<String, Object> row : rows) {
+            String empId = String.valueOf(row.get("employee_id"));
+            String cipherText = (String) row.get("encryted_template");
+            String iv = (String) row.get("iv");
+            String keyVersion = (String) row.get("key_version");
 
-            // Compare probe against each candidate template stored in JSON file
-            for (StoredTemplate candidate : templateCache.values()) {
-                try {
-                    byte[] candidateBytes = Base64.getDecoder().decode(candidate.getTemplate());
-                    FingerprintTemplate candidateTemplate = new FingerprintTemplate(candidateBytes);
+            if (cipherText == null || iv == null) continue;
 
-                    double score = matcher.match(candidateTemplate);
-                    logger.debug("Compared with ID '{}' -> score: {}", candidate.getId(), score);
+            byte[] decryptedTemplate = null;
+            try {
+                // In-memory AES-256-GCM Decryption
+                decryptedTemplate = cryptoService.decrypt(cipherText, iv, keyVersion);
+                FingerprintTemplate candidateTemplate = new FingerprintTemplate(decryptedTemplate);
 
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestMatchId = candidate.getId();
+                double score = matcher.match(candidateTemplate);
+                if (score > bestScore) {
+                    bestScore = score;
+                    if (score >= MATCH_THRESHOLD) {
+                        matchedEmployeeId = empId;
                     }
-                } catch (Exception ex) {
-                    logger.warn("Could not deserialize template for ID '{}': {}", candidate.getId(), ex.getMessage());
+                }
+            } catch (Exception e) {
+                logger.warn("Could not match template for employee {}: {}", empId, e.getMessage());
+            } finally {
+                if (decryptedTemplate != null) {
+                    cryptoService.wipe(decryptedTemplate); // Wipe decrypted plaintext from memory
                 }
             }
-        } finally {
-            rwLock.readLock().unlock();
         }
 
-        boolean isMatched = bestScore >= MATCH_THRESHOLD;
-        Map<String, Object> resp = new HashMap<>();
-        resp.put("matched", isMatched);
-        resp.put("id", isMatched ? bestMatchId : null);
-        resp.put("score", Math.round(bestScore * 100.0) / 100.0);
-        resp.put("threshold", MATCH_THRESHOLD);
+        if (matchedEmployeeId == null || bestScore < MATCH_THRESHOLD) {
+            logger.info("Fingerprint match failed. Best score: {}. Threshold: {}", bestScore, MATCH_THRESHOLD);
+            Map<String, Object> notFound = new HashMap<>();
+            notFound.put("success", false);
+            notFound.put("matched", false);
+            notFound.put("score", Math.round(bestScore * 10.0) / 10.0);
+            notFound.put("message", "No user exists");
+            notFound.put("announcement", "No user exists");
+            return notFound;
+        }
 
-        if (isMatched) {
-            resp.put("message", "Fingerprint matched successfully with ID: " + bestMatchId);
+        // Matched! Now execute Punch In / Punch Out in NeonDB attendance
+        return executePunch(matchedEmployeeId, bestScore);
+    }
+
+    /**
+     * Executes Punch In or Punch Out for a verified employee in NeonDB.
+     */
+    private Map<String, Object> executePunch(String employeeId, double score) {
+        // Fetch employee details
+        String empSql = """
+            SELECT e.id, e.email,
+                   COALESCE(e.first_name, u.first_name, 'Employee') as first_name,
+                   COALESCE(e.last_name, u.last_name, 'User') as last_name
+            FROM employees e
+            LEFT JOIN users u ON u.employee_id = e.id OR e.user_id = u.id
+            WHERE e.id = ?::uuid
+            LIMIT 1
+            """;
+
+        List<Map<String, Object>> empList = jdbcTemplate.queryForList(empSql, employeeId);
+        String employeeName = "Employee";
+        String employeeEmail = "";
+        if (!empList.isEmpty()) {
+            Map<String, Object> emp = empList.get(0);
+            employeeName = emp.get("first_name") + " " + emp.get("last_name");
+            employeeEmail = emp.get("email") != null ? (String) emp.get("email") : "";
+        }
+
+        // Query today's attendance record
+        String attSql = """
+            SELECT id, check_in, check_out, status, worked_hours
+            FROM attendance
+            WHERE employee_id = ?::uuid AND date = CURRENT_DATE
+            LIMIT 1
+            """;
+
+        List<Map<String, Object>> attList = jdbcTemplate.queryForList(attSql, employeeId);
+
+        String action;
+        String status;
+        Instant now = Instant.now();
+        Timestamp nowTs = Timestamp.from(now);
+        BigDecimal workedHours = BigDecimal.ZERO;
+        String checkInStr = null;
+        String checkOutStr = null;
+
+        if (attList.isEmpty()) {
+            // Case 1: Not checked in today -> INSERT PUNCH IN
+            action = "PUNCH_IN";
+            LocalTime localTime = LocalTime.now();
+            boolean isLate = localTime.isAfter(LocalTime.of(9, 30));
+            status = isLate ? "Late" : "Present";
+            checkInStr = now.toString();
+
+            String insertSql = """
+                INSERT INTO attendance (employee_id, date, check_in, check_out, worked_hours, status, is_manual_edit, created_at, updated_at)
+                VALUES (?::uuid, CURRENT_DATE, ?, NULL, 0.0, ?, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                """;
+            jdbcTemplate.update(insertSql, employeeId, nowTs, status);
+            logger.info("Employee {} punched in at {} with status {}", employeeName, now, status);
         } else {
-            resp.put("message", "No matching fingerprint found. (Best score: " + Math.round(bestScore * 10.0) / 10.0 + ")");
-        }
+            Map<String, Object> record = attList.get(0);
+            String attId = String.valueOf(record.get("id"));
+            Timestamp checkInTs = (Timestamp) record.get("check_in");
+            Timestamp checkOutTs = (Timestamp) record.get("check_out");
 
-        return resp;
-    }
+            if (checkInTs == null) {
+                // Not checked in yet -> PUNCH IN
+                action = "PUNCH_IN";
+                LocalTime localTime = LocalTime.now();
+                boolean isLate = localTime.isAfter(LocalTime.of(9, 30));
+                status = isLate ? "Late" : "Present";
+                checkInStr = now.toString();
 
-    /**
-     * Lists all enrolled fingerprint IDs and metadata (without raw template strings).
-     */
-    public List<Map<String, Object>> getAllTemplates() {
-        rwLock.readLock().lock();
-        try {
-            List<Map<String, Object>> list = new ArrayList<>();
-            for (StoredTemplate st : templateCache.values()) {
-                Map<String, Object> item = new HashMap<>();
-                item.put("id", st.getId());
-                item.put("createdAt", st.getCreatedAt());
-                item.put("minutiaeCount", st.getMinutiaeCount());
-                list.add(item);
+                String updateSql = """
+                    UPDATE attendance
+                    SET check_in = ?, check_out = NULL, worked_hours = 0.0, status = ?, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ?::uuid
+                    """;
+                jdbcTemplate.update(updateSql, nowTs, status, attId);
+                logger.info("Employee {} punched in at {} with status {}", employeeName, now, status);
+            } else if (checkOutTs == null) {
+                // Case 2: Punched in, not yet punched out -> PUNCH OUT
+                action = "PUNCH_OUT";
+                checkInStr = checkInTs.toInstant().toString();
+                checkOutStr = now.toString();
+
+                long diffMs = Math.max(0, nowTs.getTime() - checkInTs.getTime());
+                double hoursDouble = diffMs / (1000.0 * 60 * 60);
+                workedHours = BigDecimal.valueOf(hoursDouble).setScale(2, RoundingMode.HALF_UP);
+
+                status = String.valueOf(record.get("status"));
+                if (workedHours.compareTo(BigDecimal.valueOf(8.5)) > 0) {
+                    status = "Overtime";
+                } else if (workedHours.compareTo(BigDecimal.valueOf(4.0)) < 0) {
+                    status = "Half-day";
+                }
+
+                String updateSql = """
+                    UPDATE attendance
+                    SET check_out = ?, worked_hours = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ?::uuid
+                    """;
+                jdbcTemplate.update(updateSql, nowTs, workedHours, status, attId);
+                logger.info("Employee {} punched out at {} (worked {} hrs)", employeeName, now, workedHours);
+            } else {
+                // Case 3: Punched out previously today -> Re-Punch In
+                action = "PUNCH_IN";
+                status = "Present";
+                checkInStr = now.toString();
+
+                String rePunchSql = """
+                    UPDATE attendance
+                    SET check_in = ?, check_out = NULL, worked_hours = 0.0, status = ?, updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ?::uuid
+                    """;
+                jdbcTemplate.update(rePunchSql, nowTs, status, attId);
+                logger.info("Employee {} re-punched in at {}", employeeName, now);
             }
-            list.sort(Comparator.comparing(a -> String.valueOf(a.get("id"))));
-            return list;
-        } finally {
-            rwLock.readLock().unlock();
         }
+
+        java.time.format.DateTimeFormatter timeFormatter = java.time.format.DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH)
+            .withZone(java.time.ZoneId.systemDefault());
+        String timeStr = timeFormatter.format(now);
+
+        String announcement = action.equals("PUNCH_IN")
+            ? "Welcome " + employeeName + "! Punched in at " + timeStr
+            : "Goodbye " + employeeName + "! Punched out at " + timeStr;
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("matched", true);
+        response.put("action", action);
+        response.put("employeeId", employeeId);
+        response.put("employeeName", employeeName);
+        response.put("employeeEmail", employeeEmail);
+        response.put("status", status);
+        response.put("checkIn", checkInStr);
+        response.put("checkOut", checkOutStr);
+        response.put("time", timeStr);
+        response.put("announcement", announcement);
+        response.put("workedHours", workedHours);
+        response.put("score", Math.round(score * 10.0) / 10.0);
+        response.put("message", action.equals("PUNCH_IN") ? "Successfully Punched In" : "Successfully Punched Out");
+
+        return response;
     }
 
     /**
-     * Deletes a template by ID from the JSON file.
+     * Retrieves today's attendance status for an employee.
      */
-    public boolean deleteTemplate(String id) {
-        rwLock.writeLock().lock();
-        try {
-            if (templateCache.remove(id) != null) {
-                saveTemplatesToFile(new ArrayList<>(templateCache.values()));
-                logger.info("Deleted template ID '{}'", id);
-                return true;
-            }
-            return false;
-        } catch (IOException e) {
-            logger.error("Failed to update templates.json after deletion: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to delete template: " + e.getMessage());
-        } finally {
-            rwLock.writeLock().unlock();
+    public Map<String, Object> getTodayAttendanceStatus(String employeeIdentifier) {
+        String employeeId = resolveEmployeeId(employeeIdentifier);
+        Map<String, Object> status = new HashMap<>();
+        status.put("employeeId", employeeId);
+        status.put("hasFingerprint", hasFingerprint(employeeIdentifier));
+
+        if (employeeId == null) {
+            status.put("punchedIn", false);
+            return status;
         }
+
+        String sql = """
+            SELECT check_in, check_out, status, worked_hours
+            FROM attendance
+            WHERE employee_id = ?::uuid AND date = CURRENT_DATE
+            LIMIT 1
+            """;
+
+        List<Map<String, Object>> list = jdbcTemplate.queryForList(sql, employeeId);
+        if (list.isEmpty() || list.get(0).get("check_in") == null) {
+            status.put("punchedIn", false);
+            status.put("checkIn", null);
+            status.put("checkOut", null);
+            status.put("status", "Not Punched In");
+        } else {
+            Map<String, Object> rec = list.get(0);
+            boolean isPunchedIn = rec.get("check_out") == null;
+            status.put("punchedIn", isPunchedIn);
+            status.put("checkIn", rec.get("check_in") != null ? rec.get("check_in").toString() : null);
+            status.put("checkOut", rec.get("check_out") != null ? rec.get("check_out").toString() : null);
+            status.put("workedHours", rec.get("worked_hours"));
+            status.put("status", rec.get("status"));
+        }
+
+        return status;
     }
 
     /**
-     * Helper to decode Base64 dataURL or raw Base64 string into byte array.
+     * Deletes an employee's enrolled fingerprint.
+     */
+    public boolean deleteFingerprint(String employeeIdentifier) {
+        String employeeId = resolveEmployeeId(employeeIdentifier);
+        if (employeeId == null) return false;
+
+        String sql = "DELETE FROM fingerprint WHERE employee_id = ?::uuid";
+        return jdbcTemplate.update(sql, employeeId) > 0;
+    }
+
+    /**
+     * Resolves an employee identifier (UUID or email) to an employee UUID.
+     */
+    private String resolveEmployeeId(String identifier) {
+        if (identifier == null || identifier.trim().isEmpty()) return null;
+        String clean = identifier.trim();
+
+        // Check if already a valid UUID
+        if (clean.matches("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")) {
+            return clean;
+        }
+
+        // Look up by email in employees or users
+        String query = """
+            SELECT id FROM employees WHERE LOWER(email) = LOWER(?)
+            UNION
+            SELECT employee_id as id FROM users WHERE LOWER(email) = LOWER(?) AND employee_id IS NOT NULL
+            LIMIT 1
+            """;
+        List<String> list = jdbcTemplate.query(query, (rs, rowNum) -> rs.getString("id"), clean, clean);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    /**
+     * Decodes a base64 image string or dataURL into raw bytes.
      */
     private byte[] decodeBase64Image(String input) {
         String clean = input.trim();
         if (clean.contains(",")) {
             clean = clean.substring(clean.indexOf(",") + 1);
         }
-        // Remove line breaks / whitespace
         clean = clean.replaceAll("\\s+", "");
         return Base64.getDecoder().decode(clean);
     }

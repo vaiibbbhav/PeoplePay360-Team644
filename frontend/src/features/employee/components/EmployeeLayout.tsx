@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useCurrentUser, useLogout, type User } from '@/features/auth/queries/useAuth';
+import { useFingerprintStatus } from '@/features/attendance/queries/useFingerprint';
 
 type NavItem = {
   label: string;
@@ -35,6 +36,10 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
       email: 'employee@peoplepay360.com',
     },
   };
+
+  const employeeId = currentUser.employee?.id || currentUser.employeeId || currentUser.id || '';
+  const { data: fpStatus } = useFingerprintStatus(employeeId);
+  const isFingerprintRegistered = fpStatus?.enrolled ?? true; // Defaults to true until loaded to prevent flicker
 
   const employeeNavItems: NavItem[] = [
     {
@@ -317,17 +322,43 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
                   <item.icon className="w-4 h-4 shrink-0 opacity-80" />
                   <span className="truncate">{item.label}</span>
                 </div>
-                {item.badge && (
-                  <span
-                    className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${
-                      active
-                        ? 'bg-accent-ink/20 text-accent-ink'
-                        : 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {item.label === 'Attendance' && !isFingerprintRegistered && (
+                    <span
+                      title="Fingerprint Registration Pending"
+                      className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold border ${
+                        active
+                          ? 'bg-accent-ink/20 text-accent-ink border-accent-ink/40'
+                          : 'bg-accent/15 text-accent border-accent/30'
+                      }`}
+                    >
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span
+                          className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                            active ? 'bg-white' : 'bg-accent'
+                          }`}
+                        />
+                        <span
+                          className={`relative inline-flex rounded-full h-1.5 w-1.5 ${
+                            active ? 'bg-white' : 'bg-accent'
+                          }`}
+                        />
+                      </span>
+                      <span className="hidden sm:inline">Add FP</span>
+                    </span>
+                  )}
+                  {item.badge && (
+                    <span
+                      className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${
+                        active
+                          ? 'bg-accent-ink/20 text-accent-ink'
+                          : 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
               </Link>
             );
           })}

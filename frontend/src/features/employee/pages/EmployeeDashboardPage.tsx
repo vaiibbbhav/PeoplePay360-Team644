@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { EmployeeLayout } from '../components/EmployeeLayout';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
+import { useFingerprintStatus } from '@/features/attendance/queries/useFingerprint';
 
 export const EmployeeDashboardPage: React.FC = () => {
   const { data: user } = useCurrentUser();
@@ -17,6 +18,10 @@ export const EmployeeDashboardPage: React.FC = () => {
       email: 'employee@peoplepay360.com',
     },
   };
+
+  const employeeId = currentUser.employee?.id || currentUser.employeeId || currentUser.id || '';
+  const { data: fpStatus } = useFingerprintStatus(employeeId);
+  const hasFingerprint = fpStatus?.enrolled;
 
   const employeeModules = [
     {
@@ -128,6 +133,41 @@ export const EmployeeDashboardPage: React.FC = () => {
           Employee Self-Service Portal · Active Role: <b className="text-ink">{currentUser.role}</b>
         </p>
       </div>
+
+      {/* Biometric Registration Alert Banner */}
+      {hasFingerprint === false && (
+        <div className="mb-8 p-4 sm:p-5 rounded-2xl border border-accent/40 bg-accent/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-accent/20 text-accent flex items-center justify-center shrink-0">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 004.07 9m5.918 8d.5.5 0 01.5.5v2a.5.5 0 01-.5.5h-2a.5.5 0 01-.5-.5v-2a.5.5 0 01.5-.5h2z"
+                />
+              </svg>
+            </div>
+            <div>
+              <div className="text-xs sm:text-sm font-semibold text-ink flex items-center gap-2">
+                <span>Biometric Fingerprint Setup Required</span>
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-accent text-accent-ink uppercase tracking-wider">
+                  Action Required
+                </span>
+              </div>
+              <p className="text-xs text-ink-soft mt-0.5">
+                Your profile does not have an enrolled fingerprint. Register now to enable one-touch biometric check-in & check-out.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/employee/attendance?register=true"
+            className="px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline text-center shrink-0"
+          >
+            Add Fingerprint
+          </Link>
+        </div>
+      )}
 
       {/* Quick Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
