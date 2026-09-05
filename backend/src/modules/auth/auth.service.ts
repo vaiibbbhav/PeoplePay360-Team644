@@ -1,9 +1,11 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { UnauthorizedError, NotFoundError } from '../../shared/errors';
+import { EmailNotVerifiedError } from './auth.errors';
 import { LoginInput } from './auth.validators';
 import * as authRepository from './auth.repository';
 import { AuthUser, UserRole } from '../../shared/auth-middleware';
+import { sendVerificationEmail } from '../../shared/mailer';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'peoplepay360-hackathon-super-secret-jwt-key';
 const TOKEN_EXPIRY = '7d';
@@ -59,6 +61,12 @@ export const login = async (input: LoginInput): Promise<AuthResponse> => {
   const isMatch = await bcrypt.compare(input.password, user.passwordHash);
   if (!isMatch) {
     throw new UnauthorizedError('Invalid email or password');
+  }
+
+  if (!user.isEmailVerified) {
+    throw new EmailNotVerifiedError(
+      'Please verify your email before logging in. Check your inbox for the verification link.',
+    );
   }
 
   const employee = await authRepository.findEmployeeByUserId(user.id);
@@ -130,6 +138,10 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
       );
     }
 
+    if (!user.isEmailVerified) {
+      throw new EmailNotVerifiedError('Please verify your email before logging in.');
+    }
+
     const employee = await authRepository.findEmployeeByUserId(user.id);
     const employeeData = employee
       ? {
@@ -155,7 +167,10 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
       },
       token,
     };
-  } catch {
+  } catch (err: any) {
+    if (err instanceof EmailNotVerifiedError || err instanceof UnauthorizedError) {
+      throw err;
+    }
     throw new UnauthorizedError('Invalid or expired token');
   }
 };
@@ -186,4 +201,43 @@ export const verifyEmail = async (token: string): Promise<{ email: string }> => 
     }
     throw new UnauthorizedError('Verification token is invalid or has expired');
   }
+};
+
+export const resendVerificationEmail = async (
+  email: string,
+): Promise<{ success: boolean; message: string }> => {
+  const normalizedEmail = email.toLowerCase().trim();
+  const user = await authRepository.findUserByEmail(normalizedEmail);
+  if (!user) {
+    return {
+      success: true,
+      message: 'If an account exists with this email, a verification link has been sent.',
+    };
+  }
+
+  if (user.isEmailVerified) {
+    return {
+      success: true,
+      message: 'This email is already verified. You can sign in directly.',
+    };
+  }
+
+  const verificationToken = jwt.sign(
+    { userId: user.id, email: user.email, purpose: 'email-verification' },
+    JWT_SECRET,
+    { expiresIn: '7d' },
+  );
+
+  const employeeName = `${user.firstName} ${user.lastName}`.trim();
+
+  await sendVerificationEmail({
+    toEmail: user.email,
+    employeeName,
+    verificationToken,
+  });
+
+  return {
+    success: true,
+    message: 'Verification email has been sent. Please check your inbox.',
+  };
 };

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../shared/async-handler';
-import { loginSchema } from './auth.validators';
+import { loginSchema, resendVerificationSchema } from './auth.validators';
 import * as authService from './auth.service';
 import { UnauthorizedError } from '../../shared/errors';
 import { getCookieValue } from '../../shared/auth-middleware';
@@ -68,3 +68,11 @@ export const verifyEmail = asyncHandler(async (req: Request, res: Response): Pro
     message: 'Email verified successfully',
   });
 });
+
+export const resendVerification = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const validated = resendVerificationSchema.parse(req.body);
+    const result = await authService.resendVerificationEmail(validated.email);
+    res.json(result);
+  },
+);

@@ -62,7 +62,10 @@ export const createApp = (): Express => {
     if (status === 500) {
       console.error(err);
     }
-    res.status(status).json({ error: err.message });
+    res.status(status).json({
+      error: err.message,
+      ...(err.code ? { code: err.code } : {}),
+    });
   });
 
   return app;
