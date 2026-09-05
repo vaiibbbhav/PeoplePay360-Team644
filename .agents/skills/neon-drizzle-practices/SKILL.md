@@ -19,5 +19,11 @@ description: Database practices for Neon Serverless Postgres and Drizzle ORM in 
   - Payrun aggregates: `numeric({ precision: 14, scale: 2 })`.
   - Worked days & hours: `numeric({ precision: 5, scale: 2 })`.
 
-## 3. Schema Sync Mandate
+## 3. Simplicity & Straightforward Queries Mandate
+- Keep Drizzle queries clear, direct, and readable.
+- Avoid over-engineered query builders or excessive runtime query composition.
+- Prefer explicit joins and simple filters (`eq`, `and`, `ilike`, `gte`, `lte`).
+- Structure repositories with small, modular methods (e.g., `findUserById`, `listUsers`, `createUser`, `updateUser`).
+
+## 4. Schema Sync Mandate
 Whenever any developer or agent modifies, adds, or drops a table or column in `src/db/schema.ts`, you **MUST** update `DATABASE_SCHEMA.md` in the exact same change.

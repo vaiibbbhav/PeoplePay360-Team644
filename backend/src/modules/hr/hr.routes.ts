@@ -14,6 +14,14 @@ router.get(
 );
 
 router.get(
+  '/meta',
+  asyncHandler(async (_req, res) => {
+    const meta = await hrService.getMetadataOptions();
+    res.json(meta);
+  }),
+);
+
+router.get(
   '/kanban',
   asyncHandler(async (_req, res) => {
     const kanban = await hrService.getEmployeesForKanban();
