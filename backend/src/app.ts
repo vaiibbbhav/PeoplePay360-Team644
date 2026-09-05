@@ -45,18 +45,12 @@ export const createApp = (): Express => {
   app.use('/api/contracts', contractsRoutes);
   app.use('/api/attendance', attendanceRoutes);
   app.use('/api/time-off', timeoffRoutes);
-  app.use('/api/timeoff', timeoffRoutes);
   app.use('/api/payroll', payrollRoutes);
-  app.use('/api/reports', reportingRoutes);
-  app.use('/api/documents', documentsRoutes);
-  app.use('/api/policies', documentsRoutes);
-  app.use('/api/schedules', schedulesRoutes);
-  app.use('/api/working-schedules', schedulesRoutes);
-
-  // Direct resource aliases matching GEMINI.md section 9
   app.use('/api/payruns', payrollRoutes);
   app.use('/api/payslips', payrollRoutes);
-  app.use('/api/salary-structures', payrollRoutes);
+  app.use('/api/reports', reportingRoutes);
+  app.use('/api/documents', documentsRoutes);
+  app.use('/api/schedules', schedulesRoutes);
 
   // 404 handler for unmatched routes
   app.use((_req: Request, res: Response) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatGrid, type StatItem } from '@/components/ui/StatCard';
-import type { AttendanceRecord } from '@/features/employee/queries/useAttendance';
+import type { AttendanceRecord } from '../queries/useAttendance';
 
 type AttendanceSummaryCardsProps = {
   records: AttendanceRecord[];

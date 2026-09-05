@@ -23,14 +23,12 @@ export const getAttendanceById = asyncHandler(
 
 export const recordCheckIn = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { employeeId, checkIn } = checkInSchema.parse(req.body);
-  assertEmployeeAccess(req, employeeId);
   const record = await attendanceService.recordCheckIn(employeeId, checkIn);
   res.status(201).json(record);
 });
 
 export const recordCheckOut = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { employeeId, checkOut } = checkOutSchema.parse(req.body);
-  assertEmployeeAccess(req, employeeId);
   const record = await attendanceService.recordCheckOut(employeeId, checkOut);
   res.json(record);
 });
@@ -38,7 +36,6 @@ export const recordCheckOut = asyncHandler(async (req: Request, res: Response): 
 export const saveManualAttendance = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const validated = validateAttendanceRecord(req.body);
-    assertEmployeeAccess(req, validated.employeeId as string);
     const record = await attendanceService.saveManualAttendance(validated);
     res.status(201).json(record);
   },

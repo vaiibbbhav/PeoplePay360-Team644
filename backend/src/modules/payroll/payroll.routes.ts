@@ -10,6 +10,7 @@ import {
   authenticateToken,
   requireAnyPermission,
   requirePermission,
+  assertEmployeeAccess,
 } from '../../shared/auth-middleware';
 
 const router = Router();
@@ -135,10 +136,7 @@ router.get(
   requireAnyPermission(['payroll.payslip.read', 'payslip.self.read']),
   asyncHandler(async (req, res) => {
     const payslip = await payrollService.getPayslipById(req.params.id);
-    if (req.user?.role === 'Employee' && payslip.employee_id !== req.user.employeeId) {
-      res.status(403).json({ error: 'Employees may only access their own payslips' });
-      return;
-    }
+    assertEmployeeAccess(req, payslip.employee_id);
     res.json(payslip);
   }),
 );

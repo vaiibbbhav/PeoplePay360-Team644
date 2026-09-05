@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePunchFingerprint, type PunchResult } from '../queries/useFingerprint';
-import { useAttendanceList } from '@/features/employee/queries/useAttendance';
+import { useAttendanceList } from '../queries/useAttendance';
 import { getTodayIST, formatTimeIST } from '@/lib/formatters';
 import { ReaderStatusCard } from '../components/ReaderStatusCard';
 import { FingerprintScannerPad } from '../components/FingerprintScannerPad';

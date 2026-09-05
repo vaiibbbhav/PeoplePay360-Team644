@@ -118,3 +118,40 @@ export const requireEmployeeRead = (req: Request, res: Response, next: NextFunct
   }
   return requirePermission('employee.read')(req, res, next);
 };
+
+export const assertCanViewTimeOffRequest = (
+  req: Request,
+  request: { employee_id: string; manager_id?: string | null },
+): void => {
+  if (!req.user) throw new UnauthorizedError();
+  if (hasPermission(req.user.role, 'timeoff.read')) {
+    return;
+  }
+  if (req.user.role === 'Employee') {
+    if (
+      req.user.employeeId === request.employee_id ||
+      (request.manager_id && req.user.employeeId === request.manager_id)
+    ) {
+      return;
+    }
+  }
+  throw new ForbiddenError('You are not authorized to view this request');
+};
+
+export const assertCanApproveTimeOffRequest = (
+  req: Request,
+  request: { employee_id: string; manager_id?: string | null },
+): void => {
+  if (!req.user) throw new UnauthorizedError();
+  if (hasPermission(req.user.role, 'timeoff.approve')) {
+    return;
+  }
+  if (req.user.role === 'Employee' && req.user.employeeId) {
+    if (request.manager_id && req.user.employeeId === request.manager_id) {
+      return;
+    }
+  }
+  throw new ForbiddenError(
+    'Only HR administrators or the direct reporting manager can approve or refuse this request',
+  );
+};

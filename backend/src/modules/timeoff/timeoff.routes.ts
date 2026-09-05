@@ -11,6 +11,8 @@ import {
   requireAnyPermission,
   requirePermission,
   requireEmployeeBodyAccess,
+  assertCanViewTimeOffRequest,
+  assertCanApproveTimeOffRequest,
 } from '../../shared/auth-middleware';
 
 const router = Router();
@@ -151,20 +153,7 @@ router.get(
   requireAnyPermission(['timeoff.read', 'timeoff.self.read']),
   asyncHandler(async (req, res) => {
     const request = await timeoffService.getRequestById(req.params.id);
-    // HR/Admin, owner, or direct manager can view
-    const isHrOrAdmin = [
-      'Admin',
-      'HR Manager',
-      'HR Payroll Manager',
-      'HR Payroll User',
-    ].includes(req.user?.role || '');
-
-    if (!isHrOrAdmin && req.user?.employeeId !== request.employee_id) {
-      if (req.user?.employeeId !== request.manager_id) {
-        res.status(403).json({ error: 'You are not authorized to view this request' });
-        return;
-      }
-    }
+    assertCanViewTimeOffRequest(req, request);
     res.json(request);
   }),
 );
@@ -184,8 +173,9 @@ router.post(
 router.post(
   '/requests/:id/approve',
   asyncHandler(async (req, res) => {
-    const user = req.user ? { id: req.user.id, role: req.user.role, employeeId: req.user.employeeId } : undefined;
-    const approved = await timeoffService.approveRequest(req.params.id, user);
+    const request = await timeoffService.getRequestById(req.params.id);
+    assertCanApproveTimeOffRequest(req, request);
+    const approved = await timeoffService.approveRequest(req.params.id, req.user?.id);
     res.json(approved);
   }),
 );
@@ -194,9 +184,10 @@ router.post(
 router.post(
   '/requests/:id/refuse',
   asyncHandler(async (req, res) => {
+    const request = await timeoffService.getRequestById(req.params.id);
+    assertCanApproveTimeOffRequest(req, request);
     const reason = req.body.reason as string | undefined;
-    const user = req.user ? { id: req.user.id, role: req.user.role, employeeId: req.user.employeeId } : undefined;
-    const refused = await timeoffService.refuseRequest(req.params.id, reason, user);
+    const refused = await timeoffService.refuseRequest(req.params.id, reason, req.user?.id);
     res.json(refused);
   }),
 );

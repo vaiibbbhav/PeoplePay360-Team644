@@ -8,7 +8,7 @@ import {
   Calendar,
   ArrowRight,
 } from 'lucide-react';
-import type { AttendanceRecord } from '@/features/employee/queries/useAttendance';
+import type { AttendanceRecord } from '../queries/useAttendance';
 
 import { formatTimeIST, formatDateIST } from '@/lib/formatters';
 

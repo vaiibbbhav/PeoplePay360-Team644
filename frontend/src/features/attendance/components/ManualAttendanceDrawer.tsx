@@ -5,7 +5,7 @@ import {
   useSaveManualAttendance,
   type AttendanceRecord,
   type SaveManualAttendancePayload,
-} from '@/features/employee/queries/useAttendance';
+} from '../queries/useAttendance';
 import { getTodayIST, formatDateIST } from '@/lib/formatters';
 
 type ManualAttendanceDrawerProps = {

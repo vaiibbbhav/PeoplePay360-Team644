@@ -113,33 +113,10 @@ export async function createRequest(data: Record<string, unknown>) {
   return await timeoffRepo.insertRequest(data);
 }
 
-export async function approveRequest(
-  id: string,
-  user?: { id: string; role: string; employeeId?: string },
-) {
+export async function approveRequest(id: string, approverUserId?: string) {
   const request = await getRequestById(id);
   if (request.status !== 'pending') {
     throw new ValidationError(`Cannot approve request with status '${request.status}'`);
-  }
-
-  // Authorization: Admin / HR or Direct Manager
-  const isHrOrAdmin = [
-    'Admin',
-    'HR Manager',
-    'HR Payroll Manager',
-    'HR Payroll User',
-  ].includes(user?.role || '');
-
-  if (!isHrOrAdmin) {
-    if (!user?.employeeId) {
-      throw new ForbiddenError('Insufficient permissions to approve leave requests');
-    }
-    const isManager = await timeoffRepo.isDirectManager(user.employeeId, request.employee_id);
-    if (!isManager) {
-      throw new ForbiddenError(
-        'Only HR administrators or the direct reporting manager can approve this request',
-      );
-    }
   }
 
   const type = await timeoffRepo.findTimeOffTypeById(request.time_off_type_id);
@@ -162,37 +139,13 @@ export async function approveRequest(
     allocationId = allocation.id;
   }
 
-  return await timeoffRepo.executeApproveRequestTx(id, allocationId, duration, user?.id);
+  return await timeoffRepo.executeApproveRequestTx(id, allocationId, duration, approverUserId);
 }
 
-export async function refuseRequest(
-  id: string,
-  reason?: string,
-  user?: { id: string; role: string; employeeId?: string },
-) {
+export async function refuseRequest(id: string, reason?: string, _approverUserId?: string) {
   const request = await getRequestById(id);
   if (request.status !== 'pending') {
     throw new ValidationError(`Cannot refuse request with status '${request.status}'`);
-  }
-
-  // Authorization: Admin / HR or Direct Manager
-  const isHrOrAdmin = [
-    'Admin',
-    'HR Manager',
-    'HR Payroll Manager',
-    'HR Payroll User',
-  ].includes(user?.role || '');
-
-  if (!isHrOrAdmin) {
-    if (!user?.employeeId) {
-      throw new ForbiddenError('Insufficient permissions to refuse leave requests');
-    }
-    const isManager = await timeoffRepo.isDirectManager(user.employeeId, request.employee_id);
-    if (!isManager) {
-      throw new ForbiddenError(
-        'Only HR administrators or the direct reporting manager can refuse this request',
-      );
-    }
   }
 
   return await timeoffRepo.refuseRequest(id, reason);

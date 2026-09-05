@@ -8,7 +8,7 @@ import {
   type AttendanceRecord,
 } from '../queries/useAttendance';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
-import { useFingerprintStatus } from '@/features/attendance/queries/useFingerprint';
+import { useFingerprintStatus } from '../queries/useFingerprint';
 import { AttendanceStatsHeader } from '../components/AttendanceStatsHeader';
 import { AttendanceCalendarGrid } from '../components/AttendanceCalendarGrid';
 import { AttendanceDetailCard } from '../components/AttendanceDetailCard';

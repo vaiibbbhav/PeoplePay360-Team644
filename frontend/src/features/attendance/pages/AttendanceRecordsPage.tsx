@@ -4,7 +4,7 @@ import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import {
   useAttendanceList,
   type AttendanceRecord,
-} from '@/features/employee/queries/useAttendance';
+} from '../queries/useAttendance';
 import { AttendanceSummaryCards } from '../components/AttendanceSummaryCards';
 import {
   AttendanceFilterToolbar,
@@ -12,7 +12,7 @@ import {
 } from '../components/AttendanceFilterToolbar';
 import { AttendanceRecordsTable } from '../components/AttendanceRecordsTable';
 import { ManualAttendanceDrawer } from '../components/ManualAttendanceDrawer';
-import { EmployeeAttendancePage } from '@/features/employee/pages/EmployeeAttendancePage';
+import { EmployeeAttendancePage } from './EmployeeAttendancePage';
 import { Users } from 'lucide-react';
 
 export const AttendanceRecordsPage: React.FC = () => {

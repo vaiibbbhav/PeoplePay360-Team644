@@ -238,7 +238,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     },
     {
       label: 'My Profile',
-      path: '/profile',
+      path: '/employees',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -299,7 +299,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     },
     {
       label: 'Org View',
-      path: '/employee/org-view',
+      path: '/organization',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -328,36 +328,26 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   ];
 
   const isEmployeeActive = (itemPath: string) => {
-    if (itemPath === '/employee/dashboard' || itemPath === '/dashboard') {
-      return (
-        (location.pathname === '/employee/dashboard' || location.pathname === '/dashboard') &&
-        (!location.hash || location.hash === '')
-      );
+    if (itemPath === '/dashboard') {
+      return location.pathname === '/dashboard' && (!location.hash || location.hash === '');
     }
     if (itemPath === '/attendance') {
       return location.pathname === '/attendance' || location.pathname === '/employee/attendance';
     }
-    if (itemPath === '/profile') {
-      return location.pathname === '/profile' || location.pathname.startsWith('/employees/');
-    }
     if (itemPath === '/employees') {
-      return location.pathname === '/employees';
+      return location.pathname.startsWith('/employees');
     }
     if (itemPath === '/compensation') {
       return location.pathname === '/compensation' || location.pathname.startsWith('/payslip');
     }
     if (itemPath === '/time-off') {
-      return location.pathname === '/time-off' || location.pathname.startsWith('/time-off');
+      return location.pathname.startsWith('/time-off');
     }
     if (itemPath === '/documents') {
-      return location.pathname === '/documents' || location.pathname === '/policies';
+      return location.pathname.startsWith('/documents');
     }
-    if (itemPath === '/time-off') {
-      return (
-        location.pathname === '/time-off' ||
-        location.pathname === '/employee/time-off' ||
-        location.pathname === '/timeoff'
-      );
+    if (itemPath === '/organization') {
+      return location.pathname === '/organization';
     }
     return location.pathname === itemPath;
   };

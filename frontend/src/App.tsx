@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './api/queryClient';
-import { LandingPage } from './pages/LandingPage';
+import { LandingPage } from './features/landing/pages/LandingPage';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { VerifyEmailPage } from './features/auth/pages/VerifyEmailPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { EmployeeAttendancePage } from './features/employee/pages/EmployeeAttendancePage';
+import { DashboardPage } from './features/dashboard/pages/DashboardPage';
+import { EmployeeAttendancePage } from './features/attendance/pages/EmployeeAttendancePage';
 import { AttendanceRecordsPage } from './features/attendance/pages/AttendanceRecordsPage';
 import { AttendanceTerminalPage } from './features/attendance/pages/AttendanceTerminalPage';
 import { UserManagementPage } from './features/users/pages/UserManagementPage';
@@ -45,12 +45,9 @@ export function App() {
 
           {/* Protected routes — all authenticated users */}
           <Route element={<ProtectedRoute />}>
-            {/* Dashboard & Portals */}
+            {/* Dashboard */}
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/dashboard/:section" element={<DashboardPage />} />
-            <Route path="/employee/dashboard" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/employee/dashboard/:section" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
 
             {/* Attendance */}
             <Route path="/attendance" element={<AttendanceRecordsPage />} />
@@ -59,9 +56,6 @@ export function App() {
 
             {/* Time Off */}
             <Route path="/time-off" element={<TimeOffPage />} />
-            <Route path="/timeoff" element={<Navigate to="/time-off" replace />} />
-            <Route path="/leaves" element={<Navigate to="/time-off" replace />} />
-            <Route path="/employee/time-off" element={<Navigate to="/time-off" replace />} />
 
             {/* Compensation & Individual Payslip View */}
             <Route path="/compensation" element={<CompensationPage />} />
@@ -69,26 +63,17 @@ export function App() {
 
             {/* Documents & Policies */}
             <Route path="/documents" element={<DocumentsPage />} />
-            <Route path="/policies" element={<Navigate to="/documents" replace />} />
-            <Route path="/employee/docs" element={<Navigate to="/documents" replace />} />
-            <Route path="/employee/documents" element={<Navigate to="/documents" replace />} />
 
             {/* Organization Chart */}
             <Route path="/organization" element={<OrgViewPage />} />
-            <Route path="/org-view" element={<OrgViewPage />} />
-            <Route path="/employee/org-view" element={<Navigate to="/org-view" replace />} />
 
             {/* Contracts & Work Schedules */}
             <Route path="/contracts" element={<ContractsPage />} />
             <Route path="/schedules" element={<SchedulesPage />} />
-            <Route path="/working-schedules" element={<Navigate to="/schedules" replace />} />
 
             {/* Employees */}
             <Route path="/employees" element={<EmployeeDirectoryPage />} />
             <Route path="/employees/:id" element={<EmployeeProfilePage />} />
-            <Route path="/employee/profile" element={<EmployeeProfilePage />} />
-            <Route path="/profile" element={<EmployeeProfilePage />} />
-            <Route path="/employee/:id" element={<EmployeeProfilePage />} />
           </Route>
 
           {/* Payslips registry — HR Manager, Payroll roles, Admin */}
