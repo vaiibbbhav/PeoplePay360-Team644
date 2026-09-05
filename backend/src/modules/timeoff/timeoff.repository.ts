@@ -1,5 +1,5 @@
 import { db } from '../../shared/db';
-import { timeOffTypes, timeOffAllocations, timeOffRequests, employees } from '../../db/schema';
+import { timeOffTypes, timeOffAllocations, timeOffRequests } from '../../db/schema';
 import { eq, and, lte, gte, gt, desc } from 'drizzle-orm';
 
 export async function findAllTimeOffTypes() {
@@ -49,7 +49,9 @@ export async function findAllAllocations(employeeId?: string) {
     .leftJoin(timeOffTypes, eq(timeOffAllocations.timeOffTypeId, timeOffTypes.id));
 
   if (employeeId) {
-    return await query.where(eq(timeOffAllocations.employeeId, employeeId)).orderBy(desc(timeOffAllocations.createdAt));
+    return await query
+      .where(eq(timeOffAllocations.employeeId, employeeId))
+      .orderBy(desc(timeOffAllocations.createdAt));
   }
   return await query.orderBy(desc(timeOffAllocations.createdAt));
 }
@@ -91,8 +93,8 @@ export async function findValidAllocation(employeeId: string, typeId: string, da
         eq(timeOffAllocations.status, 'approved'),
         lte(timeOffAllocations.validFrom, dateStr),
         gte(timeOffAllocations.validTo, dateStr),
-        gt(timeOffAllocations.remainingAmount, '0')
-      )
+        gt(timeOffAllocations.remainingAmount, '0'),
+      ),
     )
     .orderBy(timeOffAllocations.validTo)
     .limit(1);
@@ -152,7 +154,9 @@ export async function findAllRequests(employeeId?: string) {
     .leftJoin(timeOffTypes, eq(timeOffRequests.timeOffTypeId, timeOffTypes.id));
 
   if (employeeId) {
-    return await query.where(eq(timeOffRequests.employeeId, employeeId)).orderBy(desc(timeOffRequests.startDate));
+    return await query
+      .where(eq(timeOffRequests.employeeId, employeeId))
+      .orderBy(desc(timeOffRequests.startDate));
   }
   return await query.orderBy(desc(timeOffRequests.startDate));
 }
@@ -203,7 +207,7 @@ export async function executeApproveRequestTx(
   requestId: string,
   allocationId: string | null,
   duration: number,
-  approverId?: string
+  approverId?: string,
 ) {
   return await db.transaction(async (tx) => {
     if (allocationId) {

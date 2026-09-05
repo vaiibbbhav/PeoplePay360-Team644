@@ -14,7 +14,10 @@ const config: PoolConfig = {
   connectionTimeoutMillis: 10000,
 };
 
-if (connectionString && (connectionString.includes('neon.tech') || connectionString.includes('sslmode=require'))) {
+if (
+  connectionString &&
+  (connectionString.includes('neon.tech') || connectionString.includes('sslmode=require'))
+) {
   config.ssl = {
     rejectUnauthorized: false,
   };
