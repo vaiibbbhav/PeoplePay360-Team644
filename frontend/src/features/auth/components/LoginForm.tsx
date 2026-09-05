@@ -51,7 +51,7 @@ export const LoginForm: React.FC = () => {
       if (res?.user?.role) {
         navigate(getDefaultPathForRole(res.user.role));
       } else {
-        navigate('/employee/dashboard');
+        navigate('/dashboard');
       }
     } catch (err: any) {
       const errorCode = err.response?.data?.code;
@@ -210,7 +210,10 @@ export const LoginForm: React.FC = () => {
             </div>
           </div>
         ) : errorMessage ? (
-          <div className="px-3.5 py-3 rounded-lg border border-red-500/30 text-red-600 dark:text-red-400 text-xs bg-red-500/10">
+          <div
+            role="alert"
+            className="px-3.5 py-3 rounded-lg border border-red-500/30 text-red-600 dark:text-red-400 text-xs bg-red-500/10"
+          >
             {errorMessage}
           </div>
         ) : null}

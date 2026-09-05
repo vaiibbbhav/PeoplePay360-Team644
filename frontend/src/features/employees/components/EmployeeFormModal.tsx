@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
 import type {
   EmployeeHubDetails,
   EmployeeMetaOptions,
@@ -23,6 +24,7 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
   onSave,
   isSaving,
 }) => {
+  const dialogRef = useDialogAccessibility({ isOpen, onClose });
   const [activeSubTab, setActiveSubTab] = useState<'personal' | 'employment'>('personal');
 
   // Form states
@@ -103,7 +105,14 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-ink/40 backdrop-blur-xs">
-      <div className="bg-bg border border-line rounded-2xl w-full max-w-4xl overflow-hidden flex flex-col h-[700px] max-h-[92vh] shadow-lg">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={employee ? 'Edit employee' : 'Add employee'}
+        tabIndex={-1}
+        className="bg-bg border border-line rounded-2xl w-full max-w-4xl overflow-hidden flex flex-col h-[700px] max-h-[92vh] shadow-lg"
+      >
         {/* Modal Top Bar */}
         <div className="px-6 mt-2 flex items-center justify-between bg-bg">
           <div className="flex items-center gap-8 -mb-px">

@@ -68,11 +68,7 @@ export const LandingPage: React.FC = () => {
     : '';
 
   const dashboardPath =
-    user?.role === 'Employee'
-      ? '/employee/dashboard'
-      : user?.role === 'Admin'
-        ? '/users'
-        : '/dashboard';
+    user?.role === 'Employee' ? '/dashboard' : user?.role === 'Admin' ? '/users' : '/dashboard';
 
   return (
     <div className="min-h-screen bg-bg text-ink">

@@ -104,7 +104,10 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
           {isLoading ? (
             [0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="p-3 rounded-xl border border-line bg-bg-raised/40 space-y-2 flex flex-col items-center justify-center">
+              <div
+                key={i}
+                className="p-3 rounded-xl border border-line bg-bg-raised/40 space-y-2 flex flex-col items-center justify-center"
+              >
                 <div className="h-2.5 w-14 bg-ink/10 rounded animate-pulse" />
                 <div className="h-6 w-10 bg-ink/10 rounded animate-pulse" />
               </div>
@@ -153,9 +156,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <div>
-                <h3 className="font-sans text-base font-semibold text-ink">
-                  Employment Contracts
-                </h3>
+                <h3 className="font-sans text-base font-semibold text-ink">Employment Contracts</h3>
                 <p className="text-xs text-ink-soft mt-0.5">
                   Period-based binding agreements & status
                 </p>
@@ -200,12 +201,18 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
                   <div className="flex flex-col">
                     <span className="font-semibold text-ink">{c.employee_name || c.name}</span>
                     <span className="text-[11px] text-ink-soft">
-                      Starts: {new Date(c.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      Starts:{' '}
+                      {new Date(c.start_date).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-ink text-[11px]">
-                      ₹{Number(c.wage).toLocaleString('en-IN')}/{c.wage_type === 'hourly' ? 'hr' : 'mo'}
+                      ₹{Number(c.wage).toLocaleString('en-IN')}/
+                      {c.wage_type === 'hourly' ? 'hr' : 'mo'}
                     </span>
                     <span
                       className={`text-[10px] px-2 py-0.5 rounded-full border ${
@@ -238,9 +245,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <div>
-                <h3 className="font-sans text-base font-semibold text-ink">
-                  Working Schedules
-                </h3>
+                <h3 className="font-sans text-base font-semibold text-ink">Working Schedules</h3>
                 <p className="text-xs text-ink-soft mt-0.5">
                   Shift patterns, daily hours & break policies
                 </p>
@@ -278,9 +283,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
                 >
                   <div className="flex flex-col">
                     <span className="font-semibold text-ink">{s.name}</span>
-                    <span className="text-[11px] text-ink-soft">
-                      Weekly standard allocation
-                    </span>
+                    <span className="text-[11px] text-ink-soft">Weekly standard allocation</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-semibold text-accent text-xs">
@@ -410,7 +413,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
           </Link>
 
           <Link
-            to="/employee/org-view"
+            to="/organization"
             className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
           >
             <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">

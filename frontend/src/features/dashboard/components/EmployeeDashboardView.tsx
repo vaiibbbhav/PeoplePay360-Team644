@@ -19,7 +19,7 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
       title: 'Attendance & Punches',
       desc: 'Check-in, check-out logs, daily attendance history, and punch terminal.',
       tag: 'Time & Attendance',
-      link: '/attendance',
+      link: '/attendance/my',
     },
     {
       id: 'time-off',
@@ -40,21 +40,21 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
       title: 'My Profile',
       desc: 'Personal details, emergency contacts, and employment history.',
       tag: 'Account',
-      link: '/profile',
+      link: '/employees',
     },
     {
       id: 'team',
       title: 'Org View & Directory',
       desc: 'Visual reporting hierarchy, leadership tree, and team rosters.',
       tag: 'Organization',
-      link: '/employee/org-view',
+      link: '/organization',
     },
     {
       id: 'documents',
       title: 'Policies & Documents',
       desc: 'Mandatory company policies, code of conduct, and compliance acknowledgments.',
       tag: 'Compliance',
-      link: '/employee/docs',
+      link: '/documents',
     },
     {
       id: 'contracts',
@@ -71,7 +71,6 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
       link: '/schedules',
     },
   ];
-
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 font-sans">
@@ -107,7 +106,8 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
                 </span>
               </div>
               <p className="text-xs text-ink-soft mt-0.5">
-                Your profile does not have an enrolled fingerprint. Register now to enable one-touch biometric check-in & check-out.
+                Your profile does not have an enrolled fingerprint. Register now to enable one-touch
+                biometric check-in & check-out.
               </p>
             </div>
           </div>
@@ -125,9 +125,7 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
         <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-xs text-ink-soft font-medium">Session Role</span>
           <div className="text-base font-semibold text-ink mt-1">{user.role}</div>
-          <span className="text-[11px] text-accent font-medium mt-1 block">
-            Active Workspace
-          </span>
+          <span className="text-[11px] text-accent font-medium mt-1 block">Active Workspace</span>
         </div>
         <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-xs text-ink-soft font-medium">Employment Contract</span>

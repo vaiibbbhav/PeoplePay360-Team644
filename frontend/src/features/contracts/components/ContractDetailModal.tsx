@@ -1,4 +1,5 @@
 import React from 'react';
+import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
 import type { ContractItem } from '../queries/useContracts';
 
 type ContractDetailModalProps = {
@@ -12,6 +13,7 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
   onClose,
   onEdit,
 }) => {
+  const dialogRef = useDialogAccessibility({ isOpen: Boolean(contract), onClose });
   if (!contract) return null;
 
   const formatDate = (val?: string | null) => {
@@ -35,11 +37,21 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs font-sans">
-      <div className="bg-bg border border-line rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="contract-detail-title"
+        tabIndex={-1}
+        className="bg-bg border border-line rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+      >
         {/* Header */}
         <div className="px-6 py-5 border-b border-line flex items-center justify-between bg-bg-raised/30">
           <div>
-            <h2 className="font-sans text-xl font-bold text-ink mt-0.5 mb-0">
+            <h2
+              id="contract-detail-title"
+              className="font-sans text-xl font-bold text-ink mt-0.5 mb-0"
+            >
               {contract.name}
             </h2>
           </div>

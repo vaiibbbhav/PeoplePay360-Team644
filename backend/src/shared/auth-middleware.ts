@@ -119,8 +119,6 @@ export const requireEmployeeRead = (req: Request, res: Response, next: NextFunct
   return requirePermission('employee.read')(req, res, next);
 };
 
-// Generic authorization primitive: permits access if user has the RBAC permission
-// OR if the authenticated user is the owner of the resource
 export const assertOwnerOrPermission = (
   req: Request,
   ownerEmployeeId: string,
@@ -133,8 +131,6 @@ export const assertOwnerOrPermission = (
   throw new ForbiddenError(errorMessage);
 };
 
-// Generic authorization primitive: permits access if user has the RBAC permission
-// OR if the authenticated user is the direct manager of the resource owner
 export const assertManagerOrPermission = (
   req: Request,
   managerEmployeeId: string | null | undefined,

@@ -68,7 +68,7 @@ export function App() {
             {/* Attendance */}
             <Route path="/attendance" element={<AttendanceRecordsPage />} />
             <Route path="/attendance/terminal" element={<AttendanceTerminalPage />} />
-            <Route path="/employee/attendance" element={<EmployeeAttendancePage />} />
+            <Route path="/attendance/my" element={<EmployeeAttendancePage />} />
 
             {/* Time Off */}
             <Route path="/time-off" element={<TimeOffPage />} />

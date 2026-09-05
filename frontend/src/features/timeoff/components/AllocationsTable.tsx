@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Plus, Check, Calendar, ShieldCheck, AlertCircle } from 'lucide-react';
-import {
-  useTimeOffAllocations,
-  useApproveAllocation,
-} from '../queries/useTimeOff';
+import { useTimeOffAllocations, useApproveAllocation } from '../queries/useTimeOff';
 import { GrantAllocationModal } from './GrantAllocationModal';
+import { InlineAlert } from '@/components/ui/InlineAlert';
 
 type AllocationsTableProps = {
   canManage?: boolean;
@@ -14,12 +12,14 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
   const { data: allocations = [], isLoading } = useTimeOffAllocations();
   const approveMutation = useApproveAllocation();
   const [isGrantModalOpen, setIsGrantModalOpen] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const handleApprove = async (id: string) => {
     try {
+      setActionError(null);
       await approveMutation.mutateAsync(id);
     } catch (err: unknown) {
-      alert(
+      setActionError(
         (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
           'Failed to approve allocation.',
       );
@@ -49,6 +49,8 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
         )}
       </div>
 
+      {actionError && <InlineAlert>{actionError}</InlineAlert>}
+
       {isLoading ? (
         <div className="border border-line rounded-2xl p-12 text-center bg-bg">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-2" />
@@ -61,7 +63,8 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
           </div>
           <h4 className="font-sans text-base font-medium text-ink">No Allocations Recorded</h4>
           <p className="text-xs text-ink-soft max-w-sm mx-auto mt-1">
-            Assign annual vacation, sick, and personal leave days to employees using the button above.
+            Assign annual vacation, sick, and personal leave days to employees using the button
+            above.
           </p>
         </div>
       ) : (
@@ -159,10 +162,7 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
         </div>
       )}
 
-      <GrantAllocationModal
-        isOpen={isGrantModalOpen}
-        onClose={() => setIsGrantModalOpen(false)}
-      />
+      <GrantAllocationModal isOpen={isGrantModalOpen} onClose={() => setIsGrantModalOpen(false)} />
     </div>
   );
 };

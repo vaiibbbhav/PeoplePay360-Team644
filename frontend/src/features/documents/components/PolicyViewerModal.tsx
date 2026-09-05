@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
 import type { Policy } from '../queries/useDocuments';
 
 type PolicyViewerModalProps = {
@@ -17,6 +18,7 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
   isAccepting = false,
 }) => {
   const [agreedPolicyId, setAgreedPolicyId] = useState<string | null>(null);
+  const dialogRef = useDialogAccessibility({ isOpen, onClose });
 
   if (!isOpen || !policy) return null;
 
@@ -66,7 +68,14 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/40 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col bg-bg-raised border border-line rounded-2xl shadow-xl overflow-hidden">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Policy: ${policy.title}`}
+        tabIndex={-1}
+        className="relative w-full max-w-3xl max-h-[90vh] flex flex-col bg-bg-raised border border-line rounded-2xl shadow-xl overflow-hidden"
+      >
         {/* Modal Topbar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-line bg-bg">
           <div className="flex items-center gap-2">

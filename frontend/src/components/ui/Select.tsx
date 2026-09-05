@@ -4,6 +4,7 @@ import React, {
   useState,
   useRef,
   useEffect,
+  useId,
   type ReactNode,
 } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
@@ -17,6 +18,9 @@ type SelectContextType = {
   setSelectedLabel: React.Dispatch<React.SetStateAction<ReactNode>>;
   placeholder?: string;
   setPlaceholder: React.Dispatch<React.SetStateAction<string | undefined>>;
+  listboxId: string;
+  listboxRef: React.RefObject<HTMLDivElement | null>;
+  focusFirstOption: () => void;
 };
 
 const SelectContext = createContext<SelectContextType | undefined>(undefined);
@@ -48,6 +52,9 @@ export const Select: React.FC<SelectProps> = ({
   const [open, setOpen] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState<ReactNode>(null);
   const [placeholder, setPlaceholder] = useState<string | undefined>(undefined);
+  const [focusRequest, setFocusRequest] = useState(0);
+  const listboxId = useId();
+  const listboxRef = useRef<HTMLDivElement>(null);
 
   const isControlled = controlledValue !== undefined;
   const currentValue = isControlled ? controlledValue : internalValue;
@@ -58,6 +65,10 @@ export const Select: React.FC<SelectProps> = ({
     }
     onValueChange?.(val);
     setOpen(false);
+  };
+
+  const focusFirstOption = () => {
+    setFocusRequest((request) => request + 1);
   };
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -76,6 +87,14 @@ export const Select: React.FC<SelectProps> = ({
     };
   }, [open]);
 
+  useEffect(() => {
+    if (open && focusRequest > 0) {
+      listboxRef.current
+        ?.querySelector<HTMLButtonElement>('[role="option"]:not(:disabled)')
+        ?.focus();
+    }
+  }, [focusRequest, open]);
+
   return (
     <SelectContext.Provider
       value={{
@@ -87,6 +106,9 @@ export const Select: React.FC<SelectProps> = ({
         setSelectedLabel,
         placeholder,
         setPlaceholder,
+        listboxId,
+        listboxRef,
+        focusFirstOption,
       }}
     >
       <div ref={containerRef} className={`relative inline-block text-left ${className}`}>
@@ -109,7 +131,14 @@ export const SelectTrigger: React.FC<SelectTriggerProps> = ({
   id,
   disabled = false,
 }) => {
-  const { open, setOpen } = useSelect();
+  const { open, setOpen, listboxId, focusFirstOption } = useSelect();
+
+  const openWithKeyboard = () => {
+    if (!open) {
+      setOpen(true);
+    }
+    focusFirstOption();
+  };
 
   return (
     <button
@@ -117,9 +146,17 @@ export const SelectTrigger: React.FC<SelectTriggerProps> = ({
       type="button"
       disabled={disabled}
       onClick={() => setOpen((prev) => !prev)}
+      onKeyDown={(event) => {
+        if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openWithKeyboard();
+        }
+        if (event.key === 'Escape') setOpen(false);
+      }}
       className={`flex items-center justify-between gap-2 px-3.5 py-2 text-xs rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-accent hover:border-line-strong transition-all cursor-pointer select-none disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       aria-haspopup="listbox"
       aria-expanded={open}
+      aria-controls={open ? listboxId : undefined}
     >
       {children}
       <ChevronDown
@@ -162,7 +199,7 @@ export const SelectContent: React.FC<SelectContentProps> = ({
   className = '',
   align = 'start',
 }) => {
-  const { open } = useSelect();
+  const { open, listboxId, listboxRef, setOpen } = useSelect();
 
   if (!open) return null;
 
@@ -172,7 +209,15 @@ export const SelectContent: React.FC<SelectContentProps> = ({
   return (
     <div
       role="listbox"
+      id={listboxId}
+      ref={listboxRef}
       tabIndex={-1}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          setOpen(false);
+        }
+      }}
       className={`absolute z-50 mt-1.5 min-w-[160px] max-h-60 w-full overflow-auto rounded-xl border border-line bg-bg p-1 text-xs shadow-lg ring-1 ring-black/5 dark:ring-white/5 focus:outline-none font-sans ${alignClasses} ${className}`}
     >
       {children}
@@ -203,23 +248,23 @@ export const SelectItem: React.FC<SelectItemProps> = ({
   }, [isSelected, children, setSelectedLabel]);
 
   return (
-    <div
+    <button
+      type="button"
       role="option"
       aria-selected={isSelected}
+      disabled={disabled}
       onClick={() => {
         if (!disabled) {
           onValueChange?.(value);
           setSelectedLabel(children);
         }
       }}
-      className={`relative flex items-center justify-between px-3 py-2 rounded-lg text-xs cursor-pointer select-none transition-colors ${
-        isSelected
-          ? 'bg-accent/10 text-accent font-medium'
-          : 'text-ink hover:bg-bg-raised'
+      className={`relative flex w-full items-center justify-between px-3 py-2 rounded-lg text-left text-xs cursor-pointer select-none transition-colors ${
+        isSelected ? 'bg-accent/10 text-accent font-medium' : 'text-ink hover:bg-bg-raised'
       } ${disabled ? 'opacity-40 cursor-not-allowed' : ''} ${className}`}
     >
       <span className="truncate">{children}</span>
       {isSelected && <Check className="w-3.5 h-3.5 text-accent shrink-0 ml-2" />}
-    </div>
+    </button>
   );
 };
