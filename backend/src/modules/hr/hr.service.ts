@@ -64,3 +64,31 @@ export async function getEmployeesForKanban() {
 
   return grouped;
 }
+
+export async function getMetadataOptions() {
+  const [departmentsList, jobPositionsList, schedulesList, employeesList] = await Promise.all([
+    hrRepo.findAllDepartments(),
+    hrRepo.findAllJobPositions(),
+    hrRepo.findAllWorkingSchedules(),
+    hrRepo.findAllEmployees(),
+  ]);
+
+  return {
+    departments: departmentsList.map((d) => ({ id: d.id, name: d.name })),
+    jobPositions: jobPositionsList.map((j) => ({
+      id: j.id,
+      title: j.title,
+      departmentId: j.departmentId,
+    })),
+    workingSchedules: schedulesList.map((s) => ({
+      id: s.id,
+      name: s.name,
+      weeklyHours: s.weeklyHours,
+    })),
+    managers: employeesList.map((e) => ({
+      id: e.id,
+      name: `${e.first_name} ${e.last_name}`,
+      email: e.email,
+    })),
+  };
+}

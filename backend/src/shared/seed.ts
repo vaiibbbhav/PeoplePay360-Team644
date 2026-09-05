@@ -68,10 +68,7 @@ export const seedDatabase = async (): Promise<void> => {
       if (existingDept.length > 0) {
         deptMap[name] = existingDept[0].id;
       } else {
-        const [inserted] = await db
-          .insert(schema.departments)
-          .values({ name })
-          .returning();
+        const [inserted] = await db.insert(schema.departments).values({ name }).returning();
         deptMap[name] = inserted.id;
       }
     }
@@ -158,6 +155,16 @@ export const seedDatabase = async (): Promise<void> => {
 
       if (existingEmp.length > 0) {
         employeeId = existingEmp[0].id;
+        await db
+          .update(schema.employees)
+          .set({
+            bankName: 'HDFC Bank',
+            bankAccountNumber: '50100492819283',
+            bankRoutingCode: 'HDFC0001234',
+            identificationNumber: 'ABCDE1234F',
+            employmentStatus: 'active',
+          })
+          .where(eq(schema.employees.id, employeeId));
       } else {
         const [newEmp] = await db
           .insert(schema.employees)
@@ -168,6 +175,10 @@ export const seedDatabase = async (): Promise<void> => {
             departmentId: emp.departmentId,
             workingScheduleId: scheduleId,
             employmentStatus: 'active',
+            bankName: 'HDFC Bank',
+            bankAccountNumber: '50100492819283',
+            bankRoutingCode: 'HDFC0001234',
+            identificationNumber: 'ABCDE1234F',
           })
           .returning();
         employeeId = newEmp.id;
@@ -201,7 +212,211 @@ export const seedDatabase = async (): Promise<void> => {
       }
     }
 
-    console.info(`✅ Seeded ${sampleEmployees.length} sample employee accounts (password: ${staffPassword})`);
+    // 7. Seed Salary Structure & Rules
+    let salaryStructureId: string;
+    const existingStructure = await db
+      .select()
+      .from(schema.salaryStructures)
+      .where(eq(schema.salaryStructures.code, 'STD_TECH_2026'))
+      .limit(1);
+
+    if (existingStructure.length > 0) {
+      salaryStructureId = existingStructure[0].id;
+    } else {
+      const [newStructure] = await db
+        .insert(schema.salaryStructures)
+        .values({
+          name: 'Standard Full-Time Compensation Structure',
+          code: 'STD_TECH_2026',
+          description: 'Standard tech and corporate compensation package for FY 2026-27',
+          isActive: true,
+        })
+        .returning();
+      salaryStructureId = newStructure.id;
+
+      const rulesToSeed = [
+        {
+          structureId: salaryStructureId,
+          code: 'BASIC',
+          name: 'Basic Salary',
+          category: 'basic',
+          sequence: 10,
+          computationMethod: 'percentage',
+          percentage: '50.00',
+          percentageOfCode: 'contractWage',
+        },
+        {
+          structureId: salaryStructureId,
+          code: 'HRA',
+          name: 'House Rent Allowance (HRA)',
+          category: 'allowance',
+          sequence: 20,
+          computationMethod: 'percentage',
+          percentage: '50.00',
+          percentageOfCode: 'BASIC',
+        },
+        {
+          structureId: salaryStructureId,
+          code: 'SPECIAL_ALLOWANCE',
+          name: 'Special Allowance',
+          category: 'allowance',
+          sequence: 30,
+          computationMethod: 'percentage',
+          percentage: '30.00',
+          percentageOfCode: 'BASIC',
+        },
+        {
+          structureId: salaryStructureId,
+          code: 'CONVEYANCE',
+          name: 'Conveyance Allowance',
+          category: 'allowance',
+          sequence: 40,
+          computationMethod: 'fixed',
+          amount: '1600.00',
+        },
+        {
+          structureId: salaryStructureId,
+          code: 'MEDICAL',
+          name: 'Medical Allowance',
+          category: 'allowance',
+          sequence: 50,
+          computationMethod: 'fixed',
+          amount: '1250.00',
+        },
+        {
+          structureId: salaryStructureId,
+          code: 'GROSS',
+          name: 'Gross Earnings',
+          category: 'gross',
+          sequence: 100,
+          computationMethod: 'formula',
+          formula: 'BASIC + HRA + SPECIAL_ALLOWANCE + CONVEYANCE + MEDICAL',
+        },
+        {
+          structureId: salaryStructureId,
+          code: 'PF_EMP',
+          name: 'Provident Fund (Employee PF)',
+          category: 'deduction',
+          sequence: 110,
+          computationMethod: 'percentage',
+          percentage: '12.00',
+          percentageOfCode: 'BASIC',
+        },
+        {
+          structureId: salaryStructureId,
+          code: 'PROF_TAX',
+          name: 'Professional Tax (PT)',
+          category: 'deduction',
+          sequence: 120,
+          computationMethod: 'fixed',
+          amount: '200.00',
+        },
+        {
+          structureId: salaryStructureId,
+          code: 'TDS',
+          name: 'Income Tax (TDS)',
+          category: 'deduction',
+          sequence: 130,
+          computationMethod: 'fixed',
+          amount: '2500.00',
+        },
+        {
+          structureId: salaryStructureId,
+          code: 'TOTAL_DEDUCTIONS',
+          name: 'Total Deductions',
+          category: 'deduction',
+          sequence: 190,
+          computationMethod: 'formula',
+          formula: 'PF_EMP + PROF_TAX + TDS',
+        },
+        {
+          structureId: salaryStructureId,
+          code: 'NET',
+          name: 'Net Payable Salary',
+          category: 'net',
+          sequence: 200,
+          computationMethod: 'formula',
+          formula: 'GROSS - TOTAL_DEDUCTIONS',
+        },
+      ];
+
+      for (const r of rulesToSeed) {
+        await db.insert(schema.salaryRules).values(r);
+      }
+    }
+    console.info('✅ Salary Structure & Rules verified: STD_TECH_2026');
+
+    // 8. Seed Employee Contracts
+    const employeeList = await db.select().from(schema.employees);
+    const wages: Record<string, string> = {
+      'aarav@company.com': '90000.00',
+      'maya@company.com': '85000.00',
+      'rohan@company.com': '75000.00',
+      'nisha@company.com': '120000.00',
+    };
+
+    for (const emp of employeeList) {
+      const existingContract = await db
+        .select()
+        .from(schema.contracts)
+        .where(eq(schema.contracts.employeeId, emp.id))
+        .limit(1);
+
+      if (existingContract.length === 0) {
+        const wage = wages[emp.email] || '80000.00';
+        await db.insert(schema.contracts).values({
+          employeeId: emp.id,
+          name: `${emp.firstName} ${emp.lastName} - FY26 Employment Contract`,
+          wage,
+          wageType: 'monthly',
+          salaryStructureId,
+          workingScheduleId: scheduleId,
+          departmentId: emp.departmentId,
+          startDate: '2026-04-01',
+          status: 'active',
+          notes: 'Standard permanent full-time employment agreement',
+        });
+      }
+    }
+    console.info('✅ Employee Contracts verified');
+
+    // 9. Seed Payruns & Payslips (June, July, August 2026)
+    const periods = [
+      { name: 'June 2026 Regular Payrun', start: '2026-06-01', end: '2026-06-30' },
+      { name: 'July 2026 Regular Payrun', start: '2026-07-01', end: '2026-07-31' },
+      { name: 'August 2026 Regular Payrun', start: '2026-08-01', end: '2026-08-31' },
+    ];
+
+    for (const p of periods) {
+      const existingPayrun = await db
+        .select()
+        .from(schema.payruns)
+        .where(eq(schema.payruns.periodStart, p.start))
+        .limit(1);
+
+      if (existingPayrun.length === 0) {
+        const empIds = employeeList.map((e) => e.id);
+        const { createPayrunWizard, validatePayrun, markPayrunPaid } =
+          await import('../modules/payroll/payroll.service');
+
+        const created = await createPayrunWizard({
+          name: p.name,
+          salaryStructureId,
+          periodStart: p.start,
+          periodEnd: p.end,
+          employeeIds: empIds,
+          notes: `Monthly regular payroll processing for ${p.name}`,
+        });
+
+        await validatePayrun(created.id);
+        await markPayrunPaid(created.id);
+        console.info(`✅ Seeded and finalized payrun: ${p.name}`);
+      }
+    }
+
+    console.info(
+      `✅ Seeded ${sampleEmployees.length} sample employee accounts (password: ${staffPassword})`,
+    );
     console.info('🎉 Seeding completed successfully!');
   } catch (error) {
     console.error('❌ Seeding failed:', error);

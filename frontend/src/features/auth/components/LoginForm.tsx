@@ -42,7 +42,11 @@ export const LoginForm: React.FC = () => {
         navigate('/dashboard');
       }
     } catch (err: any) {
-      const msg = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to sign in';
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to sign in';
       setErrorMessage(msg);
     }
   };
@@ -61,7 +65,11 @@ export const LoginForm: React.FC = () => {
         navigate('/dashboard');
       }
     } catch (err: any) {
-      const msg = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to sign in';
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to sign in';
       setErrorMessage(msg);
       setActiveRoleLogin(null);
     }
@@ -145,7 +153,8 @@ export const LoginForm: React.FC = () => {
       </div>
 
       <div className="mt-5 pt-4 border-t border-line text-center text-[11px] text-ink-soft leading-relaxed">
-        Accounts are provisioned by your system administrator. Contact your HR or IT department to request access.
+        Accounts are provisioned by your system administrator. Contact your HR or IT department to
+        request access.
       </div>
     </div>
   );

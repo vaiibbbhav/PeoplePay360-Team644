@@ -3,15 +3,12 @@ import { queryClient } from './queryClient';
 
 export const API_URL = import.meta.env.VITE_API_URL;
 
-const PUBLIC_PAGES = [
-  '/',
-  '/login',
-  '/forgot-password',
-  '/reset-password',
-];
+const PUBLIC_PAGES = ['/', '/login', '/forgot-password', '/reset-password'];
 
 export const isAuthPage = (): boolean =>
-  PUBLIC_PAGES.some((path) => window.location.pathname === path || window.location.pathname.startsWith(`${path}/`));
+  PUBLIC_PAGES.some(
+    (path) => window.location.pathname === path || window.location.pathname.startsWith(`${path}/`),
+  );
 
 /**
  * Public client for unauthenticated endpoints (login, register, public landing).
@@ -21,7 +18,6 @@ export const publicApi = axios.create({
   withCredentials: true,
   timeout: 30000,
 });
-
 
 /**
  * Primary authenticated client for protected operations.
@@ -55,8 +51,7 @@ const handleRateLimitAndErrors = async (error: AxiosError<{ error?: string }>) =
   const status = error.response?.status;
 
   if (status === 429) {
-    const message =
-      error.response?.data?.error || 'Too many requests. Please try again later.';
+    const message = error.response?.data?.error || 'Too many requests. Please try again later.';
     console.warn('[RateLimit]', message);
 
     if (!isAuthPage()) {
@@ -73,7 +68,8 @@ const handleRateLimitAndErrors = async (error: AxiosError<{ error?: string }>) =
 api.interceptors.response.use(
   handleResponseSuccess,
   async (error: AxiosError<{ error?: string }>) => {
-    const originalRequest = error.config as (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
+    const originalRequest = error.config as
+      (InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
 
     if (!originalRequest) {
       return handleRateLimitAndErrors(error);
@@ -99,8 +95,7 @@ api.interceptors.response.use(
     }
 
     return handleRateLimitAndErrors(error);
-  }
+  },
 );
 
 publicApi.interceptors.response.use(handleResponseSuccess, handleRateLimitAndErrors);
-

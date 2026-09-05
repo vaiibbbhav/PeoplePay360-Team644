@@ -19,7 +19,7 @@ interface UserFormPanelProps {
       role?: UserRole;
       employeeId?: string | null;
       isActive?: boolean;
-    }
+    },
   ) => Promise<void>;
   onCancel: () => void;
   isSaving: boolean;
@@ -124,7 +124,7 @@ export const UserFormPanel: React.FC<UserFormPanelProps> = ({
       }
       if (!isPasswordValid) {
         setErrorMessage(
-          'Password must satisfy all criteria: 8+ characters, 1 uppercase, 1 number, and 1 symbol.'
+          'Password must satisfy all criteria: 8+ characters, 1 uppercase, 1 number, and 1 symbol.',
         );
         return;
       }
@@ -141,14 +141,14 @@ export const UserFormPanel: React.FC<UserFormPanelProps> = ({
         setPassword('');
       } catch (err: any) {
         setErrorMessage(
-          err.response?.data?.message || err.message || 'Failed to create user account.'
+          err.response?.data?.message || err.message || 'Failed to create user account.',
         );
       }
     } else {
       // Validation for Edit
       if (password && !isPasswordValid) {
         setErrorMessage(
-          'New password must satisfy all criteria: 8+ characters, 1 uppercase, 1 number, and 1 symbol.'
+          'New password must satisfy all criteria: 8+ characters, 1 uppercase, 1 number, and 1 symbol.',
         );
         return;
       }
@@ -164,7 +164,7 @@ export const UserFormPanel: React.FC<UserFormPanelProps> = ({
         setPassword('');
       } catch (err: any) {
         setErrorMessage(
-          err.response?.data?.message || err.message || 'Failed to update user access.'
+          err.response?.data?.message || err.message || 'Failed to update user access.',
         );
       }
     }
@@ -212,9 +212,7 @@ export const UserFormPanel: React.FC<UserFormPanelProps> = ({
       <form onSubmit={handleSubmit} className="flex flex-col gap-4.5 flex-1 overflow-y-auto pr-1">
         {/* Linked Employee */}
         <div>
-          <label className="block text-xs font-medium text-ink mb-1.5">
-            Link Employee Profile
-          </label>
+          <label className="block text-xs font-medium text-ink mb-1.5">Link Employee Profile</label>
           <select
             value={selectedEmployeeId}
             onChange={(e) => handleEmployeeChange(e.target.value)}
@@ -280,7 +278,9 @@ export const UserFormPanel: React.FC<UserFormPanelProps> = ({
           <div className="mt-2 p-2.5 rounded-lg bg-bg-raised/50 border border-line grid grid-cols-2 gap-1.5 text-[11px]">
             <div
               className={`flex items-center gap-1.5 ${
-                hasMinLength ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-ink-soft'
+                hasMinLength
+                  ? 'text-emerald-600 dark:text-emerald-400 font-medium'
+                  : 'text-ink-soft'
               }`}
             >
               <span>{hasMinLength ? '✓' : '○'}</span>
@@ -288,7 +288,9 @@ export const UserFormPanel: React.FC<UserFormPanelProps> = ({
             </div>
             <div
               className={`flex items-center gap-1.5 ${
-                hasUppercase ? 'text-emerald-600 dark:text-emerald-400 font-medium' : 'text-ink-soft'
+                hasUppercase
+                  ? 'text-emerald-600 dark:text-emerald-400 font-medium'
+                  : 'text-ink-soft'
               }`}
             >
               <span>{hasUppercase ? '✓' : '○'}</span>
@@ -348,9 +350,7 @@ export const UserFormPanel: React.FC<UserFormPanelProps> = ({
                         </span>
                       )}
                     </div>
-                    <div className="text-[11px] text-ink-soft leading-tight mt-0.5">
-                      {r.desc}
-                    </div>
+                    <div className="text-[11px] text-ink-soft leading-tight mt-0.5">{r.desc}</div>
                   </div>
                 </label>
               );
@@ -398,8 +398,8 @@ export const UserFormPanel: React.FC<UserFormPanelProps> = ({
             {isSaving
               ? 'Saving Access...'
               : isEditing
-              ? 'Save Access Changes'
-              : 'Create User & Grant Access'}
+                ? 'Save Access Changes'
+                : 'Create User & Grant Access'}
           </button>
         </div>
       </form>

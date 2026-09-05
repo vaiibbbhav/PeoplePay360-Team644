@@ -3,12 +3,16 @@ import {
   employees,
   departments,
   jobPositions,
+  workingSchedules,
   contracts,
   attendance,
   timeOffRequests,
   payslips,
 } from '../../db/schema';
-import { eq, desc, count } from 'drizzle-orm';
+import { eq, desc, count, sql } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
+
+const managers = alias(employees, 'managers');
 
 export async function findAllEmployees() {
   return await db
@@ -23,6 +27,9 @@ export async function findAllEmployees() {
       job_position_id: employees.jobPositionId,
       job_position_title: jobPositions.title,
       manager_id: employees.managerId,
+      manager_name: sql<string | null>`concat(${managers.firstName}, ' ', ${managers.lastName})`,
+      working_schedule_id: employees.workingScheduleId,
+      working_schedule_name: workingSchedules.name,
       employment_status: employees.employmentStatus,
       date_of_joining: employees.dateOfJoining,
       date_of_birth: employees.dateOfBirth,
@@ -37,6 +44,8 @@ export async function findAllEmployees() {
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
+    .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))
+    .leftJoin(managers, eq(employees.managerId, managers.id))
     .orderBy(desc(employees.createdAt));
 }
 
@@ -53,6 +62,10 @@ export async function findEmployeeById(id: string) {
       job_position_id: employees.jobPositionId,
       job_position_title: jobPositions.title,
       manager_id: employees.managerId,
+      manager_name: sql<string | null>`concat(${managers.firstName}, ' ', ${managers.lastName})`,
+      working_schedule_id: employees.workingScheduleId,
+      working_schedule_name: workingSchedules.name,
+      weekly_hours: workingSchedules.weeklyHours,
       employment_status: employees.employmentStatus,
       date_of_joining: employees.dateOfJoining,
       date_of_birth: employees.dateOfBirth,
@@ -67,6 +80,8 @@ export async function findEmployeeById(id: string) {
     .from(employees)
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
+    .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))
+    .leftJoin(managers, eq(employees.managerId, managers.id))
     .where(eq(employees.id, id))
     .limit(1);
 
@@ -169,4 +184,16 @@ export async function getEmployeeStats(employeeId: string) {
     time_off_count: timeOffRes?.val ?? 0,
     payslip_count: payslipRes?.val ?? 0,
   };
+}
+
+export async function findAllDepartments() {
+  return await db.select().from(departments).orderBy(departments.name);
+}
+
+export async function findAllJobPositions() {
+  return await db.select().from(jobPositions).orderBy(jobPositions.title);
+}
+
+export async function findAllWorkingSchedules() {
+  return await db.select().from(workingSchedules).orderBy(workingSchedules.name);
 }

@@ -56,5 +56,5 @@ features/<feature-name>/
 
 1. **Always use `type` instead of `interface`** across both backend and frontend, unless strictly required for external library declaration merging.
 2. **Design System:** Strictly adhere to `DESIGN.md` (Playfair Display headlines, IBM Plex Sans body, violet accent `#6A3FA0`, hairline borders, zero shadows/gradients).
-3. **Explicit UI States:** Every list and screen view must handle **Loading**, **Error**, and **Empty** states cleanly.
+3. **Explicit UI States (Suspense & Error Boundary):** Handle **Loading** and **Error** states via `<Suspense fallback={...}>` and `<ErrorBoundary fallback={...}>` (from `@/components/ui/ErrorBoundary`) with `useSuspenseQuery`. Empty states must be handled cleanly within the component.
 4. **Tailwind Standard:** Always use Tailwind CSS utility classes (`className="..."`), never inline styles (`style={{ ... }}`) or ad-hoc vanilla CSS.

@@ -41,4 +41,9 @@ features/<feature-name>/
 5. **Strict Tailwind CSS Standard:**
    - ALWAYS style components using Tailwind CSS utility classes (`className="..."`).
    - NEVER use vanilla CSS or inline `style={{ ... }}` unless an extreme dynamic runtime calculation strictly requires it.
+6. **Suspense & Error Boundary Standard:**
+   - Prefer React `<Suspense fallback={...}>` and declarative `<ErrorBoundary fallback={...}>` over repetitive `if (isLoading) return ...; if (isError) return ...;` boilerplate in top-level pages.
+   - Colocate suspense queries with `useSuspenseQuery` in the feature's `queries/` file for seamless streaming/suspension.
+   - Generic boundary primitive lives in `@/components/ui/ErrorBoundary`.
+
 

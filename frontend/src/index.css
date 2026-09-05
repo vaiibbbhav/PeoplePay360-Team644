@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-bg: var(--bg);
@@ -16,28 +16,28 @@
 }
 
 :root {
-  --bg: #FAFAF8;
-  --bg-raised: #F1EFEA;
+  --bg: #fafaf8;
+  --bg-raised: #f1efea;
   --ink: #131211;
-  --ink-soft: #55524C;
-  --line: #DEDAD1;
-  --accent: #6A3FA0;
-  --accent-ink: #FFFFFF;
-  --accent-soft: #EDE4F7;
-  --over-red: #A4483B;
+  --ink-soft: #55524c;
+  --line: #dedad1;
+  --accent: #6a3fa0;
+  --accent-ink: #ffffff;
+  --accent-soft: #ede4f7;
+  --over-red: #a4483b;
   color-scheme: light;
 }
 
 html.dark {
-  --bg: #0C0B0D;
-  --bg-raised: #17151A;
-  --ink: #F3F1EC;
-  --ink-soft: #A6A29B;
-  --line: #2B2831;
-  --accent: #B08FE0;
-  --accent-ink: #0C0B0D;
-  --accent-soft: #241E33;
-  --over-red: #D97C6C;
+  --bg: #0c0b0d;
+  --bg-raised: #17151a;
+  --ink: #f3f1ec;
+  --ink-soft: #a6a29b;
+  --line: #2b2831;
+  --accent: #b08fe0;
+  --accent-ink: #0c0b0d;
+  --accent-soft: #241e33;
+  --over-red: #d97c6c;
   color-scheme: dark;
 }
 
@@ -53,9 +53,40 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'IBM Plex Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  transition: background 0.25s ease, color 0.25s ease;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  header,
+  footer,
+  nav,
+  button {
+    display: none !important;
+  }
+  #monthly-salary-slip,
+  #yearly-salary-slip {
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
 }

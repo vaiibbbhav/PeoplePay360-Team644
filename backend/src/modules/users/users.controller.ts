@@ -26,7 +26,9 @@ export const updateUser = asyncHandler(async (req: Request, res: Response): Prom
   res.json(user);
 });
 
-export const getEmployeeOptions = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
-  const employees = await usersService.getEmployeeOptions();
-  res.json(employees);
-});
+export const getEmployeeOptions = asyncHandler(
+  async (_req: Request, res: Response): Promise<void> => {
+    const employees = await usersService.getEmployeeOptions();
+    res.json(employees);
+  },
+);

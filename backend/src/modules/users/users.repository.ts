@@ -40,8 +40,8 @@ export const listUsers = async (filters: {
       or(
         ilike(schema.users.email, term),
         ilike(schema.employees.firstName, term),
-        ilike(schema.employees.lastName, term)
-      )
+        ilike(schema.employees.lastName, term),
+      ),
     );
   }
 
@@ -142,7 +142,7 @@ export const updateUser = async (
     employeeId?: string | null;
     isActive?: boolean;
     passwordHash?: string;
-  }
+  },
 ): Promise<UserWithEmployee> => {
   await db
     .update(schema.users)

@@ -241,6 +241,10 @@ export async function markPayrunPaid(id: string) {
   return await payrollRepo.updatePayrunStatus(id, 'paid');
 }
 
+export async function listPayslips(filter?: { employeeId?: string; payrunId?: string }) {
+  return await payrollRepo.findPayslips(filter);
+}
+
 export async function getPayslipById(id: string) {
   const payslip = await payrollRepo.findPayslipById(id);
   if (!payslip) {
