@@ -202,7 +202,7 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     },
     {
       label: 'Org View',
-      path: '#org-view',
+      path: '/employee/org-view',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -237,6 +237,24 @@ export const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({
     }
     if (itemPath === '/documents') {
       return location.pathname === '/documents' || location.pathname === '/policies';
+    }
+    if (itemPath === '/employee/docs') {
+      return (
+        location.pathname === '/employee/docs' ||
+        location.pathname === '/employee/documents' ||
+        location.pathname === '/documents' ||
+        location.pathname === '/policies'
+      );
+    }
+    if (itemPath === '/employee/org-view') {
+      return (
+        location.pathname === '/employee/org-view' ||
+        location.pathname === '/org-view' ||
+        location.pathname === '/organization'
+      );
+    }
+    if (itemPath === '/compensation') {
+      return location.pathname === '/compensation' || location.pathname === '/payslips';
     }
     if (itemPath.startsWith('#')) {
       return (

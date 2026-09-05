@@ -287,7 +287,7 @@ ${verificationUrl}
 This link is valid for 7 days.
   `.trim();
 
-  const transporter = getTransporter();
+  const transporter = await getTransporter();
 
   if (!transporter) {
     console.warn(

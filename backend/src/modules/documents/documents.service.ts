@@ -1,5 +1,6 @@
 import * as docsRepo from './documents.repository';
-import { NotFoundError } from '../../shared/errors';
+import { NotFoundError, ConflictError } from '../../shared/errors';
+import type { CreatePolicyInput, UpdatePolicyInput } from './documents.validators';
 
 export type PolicyWithStatus = {
   id: string;
@@ -171,3 +172,53 @@ export async function acceptAllPolicies(
 export async function getCompanyComplianceStats() {
   return docsRepo.getComplianceStats();
 }
+
+export async function createPolicy(input: CreatePolicyInput) {
+  const existing = await docsRepo.findPolicyByCode(input.code);
+  if (existing) {
+    throw new ConflictError(`A policy with code '${input.code}' already exists`);
+  }
+
+  return await docsRepo.insertPolicy({
+    title: input.title,
+    code: input.code,
+    category: input.category,
+    version: input.version || '1.0',
+    summary: input.summary,
+    content: input.content,
+    isMandatory: input.isMandatory,
+    effectiveDate: input.effectiveDate,
+  });
+}
+
+export async function updatePolicy(id: string, input: UpdatePolicyInput) {
+  const existing = await docsRepo.findPolicyById(id);
+  if (!existing) {
+    throw new NotFoundError(`Policy with ID '${id}' not found`);
+  }
+
+  if (input.code && input.code !== existing.code) {
+    const withSameCode = await docsRepo.findPolicyByCode(input.code);
+    if (withSameCode) {
+      throw new ConflictError(`A policy with code '${input.code}' already exists`);
+    }
+  }
+
+  const updated = await docsRepo.updatePolicy(id, input);
+  return updated;
+}
+
+export async function deletePolicy(id: string) {
+  const existing = await docsRepo.findPolicyById(id);
+  if (!existing) {
+    throw new NotFoundError(`Policy with ID '${id}' not found`);
+  }
+
+  await docsRepo.deletePolicy(id);
+  return { success: true, message: `Policy '${existing.title}' deleted successfully` };
+}
+
+export async function getCompanyComplianceRoster() {
+  return await docsRepo.getCompanyComplianceRoster();
+}
+

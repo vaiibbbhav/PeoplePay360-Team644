@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useEmployeeContracts, type EmployeeContract } from '../queries/useEmployees';
+import { useCreateContract, type CreateContractPayload } from '@/features/contracts/queries/useContracts';
+import { ContractFormDrawer } from '@/features/contracts/components/ContractFormDrawer';
 import { StatGrid } from '@/components/ui/StatCard';
 
 type ContractsTabProps = {
@@ -8,6 +10,12 @@ type ContractsTabProps = {
 
 export const ContractsTab: React.FC<ContractsTabProps> = ({ employeeId }) => {
   const { data: contracts = [], isLoading, error } = useEmployeeContracts(employeeId);
+  const createContractMutation = useCreateContract();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handleCreateContract = async (payload: CreateContractPayload) => {
+    await createContractMutation.mutateAsync(payload);
+  };
 
   const formatDate = (val: string | null | undefined) => {
     if (!val) return '—';
@@ -115,9 +123,18 @@ export const ContractsTab: React.FC<ContractsTabProps> = ({ employeeId }) => {
               computations.
             </p>
           </div>
-          <span className="text-xs text-ink-soft px-2.5 py-1 rounded-md border border-line bg-bg-raised">
-            {contracts.length} Records
-          </span>
+          <div className="flex items-center gap-2.5">
+            <span className="text-xs text-ink-soft px-2.5 py-1 rounded-md border border-line bg-bg-raised">
+              {contracts.length} Records
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsDrawerOpen(true)}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
+            >
+              <span>+</span> New Contract
+            </button>
+          </div>
         </div>
 
         {contracts.length === 0 ? (
@@ -172,6 +189,15 @@ export const ContractsTab: React.FC<ContractsTabProps> = ({ employeeId }) => {
           </div>
         )}
       </div>
+
+      <ContractFormDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onSubmit={handleCreateContract}
+        defaultEmployeeId={employeeId}
+        isSubmitting={createContractMutation.isPending}
+      />
     </div>
   );
 };
+

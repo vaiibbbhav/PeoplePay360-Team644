@@ -107,8 +107,8 @@ export const DashboardPage: React.FC = () => {
         title: 'Organization Chart',
         desc: 'Interactive organization hierarchy, reporting chains, and team composition.',
         tag: 'Company',
-        link: '#org-view',
-        isDirectLink: false,
+        link: '/org-view',
+        isDirectLink: true,
       },
     ];
 
@@ -437,17 +437,47 @@ export const DashboardPage: React.FC = () => {
             </Link>
 
             <Link
-              to="/attendance"
+              to="/contracts"
               className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
             >
               <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
-                ⏱️
+                📄
               </div>
               <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
-                Biometric & Attendance
+                Contract Management
               </h4>
               <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                Punch calendar logs, shift tracking, and daily presence audit.
+                Period-active employment contracts, wage structures, and terms.
+              </p>
+            </Link>
+
+            <Link
+              to="/schedules"
+              className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
+            >
+              <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
+                📅
+              </div>
+              <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
+                Working Schedules
+              </h4>
+              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+                Shift patterns, working days, and automated weekly hours calculation.
+              </p>
+            </Link>
+
+            <Link
+              to="/documents"
+              className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
+            >
+              <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
+                🛡️
+              </div>
+              <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
+                Policies & Compliance
+              </h4>
+              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+                Company policies, regulatory documents, and employee acknowledgments.
               </p>
             </Link>
           </div>

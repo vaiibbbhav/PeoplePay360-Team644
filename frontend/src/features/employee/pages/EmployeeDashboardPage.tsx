@@ -53,11 +53,11 @@ export const EmployeeDashboardPage: React.FC = () => {
     },
     {
       id: 'team',
-      title: 'Team Directory',
-      desc: 'Department colleagues, reporting manager, and peer directory.',
+      title: 'Org View & Directory',
+      desc: 'Visual reporting hierarchy, leadership tree, and team rosters.',
       tag: 'Organization',
-      link: '#team',
-      isDirectLink: false,
+      link: '/employee/org-view',
+      isDirectLink: true,
     },
     {
       id: 'compensation',
@@ -72,7 +72,7 @@ export const EmployeeDashboardPage: React.FC = () => {
       title: 'Policies & Documents',
       desc: 'Mandatory company policies, code of conduct, and compliance acknowledgments.',
       tag: 'Compliance',
-      link: '/documents',
+      link: '/employee/docs',
       isDirectLink: true,
     },
     {

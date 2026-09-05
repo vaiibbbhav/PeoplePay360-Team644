@@ -12,6 +12,9 @@ import { EmployeeProfilePage } from './features/employees/pages/EmployeeProfileP
 import { CompensationPage } from './features/compensation/pages/CompensationPage';
 import { PayslipViewPage } from './features/compensation/pages/PayslipViewPage';
 import { DocumentsPage } from './features/documents/pages/DocumentsPage';
+import { OrgViewPage } from './features/organization/pages/OrgViewPage';
+import { ContractsPage } from './features/contracts/pages/ContractsPage';
+import { SchedulesPage } from './features/schedules/pages/SchedulesPage';
 
 export function App() {
   return (
@@ -31,7 +34,15 @@ export function App() {
           <Route path="/payslips" element={<CompensationPage />} />
           <Route path="/documents" element={<DocumentsPage />} />
           <Route path="/policies" element={<DocumentsPage />} />
+          <Route path="/employee/docs" element={<DocumentsPage />} />
+          <Route path="/employee/documents" element={<DocumentsPage />} />
+          <Route path="/employee/org-view" element={<OrgViewPage />} />
+          <Route path="/org-view" element={<OrgViewPage />} />
+          <Route path="/organization" element={<OrgViewPage />} />
           <Route path="/payslip/:id" element={<PayslipViewPage />} />
+          <Route path="/contracts" element={<ContractsPage />} />
+          <Route path="/schedules" element={<SchedulesPage />} />
+          <Route path="/working-schedules" element={<SchedulesPage />} />
           <Route path="/employees" element={<EmployeeDirectoryPage />} />
           <Route path="/employees/:id" element={<EmployeeProfilePage />} />
           <Route path="/profile" element={<EmployeeProfilePage />} />

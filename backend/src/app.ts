@@ -10,10 +10,14 @@ import timeoffRoutes from './modules/timeoff/timeoff.routes';
 import payrollRoutes from './modules/payroll/payroll.routes';
 import reportingRoutes from './modules/reporting/reporting.routes';
 import documentsRoutes from './modules/documents/documents.routes';
+import schedulesRoutes from './modules/schedules/schedules.routes';
 import { AppError } from './shared/errors';
+import { securityHeaders } from './shared/security';
 
 export const createApp = (): Express => {
   const app = express();
+  app.disable('x-powered-by');
+  app.use(securityHeaders);
 
   // Middleware
   app.use(
@@ -22,7 +26,7 @@ export const createApp = (): Express => {
       credentials: true,
     }),
   );
-  app.use(express.json());
+  app.use(express.json({ limit: '1mb' }));
   app.use(cookieParser());
 
   // Health check
@@ -45,6 +49,8 @@ export const createApp = (): Express => {
   app.use('/api/reports', reportingRoutes);
   app.use('/api/documents', documentsRoutes);
   app.use('/api/policies', documentsRoutes);
+  app.use('/api/schedules', schedulesRoutes);
+  app.use('/api/working-schedules', schedulesRoutes);
 
   // Direct resource aliases matching GEMINI.md section 9
   app.use('/api/payruns', payrollRoutes);

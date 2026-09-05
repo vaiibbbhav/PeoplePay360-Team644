@@ -19,6 +19,11 @@ describe('Salary Rule Engine', () => {
     expect(evaluateFormula('BASIC - 500', context)).toBe(4500);
   });
 
+  it('should reject executable JavaScript instead of evaluating it', () => {
+    const context = { results: {}, contractWage: 5000, workedDays: 22 };
+    expect(() => evaluateFormula('process.exit()', context)).toThrow('Invalid payroll formula');
+  });
+
   it('should compute ordered payslip lines with fixed, percentage, and formula rules', () => {
     const rules: SalaryRule[] = [
       {
