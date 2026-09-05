@@ -64,10 +64,10 @@ public class FingerprintService {
 
         // Store encrypted template into NeonDB
         String upsertSql = """
-            INSERT INTO fingerprint (employee_id, encryted_template, iv, key_version, updated_at)
+            INSERT INTO fingerprint (employee_id, encrypted_template, iv, key_version, updated_at)
             VALUES (?::uuid, ?, ?, ?, CURRENT_TIMESTAMP)
             ON CONFLICT (employee_id) DO UPDATE SET
-                encryted_template = EXCLUDED.encryted_template,
+                encrypted_template = EXCLUDED.encrypted_template,
                 iv = EXCLUDED.iv,
                 key_version = EXCLUDED.key_version,
                 updated_at = CURRENT_TIMESTAMP
@@ -118,7 +118,7 @@ public class FingerprintService {
         FingerprintMatcher matcher = new FingerprintMatcher(probeTemplate);
 
         // Fetch all enrolled encrypted templates from NeonDB
-        String querySql = "SELECT employee_id, encryted_template, iv, key_version FROM fingerprint";
+        String querySql = "SELECT employee_id, encrypted_template, iv, key_version FROM fingerprint";
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(querySql);
 
         if (rows.isEmpty()) {
@@ -136,7 +136,7 @@ public class FingerprintService {
 
         for (Map<String, Object> row : rows) {
             String empId = String.valueOf(row.get("employee_id"));
-            String cipherText = (String) row.get("encryted_template");
+            String cipherText = (String) row.get("encrypted_template");
             String iv = (String) row.get("iv");
             String keyVersion = (String) row.get("key_version");
 

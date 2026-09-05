@@ -45,36 +45,50 @@ export function App() {
 
           {/* Protected routes — all authenticated users */}
           <Route element={<ProtectedRoute />}>
+            {/* Dashboard & Portals */}
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/dashboard/:section" element={<DashboardPage />} />
-            <Route path="/employee/dashboard" element={<DashboardPage />} />
-            <Route path="/employee/dashboard/:section" element={<DashboardPage />} />
+            <Route path="/employee/dashboard" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/employee/dashboard/:section" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
+
+            {/* Attendance */}
             <Route path="/attendance" element={<AttendanceRecordsPage />} />
-            <Route path="/employee/attendance" element={<EmployeeAttendancePage />} />
             <Route path="/attendance/terminal" element={<AttendanceTerminalPage />} />
+            <Route path="/employee/attendance" element={<EmployeeAttendancePage />} />
+
+            {/* Time Off */}
             <Route path="/time-off" element={<TimeOffPage />} />
-            <Route path="/employee/time-off" element={<TimeOffPage />} />
-            <Route path="/timeoff" element={<TimeOffPage />} />
-            <Route path="/leaves" element={<TimeOffPage />} />
+            <Route path="/timeoff" element={<Navigate to="/time-off" replace />} />
+            <Route path="/leaves" element={<Navigate to="/time-off" replace />} />
+            <Route path="/employee/time-off" element={<Navigate to="/time-off" replace />} />
+
+            {/* Compensation & Individual Payslip View */}
             <Route path="/compensation" element={<CompensationPage />} />
-            <Route path="/documents" element={<DocumentsPage />} />
-            <Route path="/policies" element={<DocumentsPage />} />
-            <Route path="/employee/docs" element={<DocumentsPage />} />
-            <Route path="/employee/documents" element={<DocumentsPage />} />
-            <Route path="/employee/org-view" element={<OrgViewPage />} />
-            <Route path="/org-view" element={<OrgViewPage />} />
-            <Route path="/organization" element={<OrgViewPage />} />
             <Route path="/payslip/:id" element={<PayslipViewPage />} />
+
+            {/* Documents & Policies */}
+            <Route path="/documents" element={<DocumentsPage />} />
+            <Route path="/policies" element={<Navigate to="/documents" replace />} />
+            <Route path="/employee/docs" element={<Navigate to="/documents" replace />} />
+            <Route path="/employee/documents" element={<Navigate to="/documents" replace />} />
+
+            {/* Organization Chart */}
+            <Route path="/organization" element={<OrgViewPage />} />
+            <Route path="/org-view" element={<OrgViewPage />} />
+            <Route path="/employee/org-view" element={<Navigate to="/org-view" replace />} />
+
+            {/* Contracts & Work Schedules */}
             <Route path="/contracts" element={<ContractsPage />} />
             <Route path="/schedules" element={<SchedulesPage />} />
-            <Route path="/working-schedules" element={<SchedulesPage />} />
+            <Route path="/working-schedules" element={<Navigate to="/schedules" replace />} />
+
+            {/* Employees */}
             <Route path="/employees" element={<EmployeeDirectoryPage />} />
-            <Route path="/employee/profile" element={<EmployeeProfilePage />} />
             <Route path="/employees/:id" element={<EmployeeProfilePage />} />
+            <Route path="/employee/profile" element={<EmployeeProfilePage />} />
             <Route path="/profile" element={<EmployeeProfilePage />} />
             <Route path="/employee/:id" element={<EmployeeProfilePage />} />
-            {/* Analytics alias: redirect to dashboard */}
-            <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
           </Route>
 
           {/* Payslips registry — HR Manager, Payroll roles, Admin */}

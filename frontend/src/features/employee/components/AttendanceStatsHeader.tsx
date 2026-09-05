@@ -81,7 +81,7 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
                 Change Fingerprint
               </span>
               <span className="text-[10px] text-ink-soft leading-tight">
-                {fingerprint?.encryted_template ? 'Enrolled Key Active' : 'Configure Biometrics'}
+                {fingerprint?.encrypted_template || fingerprint?.encryted_template ? 'Enrolled Key Active' : 'Configure Biometrics'}
               </span>
             </div>
           </button>
@@ -148,7 +148,7 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
                 <span className="text-xs font-sans font-normal text-ink-soft">manual</span>
               </div>
               <span className="text-[10px] text-accent font-medium mt-1 block truncate">
-                {fingerprint?.encryted_template ? 'Hardware Fingerprint Active' : 'Scanner Pending'}
+                {fingerprint?.encrypted_template || fingerprint?.encryted_template ? 'Hardware Fingerprint Active' : 'Scanner Pending'}
               </span>
             </div>
           </>

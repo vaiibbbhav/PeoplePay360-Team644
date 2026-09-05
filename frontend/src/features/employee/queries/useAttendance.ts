@@ -19,7 +19,8 @@ export type AttendanceRecord = {
 export type FingerprintRecord = {
   id: string;
   employee_id: string;
-  encryted_template: string;
+  encrypted_template: string;
+  encryted_template?: string;
   created_at?: string;
   updated_at?: string;
 };
@@ -163,6 +164,7 @@ const getFingerprintApi = async (employeeId: string): Promise<FingerprintRecord 
   return {
     id: 'fp-client-001',
     employee_id: employeeId,
+    encrypted_template: 'FP_SHA256_a9c4b78e12d45ef88902bca4710398f5960d7c3b2e1a',
     encryted_template: 'FP_SHA256_a9c4b78e12d45ef88902bca4710398f5960d7c3b2e1a',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -171,12 +173,15 @@ const getFingerprintApi = async (employeeId: string): Promise<FingerprintRecord 
 
 const updateFingerprintApi = async (payload: {
   employeeId: string;
-  encrytedTemplate: string;
+  encryptedTemplate?: string;
+  encrytedTemplate?: string;
 }): Promise<FingerprintRecord> => {
+  const tmpl = payload.encryptedTemplate || payload.encrytedTemplate || 'AES-256-GCM';
   const record: FingerprintRecord = {
     id: `fp-${Date.now()}`,
     employee_id: payload.employeeId,
-    encryted_template: payload.encrytedTemplate,
+    encrypted_template: tmpl,
+    encryted_template: tmpl,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };

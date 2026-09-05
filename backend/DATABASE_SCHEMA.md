@@ -6,7 +6,7 @@ This document describes the schema architecture and table definitions in `src/db
 
 ## 1. Organizations & Work Schedules
 - `departments`: `id (uuid, pk)`, `name (varchar 100, unique)`, `manager_id (uuid)`, `created_at (timestamptz)`
-- `jobPositions`: `id (uuid, pk)`, `title (varchar 100)`, `department_id (uuid, fk)`, `created_at (timestamptz)`
+- `job_positions`: `id (uuid, pk)`, `title (varchar 100)`, `department_id (uuid, fk)`, `created_at (timestamptz)` (TS export: `jobPositions`)
 - `working_schedules`: `id (uuid, pk)`, `name (varchar 100)`, `weekly_hours (numeric 5,2)`, `is_active (boolean)`, `created_at (timestamptz)`
 - `working_schedule_lines`: `id (uuid, pk)`, `schedule_id (uuid, fk)`, `day_of_week (varchar 15)`, `start_time (time)`, `end_time (time)`, `break_minutes (int)`
 
@@ -43,7 +43,7 @@ This document describes the schema architecture and table definitions in `src/db
 - `fingerprint`:
   - `id (uuid, pk, default uuid_generate_v4() / gen_random_uuid())`
   - `employee_id (uuid, not null, unique, fk -> employees.id, on delete cascade)`
-  - `encryted_template (text, not null)`: Base64-encoded AES-256-GCM ciphertext of the OpenAFIS biometric template.
+  - `encrypted_template (text, not null)`: Base64-encoded AES-256-GCM ciphertext of the OpenAFIS biometric template.
   - `iv (varchar 64, not null)`: Base64-encoded 12-byte secure random Initialization Vector.
   - `key_version (varchar 20, default 'v1')`: Key version for cryptographic rotation.
   - `created_at (timestamptz)`

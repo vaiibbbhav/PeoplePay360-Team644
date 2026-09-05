@@ -193,7 +193,7 @@ export const EmployeeAttendancePage: React.FC = () => {
         {/* Top States Header & Summary */}
         <AttendanceStatsHeader
           records={records}
-          fingerprint={isEnrolled ? { id: 'fp-active', employee_id: employeeId, encryted_template: 'AES-256-GCM' } : null}
+          fingerprint={isEnrolled ? { id: 'fp-active', employee_id: employeeId, encrypted_template: 'AES-256-GCM' } : null}
           onOpenFingerprintModal={() => setIsFingerprintModalOpen(true)}
           monthName={monthName}
           year={year}

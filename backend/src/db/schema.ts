@@ -22,7 +22,7 @@ export const departments = pgTable('departments', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const jobPositions = pgTable('jobPositions', {
+export const jobPositions = pgTable('job_positions', {
   id: uuid('id').defaultRandom().primaryKey(),
   title: varchar('title', { length: 100 }).notNull(),
   departmentId: uuid('department_id').references(() => departments.id, { onDelete: 'set null' }),
@@ -176,7 +176,7 @@ export const fingerprint = pgTable('fingerprint', {
     .notNull()
     .unique()
     .references(() => employees.id, { onDelete: 'cascade' }),
-  encrytedTemplate: text('encryted_template').notNull(),
+  encryptedTemplate: text('encrypted_template').notNull(),
   iv: varchar('iv', { length: 64 }).notNull(),
   keyVersion: varchar('key_version', { length: 20 }).notNull().default('v1'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
