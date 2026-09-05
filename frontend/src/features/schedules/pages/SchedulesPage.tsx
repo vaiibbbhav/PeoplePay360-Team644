@@ -7,7 +7,7 @@ import {
   type ScheduleItem,
   type CreateSchedulePayload,
 } from '../queries/useSchedules';
-import { HrNavHeader } from '@/components/layout/HrNavHeader';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { StatGrid } from '@/components/ui/StatCard';
 import { ScheduleCard } from '../components/ScheduleCard';
 import { ScheduleFormDrawer } from '../components/ScheduleFormDrawer';
@@ -77,21 +77,18 @@ export const SchedulesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col">
-      <HrNavHeader
-        title="Work Schedules"
-        subtitle="Weekly Hour Patterns & Day Lines"
-        actionButton={
-          <button
-            type="button"
-            onClick={handleOpenCreate}
-            className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
-          >
-            <span>+</span> New Schedule
-          </button>
-        }
-      />
-
+    <AppLayout
+      title="Work Schedules"
+      actions={
+        <button
+          type="button"
+          onClick={handleOpenCreate}
+          className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
+        >
+          <span>+</span> New Schedule
+        </button>
+      }
+    >
       <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8 space-y-8">
         {/* KPI Cards */}
         <StatGrid
@@ -145,21 +142,16 @@ export const SchedulesPage: React.FC = () => {
             </svg>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            {(['all', 'active', 'inactive'] as const).map((filter) => (
-              <button
-                key={filter}
-                type="button"
-                onClick={() => setFilterActive(filter)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors cursor-pointer border ${
-                  filterActive === filter
-                    ? 'border-accent bg-accent-soft text-accent'
-                    : 'border-line bg-bg text-ink-soft hover:text-ink'
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
+          <div className="w-full sm:w-auto">
+            <select
+              value={filterActive}
+              onChange={(e) => setFilterActive(e.target.value as 'all' | 'active' | 'inactive')}
+              className="w-full sm:w-auto px-3.5 py-2 text-xs rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer"
+            >
+              <option value="all">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
           </div>
         </div>
 
@@ -256,6 +248,6 @@ export const SchedulesPage: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 };

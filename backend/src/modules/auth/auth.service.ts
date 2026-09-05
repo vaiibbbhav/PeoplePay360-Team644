@@ -84,7 +84,12 @@ export const login = async (input: LoginInput): Promise<AuthResponse> => {
     : null;
   const employeeId = employee?.id || null;
 
-  const token = generateToken({ ...user, role: user.role as UserRole, employeeId });
+  const token = generateToken({
+    id: user.id,
+    email: user.email,
+    role: user.role as UserRole,
+    employeeId,
+  });
 
   return {
     user: {
@@ -159,7 +164,12 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
       : null;
     const employeeId = employee?.id || null;
 
-    const token = generateToken({ ...user, role: user.role as UserRole, employeeId });
+    const token = generateToken({
+      id: user.id,
+      email: user.email,
+      role: user.role as UserRole,
+      employeeId,
+    });
 
     return {
       user: {
@@ -233,7 +243,7 @@ export const resendVerificationEmail = async (
   const verificationToken = jwt.sign(
     { userId: user.id, email: user.email, purpose: 'email-verification' },
     getJwtSecret(),
-    { expiresIn: '7d' },
+    { expiresIn: '8h' },
   );
 
   const employeeName = `${user.firstName} ${user.lastName}`.trim();

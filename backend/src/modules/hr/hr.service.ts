@@ -43,6 +43,16 @@ export async function createEmployee(data: Record<string, any>) {
     const existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1);
     if (existingUser[0]) {
       userId = existingUser[0].id;
+      if (data.firstName !== undefined || data.lastName !== undefined) {
+        await db
+          .update(users)
+          .set({
+            ...(data.firstName ? { firstName: data.firstName } : {}),
+            ...(data.lastName ? { lastName: data.lastName } : {}),
+            updatedAt: new Date(),
+          })
+          .where(eq(users.id, userId));
+      }
     } else {
       const salt = await bcrypt.genSalt(10);
       const defaultPasswordHash = await bcrypt.hash('Employee@123', salt);
@@ -61,15 +71,17 @@ export async function createEmployee(data: Record<string, any>) {
     }
   }
 
-  return await hrRepo.insertEmployee({
+  const created = await hrRepo.insertEmployee({
     ...data,
     userId,
   });
+  return await getEmployeeById(created.id);
 }
 
 export async function updateEmployee(id: string, data: Record<string, unknown>) {
   await getEmployeeById(id);
-  return await hrRepo.updateEmployeeById(id, data);
+  await hrRepo.updateEmployeeById(id, data);
+  return await getEmployeeById(id);
 }
 
 export async function deleteEmployee(id: string) {

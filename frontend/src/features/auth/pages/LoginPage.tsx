@@ -1,8 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { LoginForm } from '../components/LoginForm';
+import { useCurrentUser } from '../queries/useAuth';
+import { getDefaultPathForRole } from '@/lib/permissions';
 
 export const LoginPage: React.FC = () => {
+  const { data: user, isLoading } = useCurrentUser();
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (user) {
+    return <Navigate to={getDefaultPathForRole(user.role)} replace />;
+  }
   return (
     <div className="min-h-screen flex flex-col bg-bg text-ink">
       <header className="border-b border-line px-8 py-4 flex justify-between items-center bg-bg">

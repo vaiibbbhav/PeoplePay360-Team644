@@ -151,10 +151,15 @@ export async function insertEmployee(data: Record<string, any>) {
 
 export async function updateEmployeeById(id: string, data: Record<string, any>) {
   const emp = await findEmployeeById(id);
-  if (emp && emp.user_id && (data.firstName !== undefined || data.lastName !== undefined)) {
+  if (
+    emp &&
+    emp.user_id &&
+    (data.firstName !== undefined || data.lastName !== undefined || data.email !== undefined)
+  ) {
     const userUpdate: Record<string, any> = { updatedAt: new Date() };
     if (data.firstName !== undefined) userUpdate.firstName = data.firstName;
     if (data.lastName !== undefined) userUpdate.lastName = data.lastName;
+    if (data.email !== undefined) userUpdate.email = (data.email as string).toLowerCase().trim();
     await db.update(users).set(userUpdate).where(eq(users.id, emp.user_id));
   }
 

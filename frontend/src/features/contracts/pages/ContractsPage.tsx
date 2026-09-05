@@ -7,7 +7,7 @@ import {
   type CreateContractPayload,
   type ContractStatus,
 } from '../queries/useContracts';
-import { HrNavHeader } from '@/components/layout/HrNavHeader';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { StatGrid } from '@/components/ui/StatCard';
 import { ContractTable } from '../components/ContractTable';
 import { ContractDetailModal } from '../components/ContractDetailModal';
@@ -73,21 +73,18 @@ export const ContractsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col">
-      <HrNavHeader
-        title="Contracts"
-        subtitle="Employment Terms & Wage Baseline"
-        actionButton={
-          <button
-            type="button"
-            onClick={handleOpenCreate}
-            className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
-          >
-            <span>+</span> New Contract
-          </button>
-        }
-      />
-
+    <AppLayout
+      title="Contracts"
+      actions={
+        <button
+          type="button"
+          onClick={handleOpenCreate}
+          className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
+        >
+          <span>+</span> New Contract
+        </button>
+      }
+    >
       <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8 space-y-8">
         {/* Stat Cards */}
         <StatGrid
@@ -141,21 +138,18 @@ export const ContractsPage: React.FC = () => {
             </svg>
           </div>
 
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-            {(['all', 'active', 'draft', 'expired', 'cancelled'] as const).map((st) => (
-              <button
-                key={st}
-                type="button"
-                onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors cursor-pointer border ${
-                  statusFilter === st
-                    ? 'border-accent bg-accent-soft text-accent'
-                    : 'border-line bg-bg text-ink-soft hover:text-ink'
-                }`}
-              >
-                {st}
-              </button>
-            ))}
+          <div className="w-full sm:w-auto">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as ContractStatus | 'all')}
+              className="w-full sm:w-auto px-3.5 py-2 text-xs rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer"
+            >
+              <option value="all">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="draft">Draft</option>
+              <option value="expired">Expired</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
           </div>
         </div>
 
@@ -212,6 +206,6 @@ export const ContractsPage: React.FC = () => {
         initialData={editingContract}
         isSubmitting={createContractMutation.isPending || updateContractMutation.isPending}
       />
-    </div>
+    </AppLayout>
   );
 };
