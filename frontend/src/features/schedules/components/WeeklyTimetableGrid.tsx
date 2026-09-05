@@ -48,9 +48,8 @@ export const WeeklyTimetableGrid: React.FC<WeeklyTimetableGridProps> = ({ lines 
           return (
             <div
               key={day}
-              className={`p-3 flex flex-col items-center justify-center gap-1 min-h-[72px] ${
-                isWorking ? 'bg-bg' : 'bg-bg-raised/40 text-ink-soft'
-              }`}
+              className={`p-3 flex flex-col items-center justify-center gap-1 min-h-[72px] ${isWorking ? 'bg-bg' : 'bg-bg-raised/40 text-ink-soft'
+                }`}
             >
               {isWorking ? (
                 <>

@@ -89,7 +89,7 @@ export const SchedulesPage: React.FC = () => {
         </button>
       }
     >
-      <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8 space-y-8">
+      <main className="max-w-6xl mx-auto w-full flex-1 md:px-6 py-8 space-y-8">
         {/* KPI Cards */}
         <StatGrid
           columns={4}
@@ -195,7 +195,7 @@ export const SchedulesPage: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6">
             {filtered.map((schedule) => (
               <ScheduleCard
                 key={schedule.id}

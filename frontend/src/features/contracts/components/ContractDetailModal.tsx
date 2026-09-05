@@ -39,9 +39,6 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
         {/* Header */}
         <div className="px-6 py-5 border-b border-line flex items-center justify-between bg-bg-raised/30">
           <div>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-accent">
-              Employment Agreement
-            </span>
             <h2 className="font-serif text-xl font-bold text-ink mt-0.5 mb-0">
               {contract.name}
             </h2>
@@ -58,7 +55,7 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
 
         {/* Content */}
         <div className="p-6 overflow-y-auto space-y-6 text-xs">
-          {/* Employee Card - Active badge removed */}
+          {/* Employee Card with Status Badge */}
           <div className="flex items-center justify-between p-4 rounded-xl border border-line bg-bg-raised/40">
             <div className="flex items-center gap-3">
               {contract.employee_avatar ? (
@@ -82,6 +79,10 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
                 </span>
               </div>
             </div>
+
+            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider border border-accent/30 bg-accent-soft text-accent">
+              {contract.status}
+            </span>
           </div>
 
           {/* Key Terms Grid - Clear modern font for Contract Wage, generic subtexts removed */}
@@ -119,7 +120,7 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
 
           {/* Validity & Period */}
           <div className="border border-line rounded-xl p-4 bg-bg space-y-3">
-            <h4 className="font-semibold text-ink text-xs uppercase tracking-wider m-0">
+            <h4 className="font-semibold text-ink mb-2 text-xs uppercase tracking-wider m-0">
               Validity & Period
             </h4>
             <div className="grid grid-cols-2 gap-4">
@@ -141,8 +142,8 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
           {/* Notes (only shown if present) */}
           {contract.notes && contract.notes.trim() !== '' && (
             <div className="border border-line rounded-xl p-4 bg-bg space-y-1.5">
-              <h4 className="font-semibold text-ink text-xs uppercase tracking-wider m-0">
-                Contract Stipulations & Notes
+              <h4 className="font-semibold text-ink mb-1 text-xs uppercase tracking-wider m-0">
+                Notes
               </h4>
               <p className="text-xs text-ink-soft leading-relaxed m-0 whitespace-pre-line">
                 {contract.notes}
