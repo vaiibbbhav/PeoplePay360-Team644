@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLoginMutation } from '../queries/useAuth';
 
-interface QuickRole {
+type QuickRole = {
   role: string;
   email: string;
   pass: string;
-}
+};
 
 const QUICK_ROLES: QuickRole[] = [
   { role: 'Admin', email: 'admin@peoplepay.com', pass: 'Admin@123' },
@@ -35,8 +35,12 @@ export const LoginForm: React.FC = () => {
     }
 
     try {
-      await loginMutation.mutateAsync({ email, password });
-      navigate('/dashboard');
+      const res = await loginMutation.mutateAsync({ email, password });
+      if (res?.user?.role === 'Employee') {
+        navigate('/employee/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       const msg = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to sign in';
       setErrorMessage(msg);
@@ -50,8 +54,12 @@ export const LoginForm: React.FC = () => {
     setActiveRoleLogin(acc.role);
 
     try {
-      await loginMutation.mutateAsync({ email: acc.email, password: acc.pass });
-      navigate('/dashboard');
+      const res = await loginMutation.mutateAsync({ email: acc.email, password: acc.pass });
+      if (acc.role === 'Employee' || res?.user?.role === 'Employee') {
+        navigate('/employee/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       const msg = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to sign in';
       setErrorMessage(msg);

@@ -4,6 +4,8 @@ import { queryClient } from './api/queryClient';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './features/auth/pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { EmployeeDashboardPage } from './features/employee/pages/EmployeeDashboardPage';
+import { EmployeeAttendancePage } from './features/employee/pages/EmployeeAttendancePage';
 import { UserManagementPage } from './features/users/pages/UserManagementPage';
 
 export function App() {
@@ -14,6 +16,8 @@ export function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/employee/dashboard" element={<EmployeeDashboardPage />} />
+          <Route path="/employee/attendance" element={<EmployeeAttendancePage />} />
           <Route path="/users" element={<UserManagementPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
