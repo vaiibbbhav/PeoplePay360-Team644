@@ -7,6 +7,8 @@ import { DashboardPage } from './pages/DashboardPage';
 import { EmployeeDashboardPage } from './features/employee/pages/EmployeeDashboardPage';
 import { EmployeeAttendancePage } from './features/employee/pages/EmployeeAttendancePage';
 import { UserManagementPage } from './features/users/pages/UserManagementPage';
+import { EmployeeDirectoryPage } from './features/employees/pages/EmployeeDirectoryPage';
+import { EmployeeProfilePage } from './features/employees/pages/EmployeeProfilePage';
 
 export function App() {
   return (
@@ -19,6 +21,8 @@ export function App() {
           <Route path="/employee/dashboard" element={<EmployeeDashboardPage />} />
           <Route path="/employee/attendance" element={<EmployeeAttendancePage />} />
           <Route path="/users" element={<UserManagementPage />} />
+          <Route path="/employees" element={<EmployeeDirectoryPage />} />
+          <Route path="/employees/:id" element={<EmployeeProfilePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
