@@ -6,7 +6,7 @@ import {
   validateCreateRequest,
 } from './timeoff.validators';
 import * as timeoffService from './timeoff.service';
-import { assertCanViewTimeOffRequest, assertCanApproveTimeOffRequest } from '../../shared/auth-middleware';
+import { assertCanViewTimeOffRequest, assertCanApproveTimeOffRequest } from './timeoff.policy';
 import { z } from 'zod';
 
 const balancesQuerySchema = z.object({
