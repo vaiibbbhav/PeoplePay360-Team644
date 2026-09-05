@@ -4,9 +4,10 @@ import type { AttendanceRecord } from '@/features/employee/queries/useAttendance
 
 type AttendanceSummaryCardsProps = {
   records: AttendanceRecord[];
+  isLoading?: boolean;
 };
 
-export const AttendanceSummaryCards: React.FC<AttendanceSummaryCardsProps> = ({ records }) => {
+export const AttendanceSummaryCards: React.FC<AttendanceSummaryCardsProps> = ({ records, isLoading = false }) => {
   const total = records.length;
   const present = records.filter(
     (r) => r.status === 'Present' || r.status.toLowerCase() === 'present',
@@ -68,5 +69,5 @@ export const AttendanceSummaryCards: React.FC<AttendanceSummaryCardsProps> = ({ 
     },
   ];
 
-  return <StatGrid items={items} columns={4} />;
+  return <StatGrid items={items} columns={4} isLoading={isLoading} skeletonCount={4} />;
 };

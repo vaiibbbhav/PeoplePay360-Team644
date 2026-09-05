@@ -640,6 +640,8 @@ export const PayrunsPage: React.FC = () => {
         {/* KPIs */}
         <StatGrid
           columns={3}
+          isLoading={isLoading}
+          skeletonCount={3}
           items={[
             {
               label: 'Total Paid (All Time)',

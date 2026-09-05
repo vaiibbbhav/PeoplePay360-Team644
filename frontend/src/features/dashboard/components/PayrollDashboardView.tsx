@@ -118,6 +118,8 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
               subtext: `${kpis.approvedTimeOffDays} approved leave days`,
             },
           ]}
+          isLoading={isLoading}
+          skeletonCount={4}
         />
       </div>
 

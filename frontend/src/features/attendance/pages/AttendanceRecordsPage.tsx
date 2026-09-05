@@ -128,7 +128,7 @@ export const AttendanceRecordsPage: React.FC = () => {
         {/* Company Ledger View */}
         <div className="space-y-6">
           {/* Real-time Summary Cards */}
-          <AttendanceSummaryCards records={filteredRecords} />
+          <AttendanceSummaryCards records={filteredRecords} isLoading={isLoading} />
 
           {/* Filtering & Actions Toolbar */}
           <AttendanceFilterToolbar

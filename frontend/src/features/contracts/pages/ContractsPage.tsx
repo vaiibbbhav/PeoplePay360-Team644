@@ -116,6 +116,8 @@ export const ContractsPage: React.FC = () => {
               subtext: 'Requires extension or renewal',
             },
           ]}
+          isLoading={isLoading}
+          skeletonCount={4}
         />
 
         {/* Filter & Search Toolbar */}

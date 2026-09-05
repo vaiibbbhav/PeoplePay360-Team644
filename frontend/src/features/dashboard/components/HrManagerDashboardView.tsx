@@ -78,6 +78,8 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
               subtext: 'Present & on shift today',
             },
           ]}
+          isLoading={isLoading}
+          skeletonCount={4}
         />
       </div>
 

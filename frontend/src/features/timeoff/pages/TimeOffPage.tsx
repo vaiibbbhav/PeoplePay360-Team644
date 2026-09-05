@@ -123,6 +123,7 @@ export const TimeOffPage: React.FC = () => {
           </div>
         </div>
 
+
         {/* Editorial Sub-Navigation Tabs */}
         <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-bg-raised border border-line overflow-x-auto">
           {/* Tab 1: My Leave & Balances */}

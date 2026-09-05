@@ -120,6 +120,8 @@ export const SchedulesPage: React.FC = () => {
               subtext: 'Covered under schedules',
             },
           ]}
+          isLoading={isLoading}
+          skeletonCount={4}
         />
 
         {/* Search & Filter Bar */}

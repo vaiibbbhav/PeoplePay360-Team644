@@ -102,6 +102,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
               subtext: 'Neon Serverless PostgreSQL',
             },
           ]}
+          isLoading={isLoading}
+          skeletonCount={4}
         />
       </div>
 
