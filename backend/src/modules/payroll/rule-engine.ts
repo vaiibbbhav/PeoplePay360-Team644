@@ -44,7 +44,8 @@ export function evaluateFormula(formula: string | undefined, context: RuleContex
     const key = match.toUpperCase();
     if (context.results[match] !== undefined) return String(context.results[match]);
     if (context.results[key] !== undefined) return String(context.results[key]);
-    if (key === 'WAGE' || key === 'BASIC_WAGE' || match === 'contractWage') return String(context.contractWage || 0);
+    if (key === 'WAGE' || key === 'BASIC_WAGE' || match === 'contractWage')
+      return String(context.contractWage || 0);
     if (key === 'WORKED_DAYS' || match === 'workedDays') return String(context.workedDays || 0);
     return '0';
   });
@@ -68,7 +69,10 @@ export function evaluateRule(rule: SalaryRule, context: RuleContext): number {
       return roundToTwoDecimals(Number(rule.amount) || 0);
     case 'percentage': {
       const baseKey = rule.percentageOfCode || '';
-      const baseAmount = context.results[baseKey] ?? context.results[baseKey.toUpperCase()] ?? (context.contractWage || 0);
+      const baseAmount =
+        context.results[baseKey] ??
+        context.results[baseKey.toUpperCase()] ??
+        (context.contractWage || 0);
       const pct = Number(rule.percentage) || 0;
       return roundToTwoDecimals(baseAmount * (pct / 100));
     }

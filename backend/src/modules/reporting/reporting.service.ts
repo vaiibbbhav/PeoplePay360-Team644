@@ -10,9 +10,13 @@ export async function getDashboardOverview() {
   ]);
 
   const totalAttendance = attendanceHealth.total_attendance_entries || 0;
-  const presentRate = totalAttendance > 0
-    ? Math.round(((attendanceHealth.present_count + attendanceHealth.overtime_count) / totalAttendance) * 100)
-    : 100;
+  const presentRate =
+    totalAttendance > 0
+      ? Math.round(
+          ((attendanceHealth.present_count + attendanceHealth.overtime_count) / totalAttendance) *
+            100,
+        )
+      : 100;
 
   return {
     kpis: {

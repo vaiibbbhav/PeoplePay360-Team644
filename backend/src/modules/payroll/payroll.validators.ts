@@ -26,7 +26,9 @@ export const createPayrunWizardSchema = z.object({
   salaryStructureId: z.string().uuid('Salary structure ID is required'),
   periodStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid periodStart format (YYYY-MM-DD)'),
   periodEnd: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid periodEnd format (YYYY-MM-DD)'),
-  employeeIds: z.array(z.string().uuid()).min(1, 'At least one employee must be selected in step 2'),
+  employeeIds: z
+    .array(z.string().uuid())
+    .min(1, 'At least one employee must be selected in step 2'),
   notes: z.string().optional().nullable(),
 });
 

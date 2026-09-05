@@ -7,7 +7,7 @@ export const runMigrations = async (): Promise<void> => {
   try {
     const migrationFile = path.resolve(__dirname, '../../migrations/001_initial_schema.sql');
     const sql = fs.readFileSync(migrationFile, 'utf-8');
-    
+
     console.info('Executing database migration: 001_initial_schema.sql...');
     await client.query(sql);
     console.info('Migration completed successfully.');

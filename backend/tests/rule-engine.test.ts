@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { computePayslipLines, SalaryRule, evaluateFormula } from '../src/modules/payroll/rule-engine';
+import {
+  computePayslipLines,
+  SalaryRule,
+  evaluateFormula,
+} from '../src/modules/payroll/rule-engine';
 
 describe('Salary Rule Engine', () => {
   it('should correctly evaluate formula strings without eval()', () => {

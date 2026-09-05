@@ -26,7 +26,9 @@ export async function findAllContracts(employeeId?: string) {
     .leftJoin(salaryStructures, eq(contracts.salaryStructureId, salaryStructures.id));
 
   if (employeeId) {
-    return await query.where(eq(contracts.employeeId, employeeId)).orderBy(desc(contracts.startDate));
+    return await query
+      .where(eq(contracts.employeeId, employeeId))
+      .orderBy(desc(contracts.startDate));
   }
   return await query.orderBy(desc(contracts.startDate));
 }
@@ -58,7 +60,11 @@ export async function findContractById(id: string) {
   return rows[0] || null;
 }
 
-export async function findActiveContractForPeriod(employeeId: string, periodStart: string, periodEnd: string) {
+export async function findActiveContractForPeriod(
+  employeeId: string,
+  periodStart: string,
+  periodEnd: string,
+) {
   const rows = await db
     .select({
       id: contracts.id,
@@ -84,8 +90,8 @@ export async function findActiveContractForPeriod(employeeId: string, periodStar
         eq(contracts.employeeId, employeeId),
         eq(contracts.status, 'active'),
         lte(contracts.startDate, periodEnd),
-        or(isNull(contracts.endDate), gte(contracts.endDate, periodStart))
-      )
+        or(isNull(contracts.endDate), gte(contracts.endDate, periodStart)),
+      ),
     )
     .orderBy(desc(contracts.startDate))
     .limit(1);
@@ -97,7 +103,7 @@ export async function findOverlappingActiveContracts(
   employeeId: string,
   startDate: string,
   endDate: string | null,
-  excludeId?: string
+  excludeId?: string,
 ) {
   const conditions = [
     eq(contracts.employeeId, employeeId),
@@ -110,7 +116,10 @@ export async function findOverlappingActiveContracts(
     conditions.push(ne(contracts.id, excludeId));
   }
 
-  return await db.select().from(contracts).where(and(...conditions));
+  return await db
+    .select()
+    .from(contracts)
+    .where(and(...conditions));
 }
 
 export async function insertContract(data: Record<string, any>) {

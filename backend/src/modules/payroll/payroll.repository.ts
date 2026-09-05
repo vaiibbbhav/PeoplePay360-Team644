@@ -6,9 +6,8 @@ import {
   payslips,
   payslipLines,
   employees,
-  contracts,
 } from '../../db/schema';
-import { eq, and, desc, count, sql } from 'drizzle-orm';
+import { eq, and, desc, sql } from 'drizzle-orm';
 import { PayslipLine, SalaryRule } from './rule-engine';
 
 export async function findAllStructures() {
@@ -199,7 +198,11 @@ export async function findPayslipById(id: string) {
   return { ...rows[0], lines };
 }
 
-export async function findExistingPayslip(employeeId: string, periodStart: string, periodEnd: string) {
+export async function findExistingPayslip(
+  employeeId: string,
+  periodStart: string,
+  periodEnd: string,
+) {
   const rows = await db
     .select()
     .from(payslips)
@@ -207,8 +210,8 @@ export async function findExistingPayslip(employeeId: string, periodStart: strin
       and(
         eq(payslips.employeeId, employeeId),
         eq(payslips.periodStart, periodStart),
-        eq(payslips.periodEnd, periodEnd)
-      )
+        eq(payslips.periodEnd, periodEnd),
+      ),
     )
     .limit(1);
 
@@ -228,7 +231,7 @@ export async function executeCreatePayrunTx(
     net: number;
     count: number;
     warnings: any[];
-  }
+  },
 ) {
   return await db.transaction(async (tx) => {
     const [payrun] = await tx
@@ -279,7 +282,7 @@ export async function executeCreatePayrunTx(
             category: l.category,
             sequence: l.sequence,
             amount: String(l.amount),
-          }))
+          })),
         );
       }
     }

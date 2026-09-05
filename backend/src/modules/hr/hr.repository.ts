@@ -1,5 +1,13 @@
 import { db } from '../../shared/db';
-import { employees, departments, jobPositions, contracts, attendance, timeOffRequests, payslips } from '../../db/schema';
+import {
+  employees,
+  departments,
+  jobPositions,
+  contracts,
+  attendance,
+  timeOffRequests,
+  payslips,
+} from '../../db/schema';
 import { eq, desc, count } from 'drizzle-orm';
 
 export async function findAllEmployees() {
@@ -130,15 +138,30 @@ export async function updateEmployeeById(id: string, data: Record<string, any>) 
 }
 
 export async function deleteEmployeeById(id: string) {
-  const deleted = await db.delete(employees).where(eq(employees.id, id)).returning({ id: employees.id });
+  const deleted = await db
+    .delete(employees)
+    .where(eq(employees.id, id))
+    .returning({ id: employees.id });
   return deleted.length > 0;
 }
 
 export async function getEmployeeStats(employeeId: string) {
-  const [contractRes] = await db.select({ val: count() }).from(contracts).where(eq(contracts.employeeId, employeeId));
-  const [attendanceRes] = await db.select({ val: count() }).from(attendance).where(eq(attendance.employeeId, employeeId));
-  const [timeOffRes] = await db.select({ val: count() }).from(timeOffRequests).where(eq(timeOffRequests.employeeId, employeeId));
-  const [payslipRes] = await db.select({ val: count() }).from(payslips).where(eq(payslips.employeeId, employeeId));
+  const [contractRes] = await db
+    .select({ val: count() })
+    .from(contracts)
+    .where(eq(contracts.employeeId, employeeId));
+  const [attendanceRes] = await db
+    .select({ val: count() })
+    .from(attendance)
+    .where(eq(attendance.employeeId, employeeId));
+  const [timeOffRes] = await db
+    .select({ val: count() })
+    .from(timeOffRequests)
+    .where(eq(timeOffRequests.employeeId, employeeId));
+  const [payslipRes] = await db
+    .select({ val: count() })
+    .from(payslips)
+    .where(eq(payslips.employeeId, employeeId));
 
   return {
     contract_count: contractRes?.val ?? 0,
