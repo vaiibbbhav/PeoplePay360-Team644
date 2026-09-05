@@ -82,15 +82,18 @@ export async function getSalaryCostByDepartment() {
 }
 
 export async function getMonthlySalaryTrends() {
+  const monthLabel = sql<string>`TO_CHAR(${payruns.periodStart}, 'Mon YYYY')`;
+  const monthDate = sql<string>`DATE_TRUNC('month', ${payruns.periodStart})`;
+
   return await db
     .select({
-      month_label: sql<string>`TO_CHAR(${payruns.periodStart}, 'Mon YYYY')`,
-      month_date: sql<string>`DATE_TRUNC('month', ${payruns.periodStart})`,
+      month_label: monthLabel,
+      month_date: monthDate,
       total_net: sql<string>`COALESCE(SUM(${payruns.totalNet}), 0)`,
       total_gross: sql<string>`COALESCE(SUM(${payruns.totalGross}), 0)`,
     })
     .from(payruns)
-    .groupBy(sql`month_label`, sql`month_date`)
-    .orderBy(sql`month_date ASC`)
+    .groupBy(monthLabel, monthDate)
+    .orderBy(sql`${monthDate} ASC`)
     .limit(12);
 }

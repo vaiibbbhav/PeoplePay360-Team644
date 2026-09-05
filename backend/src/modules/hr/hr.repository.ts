@@ -48,7 +48,7 @@ export async function findAllEmployees() {
       created_at: employees.createdAt,
     })
     .from(employees)
-    .leftJoin(users, eq(employees.userId, users.id))
+    .innerJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
     .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))
@@ -90,7 +90,7 @@ export async function findEmployeeById(id: string) {
       created_at: employees.createdAt,
     })
     .from(employees)
-    .leftJoin(users, eq(employees.userId, users.id))
+    .innerJoin(users, eq(employees.userId, users.id))
     .leftJoin(departments, eq(employees.departmentId, departments.id))
     .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
     .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))

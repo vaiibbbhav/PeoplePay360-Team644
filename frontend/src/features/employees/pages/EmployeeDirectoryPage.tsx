@@ -17,11 +17,14 @@ export const EmployeeDirectoryPage: React.FC = () => {
 
   // Filter logic
   const filteredEmployees = employees.filter((emp) => {
-    const fullName = `${emp.first_name} ${emp.last_name}`.toLowerCase();
+    const firstName = emp.first_name || '';
+    const lastName = emp.last_name || '';
+    const email = emp.email || '';
+    const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
     const matchesSearch =
       !search ||
       fullName.includes(search.toLowerCase()) ||
-      emp.email.toLowerCase().includes(search.toLowerCase()) ||
+      email.toLowerCase().includes(search.toLowerCase()) ||
       (emp.job_position_title &&
         emp.job_position_title.toLowerCase().includes(search.toLowerCase()));
 
@@ -127,8 +130,10 @@ export const EmployeeDirectoryPage: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredEmployees.map((emp) => {
-              const fullName = `${emp.first_name} ${emp.last_name}`;
-              const initials = `${emp.first_name[0] || ''}${emp.last_name[0] || ''}`.toUpperCase();
+              const firstName = emp.first_name || '';
+              const lastName = emp.last_name || '';
+              const fullName = `${firstName} ${lastName}`.trim() || 'Unnamed Employee';
+              const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || 'EM';
 
               return (
                 <div

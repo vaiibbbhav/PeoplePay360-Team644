@@ -7,8 +7,10 @@ type EmployeeHeaderCardProps = {
 };
 
 export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee, onEdit }) => {
-  const fullName = `${employee.first_name} ${employee.last_name}`;
-  const initials = `${employee.first_name[0] || ''}${employee.last_name[0] || ''}`.toUpperCase();
+  const firstName = employee.first_name || '';
+  const lastName = employee.last_name || '';
+  const fullName = `${firstName} ${lastName}`.trim() || 'Unnamed Employee';
+  const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || 'EM';
 
   return (
     <div className="bg-bg border border-line rounded-2xl overflow-hidden mb-6">
