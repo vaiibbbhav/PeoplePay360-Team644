@@ -134,36 +134,47 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
             <span className="text-xs text-accent font-medium">Payroll Context Inputs</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
-            <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
-              <span className="text-[11px] text-ink-soft block">Present</span>
-              <span className="text-xl font-serif font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
-                {attendance.present}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
-              <span className="text-[11px] text-ink-soft block">Late</span>
-              <span className="text-xl font-serif font-bold text-amber-600 dark:text-amber-400 mt-1 block">
-                {attendance.late}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
-              <span className="text-[11px] text-ink-soft block">Absent</span>
-              <span className="text-xl font-serif font-bold text-red-600 dark:text-red-400 mt-1 block">
-                {attendance.absent}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
-              <span className="text-[11px] text-ink-soft block">Overtime</span>
-              <span className="text-xl font-serif font-bold text-accent mt-1 block">
-                {attendance.overtime}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
-              <span className="text-[11px] text-ink-soft block">Edits</span>
-              <span className="text-xl font-serif font-bold text-ink mt-1 block">
-                {attendance.manualEdits}
-              </span>
-            </div>
+            {isLoading ? (
+              [0, 1, 2, 3, 4].map((i) => (
+                <div key={i} className="p-3 rounded-xl border border-line bg-bg-raised/40 space-y-2 flex flex-col items-center justify-center">
+                  <div className="h-2.5 w-14 bg-ink/10 rounded animate-pulse" />
+                  <div className="h-6 w-10 bg-ink/10 rounded animate-pulse" />
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
+                  <span className="text-[11px] text-ink-soft block">Present</span>
+                  <span className="text-xl font-serif font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
+                    {attendance.present}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
+                  <span className="text-[11px] text-ink-soft block">Late</span>
+                  <span className="text-xl font-serif font-bold text-amber-600 dark:text-amber-400 mt-1 block">
+                    {attendance.late}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
+                  <span className="text-[11px] text-ink-soft block">Absent</span>
+                  <span className="text-xl font-serif font-bold text-red-600 dark:text-red-400 mt-1 block">
+                    {attendance.absent}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
+                  <span className="text-[11px] text-ink-soft block">Overtime</span>
+                  <span className="text-xl font-serif font-bold text-accent mt-1 block">
+                    {attendance.overtime}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
+                  <span className="text-[11px] text-ink-soft block">Edits</span>
+                  <span className="text-xl font-serif font-bold text-ink mt-1 block">
+                    {attendance.manualEdits}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 

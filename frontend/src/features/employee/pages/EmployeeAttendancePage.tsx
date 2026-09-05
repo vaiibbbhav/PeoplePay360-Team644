@@ -59,7 +59,7 @@ export const EmployeeAttendancePage: React.FC = () => {
   const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
 
   // Queries & Mutations
-  const { data: records = [] } = useAttendanceList({
+  const { data: records = [], isLoading } = useAttendanceList({
     employeeId,
     startDate,
     endDate,
@@ -197,6 +197,7 @@ export const EmployeeAttendancePage: React.FC = () => {
           onOpenFingerprintModal={() => setIsFingerprintModalOpen(true)}
           monthName={monthName}
           year={year}
+          isLoading={isLoading}
         />
 
         {/* Calendar-like View */}

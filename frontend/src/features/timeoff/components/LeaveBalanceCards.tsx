@@ -5,12 +5,61 @@ import type { LeaveBalanceItem } from '../queries/useTimeOff';
 type LeaveBalanceCardsProps = {
   balances: LeaveBalanceItem[];
   onApplyLeave: (typeId?: string) => void;
+  isLoading?: boolean;
 };
 
 export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
   balances,
   onApplyLeave,
+  isLoading = false,
 }) => {
+  if (isLoading) {
+    return (
+      <div className="space-y-3 font-sans">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="h-4 w-48 bg-ink/10 rounded animate-pulse" />
+            <div className="h-3 w-64 bg-ink/10 rounded mt-1.5 animate-pulse" />
+          </div>
+          <div className="h-8 w-28 bg-ink/10 rounded-xl animate-pulse" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="p-4 rounded-2xl border border-line bg-bg flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="space-y-1.5">
+                    <div className="h-2.5 w-12 bg-ink/10 rounded animate-pulse" />
+                    <div className="h-4 w-28 bg-ink/10 rounded animate-pulse" />
+                  </div>
+                  <div className="h-4 w-12 bg-ink/10 rounded animate-pulse" />
+                </div>
+                <div className="mt-4 flex items-baseline gap-1.5">
+                  <div className="h-8 w-16 bg-ink/10 rounded animate-pulse" />
+                  <div className="h-3 w-16 bg-ink/10 rounded animate-pulse" />
+                </div>
+                <div className="mt-3 space-y-1.5">
+                  <div className="h-1.5 w-full bg-ink/10 rounded-full animate-pulse" />
+                  <div className="flex justify-between">
+                    <div className="h-2.5 w-16 bg-ink/10 rounded animate-pulse" />
+                    <div className="h-2.5 w-16 bg-ink/10 rounded animate-pulse" />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-line/60 flex items-center justify-between">
+                <div className="h-3 w-20 bg-ink/10 rounded animate-pulse" />
+                <div className="h-3 w-14 bg-ink/10 rounded animate-pulse" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (balances.length === 0) {
     return (
       <div className="border border-line rounded-2xl p-6 bg-bg flex flex-col md:flex-row items-center justify-between gap-4 font-sans">

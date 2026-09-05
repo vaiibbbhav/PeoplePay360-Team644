@@ -52,7 +52,7 @@ export const TimeOffPage: React.FC = () => {
   const employeeId = user?.employeeId || undefined;
 
   // Queries
-  const { data: balances = [] } = useLeaveBalances(employeeId);
+  const { data: balances = [], isLoading: isBalancesLoading } = useLeaveBalances(employeeId);
 
   // Own requests
   const { data: myRequests = [], isLoading: isMyRequestsLoading } = useTimeOffRequests({
@@ -213,7 +213,11 @@ export const TimeOffPage: React.FC = () => {
         {/* Tab 1 Content: My Leave & Balances */}
         {activeTab === 'my_leave' && (
           <div className="space-y-6">
-            <LeaveBalanceCards balances={balances} onApplyLeave={handleOpenApply} />
+            <LeaveBalanceCards
+              balances={balances}
+              onApplyLeave={handleOpenApply}
+              isLoading={isBalancesLoading}
+            />
 
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
@@ -249,7 +253,7 @@ export const TimeOffPage: React.FC = () => {
         {/* Tab 3 Content: Company Requests */}
         {activeTab === 'company_requests' && (
           <div className="space-y-6">
-            <TimeOffSummaryCards requests={allRequests} />
+            <TimeOffSummaryCards requests={allRequests} isLoading={isAllRequestsLoading} />
 
             {/* Filter Toolbar */}
             <div className="p-4 rounded-2xl border border-line bg-bg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">

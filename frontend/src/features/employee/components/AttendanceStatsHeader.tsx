@@ -7,6 +7,7 @@ type AttendanceStatsHeaderProps = {
   onOpenFingerprintModal: () => void;
   monthName: string;
   year: number;
+  isLoading?: boolean;
 };
 
 export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
@@ -15,6 +16,7 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
   onOpenFingerprintModal,
   monthName,
   year,
+  isLoading = false,
 }) => {
   const totalRecords = records.length;
   const presentRecords = records.filter(
@@ -88,55 +90,69 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
 
       {/* Top States & Statistics Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {/* State 1: Present Rate */}
-        <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
-          <span className="text-[11px] font-medium text-ink-soft block">Attendance Rate</span>
-          <div className="text-xl sm:text-2xl font-bold font-serif text-ink mt-1 flex items-baseline gap-1.5">
-            <span>{attendanceRate}%</span>
-            <span className="text-xs font-sans font-normal text-ink-soft">
-              ({presentRecords.length} / {totalRecords} days)
-            </span>
-          </div>
-          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            Standard Schedule
-          </span>
-        </div>
+        {isLoading ? (
+          <>
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40 space-y-2">
+                <div className="h-3 w-20 bg-ink/10 rounded animate-pulse" />
+                <div className="h-7 w-24 bg-ink/10 rounded animate-pulse" />
+                <div className="h-2.5 w-28 bg-ink/10 rounded animate-pulse" />
+              </div>
+            ))}
+          </>
+        ) : (
+          <>
+            {/* State 1: Present Rate */}
+            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
+              <span className="text-[11px] font-medium text-ink-soft block">Attendance Rate</span>
+              <div className="text-xl sm:text-2xl font-bold font-serif text-ink mt-1 flex items-baseline gap-1.5">
+                <span>{attendanceRate}%</span>
+                <span className="text-xs font-sans font-normal text-ink-soft">
+                  ({presentRecords.length} / {totalRecords} days)
+                </span>
+              </div>
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                Standard Schedule
+              </span>
+            </div>
 
-        {/* State 2: Total Hours */}
-        <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
-          <span className="text-[11px] font-medium text-ink-soft block">Total Worked Hours</span>
-          <div className="text-xl sm:text-2xl font-bold font-serif text-accent mt-1">
-            {totalWorkedHours.toFixed(1)}{' '}
-            <span className="text-xs font-sans font-normal text-ink-soft">hrs</span>
-          </div>
-          <span className="text-[10px] text-ink-soft font-medium mt-1 block">
-            Avg. {averageHoursPerDay} hrs/shift
-          </span>
-        </div>
+            {/* State 2: Total Hours */}
+            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
+              <span className="text-[11px] font-medium text-ink-soft block">Total Worked Hours</span>
+              <div className="text-xl sm:text-2xl font-bold font-serif text-accent mt-1">
+                {totalWorkedHours.toFixed(1)}{' '}
+                <span className="text-xs font-sans font-normal text-ink-soft">hrs</span>
+              </div>
+              <span className="text-[10px] text-ink-soft font-medium mt-1 block">
+                Avg. {averageHoursPerDay} hrs/shift
+              </span>
+            </div>
 
-        {/* State 3: Late Punches */}
-        <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
-          <span className="text-[11px] font-medium text-ink-soft block">Late Arrivals</span>
-          <div className="text-xl sm:text-2xl font-bold font-serif text-ink mt-1">
-            {lateRecords.length}
-          </div>
-          <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-1 block">
-            {lateRecords.length > 0 ? 'Exceptions verified' : 'Zero arrival exceptions'}
-          </span>
-        </div>
+            {/* State 3: Late Punches */}
+            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
+              <span className="text-[11px] font-medium text-ink-soft block">Late Arrivals</span>
+              <div className="text-xl sm:text-2xl font-bold font-serif text-ink mt-1">
+                {lateRecords.length}
+              </div>
+              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-1 block">
+                {lateRecords.length > 0 ? 'Exceptions verified' : 'Zero arrival exceptions'}
+              </span>
+            </div>
 
-        {/* State 4: Biometric & Manual Audits */}
-        <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
-          <span className="text-[11px] font-medium text-ink-soft block">Audit & Edits</span>
-          <div className="text-xl sm:text-2xl font-bold font-serif text-ink mt-1">
-            {manualEdits.length}{' '}
-            <span className="text-xs font-sans font-normal text-ink-soft">manual</span>
-          </div>
-          <span className="text-[10px] text-accent font-medium mt-1 block truncate">
-            {fingerprint?.encryted_template ? 'Hardware Fingerprint Active' : 'Scanner Pending'}
-          </span>
-        </div>
+            {/* State 4: Biometric & Manual Audits */}
+            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
+              <span className="text-[11px] font-medium text-ink-soft block">Audit & Edits</span>
+              <div className="text-xl sm:text-2xl font-bold font-serif text-ink mt-1">
+                {manualEdits.length}{' '}
+                <span className="text-xs font-sans font-normal text-ink-soft">manual</span>
+              </div>
+              <span className="text-[10px] text-accent font-medium mt-1 block truncate">
+                {fingerprint?.encryted_template ? 'Hardware Fingerprint Active' : 'Scanner Pending'}
+              </span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

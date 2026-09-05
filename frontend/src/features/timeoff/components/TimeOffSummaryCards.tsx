@@ -4,9 +4,13 @@ import type { TimeOffRequest } from '../queries/useTimeOff';
 
 type TimeOffSummaryCardsProps = {
   requests: TimeOffRequest[];
+  isLoading?: boolean;
 };
 
-export const TimeOffSummaryCards: React.FC<TimeOffSummaryCardsProps> = ({ requests }) => {
+export const TimeOffSummaryCards: React.FC<TimeOffSummaryCardsProps> = ({
+  requests,
+  isLoading = false,
+}) => {
   const total = requests.length;
   const pending = requests.filter((r) => r.status === 'pending').length;
   const approved = requests.filter((r) => r.status === 'approved').length;
@@ -52,5 +56,5 @@ export const TimeOffSummaryCards: React.FC<TimeOffSummaryCardsProps> = ({ reques
     },
   ];
 
-  return <StatGrid items={items} />;
+  return <StatGrid columns={4} items={items} isLoading={isLoading} skeletonCount={4} />;
 };
