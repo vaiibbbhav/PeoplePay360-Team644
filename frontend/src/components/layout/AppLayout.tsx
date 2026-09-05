@@ -427,14 +427,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     return itemPath;
   };
 
-  // Build nav groups for Admin/HR
+  // Build nav groups tailored to role
+  const isHRManagerOnly = user.role === 'HR Manager';
+  const canAccessPayroll =
+    user.role === 'Admin' ||
+    user.role === 'HR Payroll Manager' ||
+    user.role === 'HR Payroll User';
+
   const navGroups: NavGroup[] = [
     {
       title: 'Navigation',
       items: [
-        ...(user.role !== 'Admin'
-          ? [{ label: 'Overview', path: '/dashboard', icon: HomeIcon }]
-          : [{ label: 'User Management', path: '/users', icon: UsersIcon }]),
+        { label: 'Overview', path: '/dashboard', icon: HomeIcon },
+        ...(user.role === 'Admin'
+          ? [{ label: 'User Management', path: '/users', icon: UsersIcon }]
+          : []),
       ],
     },
     {
@@ -452,13 +459,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         { label: 'Time Off Requests', path: '/time-off', icon: TimeOffIcon },
       ],
     },
-    {
-      title: 'Payroll',
-      items: [
-        { label: 'Payrun Wizard', path: '/payruns', icon: PayrunIcon },
-        { label: 'Analytics', path: '/analytics', icon: AnalyticsIcon },
-      ],
-    },
+    ...(canAccessPayroll && !isHRManagerOnly
+      ? [
+          {
+            title: 'Payroll',
+            items: [
+              { label: 'Payrun Wizard', path: '/payruns', icon: PayrunIcon },
+              { label: 'Analytics', path: '/analytics', icon: AnalyticsIcon },
+            ],
+          },
+        ]
+      : []),
   ];
 
   const displayName =
