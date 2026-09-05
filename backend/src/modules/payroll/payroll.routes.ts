@@ -101,7 +101,17 @@ router.post(
 
 // Payslips
 router.get(
-  '/payslips/:id',
+  ['/payslips', '/'],
+  asyncHandler(async (req, res) => {
+    const employeeId = req.query.employeeId as string | undefined;
+    const payrunId = req.query.payrunId as string | undefined;
+    const payslips = await payrollService.listPayslips({ employeeId, payrunId });
+    res.json(payslips);
+  }),
+);
+
+router.get(
+  ['/payslips/:id', '/:id'],
   asyncHandler(async (req, res) => {
     const payslip = await payrollService.getPayslipById(req.params.id);
     res.json(payslip);
