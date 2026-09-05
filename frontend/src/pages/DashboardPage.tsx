@@ -9,7 +9,7 @@ export const DashboardPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div style={{ padding: '60px', textAlign: 'center', color: 'var(--ink-soft)' }}>
+      <div className="min-h-screen flex items-center justify-center p-15 text-center text-ink-soft bg-bg">
         Loading session...
       </div>
     );
@@ -17,9 +17,12 @@ export const DashboardPage: React.FC = () => {
 
   if (isError || !user) {
     return (
-      <div style={{ padding: '60px', textAlign: 'center' }}>
-        <p style={{ color: 'var(--over-red)' }}>Session expired or user not found.</p>
-        <button onClick={() => navigate('/login')} className="btn btn-primary" style={{ marginTop: '16px' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center p-15 text-center bg-bg text-ink">
+        <p className="text-over-red text-base">Session expired or user not found.</p>
+        <button
+          onClick={() => navigate('/login')}
+          className="mt-4 px-5 py-2.5 rounded-lg text-sm font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer"
+        >
           Go to Sign In
         </button>
       </div>
@@ -27,65 +30,44 @@ export const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="min-h-screen flex flex-col bg-bg text-ink">
       {/* Top Console Navigation */}
-      <header style={{
-        borderBottom: '1px solid var(--line)',
-        padding: '16px 32px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        background: 'var(--bg)',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
-          <span style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: '20px',
-            fontWeight: 700,
-            color: 'var(--ink)',
-          }}>
-            PeoplePay<span style={{ color: 'var(--accent)' }}>360</span>
+      <header className="border-b border-line px-8 py-4 flex justify-between items-center bg-bg">
+        <div className="flex items-center gap-7">
+          <span className="font-serif text-xl font-bold text-ink">
+            PeoplePay<span className="text-accent">360</span>
           </span>
-          <span style={{
-            fontSize: '12px',
-            padding: '3px 8px',
-            borderRadius: '4px',
-            background: 'var(--accent-soft)',
-            color: 'var(--accent)',
-            fontWeight: 600,
-          }}>
+          <span className="text-xs px-2 py-0.5 rounded bg-accent-soft text-accent font-semibold">
             {user.role}
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span style={{ fontSize: '14px', color: 'var(--ink-soft)' }}>
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-ink-soft">
             {user.email}
           </span>
-          <button onClick={logout} className="btn btn-ghost" style={{ padding: '7px 14px', fontSize: '13px' }}>
+          <button
+            onClick={logout}
+            className="px-3.5 py-1.5 rounded-lg text-xs font-medium border border-line bg-transparent text-ink hover:bg-bg-raised transition-colors cursor-pointer"
+          >
             Sign Out
           </button>
         </div>
       </header>
 
       {/* Main Workspace Area */}
-      <main className="wrap" style={{ flex: 1, padding: '40px 32px' }}>
-        <div style={{ marginBottom: '32px' }}>
-          <h1 style={{ fontSize: '32px', marginBottom: '8px' }}>
+      <main className="max-w-6xl mx-auto w-full flex-1 px-8 py-10">
+        <div className="mb-8">
+          <h1 className="font-serif text-3xl font-bold mb-2 text-ink">
             Welcome, {user.employee?.firstName || user.email.split('@')[0]}
           </h1>
-          <p style={{ color: 'var(--ink-soft)', fontSize: '15px', margin: 0 }}>
-            Operational Command Center · Role: <b>{user.role}</b>
+          <p className="text-ink-soft text-sm sm:text-base m-0">
+            Operational Command Center · Role: <b className="text-ink">{user.role}</b>
           </p>
         </div>
 
         {/* Action Modules Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: '20px',
-          marginBottom: '40px',
-        }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
           {[
             {
               title: 'Employee Master',
@@ -120,35 +102,21 @@ export const DashboardPage: React.FC = () => {
           ].map((card) => (
             <div
               key={card.title}
-              style={{
-                border: '1px solid var(--line)',
-                borderRadius: '12px',
-                padding: '24px',
-                background: 'var(--bg-raised)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
+              className="border border-line rounded-xl p-6 bg-bg-raised flex flex-col justify-between"
             >
               <div>
-                <span style={{
-                  fontSize: '11.5px',
-                  fontWeight: 600,
-                  color: 'var(--accent)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                }}>
+                <span className="text-xs font-semibold text-accent uppercase tracking-wider">
                   {card.tag}
                 </span>
-                <h3 style={{ fontSize: '18px', margin: '8px 0', fontFamily: "'IBM Plex Sans', sans-serif", fontWeight: 600 }}>
+                <h3 className="text-lg my-2 font-semibold font-sans text-ink">
                   {card.title}
                 </h3>
-                <p style={{ fontSize: '13.5px', color: 'var(--ink-soft)', margin: 0, lineHeight: 1.5 }}>
+                <p className="text-xs sm:text-sm text-ink-soft m-0 leading-relaxed">
                   {card.desc}
                 </p>
               </div>
-              <div style={{ marginTop: '20px' }}>
-                <span style={{ fontSize: '12.5px', color: 'var(--accent)', fontWeight: 500 }}>
+              <div className="mt-5">
+                <span className="text-xs text-accent font-medium hover:underline cursor-pointer">
                   Ready in module →
                 </span>
               </div>
@@ -157,46 +125,32 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Profile Card */}
-        <div style={{
-          border: '1px solid var(--line)',
-          borderRadius: '12px',
-          padding: '28px',
-          background: 'var(--bg)',
-        }}>
-          <h3 style={{ fontSize: '19px', marginBottom: '16px' }}>Current Session Details</h3>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '16px',
-            fontSize: '14px',
-          }}>
+        <div className="border border-line rounded-xl p-7 bg-bg">
+          <h3 className="font-serif text-lg sm:text-xl font-semibold mb-4 text-ink">
+            Current Session Details
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
             <div>
-              <span style={{ color: 'var(--ink-soft)', display: 'block', fontSize: '12.5px' }}>User ID</span>
-              <span style={{ fontFamily: 'monospace' }}>{user.id}</span>
+              <span className="text-ink-soft block text-xs mb-1">User ID</span>
+              <span className="font-mono text-xs sm:text-sm text-ink">{user.id}</span>
             </div>
             <div>
-              <span style={{ color: 'var(--ink-soft)', display: 'block', fontSize: '12.5px' }}>Assigned Role</span>
-              <b>{user.role}</b>
+              <span className="text-ink-soft block text-xs mb-1">Assigned Role</span>
+              <b className="text-ink">{user.role}</b>
             </div>
             <div>
-              <span style={{ color: 'var(--ink-soft)', display: 'block', fontSize: '12.5px' }}>Linked Employee ID</span>
-              <span style={{ fontFamily: 'monospace' }}>{user.employeeId || 'None (System Admin)'}</span>
+              <span className="text-ink-soft block text-xs mb-1">Linked Employee ID</span>
+              <span className="font-mono text-xs sm:text-sm text-ink">{user.employeeId || 'None (System Admin)'}</span>
             </div>
             <div>
-              <span style={{ color: 'var(--ink-soft)', display: 'block', fontSize: '12.5px' }}>Auth Status</span>
-              <span style={{ color: 'var(--accent)', fontWeight: 500 }}>Authenticated (JWT)</span>
+              <span className="text-ink-soft block text-xs mb-1">Auth Status</span>
+              <span className="text-accent font-medium">Authenticated (JWT)</span>
             </div>
           </div>
         </div>
       </main>
 
-      <footer style={{
-        borderTop: '1px solid var(--line)',
-        padding: '20px 32px',
-        textAlign: 'center',
-        fontSize: '13px',
-        color: 'var(--ink-soft)',
-      }}>
+      <footer className="border-t border-line py-5 px-8 text-center text-xs text-ink-soft">
         PeoplePay360 — Integrated HR & Payroll Operations Platform
       </footer>
     </div>

@@ -29,43 +29,29 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    <div style={{
-      maxWidth: '420px',
-      margin: '0 auto',
-      padding: '36px 32px',
-      border: '1px solid var(--line)',
-      borderRadius: '12px',
-      background: 'var(--bg-raised)',
-      boxShadow: 'none',
-    }}>
-      <div style={{ marginBottom: '28px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '28px', marginBottom: '8px' }}>Welcome back</h2>
-        <p style={{ color: 'var(--ink-soft)', fontSize: '14.5px', margin: 0 }}>
+    <div className="w-full max-w-md mx-auto p-8 sm:p-9 border border-line rounded-xl bg-bg-raised shadow-none">
+      <div className="mb-7 text-center">
+        <h2 className="font-serif text-2xl font-bold mb-2 text-ink">Welcome back</h2>
+        <p className="text-ink-soft text-sm m-0">
           Enter your credentials to access PeoplePay360
         </p>
       </div>
 
       {errorMessage && (
-        <div style={{
-          padding: '12px 14px',
-          borderRadius: '8px',
-          border: '1px solid var(--over-red)',
-          color: 'var(--over-red)',
-          fontSize: '13.5px',
-          marginBottom: '20px',
-          background: 'color-mix(in srgb, var(--over-red) 8%, var(--bg))',
-        }}>
+        <div className="px-3.5 py-3 rounded-lg border border-over-red text-over-red text-sm mb-5 bg-[color-mix(in_srgb,var(--over-red)_8%,var(--bg))]">
           {errorMessage}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4.5">
         <div>
-          <label className="editorial-label" htmlFor="email">Work Email</label>
+          <label className="block text-xs font-medium text-ink-soft mb-1.5" htmlFor="email">
+            Work Email
+          </label>
           <input
             id="email"
             type="email"
-            className="editorial-input"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-line bg-bg text-ink font-sans text-sm outline-none focus:border-accent transition-colors"
             placeholder="name@company.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -75,11 +61,13 @@ export const LoginForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="editorial-label" htmlFor="password">Password</label>
+          <label className="block text-xs font-medium text-ink-soft mb-1.5" htmlFor="password">
+            Password
+          </label>
           <input
             id="password"
             type="password"
-            className="editorial-input"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-line bg-bg text-ink font-sans text-sm outline-none focus:border-accent transition-colors"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -90,24 +78,16 @@ export const LoginForm: React.FC = () => {
 
         <button
           type="submit"
-          className="btn btn-primary"
-          style={{ width: '100%', marginTop: '6px', padding: '12px' }}
+          className="w-full mt-1.5 py-3 px-4 rounded-lg font-medium text-sm bg-accent text-accent-ink hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           disabled={loginMutation.isPending}
         >
           {loginMutation.isPending ? 'Signing in...' : 'Sign in to Console'}
         </button>
       </form>
 
-      <div style={{
-        marginTop: '24px',
-        paddingTop: '20px',
-        borderTop: '1px solid var(--line)',
-        textAlign: 'center',
-        fontSize: '13.5px',
-        color: 'var(--ink-soft)',
-      }}>
+      <div className="mt-6 pt-5 border-t border-line text-center text-sm text-ink-soft">
         Don't have an account?{' '}
-        <Link to="/register" style={{ color: 'var(--accent)', fontWeight: 500, textDecoration: 'none' }}>
+        <Link to="/register" className="text-accent font-medium no-underline hover:underline">
           Create an account
         </Link>
       </div>

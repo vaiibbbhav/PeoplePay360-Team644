@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Sun, Moon } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains('dark') ||
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (isDarkMode) {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
       document.documentElement.classList.add('dark');
       setIsDark(true);
+    } else {
+      document.documentElement.classList.remove('dark');
+      setIsDark(false);
     }
   }, []);
 
@@ -18,87 +21,62 @@ export const LandingPage: React.FC = () => {
     setIsDark(nextDark);
     if (nextDark) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-bg text-ink">
       {/* ---------- Sticky Nav ---------- */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 40,
-        background: 'color-mix(in srgb, var(--bg) 88%, transparent)',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid var(--line)',
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '18px 32px',
-          maxWidth: '1120px',
-          margin: '0 auto',
-        }}>
-          <a href="#top" style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: '21px',
-            fontWeight: 700,
-            letterSpacing: '-0.01em',
-            textDecoration: 'none',
-            color: 'var(--ink)',
-          }}>
-            PeoplePay<span style={{ color: 'var(--accent)' }}>360</span>
+      <header className="sticky top-0 z-40 bg-[color-mix(in_srgb,var(--bg)_88%,transparent)] backdrop-blur-md border-b border-line">
+        <div className="flex items-center justify-between px-6 sm:px-8 py-4.5 max-w-6xl mx-auto">
+          <a
+            href="#top"
+            className="font-serif text-xl font-bold tracking-tight text-ink no-underline"
+          >
+            PeoplePay<span className="text-accent">360</span>
           </a>
 
-          <nav style={{
-            display: 'flex',
-            gap: '28px',
-            fontSize: '14.5px',
-            color: 'var(--ink-soft)',
-            alignItems: 'center',
-          }}>
-            <a href="#modules" style={{ textDecoration: 'none' }}>Modules</a>
-            <a href="#flow" style={{ textDecoration: 'none' }}>Flow</a>
-            <a href="#validation" style={{ textDecoration: 'none' }}>Validation Engine</a>
-            <a href="#roles" style={{ textDecoration: 'none' }}>Roles</a>
+          <nav className="hidden md:flex items-center gap-7 text-sm text-ink-soft">
+            <a href="#modules" className="no-underline hover:text-ink transition-colors">
+              Modules
+            </a>
+            <a href="#flow" className="no-underline hover:text-ink transition-colors">
+              Flow
+            </a>
+            <a href="#validation" className="no-underline hover:text-ink transition-colors">
+              Validation Engine
+            </a>
+            <a href="#roles" className="no-underline hover:text-ink transition-colors">
+              Roles
+            </a>
           </nav>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div className="flex items-center gap-3.5">
+            {/* Theme Toggle with Light/Dark icons */}
             <button
+              type="button"
               onClick={toggleTheme}
-              aria-label="Toggle dark mode"
-              style={{
-                width: '42px',
-                height: '24px',
-                borderRadius: '100px',
-                border: '1px solid var(--line)',
-                background: 'var(--bg-raised)',
-                position: 'relative',
-                cursor: 'pointer',
-                padding: 0,
-              }}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="inline-flex items-center justify-center w-9.5 h-9.5 rounded-lg border border-line bg-bg-raised text-ink cursor-pointer hover:bg-bg transition-colors"
             >
-              <span style={{
-                position: 'absolute',
-                top: '2px',
-                left: '2px',
-                width: '18px',
-                height: '18px',
-                borderRadius: '50%',
-                background: 'var(--accent)',
-                transform: isDark ? 'translateX(18px)' : 'translateX(0)',
-                transition: 'transform 0.25s ease',
-                display: 'block',
-              }} />
+              {isDark ? <Sun size={17} /> : <Moon size={17} />}
             </button>
 
-            <Link to="/login" className="btn btn-ghost" style={{ padding: '8px 16px', fontSize: '13.5px' }}>
+            <Link
+              to="/login"
+              className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs font-medium border border-line bg-transparent text-ink hover:bg-bg-raised transition-colors no-underline cursor-pointer"
+            >
               Sign in
             </Link>
-            <Link to="/register" className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '13.5px' }}>
+            <Link
+              to="/register"
+              className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline cursor-pointer"
+            >
               Register
             </Link>
           </div>
@@ -107,96 +85,81 @@ export const LandingPage: React.FC = () => {
 
       <main id="top">
         {/* ---------- HERO ---------- */}
-        <section style={{ padding: '88px 0 64px', borderBottom: '1px solid var(--line)' }}>
-          <div className="wrap" style={{
-            display: 'grid',
-            gridTemplateColumns: '1.15fr 0.85fr',
-            gap: '56px',
-            alignItems: 'end',
-          }}>
+        <section className="pt-20 pb-16 border-b border-line">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8 grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-14 items-end">
             <div>
-              <div style={{
-                fontSize: '14px',
-                color: 'var(--ink-soft)',
-                marginBottom: '20px',
-                letterSpacing: '0.02em',
-              }}>
+              <div className="text-sm text-ink-soft mb-5 tracking-wide">
                 Past fragmented HR records, for real operational enterprise teams.
               </div>
-              <h1 style={{ fontSize: '54px', maxWidth: '16ch', lineHeight: 1.1 }}>
-                An HR & Payroll engine that <span style={{ color: 'var(--accent)' }}>unifies, computes,</span> and reconciles itself.
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-[54px] font-semibold text-ink leading-[1.12] max-w-[16ch] m-0">
+                An HR & Payroll engine that{' '}
+                <span className="text-accent">unifies, computes,</span> and reconciles itself.
               </h1>
-              <p style={{
-                marginTop: '24px',
-                fontSize: '17px',
-                color: 'var(--ink-soft)',
-                maxWidth: '46ch',
-                lineHeight: 1.6,
-              }}>
-                Employee master records, period-specific contracts, attendance exceptions, and sequential salary rule engines unified on a single ledger.
+              <p className="mt-6 text-base sm:text-lg text-ink-soft max-w-[46ch] leading-relaxed">
+                Employee master records, period-specific contracts, attendance exceptions, and
+                sequential salary rule engines unified on a single ledger.
               </p>
-              <div style={{ marginTop: '32px', display: 'flex', gap: '14px', alignItems: 'center' }}>
-                <a href="#flow" className="btn btn-primary">
+              <div className="mt-8 flex gap-3.5 items-center flex-wrap">
+                <a
+                  href="#flow"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline cursor-pointer"
+                >
                   See the full flow
                 </a>
-                <Link to="/login" className="btn btn-ghost">
+                <Link
+                  to="/login"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium border border-line bg-transparent text-ink hover:bg-bg-raised transition-colors no-underline cursor-pointer"
+                >
                   Access Console
                 </Link>
               </div>
             </div>
 
             {/* Hero Flow Mini Panel */}
-            <div style={{
-              border: '1px solid var(--line)',
-              borderRadius: '14px',
-              padding: '28px',
-              background: 'var(--bg-raised)',
-            }}>
-              <div style={{ fontSize: '13px', color: 'var(--ink-soft)', marginBottom: '18px' }}>
+            <div className="border border-line rounded-2xl p-7 bg-bg-raised">
+              <div className="text-xs text-ink-soft mb-4.5 font-medium">
                 Employee to payslip, one connected flow
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="flex flex-col">
                 {[
-                  { title: 'Employee Profile & Schedule Assigned', sub: 'Master identity, department, working hours', filled: true },
-                  { title: 'Active Period Contract Bound', sub: 'Period-matched wage & salary structure', filled: true },
-                  { title: 'Attendance & Leave Exceptions Logged', sub: 'Punches, manual edits, allocation deductions', filled: true },
-                  { title: 'Salary Rules Evaluated in Sequence', sub: 'Basic → Allowances → Gross → Deductions → Net', filled: true },
-                  { title: 'Payrun Validated, Paid & Dispatched', sub: 'PDF payslips generated & emailed', filled: false },
+                  {
+                    title: 'Employee Profile & Schedule Assigned',
+                    sub: 'Master identity, department, working hours',
+                    filled: true,
+                  },
+                  {
+                    title: 'Active Period Contract Bound',
+                    sub: 'Period-matched wage & salary structure',
+                    filled: true,
+                  },
+                  {
+                    title: 'Attendance & Leave Exceptions Logged',
+                    sub: 'Punches, manual edits, allocation deductions',
+                    filled: true,
+                  },
+                  {
+                    title: 'Salary Rules Evaluated in Sequence',
+                    sub: 'Basic → Allowances → Gross → Deductions → Net',
+                    filled: true,
+                  },
+                  {
+                    title: 'Payrun Validated, Paid & Dispatched',
+                    sub: 'PDF payslips generated & emailed',
+                    filled: false,
+                  },
                 ].map((step, idx, arr) => (
-                  <div
-                    key={step.title}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '14px',
-                      padding: '11px 0',
-                      position: 'relative',
-                    }}
-                  >
+                  <div key={step.title} className="flex items-start gap-3.5 py-2.5 relative">
                     {idx !== arr.length - 1 && (
-                      <div style={{
-                        position: 'absolute',
-                        left: '5px',
-                        top: '28px',
-                        width: '1px',
-                        height: '24px',
-                        background: 'var(--line)',
-                      }} />
+                      <div className="absolute left-[5px] top-7 w-px h-6 bg-line" />
                     )}
-                    <div style={{
-                      width: '11px',
-                      height: '11px',
-                      borderRadius: '50%',
-                      border: '1.5px solid var(--accent)',
-                      background: step.filled ? 'var(--accent)' : 'transparent',
-                      marginTop: '5px',
-                      flexShrink: 0,
-                    }} />
+                    <div
+                      className={`w-2.5 h-2.5 rounded-full border border-accent mt-1 shrink-0 ${
+                        step.filled ? 'bg-accent' : 'bg-transparent'
+                      }`}
+                    />
                     <div>
-                      <span style={{ fontSize: '14.5px', fontWeight: 500 }}>{step.title}</span>
-                      <small style={{ color: 'var(--ink-soft)', fontSize: '12.5px', display: 'block', marginTop: '2px' }}>
-                        {step.sub}
-                      </small>
+                      <span className="text-sm font-medium text-ink block">{step.title}</span>
+                      <small className="text-ink-soft text-xs block mt-0.5">{step.sub}</small>
                     </div>
                   </div>
                 ))}
@@ -206,26 +169,33 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* ---------- PROBLEM SECTION ---------- */}
-        <section style={{ padding: '80px 0', borderBottom: '1px solid var(--line)' }}>
-          <div className="wrap">
-            <div style={{ maxWidth: '56ch', marginBottom: '44px' }}>
-              <h2 style={{ fontSize: '32px' }}>Most basic HR tools stop at isolated CRUD tables.</h2>
+        <section className="py-20 border-b border-line">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <div className="max-w-[56ch] mb-11">
+              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink m-0">
+                Most basic HR tools stop at isolated CRUD tables.
+              </h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12">
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent)', marginBottom: '10px' }}>
+                <div className="text-xs font-semibold text-accent mb-2.5">
                   The basics fall short
                 </div>
-                <p style={{ color: 'var(--ink-soft)', fontSize: '15.5px', margin: 0, lineHeight: 1.6 }}>
-                  An employee accumulates multiple historical contracts, but payroll accidentally pulls an outdated wage. Working hours mismatch schedule templates, leave requests get approved without allocation balance deductions, and manual attendance edits slip through unnoticed.
+                <p className="text-ink-soft text-sm sm:text-base m-0 leading-relaxed">
+                  An employee accumulates multiple historical contracts, but payroll accidentally
+                  pulls an outdated wage. Working hours mismatch schedule templates, leave requests
+                  get approved without allocation balance deductions, and manual attendance edits
+                  slip through unnoticed.
                 </p>
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent)', marginBottom: '10px' }}>
+                <div className="text-xs font-semibold text-accent mb-2.5">
                   A unified operational engine instead
                 </div>
-                <p style={{ color: 'var(--ink-soft)', fontSize: '15.5px', margin: 0, lineHeight: 1.6 }}>
-                  Every payroll batch enforces period-specific contract matching. Worked hours compare directly against working schedule lines, approved leaves automatically decrement allocations, and salary rules execute sequentially with full auditability.
+                <p className="text-ink-soft text-sm sm:text-base m-0 leading-relaxed">
+                  Every payroll batch enforces period-specific contract matching. Worked hours compare
+                  directly against working schedule lines, approved leaves automatically decrement
+                  allocations, and salary rules execute sequentially with full auditability.
                 </p>
               </div>
             </div>
@@ -233,42 +203,47 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* ---------- FLOW STRIP ---------- */}
-        <section id="flow" style={{ padding: '80px 0', borderBottom: '1px solid var(--line)' }}>
-          <div className="wrap">
-            <div style={{ maxWidth: '56ch', marginBottom: '44px' }}>
-              <h2 style={{ fontSize: '32px' }}>The complete operational lifecycle</h2>
+        <section id="flow" className="py-20 border-b border-line">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <div className="max-w-[56ch] mb-11">
+              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink m-0">
+                The complete operational lifecycle
+              </h2>
             </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(5, 1fr)',
-              border: '1px solid var(--line)',
-              borderRadius: '14px',
-              overflow: 'hidden',
-            }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 border border-line rounded-2xl overflow-hidden divide-y sm:divide-y-0 sm:divide-x divide-line bg-bg">
               {[
-                { fnum: '01. Master Hub', title: 'Employee & Schedule', desc: 'Central profile, department, manager, and weekly shift definition.' },
-                { fnum: '02. Contracts', title: 'Period Binding', desc: 'Active contract validity matching the target payroll cycle dates.' },
-                { fnum: '03. Operations', title: 'Time & Leave', desc: 'Daily attendance punches, exception reviews, and leave balance deductions.' },
-                { fnum: '04. Rule Engine', title: 'Formula Sequence', desc: 'Basic, HRA, PF deductions, and gross-to-net salary computation.' },
-                { fnum: '05. Settlement', title: 'Payrun & Payslips', desc: 'Batch review, warning checks, PDF generation, and bulk email distribution.' },
-              ].map((cell, i, arr) => (
-                <div
-                  key={cell.fnum}
-                  style={{
-                    padding: '24px 20px',
-                    borderRight: i !== arr.length - 1 ? '1px solid var(--line)' : 'none',
-                    background: 'var(--bg)',
-                  }}
-                >
-                  <div style={{ color: 'var(--accent)', fontSize: '12.5px', fontWeight: 600, marginBottom: '8px' }}>
-                    {cell.fnum}
-                  </div>
-                  <h4 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '6px', margin: '0 0 6px 0' }}>
+                {
+                  fnum: '01. Master Hub',
+                  title: 'Employee & Schedule',
+                  desc: 'Central profile, department, manager, and weekly shift definition.',
+                },
+                {
+                  fnum: '02. Contracts',
+                  title: 'Period Binding',
+                  desc: 'Active contract validity matching the target payroll cycle dates.',
+                },
+                {
+                  fnum: '03. Operations',
+                  title: 'Time & Leave',
+                  desc: 'Daily attendance punches, exception reviews, and leave balance deductions.',
+                },
+                {
+                  fnum: '04. Rule Engine',
+                  title: 'Formula Sequence',
+                  desc: 'Basic, HRA, PF deductions, and gross-to-net salary computation.',
+                },
+                {
+                  fnum: '05. Settlement',
+                  title: 'Payrun & Payslips',
+                  desc: 'Batch review, warning checks, PDF generation, and bulk email distribution.',
+                },
+              ].map((cell) => (
+                <div key={cell.fnum} className="p-6 bg-bg">
+                  <div className="text-accent text-xs font-semibold mb-2">{cell.fnum}</div>
+                  <h4 className="text-base font-semibold text-ink mb-1.5 m-0 font-sans">
                     {cell.title}
                   </h4>
-                  <p style={{ fontSize: '13px', color: 'var(--ink-soft)', margin: 0, lineHeight: 1.5 }}>
-                    {cell.desc}
-                  </p>
+                  <p className="text-xs text-ink-soft m-0 leading-relaxed">{cell.desc}</p>
                 </div>
               ))}
             </div>
@@ -276,78 +251,98 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* ---------- MODULES GRID ---------- */}
-        <section id="modules" style={{ padding: '80px 0', borderBottom: '1px solid var(--line)' }}>
-          <div className="wrap">
-            <div style={{ maxWidth: '56ch', marginBottom: '44px' }}>
-              <h2 style={{ fontSize: '32px' }}>Two sides, one unified data model</h2>
+        <section id="modules" className="py-20 border-b border-line">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <div className="max-w-[56ch] mb-11">
+              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink m-0">
+                Two sides, one unified data model
+              </h2>
             </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '1px',
-              background: 'var(--line)',
-              border: '1px solid var(--line)',
-              borderRadius: '14px',
-              overflow: 'hidden',
-            }}>
-              <div style={{ background: 'var(--bg)', padding: '34px' }}>
-                <span style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: 600, marginBottom: '16px', display: 'block' }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-line border border-line rounded-2xl overflow-hidden">
+              <div className="bg-bg p-8 sm:p-9">
+                <span className="text-xs text-accent font-semibold mb-4 block">
                   Configuration & Policies
                 </span>
-                <h3 style={{ fontSize: '22px', marginBottom: '20px' }}>HR Backend Management</h3>
-                <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                <h3 className="font-serif text-xl sm:text-2xl font-semibold mb-5 text-ink m-0">
+                  HR Backend Management
+                </h3>
+                <ul className="list-none m-0 p-0 divide-y divide-line">
                   {[
-                    { label: 'Employee Master', desc: 'Kanban, List, and Form views with departmental hierarchy.' },
-                    { label: 'Contract History', desc: 'Wage tiers, wage types, and historical agreement archives.' },
-                    { label: 'Working Schedules', desc: 'Weekly shift blocks, break rules, and auto-computed weekly hours.' },
-                    { label: 'Time Off Types', desc: 'Paid/unpaid policies, day/hour units, and approval workflows.' },
-                    { label: 'Salary Structures', desc: 'Containers grouping ordered salary rules for execution.' },
-                    { label: 'Salary Rule Engine', desc: 'Fixed, percentage-of-code, and dynamic formula calculations.' },
-                  ].map((item, idx) => (
+                    {
+                      label: 'Employee Master',
+                      desc: 'Kanban, List, and Form views with departmental hierarchy.',
+                    },
+                    {
+                      label: 'Contract History',
+                      desc: 'Wage tiers, wage types, and historical agreement archives.',
+                    },
+                    {
+                      label: 'Working Schedules',
+                      desc: 'Weekly shift blocks, break rules, and auto-computed weekly hours.',
+                    },
+                    {
+                      label: 'Time Off Types',
+                      desc: 'Paid/unpaid policies, day/hour units, and approval workflows.',
+                    },
+                    {
+                      label: 'Salary Structures',
+                      desc: 'Containers grouping ordered salary rules for execution.',
+                    },
+                    {
+                      label: 'Salary Rule Engine',
+                      desc: 'Fixed, percentage-of-code, and dynamic formula calculations.',
+                    },
+                  ].map((item) => (
                     <li
                       key={item.label}
-                      style={{
-                        padding: '12px 0',
-                        borderTop: idx !== 0 ? '1px solid var(--line)' : 'none',
-                        fontSize: '14.5px',
-                        color: 'var(--ink-soft)',
-                        display: 'flex',
-                        gap: '10px',
-                      }}
+                      className="py-3 text-sm text-ink-soft flex flex-col sm:flex-row gap-2.5"
                     >
-                      <b style={{ color: 'var(--ink)', fontWeight: 500, minWidth: '130px' }}>{item.label}</b>
+                      <b className="text-ink font-medium min-w-[130px]">{item.label}</b>
                       <span>{item.desc}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div style={{ background: 'var(--bg)', padding: '34px' }}>
-                <span style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: 600, marginBottom: '16px', display: 'block' }}>
+              <div className="bg-bg p-8 sm:p-9">
+                <span className="text-xs text-accent font-semibold mb-4 block">
                   Operational Experience
                 </span>
-                <h3 style={{ fontSize: '22px', marginBottom: '20px' }}>HR & Payroll Operations</h3>
-                <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                <h3 className="font-serif text-xl sm:text-2xl font-semibold mb-5 text-ink m-0">
+                  HR & Payroll Operations
+                </h3>
+                <ul className="list-none m-0 p-0 divide-y divide-line">
                   {[
-                    { label: 'Employee Hub', desc: 'Smart navigation buttons linking to Attendance, Contracts, and Leaves.' },
-                    { label: 'Attendance Review', desc: 'Real-time punch records, worked hours, and manual correction audit logs.' },
-                    { label: 'Leave Requests', desc: 'Employee requests with approval/refusal and balance decrementing.' },
-                    { label: 'Payrun Wizard', desc: 'Two-step creation: scope & period definition, then eligible staff selection.' },
-                    { label: 'Payslip Breakdown', desc: 'Itemized rule calculations (Basic, Allowances, Gross, Deductions, Net).' },
-                    { label: 'Payroll Dashboard', desc: 'Aggregated analytics: live KPIs, department salary charts, and warnings.' },
-                  ].map((item, idx) => (
+                    {
+                      label: 'Employee Hub',
+                      desc: 'Smart navigation buttons linking to Attendance, Contracts, and Leaves.',
+                    },
+                    {
+                      label: 'Attendance Review',
+                      desc: 'Real-time punch records, worked hours, and manual correction audit logs.',
+                    },
+                    {
+                      label: 'Leave Requests',
+                      desc: 'Employee requests with approval/refusal and balance decrementing.',
+                    },
+                    {
+                      label: 'Payrun Wizard',
+                      desc: 'Two-step creation: scope & period definition, then eligible staff selection.',
+                    },
+                    {
+                      label: 'Payslip Breakdown',
+                      desc: 'Itemized rule calculations (Basic, Allowances, Gross, Deductions, Net).',
+                    },
+                    {
+                      label: 'Payroll Dashboard',
+                      desc: 'Aggregated analytics: live KPIs, department salary charts, and warnings.',
+                    },
+                  ].map((item) => (
                     <li
                       key={item.label}
-                      style={{
-                        padding: '12px 0',
-                        borderTop: idx !== 0 ? '1px solid var(--line)' : 'none',
-                        fontSize: '14.5px',
-                        color: 'var(--ink-soft)',
-                        display: 'flex',
-                        gap: '10px',
-                      }}
+                      className="py-3 text-sm text-ink-soft flex flex-col sm:flex-row gap-2.5"
                     >
-                      <b style={{ color: 'var(--ink)', fontWeight: 500, minWidth: '130px' }}>{item.label}</b>
+                      <b className="text-ink font-medium min-w-[130px]">{item.label}</b>
                       <span>{item.desc}</span>
                     </li>
                   ))}
@@ -358,85 +353,74 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* ---------- VALIDATION & ANOMALY DIAGNOSTICS ---------- */}
-        <section id="validation" style={{ padding: '80px 0', borderBottom: '1px solid var(--line)' }}>
-          <div className="wrap">
-            <div style={{ maxWidth: '56ch', marginBottom: '44px' }}>
-              <h2 style={{ fontSize: '32px' }}>Pre-computation payroll validation</h2>
-              <p style={{ marginTop: '12px', color: 'var(--ink-soft)', fontSize: '15.5px' }}>
+        <section id="validation" className="py-20 border-b border-line">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <div className="max-w-[56ch] mb-11">
+              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink m-0">
+                Pre-computation payroll validation
+              </h2>
+              <p className="mt-3 text-ink-soft text-sm sm:text-base leading-relaxed">
                 Checked line by line prior to final payrun validation, preventing erroneous payouts.
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '52px', alignItems: 'start' }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               <div>
-                <p style={{ color: 'var(--ink-soft)', fontSize: '15.5px', lineHeight: 1.6, margin: '0 0 16px 0' }}>
-                  A payrun should never execute blindly. Our system verifies employee master readiness, active period contracts, attendance integrity, and duplicate slip risks.
+                <p className="text-ink-soft text-sm sm:text-base leading-relaxed m-0 mb-4">
+                  A payrun should never execute blindly. Our system verifies employee master readiness,
+                  active period contracts, attendance integrity, and duplicate slip risks.
                 </p>
-                <div style={{
-                  borderLeft: '2px solid var(--accent)',
-                  paddingLeft: '18px',
-                  fontFamily: "'Playfair Display', serif",
-                  fontStyle: 'italic',
-                  fontSize: '18px',
-                  color: 'var(--ink)',
-                  margin: '24px 0',
-                }}>
-                  "One missing bank routing number or unconfirmed attendance edit flags the payrun before funds are committed."
+                <div className="border-l-2 border-accent pl-4.5 font-serif italic text-lg text-ink my-6">
+                  "One missing bank routing number or unconfirmed attendance edit flags the payrun
+                  before funds are committed."
                 </div>
-                <p style={{ color: 'var(--ink-soft)', fontSize: '15px', lineHeight: 1.6, margin: 0 }}>
-                  Officers can inspect anomalies with single-click filtering, update records, and recompute the batch instantly.
+                <p className="text-ink-soft text-sm leading-relaxed m-0">
+                  Officers can inspect anomalies with single-click filtering, update records, and
+                  recompute the batch instantly.
                 </p>
               </div>
 
               {/* Validation Card */}
-              <div style={{
-                border: '1px solid var(--line)',
-                borderRadius: '14px',
-                padding: '28px',
-                background: 'var(--bg-raised)',
-              }}>
-                <div style={{ fontSize: '13px', color: 'var(--ink-soft)', marginBottom: '20px' }}>
+              <div className="border border-line rounded-2xl p-7 bg-bg-raised">
+                <div className="text-xs text-ink-soft mb-5 font-medium">
                   Live Payrun Batch Diagnostics · Period: Oct 01 – Oct 31
                 </div>
 
-                <div style={{ marginBottom: '18px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', marginBottom: '6px' }}>
-                    <span>Active Contract Verification</span>
-                    <span style={{ color: 'var(--ink-soft)', fontSize: '12.5px' }}>32 / 32 Valid</span>
+                <div className="mb-4.5">
+                  <div className="flex justify-between text-sm mb-1.5">
+                    <span className="text-ink">Active Contract Verification</span>
+                    <span className="text-ink-soft text-xs">32 / 32 Valid</span>
                   </div>
-                  <div style={{ height: '6px', borderRadius: '4px', background: 'var(--line)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: '100%', background: 'var(--accent)' }} />
-                  </div>
-                </div>
-
-                <div style={{ marginBottom: '18px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', marginBottom: '6px' }}>
-                    <span>Bank Routing Information</span>
-                    <span style={{ color: 'var(--over-red)', fontSize: '12.5px', fontWeight: 500 }}>1 Missing</span>
-                  </div>
-                  <div style={{ height: '6px', borderRadius: '4px', background: 'var(--line)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: '96%', background: 'var(--over-red)' }} />
+                  <div className="h-1.5 rounded-full bg-line overflow-hidden">
+                    <div className="h-full w-full bg-accent" />
                   </div>
                 </div>
 
-                <div style={{ marginBottom: '18px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', marginBottom: '6px' }}>
-                    <span>Attendance Punch Coverage</span>
-                    <span style={{ color: 'var(--ink-soft)', fontSize: '12.5px' }}>100% Reconciled</span>
+                <div className="mb-4.5">
+                  <div className="flex justify-between text-sm mb-1.5">
+                    <span className="text-ink">Bank Routing Information</span>
+                    <span className="text-over-red text-xs font-medium">1 Missing</span>
                   </div>
-                  <div style={{ height: '6px', borderRadius: '4px', background: 'var(--line)', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: '100%', background: 'var(--accent)' }} />
+                  <div className="h-1.5 rounded-full bg-line overflow-hidden">
+                    <div className="h-full w-[96%] bg-over-red" />
                   </div>
                 </div>
 
-                <div style={{
-                  marginTop: '20px',
-                  paddingTop: '16px',
-                  borderTop: '1px solid var(--line)',
-                  fontSize: '13.5px',
-                  color: 'var(--ink-soft)',
-                }}>
-                  Batch flagged for audit: <span style={{ color: 'var(--over-red)', fontWeight: 500 }}>Employee #104 (Marcus Vance) requires bank account details before dispatch.</span>
+                <div className="mb-4.5">
+                  <div className="flex justify-between text-sm mb-1.5">
+                    <span className="text-ink">Attendance Punch Coverage</span>
+                    <span className="text-ink-soft text-xs">100% Reconciled</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-line overflow-hidden">
+                    <div className="h-full w-full bg-accent" />
+                  </div>
+                </div>
+
+                <div className="mt-5 pt-4 border-t border-line text-xs sm:text-sm text-ink-soft leading-relaxed">
+                  Batch flagged for audit:{' '}
+                  <span className="text-over-red font-medium">
+                    Employee #104 (Marcus Vance) requires bank account details before dispatch.
+                  </span>
                 </div>
               </div>
             </div>
@@ -444,61 +428,69 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* ---------- ROLES SECTION ---------- */}
-        <section id="roles" style={{ padding: '80px 0', borderBottom: '1px solid var(--line)' }}>
-          <div className="wrap">
-            <div style={{ maxWidth: '56ch', marginBottom: '44px' }}>
-              <h2 style={{ fontSize: '32px' }}>Five roles, one unified ledger</h2>
+        <section id="roles" className="py-20 border-b border-line">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8">
+            <div className="max-w-[56ch] mb-11">
+              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink m-0">
+                Five roles, one unified ledger
+              </h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '22px' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
               {[
                 {
                   role: 'Employee',
-                  items: ['Self-service portal', 'Check in / check out', 'Submit leave requests', 'Download PDF payslips'],
+                  items: [
+                    'Self-service portal',
+                    'Check in / check out',
+                    'Submit leave requests',
+                    'Download PDF payslips',
+                  ],
                 },
                 {
                   role: 'HR Manager',
-                  items: ['Full CRUD on Employees', 'Contract management', 'Approve/refuse time off', 'Attendance manual edits'],
+                  items: [
+                    'Full CRUD on Employees',
+                    'Contract management',
+                    'Approve/refuse time off',
+                    'Attendance manual edits',
+                  ],
                 },
                 {
                   role: 'HR Payroll User',
-                  items: ['All HR Manager rights', 'Create & execute payruns', 'Generate payslips', 'Read-only salary rules'],
+                  items: [
+                    'All HR Manager rights',
+                    'Create & execute payruns',
+                    'Generate payslips',
+                    'Read-only salary rules',
+                  ],
                 },
                 {
                   role: 'HR Payroll Mgr',
-                  items: ['Full platform CRUD', 'Salary rule formulas', 'Bulk email distribution', 'Full payroll history'],
+                  items: [
+                    'Full platform CRUD',
+                    'Salary rule formulas',
+                    'Bulk email distribution',
+                    'Full payroll history',
+                  ],
                 },
                 {
                   role: 'Admin',
-                  items: ['System administration', 'User management', 'Role assignments', 'Database audits'],
+                  items: [
+                    'System administration',
+                    'User management',
+                    'Role assignments',
+                    'Database audits',
+                  ],
                 },
               ].map((card) => (
-                <div key={card.role} style={{
-                  border: '1px solid var(--line)',
-                  borderRadius: '12px',
-                  padding: '22px 18px',
-                  background: 'var(--bg)',
-                }}>
-                  <h4 style={{
-                    fontSize: '15.5px',
-                    fontWeight: 600,
-                    margin: '0 0 12px 0',
-                    paddingBottom: '10px',
-                    borderBottom: '1px solid var(--line)',
-                  }}>
+                <div key={card.role} className="border border-line rounded-xl p-5 bg-bg">
+                  <h4 className="font-serif text-base font-semibold pb-2.5 mb-3 border-b border-line text-ink m-0">
                     {card.role}
                   </h4>
-                  <ul style={{ listStyle: 'none', margin: 0, padding: 0, color: 'var(--ink-soft)', fontSize: '13px' }}>
+                  <ul className="list-none m-0 p-0 text-ink-soft text-xs space-y-2">
                     {card.items.map((it) => (
-                      <li key={it} style={{ padding: '4px 0', position: 'relative', paddingLeft: '14px' }}>
-                        <span style={{
-                          position: 'absolute',
-                          left: 0,
-                          top: '10px',
-                          width: '5px',
-                          height: '5px',
-                          borderRadius: '50%',
-                          background: 'var(--accent)',
-                        }} />
+                      <li key={it} className="relative pl-3.5 flex items-center">
+                        <span className="absolute left-0 w-1.5 h-1.5 rounded-full bg-accent" />
                         {it}
                       </li>
                     ))}
@@ -510,50 +502,45 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* ---------- CTA / DELIVERABLES ---------- */}
-        <section style={{ padding: '80px 0' }}>
-          <div className="wrap" style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '60px' }}>
+        <section className="py-20">
+          <div className="max-w-6xl mx-auto px-6 sm:px-8 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-14 items-center">
             <div>
-              <h2 style={{ fontSize: '32px', maxWidth: '16ch' }}>
+              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink max-w-[16ch] m-0">
                 Operational integrity ready for demonstration
               </h2>
-              <p style={{ color: 'var(--ink-soft)', marginTop: '16px', maxWidth: '42ch', fontSize: '15.5px', lineHeight: 1.6 }}>
-                Real business logic — contract selection, working schedule mathematics, and ordered salary computation — runs in application code.
+              <p className="text-ink-soft mt-4 max-w-[42ch] text-sm sm:text-base leading-relaxed">
+                Real business logic — contract selection, working schedule mathematics, and ordered
+                salary computation — runs in application code.
               </p>
-              <div style={{ marginTop: '28px', display: 'flex', gap: '14px' }}>
-                <Link to="/register" className="btn btn-primary">
+              <div className="mt-7 flex gap-3.5 flex-wrap">
+                <Link
+                  to="/register"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline cursor-pointer"
+                >
                   Create Platform Account
                 </Link>
-                <Link to="/login" className="btn btn-ghost">
+                <Link
+                  to="/login"
+                  className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-medium border border-line bg-transparent text-ink hover:bg-bg-raised transition-colors no-underline cursor-pointer"
+                >
                   Sign in
                 </Link>
               </div>
             </div>
 
-            <div style={{
-              border: '1px solid var(--line)',
-              borderRadius: '14px',
-              padding: '8px 28px',
-              background: 'var(--bg-raised)',
-            }}>
+            <div className="border border-line rounded-2xl px-7 py-2 bg-bg-raised divide-y divide-line">
               {[
                 { title: 'Working Full-Stack Platform', desc: 'React 19 + Express + Neon Postgres' },
                 { title: 'Live Demonstration Flow', desc: 'Employee to Payslip & Leave Allocation' },
                 { title: 'Interactive Wireframe Prototype', desc: 'Excalidraw mockup verified' },
                 { title: 'Modular Architecture', desc: '4-layer backend & feature-driven UI' },
-              ].map((row, i, arr) => (
+              ].map((row) => (
                 <div
                   key={row.title}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: '20px',
-                    padding: '16px 0',
-                    borderBottom: i !== arr.length - 1 ? '1px solid var(--line)' : 'none',
-                    fontSize: '14px',
-                  }}
+                  className="flex justify-between items-center gap-5 py-4 text-sm"
                 >
-                  <span style={{ color: 'var(--ink)', fontWeight: 500 }}>{row.title}</span>
-                  <span style={{ color: 'var(--ink-soft)', textAlign: 'right' }}>{row.desc}</span>
+                  <span className="text-ink font-medium">{row.title}</span>
+                  <span className="text-ink-soft text-right text-xs sm:text-sm">{row.desc}</span>
                 </div>
               ))}
             </div>
@@ -561,17 +548,8 @@ export const LandingPage: React.FC = () => {
         </section>
 
         {/* ---------- FOOTER ---------- */}
-        <footer style={{
-          borderTop: '1px solid var(--line)',
-          padding: '36px 0 48px',
-        }}>
-          <div className="wrap" style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontSize: '13.5px',
-            color: 'var(--ink-soft)',
-          }}>
+        <footer className="border-t border-line py-9 px-6 sm:px-8">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs text-ink-soft gap-3 text-center sm:text-left">
             <span>PeoplePay360 — Integrated HR & Payroll Operations Platform</span>
             <span>Master Data → Contracts → Time Off → Payroll → Reporting</span>
           </div>
