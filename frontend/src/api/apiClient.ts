@@ -100,7 +100,7 @@ api.interceptors.response.use(
         if (!isAuthPage() && !isRedirecting) {
           isRedirecting = true;
           queryClient.clear();
-          window.location.href = '/login';
+          window.location.replace('/login?reason=session-expired');
         }
         return Promise.reject(refreshErr);
       }

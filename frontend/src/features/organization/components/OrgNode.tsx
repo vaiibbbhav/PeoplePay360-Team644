@@ -17,33 +17,35 @@ export const OrgNode: React.FC<NodeProps<OrgCustomNode>> = memo(({ data }) => {
   const { employee, reportsCount, isCollapsed, onToggleCollapse, onSelectEmployee, isSelected } =
     data;
 
-  const initials = `${employee.first_name?.[0] || ''}${employee.last_name?.[0] || ''}`.toUpperCase();
+  const initials =
+    `${employee.first_name?.[0] || ''}${employee.last_name?.[0] || ''}`.toUpperCase();
 
   const isExecutive = !employee.manager_id;
 
   return (
     <div
       onClick={() => onSelectEmployee(employee)}
-      className={`relative w-[280px] p-4.5 rounded-2xl bg-bg-raised border text-left transition-all duration-200 select-none group cursor-pointer shadow-xs hover:shadow-lg ${
+      className={`relative w-[244px] rounded-xl border bg-bg-raised p-3 text-left transition-colors select-none group cursor-pointer ${
         isSelected
           ? 'border-accent ring-2 ring-accent/30 bg-accent/[0.03] scale-[1.02]'
           : isExecutive
-            ? 'border-accent/40 bg-gradient-to-b from-accent/[0.04] to-bg-raised hover:border-accent'
+            ? 'border-accent/40 hover:border-accent'
             : 'border-line hover:border-ink/50'
       }`}
     >
-      {/* Top Handle: connects to parent manager */}
-      <Handle
-        type="target"
-        position={Position.Top}
-        className="!w-2.5 !h-2.5 !bg-accent !border-2 !border-bg !rounded-full !-top-1.5 transition-transform group-hover:scale-125"
-      />
+      {employee.manager_id && (
+        <Handle
+          type="target"
+          position={Position.Top}
+          className="!w-2.5 !h-2.5 !bg-accent !border-2 !border-bg !rounded-full !-top-1.5 transition-transform group-hover:scale-125"
+        />
+      )}
 
-      <div className="flex items-start gap-3.5">
+      <div className="flex items-start gap-3">
         {/* Avatar with status indicator */}
         <div className="relative shrink-0">
           <div
-            className={`w-11 h-11 rounded-xl font-semibold flex items-center justify-center text-xs tracking-wider border shadow-xs ${
+            className={`w-10 h-10 rounded-lg font-semibold flex items-center justify-center text-xs tracking-wider border ${
               isExecutive
                 ? 'bg-accent text-accent-ink border-accent/30 font-bold'
                 : 'bg-accent/10 text-accent border-accent/20'
@@ -65,11 +67,6 @@ export const OrgNode: React.FC<NodeProps<OrgCustomNode>> = memo(({ data }) => {
             <span className="text-[9px] font-mono uppercase tracking-widest font-semibold px-2 py-0.5 rounded bg-bg-sunken text-ink-soft border border-line-subtle truncate max-w-[130px]">
               {employee.department_name || 'General'}
             </span>
-            {isExecutive && (
-              <span className="text-[9px] font-mono uppercase text-accent font-bold tracking-wider">
-                Leadership
-              </span>
-            )}
           </div>
 
           <h4 className="text-sm font-sans font-medium text-ink truncate tracking-tight mt-1">
@@ -82,13 +79,9 @@ export const OrgNode: React.FC<NodeProps<OrgCustomNode>> = memo(({ data }) => {
         </div>
       </div>
 
-      {/* Footer Info & Quick Metadata */}
-      <div className="mt-3.5 pt-3 border-t border-line-subtle flex items-center justify-between text-[11px] text-ink-faint">
-        <span className="truncate max-w-[170px] select-all font-mono text-[10px]">
-          {employee.email}
-        </span>
-        <span className="text-accent group-hover:translate-x-0.5 transition-transform text-xs font-semibold">
-          View →
+      <div className="mt-3 border-t border-line-subtle pt-2 text-[11px] text-ink-faint">
+        <span className="text-accent group-hover:translate-x-0.5 transition-transform font-medium">
+          View profile →
         </span>
       </div>
 
@@ -119,7 +112,12 @@ export const OrgNode: React.FC<NodeProps<OrgCustomNode>> = memo(({ data }) => {
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
       )}

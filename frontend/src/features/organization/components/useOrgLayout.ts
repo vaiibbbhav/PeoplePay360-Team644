@@ -3,15 +3,15 @@ import type { Edge } from '@xyflow/react';
 import type { EmployeeListItem } from '@/features/employees/queries/useEmployees';
 import type { OrgCustomNode } from './OrgNode';
 
-const NODE_WIDTH = 280;
-const NODE_HEIGHT = 135;
+const NODE_WIDTH = 244;
+const NODE_HEIGHT = 120;
 
 export function getLayoutedElements(
   employees: EmployeeListItem[],
   collapsedIds: Set<string>,
   selectedEmployeeId: string | null,
   onToggleCollapse: (id: string) => void,
-  onSelectEmployee: (emp: EmployeeListItem) => void
+  onSelectEmployee: (emp: EmployeeListItem) => void,
 ): { nodes: OrgCustomNode[]; edges: Edge[] } {
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));

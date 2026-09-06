@@ -57,6 +57,25 @@ export const OrgViewPage: React.FC = () => {
     });
   }, [employees, search, selectedDept]);
 
+  // Keep each filtered person connected to their leadership chain instead of rendering orphan cards.
+  const chartEmployees = useMemo(() => {
+    const isFocused = Boolean(search.trim() || selectedDept !== 'all');
+    if (!isFocused) return employees;
+
+    const employeesById = new Map(employees.map((employee) => [employee.id, employee]));
+    const visibleIds = new Set(filteredEmployees.map((employee) => employee.id));
+
+    filteredEmployees.forEach((employee) => {
+      let managerId = employee.manager_id;
+      while (managerId) {
+        visibleIds.add(managerId);
+        managerId = employeesById.get(managerId)?.manager_id || null;
+      }
+    });
+
+    return employees.filter((employee) => visibleIds.has(employee.id));
+  }, [employees, filteredEmployees, search, selectedDept]);
+
   // Group by department for Department view
   const departmentGroups = useMemo(() => {
     const groups: Record<string, EmployeeListItem[]> = {};
@@ -150,9 +169,10 @@ export const OrgViewPage: React.FC = () => {
             {/* View Mode 1: Hierarchy Tree (React Flow + Dagre) */}
             {activeView === 'tree' && (
               <OrgFlowChart
-                employees={filteredEmployees}
+                employees={chartEmployees}
                 onSelectEmployee={(emp) => setSelectedEmployee(emp)}
                 selectedEmployeeId={selectedEmployee?.id}
+                isFocused={Boolean(search.trim() || selectedDept !== 'all')}
               />
             )}
 
