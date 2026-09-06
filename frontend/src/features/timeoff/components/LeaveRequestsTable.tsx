@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, AlertTriangle } from 'lucide-react';
 import { useApproveLeaveRequest, type TimeOffRequest } from '../queries/useTimeOff';
 import { RefuseLeaveModal } from './RefuseLeaveModal';
+import { RequestDetailModal } from './RequestDetailModal';
 import { InlineAlert } from '@/components/ui/InlineAlert';
 import { Pagination, usePagination } from '@/components/ui/Pagination';
 
@@ -25,6 +26,7 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
   } = usePagination(requests, 15);
   const approveMutation = useApproveLeaveRequest();
   const [selectedForRefusal, setSelectedForRefusal] = useState<TimeOffRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<TimeOffRequest | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
   const getStatusBadge = (status: string) => {
@@ -190,8 +192,15 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             type="button"
+                            onClick={() => setSelectedRequest(req)}
+                            className="px-2.5 py-1 rounded-lg border border-line hover:bg-bg-raised text-[11px] font-medium text-ink transition-colors cursor-pointer"
+                          >
+                            Details
+                          </button>
+                          <button
+                            type="button"
                             onClick={() => setSelectedForRefusal(req)}
-                            className="px-2.5 py-1 rounded-lg border border-line hover:bg-rose-500/10 hover:border-rose-500/30 hover:text-rose-600 dark:hover:text-rose-400 text-[11px] font-medium transition-colors"
+                            className="px-2.5 py-1 rounded-lg border border-line hover:bg-rose-500/10 hover:border-rose-500/30 hover:text-rose-600 dark:hover:text-rose-400 text-[11px] font-medium transition-colors cursor-pointer"
                           >
                             Refuse
                           </button>
@@ -199,13 +208,19 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
                             type="button"
                             disabled={approveMutation.isPending}
                             onClick={() => handleApprove(req.id)}
-                            className="px-2.5 py-1 rounded-lg bg-accent text-white hover:bg-accent/90 text-[11px] font-semibold transition-colors disabled:opacity-50"
+                            className="px-2.5 py-1 rounded-lg bg-accent text-accent-ink hover:opacity-90 text-[11px] font-semibold transition-opacity disabled:opacity-50 cursor-pointer"
                           >
                             Approve
                           </button>
                         </div>
                       ) : (
-                        <span className="text-[11px] text-ink-soft italic">Completed</span>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedRequest(req)}
+                          className="px-2.5 py-1 rounded-lg border border-line hover:bg-bg-raised text-[11px] font-medium text-ink-soft hover:text-ink transition-colors cursor-pointer"
+                        >
+                          View Details
+                        </button>
                       )}
                     </td>
                   )}
@@ -232,6 +247,13 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
         isOpen={Boolean(selectedForRefusal)}
         onClose={() => setSelectedForRefusal(null)}
         request={selectedForRefusal}
+      />
+
+      <RequestDetailModal
+        isOpen={Boolean(selectedRequest)}
+        onClose={() => setSelectedRequest(null)}
+        request={selectedRequest}
+        canManage={canManage}
       />
     </div>
   );
