@@ -234,6 +234,7 @@ export const fingerprint = pgTable('fingerprint', {
     .unique()
     .references(() => employees.id, { onDelete: 'cascade' }),
   encryptedTemplate: text('encrypted_template').notNull(),
+  encrytedTemplate: text('encryted_template'),
   iv: varchar('iv', { length: 64 }).notNull(),
   keyVersion: varchar('key_version', { length: 20 }).notNull().default('v1'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),

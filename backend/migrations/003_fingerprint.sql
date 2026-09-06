@@ -13,13 +13,34 @@ CREATE TABLE IF NOT EXISTS fingerprint (
 
 CREATE INDEX IF NOT EXISTS idx_fingerprint_employee ON fingerprint(employee_id);
 
--- Ensure column name is encrypted_template if previously created with typo encryted_template
-DO $$
+-- Ensure both encrypted_template and encryted_template exist and remain synchronized
+-- for backward/forward compatibility across Drizzle Studio, Java service, and legacy queries
+ALTER TABLE fingerprint ADD COLUMN IF NOT EXISTS encrypted_template TEXT;
+ALTER TABLE fingerprint ADD COLUMN IF NOT EXISTS encryted_template TEXT;
+
+UPDATE fingerprint 
+SET encryted_template = encrypted_template 
+WHERE encryted_template IS NULL AND encrypted_template IS NOT NULL;
+
+UPDATE fingerprint 
+SET encrypted_template = encryted_template 
+WHERE encrypted_template IS NULL AND encryted_template IS NOT NULL;
+
+CREATE OR REPLACE FUNCTION sync_fingerprint_template()
+RETURNS TRIGGER AS $$
 BEGIN
-    IF EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'fingerprint' AND column_name = 'encryted_template'
-    ) THEN
-        ALTER TABLE fingerprint RENAME COLUMN encryted_template TO encrypted_template;
+    IF NEW.encrypted_template IS NOT NULL AND (NEW.encryted_template IS NULL OR NEW.encryted_template <> NEW.encrypted_template) THEN
+        NEW.encryted_template := NEW.encrypted_template;
+    ELSIF NEW.encryted_template IS NOT NULL AND (NEW.encrypted_template IS NULL OR NEW.encrypted_template <> NEW.encryted_template) THEN
+        NEW.encrypted_template := NEW.encryted_template;
     END IF;
-END $$;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_sync_fingerprint_template ON fingerprint;
+CREATE TRIGGER trg_sync_fingerprint_template
+BEFORE INSERT OR UPDATE ON fingerprint
+FOR EACH ROW
+EXECUTE FUNCTION sync_fingerprint_template();
+

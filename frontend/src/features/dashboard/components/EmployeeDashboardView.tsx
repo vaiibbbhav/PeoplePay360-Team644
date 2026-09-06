@@ -10,7 +10,9 @@ type EmployeeDashboardViewProps = {
 
 export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ user }) => {
   const employeeId = user.employee?.id || user.employeeId || user.id || '';
-  const employeeCode = user.employeeCode || null;
+  const employeeCode = user.employeeCode
+    ? user.employeeCode.replace(/^EMP-0*(\d+)$/i, 'EMP-$1')
+    : null;
   const { data: fpStatus } = useFingerprintStatus(employeeId);
   const hasFingerprint = fpStatus?.enrolled;
 

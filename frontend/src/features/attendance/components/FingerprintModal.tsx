@@ -117,7 +117,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({
           <span className="font-mono text-[11px] text-ink-soft">
             {employeeCode ? (
               <span className="px-2 py-0.5 rounded bg-accent/10 text-accent font-semibold border border-accent/20">
-                {employeeCode}
+                {employeeCode.replace(/^EMP-0*(\d+)$/i, 'EMP-$1')}
               </span>
             ) : (
               `${employeeId.slice(0, 8)}...`

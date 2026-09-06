@@ -139,6 +139,7 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `id` (UUID, Primary Key, default random)
 - `employee_id` (UUID, NOT NULL, unique, references `employees.id` ON DELETE CASCADE)
 - `encrypted_template` (TEXT, NOT NULL)
+- `encryted_template` (TEXT, synchronized compatibility alias)
 - `iv` (VARCHAR(64), NOT NULL)
 - `key_version` (VARCHAR(20), NOT NULL, default 'v1')
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)

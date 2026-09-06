@@ -530,12 +530,12 @@ public class FingerprintService {
             return clean;
         }
 
-        // Look up by employee_code in employees table (e.g. EMP-1, EMP-001, emp-3, emp-003)
+        // Look up by employee_code in employees table (e.g. 3, EMP-3, EMP-003)
         String codeQuery = """
             SELECT id FROM employees
             WHERE LOWER(employee_code) = LOWER(?)
                OR regexp_replace(LOWER(employee_code), '^emp-0*', 'emp-') = regexp_replace(LOWER(?), '^emp-0*', 'emp-')
-               OR regexp_replace(LOWER(employee_code), '^emp-0*', '') = LOWER(?)
+               OR regexp_replace(LOWER(employee_code), '^emp-0*', '') = regexp_replace(LOWER(?), '^emp-0*', '')
             LIMIT 1
             """;
         List<String> codeList = jdbcTemplate.query(codeQuery, (rs, rowNum) -> rs.getString("id"), clean, clean, clean);
