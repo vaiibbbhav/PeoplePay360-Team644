@@ -17,6 +17,8 @@ export const listUsers = async (query: UserQueryInput) => {
     search: query.search,
     role: query.role,
     isActive: query.isActive,
+    page: query.page,
+    pageSize: query.pageSize,
   });
 };
 

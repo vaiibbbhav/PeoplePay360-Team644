@@ -48,14 +48,22 @@ export type UserQueryParams = {
   search?: string;
   role?: string;
   isActive?: boolean;
+  page: number;
+  pageSize: number;
+};
+
+export type UsersListResponse = {
+  users: UserItem[];
+  total: number;
 };
 
 // Fetchers
-const fetchUsers = async (params?: UserQueryParams): Promise<UserItem[]> => {
-  const { data } = await api.get<any>('/users', { params });
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.users)) return data.users;
-  return [];
+const fetchUsers = async (params: UserQueryParams): Promise<UsersListResponse> => {
+  const { data } = await api.get<UsersListResponse>('/users', { params });
+  return {
+    users: Array.isArray(data?.users) ? data.users : [],
+    total: typeof data?.total === 'number' ? data.total : 0,
+  };
 };
 
 const fetchEmployeeOptions = async (): Promise<EmployeeOption[]> => {
@@ -86,7 +94,7 @@ const deleteUserApi = async (id: string): Promise<void> => {
 };
 
 // React Query Hooks
-export const useUsersList = (params?: UserQueryParams) => {
+export const useUsersList = (params: UserQueryParams) => {
   return useQuery({
     queryKey: ['users', params],
     queryFn: () => fetchUsers(params),

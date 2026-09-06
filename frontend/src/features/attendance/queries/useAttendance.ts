@@ -32,123 +32,15 @@ type AttendanceFilterParams = {
   endDate?: string;
 };
 
-// Seed realistic fallback records for testing & rich calendar presentation
-export function generateFallbackAttendance(
-  employeeId: string,
-  year: number,
-  month: number, // 0-indexed (0 = Jan, 2 = Mar)
-): AttendanceRecord[] {
-  const records: AttendanceRecord[] = [];
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const today = new Date();
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const currentDate = new Date(year, month, day);
-    // Do not generate future dates past tomorrow
-    if (currentDate > today && currentDate.getDate() > today.getDate() + 1) {
-      continue;
-    }
-
-    const dayOfWeek = currentDate.getDay(); // 0 = Sun, 6 = Sat
-    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-    if (isWeekend) {
-      continue;
-    }
-
-    // Deterministic simulation patterns
-    if (day === 4) {
-      // Late with exception note
-      records.push({
-        id: `att-${year}${month + 1}${day}-001`,
-        employee_id: employeeId,
-        date: dateStr,
-        check_in: `${dateStr}T10:14:22Z`,
-        check_out: `${dateStr}T18:44:10Z`,
-        worked_hours: '8.50',
-        status: 'Late',
-        exception_note: 'Severe subway transit delay - verified by morning supervisor',
-        is_manual_edit: false,
-        created_at: `${dateStr}T10:14:22Z`,
-        updated_at: `${dateStr}T18:44:10Z`,
-      });
-    } else if (day === 11) {
-      // Manual adjustment
-      records.push({
-        id: `att-${year}${month + 1}${day}-002`,
-        employee_id: employeeId,
-        date: dateStr,
-        check_in: `${dateStr}T09:00:00Z`,
-        check_out: `${dateStr}T17:30:00Z`,
-        worked_hours: '8.50',
-        status: 'Present',
-        exception_note:
-          'Biometric hardware sensor offline. Manual HR log adjustment per badge swipe.',
-        is_manual_edit: true,
-        created_at: `${dateStr}T09:00:00Z`,
-        updated_at: `${dateStr}T17:35:00Z`,
-      });
-    } else if (day === 18) {
-      // Half-Day
-      records.push({
-        id: `att-${year}${month + 1}${day}-003`,
-        employee_id: employeeId,
-        date: dateStr,
-        check_in: `${dateStr}T09:05:12Z`,
-        check_out: `${dateStr}T13:35:45Z`,
-        worked_hours: '4.50',
-        status: 'Half-Day',
-        exception_note: 'Approved medical appointment afternoon leave',
-        is_manual_edit: false,
-        created_at: `${dateStr}T09:05:12Z`,
-        updated_at: `${dateStr}T13:35:45Z`,
-      });
-    } else {
-      // Standard Present day
-      const checkInMinutes = 2 + (day % 10);
-      const checkOutMinutes = 30 + (day % 20);
-      records.push({
-        id: `att-${year}${month + 1}${day}-000`,
-        employee_id: employeeId,
-        date: dateStr,
-        check_in: `${dateStr}T09:${String(checkInMinutes).padStart(2, '0')}:15Z`,
-        check_out: `${dateStr}T17:${String(checkOutMinutes).padStart(2, '0')}:00Z`,
-        worked_hours: '8.50',
-        status: 'Present',
-        exception_note: null,
-        is_manual_edit: false,
-        created_at: `${dateStr}T09:${String(checkInMinutes).padStart(2, '0')}:15Z`,
-        updated_at: `${dateStr}T17:${String(checkOutMinutes).padStart(2, '0')}:00Z`,
-      });
-    }
-  }
-
-  return records;
-}
 
 // 1. API Functions
 const getAttendanceApi = async (params?: AttendanceFilterParams): Promise<AttendanceRecord[]> => {
   try {
     const { data } = await api.get<AttendanceRecord[]>('/attendance', { params });
-    if (Array.isArray(data)) {
-      if (data.length > 0 || !params?.employeeId) {
-        return data;
-      }
-    }
+    return Array.isArray(data) ? data : [];
   } catch {
-    // Graceful fallback to rich sample dataset if backend offline
+    return [];
   }
-
-  if (params?.employeeId) {
-    const now = new Date();
-    return generateFallbackAttendance(
-      params.employeeId,
-      now.getFullYear(),
-      now.getMonth(),
-    );
-  }
-  return [];
 };
 
 const LOCAL_STORAGE_FP_KEY = 'peoplepay_employee_fingerprint_';

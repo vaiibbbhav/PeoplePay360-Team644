@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import {
   useUsersList,
@@ -14,7 +14,7 @@ import { DeleteConfirmDialog } from '../components/DeleteConfirmDialog';
 import { useNavigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { SearchInput } from '@/components/ui/SearchInput';
-import { Pagination, usePagination } from '@/components/ui/Pagination';
+import { Pagination } from '@/components/ui/Pagination';
 import {
   Select,
   SelectTrigger,
@@ -38,7 +38,22 @@ export const UserManagementPage: React.FC = () => {
 
   // ─ Search / filter state ─
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [search]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
 
   // ─ Modal states ─
   const [addOpen, setAddOpen] = useState(false);
@@ -47,10 +62,21 @@ export const UserManagementPage: React.FC = () => {
   const [deleteError, setDeleteError] = useState('');
 
   // ─ Queries ─
-  const { data: users = [], isLoading: isUsersLoading } = useUsersList({
-    search: search.trim() || undefined,
+  const { data: usersResponse, isLoading: isUsersLoading } = useUsersList({
+    search: debouncedSearch || undefined,
     role: roleFilter || undefined,
+    page: currentPage,
+    pageSize,
   });
+  const users = usersResponse?.users ?? [];
+  const totalUsers = usersResponse?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalUsers / pageSize));
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
   const { data: employees = [] } = useEmployeeOptions();
   const createMutation = useCreateUser();
   const updateMutation = useUpdateUser();
@@ -116,22 +142,6 @@ export const UserManagementPage: React.FC = () => {
     }
   };
 
-  const filteredUsers = users.filter((u) => {
-    if (!search.trim()) return true;
-    const q = search.toLowerCase();
-    const name = `${u.firstName || ''} ${u.lastName || ''}`.trim().toLowerCase();
-    return (
-      u.email.toLowerCase().includes(q) || u.role.toLowerCase().includes(q) || name.includes(q)
-    );
-  });
-
-  const {
-    currentPage,
-    setCurrentPage,
-    pageSize,
-    setPageSize,
-    paginatedItems: paginatedUsers,
-  } = usePagination(filteredUsers, 15);
 
   return (
     <AppLayout title="User Management">
@@ -174,7 +184,10 @@ export const UserManagementPage: React.FC = () => {
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <Select
               value={roleFilter || 'all'}
-              onValueChange={(val) => setRoleFilter(val === 'all' ? '' : val)}
+              onValueChange={(val) => {
+                setRoleFilter(val === 'all' ? '' : val);
+                setCurrentPage(1);
+              }}
             >
               <SelectTrigger className="w-full sm:w-44">
                 <SelectValue placeholder="All Roles" />
@@ -214,7 +227,7 @@ export const UserManagementPage: React.FC = () => {
                     </div>
                   </td>
                 </tr>
-              ) : filteredUsers.length === 0 ? (
+              ) : users.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-16 text-center">
                     <p className="text-sm text-ink-soft">
@@ -223,7 +236,7 @@ export const UserManagementPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                paginatedUsers.map((u, idx) => {
+                users.map((u, idx) => {
                   const displayName = `${u.firstName || ''} ${u.lastName || ''}`.trim() || '—';
                   const serialNum = (currentPage - 1) * pageSize + idx + 1;
                   return (
@@ -282,7 +295,7 @@ export const UserManagementPage: React.FC = () => {
           </table>
           <Pagination
             currentPage={currentPage}
-            totalItems={filteredUsers.length}
+            totalItems={totalUsers}
             pageSize={pageSize}
             pageSizeOptions={[10, 15, 25, 50]}
             itemName="users"

@@ -129,6 +129,16 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
     }
   }, [dateCalculation, isHalfDay]);
 
+  const dialogRef = useDialogAccessibility({ isOpen, onClose });
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!createMutation.isPending) onClose();
+  }, isOpen);
+
+  const setCombinedRef = (node: HTMLDivElement | null) => {
+    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
+
   if (!isOpen) return null;
 
   const handleStartDateChange = (val: string) => {
@@ -198,19 +208,9 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
         err instanceof Error
           ? err.message
           : (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
-            'Failed to submit leave request.';
+          'Failed to submit leave request.';
       setErrorMessage(msg);
     }
-  };
-
-  const dialogRef = useDialogAccessibility({ isOpen, onClose });
-  const modalRef = useClickOutside<HTMLDivElement>(() => {
-    if (!createMutation.isPending) onClose();
-  }, isOpen);
-
-  const setCombinedRef = (node: HTMLDivElement | null) => {
-    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
   };
 
   return (
@@ -232,9 +232,6 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-line flex items-center justify-between bg-bg-raised/40">
             <div>
-              <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
-                Time Off Request
-              </span>
               <h2 id="apply-leave-title" className="text-lg sm:text-xl font-serif font-bold text-ink mt-0.5">
                 Apply for Leave
               </h2>
@@ -263,13 +260,6 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
                 <label className="text-xs font-semibold text-ink uppercase tracking-wider">
                   Leave Category <span className="text-rose-500">*</span>
                 </label>
-                {activeBalance && (
-                  <span className="text-[11px] font-medium text-accent font-mono">
-                    {activeBalance.requiresAllocation
-                      ? `${activeBalance.remaining.toFixed(1)} ${activeBalance.unit} remaining`
-                      : 'Unlimited allocation'}
-                  </span>
-                )}
               </div>
               <select
                 value={selectedTypeId}
@@ -360,7 +350,7 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
                     checked={excludeWeekends}
                     disabled={isHalfDay}
                     onChange={(e) => setExcludeWeekends(e.target.checked)}
-                    className="rounded border-line text-accent focus:ring-accent w-3.5 h-3.5"
+                    className="rounded border-line accent-accent focus:ring-accent w-3.5 h-3.5 cursor-pointer"
                   />
                   <span className="text-[11px] text-ink-soft">
                     Exclude Weekends ({dateCalculation.weekendDays} sat/sun skipped)
@@ -370,11 +360,10 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
                 <button
                   type="button"
                   onClick={handleToggleHalfDay}
-                  className={`px-2 py-1 rounded-lg text-[11px] font-medium border transition-colors ${
-                    isHalfDay
-                      ? 'bg-accent text-white border-accent'
-                      : 'border-line bg-bg text-ink hover:bg-bg-raised'
-                  }`}
+                  className={`px-2 py-1 rounded-lg text-[11px] font-medium border transition-colors ${isHalfDay
+                    ? 'bg-accent text-white border-accent'
+                    : 'border-line bg-bg text-ink hover:bg-bg-raised'
+                    }`}
                 >
                   {isHalfDay ? 'Half-Day (0.5d) Active' : 'Half-Day (0.5d)'}
                 </button>
