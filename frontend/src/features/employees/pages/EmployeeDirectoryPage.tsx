@@ -55,10 +55,15 @@ export const EmployeeDirectoryPage: React.FC = () => {
       }
     >
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8">
+      <div className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
         {/* Page Title & Intro */}
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink">Employee Directory</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-5 sm:pb-6">
+          <div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">Employee Directory</h1>
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
+              Company-wide employee directory, departmental structure, and employment profiles.
+            </p>
+          </div>
           <button
             onClick={() => setIsCreateModalOpen(true)}
             className="sm:hidden self-start px-3.5 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
@@ -68,7 +73,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
         </div>
 
         {/* Toolbar & Filter Controls */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-3.5 sm:p-4 rounded-2xl border border-line bg-bg mb-6">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-3.5 sm:p-4 rounded-2xl border border-line bg-bg">
           <SearchInput
             placeholder="Search by employee name, email or job title..."
             value={search}

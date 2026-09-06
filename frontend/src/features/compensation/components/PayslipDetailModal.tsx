@@ -3,6 +3,8 @@ import { usePayslipDetail } from '../queries/useEmployeePayslips';
 import { formatCurrency, formatPeriod } from '@/lib/formatters';
 import { useClickOutside } from '@/hooks/useClickOutside';
 
+import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
+
 export type PayslipDetailModalProps = {
   payslipId: string | null;
   onClose: () => void;
@@ -73,9 +75,15 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
 }) => {
   const { data: payslip, isLoading, isError } = usePayslipDetail(payslipId);
 
+  const dialogRef = useDialogAccessibility({ isOpen: Boolean(payslipId), onClose });
   const modalRef = useClickOutside<HTMLDivElement>(() => {
     onClose();
   }, Boolean(payslipId));
+
+  const setCombinedRef = (node: HTMLDivElement | null) => {
+    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
 
   if (!payslipId) return null;
 
@@ -84,16 +92,22 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto font-sans">
       <div
-        ref={modalRef}
-        className="bg-bg border border-line rounded-xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-150"
+        ref={setCombinedRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="payslip-modal-title"
+        tabIndex={-1}
+        className="bg-bg border border-line rounded-2xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95 duration-150 overflow-hidden"
       >
         {/* Modal Top Bar (Hidden on print) */}
-        <div className="flex items-center justify-between px-6 py-3.5 border-b border-line bg-bg-raised print:hidden">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-line bg-bg-raised/50 print:hidden">
           <div className="flex items-center gap-2">
-            <span className="font-sans text-sm font-bold text-ink">Payslip Document Preview</span>
-            <span className="text-[11px] px-2 py-0.5 rounded bg-accent-soft text-accent font-medium">
+            <h2 id="payslip-modal-title" className="font-serif text-sm sm:text-base font-bold text-ink">
+              Payslip Document Preview
+            </h2>
+            <span className="text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full bg-accent-soft text-accent font-medium border border-accent/20">
               Verified
             </span>
           </div>
@@ -102,7 +116,7 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
             <button
               type="button"
               onClick={handlePrint}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -133,7 +147,7 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="p-6 sm:p-8 overflow-y-auto flex-1 text-ink bg-bg">
+        <div className="p-4 sm:p-6 overflow-y-auto no-scrollbar flex-1 text-ink bg-bg">
           {isLoading && (
             <div className="py-20 text-center text-sm text-ink-soft animate-pulse">
               Loading payslip details and lines...
@@ -151,7 +165,7 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
               {/* Official Header */}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between border-b border-line pb-5 gap-4">
                 <div>
-                  <h2 className="font-sans text-2xl font-bold tracking-tight text-ink">
+                  <h2 className="font-serif text-2xl font-bold tracking-tight text-ink">
                     PeoplePay<span className="text-accent">360</span> Inc.
                   </h2>
                   <p className="text-xs text-ink-soft mt-1 leading-relaxed">

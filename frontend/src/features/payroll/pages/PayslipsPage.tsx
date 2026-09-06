@@ -208,27 +208,27 @@ export const PayslipsPage: React.FC = () => {
 
   return (
     <AppLayout title="All Employee Payslips">
-      <div className="space-y-6 w-full min-w-0 max-w-7xl mx-auto font-sans">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
         {/* Editorial Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
             <span className="text-xs font-mono uppercase tracking-widest text-accent font-semibold">
               Payroll Administration
             </span>
-            <h1 className="text-2xl lg:text-3xl font-sans font-medium text-ink tracking-tight mt-1">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               All Employee Payslips
             </h1>
-            <p className="text-xs text-ink-soft mt-1 max-w-2xl">
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 max-w-2xl leading-relaxed">
               Complete organizational registry of all computed, validated, and paid employee payslips across all payruns.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 flex-wrap">
             <button
               type="button"
               onClick={handleExportCSV}
               disabled={filteredPayslips.length === 0}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border border-line bg-bg hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-xs disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-xs disabled:opacity-50"
             >
               <Download className="w-3.5 h-3.5 text-ink-soft" />
               <span>Export CSV</span>
@@ -237,7 +237,7 @@ export const PayslipsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => refetch()}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border border-line bg-bg hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-xs"
               title="Refresh payslips"
             >
               <RefreshCw className="w-3.5 h-3.5 text-ink-soft" />
@@ -247,7 +247,7 @@ export const PayslipsPage: React.FC = () => {
         </div>
 
         {/* KPI Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
           <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs">
             <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-ink-soft" />
@@ -305,9 +305,9 @@ export const PayslipsPage: React.FC = () => {
         </div>
 
         {/* Filter and Search Toolbar */}
-        <div className="p-4 rounded-2xl border border-line bg-bg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-2xs">
+        <div className="p-3.5 sm:p-4 rounded-2xl border border-line bg-bg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 shadow-2xs">
           {/* Search Box */}
-          <div className="flex-1 max-w-md">
+          <div className="flex-1 w-full sm:max-w-md">
             <SearchInput
               placeholder="Search by employee name, email, or payrun..."
               value={searchQuery}
@@ -316,11 +316,11 @@ export const PayslipsPage: React.FC = () => {
           </div>
 
           {/* Filter Dropdowns */}
-          <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-2.5 flex-wrap w-full sm:w-auto">
             {/* Payrun Filter */}
             {uniquePayruns.length > 0 && (
               <Select value={selectedPayrun} onValueChange={setSelectedPayrun}>
-                <SelectTrigger className="w-[160px]">
+                <SelectTrigger className="w-full sm:w-[160px]">
                   <SelectValue placeholder="All Payruns" />
                 </SelectTrigger>
                 <SelectContent>
@@ -337,7 +337,7 @@ export const PayslipsPage: React.FC = () => {
             {/* Salary Structure Filter */}
             {uniqueStructures.length > 0 && (
               <Select value={selectedStructure} onValueChange={setSelectedStructure}>
-                <SelectTrigger className="w-[160px]">
+                <SelectTrigger className="w-full sm:w-[160px]">
                   <SelectValue placeholder="All Structures" />
                 </SelectTrigger>
                 <SelectContent>
@@ -353,7 +353,7 @@ export const PayslipsPage: React.FC = () => {
 
             {/* Status Filter */}
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-full sm:w-[140px]">
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
@@ -366,7 +366,7 @@ export const PayslipsPage: React.FC = () => {
 
             {/* Sort Dropdown */}
             <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
-              <SelectTrigger className="w-[170px]">
+              <SelectTrigger className="w-full sm:w-[170px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -392,7 +392,7 @@ export const PayslipsPage: React.FC = () => {
         {isError && (
           <div className="p-8 text-center border border-line rounded-2xl bg-bg-raised space-y-3">
             <AlertTriangle className="w-8 h-8 text-rose-500 mx-auto" />
-            <h3 className="font-sans text-base font-bold text-ink">Failed to Load Payslips</h3>
+            <h3 className="font-serif text-base font-bold text-ink">Failed to Load Payslips</h3>
             <p className="text-xs text-ink-soft max-w-sm mx-auto">
               Could not retrieve employee payslips. Ensure your account has appropriate payroll or HR permissions.
             </p>
@@ -411,8 +411,8 @@ export const PayslipsPage: React.FC = () => {
             {filteredPayslips.length === 0 ? (
               <div className="p-12 text-center space-y-2">
                 <FileText className="w-8 h-8 text-ink-soft mx-auto opacity-50" />
-                <h3 className="font-sans text-base font-bold text-ink">No Payslips Found</h3>
-                <p className="text-xs text-ink-soft max-w-sm mx-auto">
+                <h3 className="font-serif text-base font-bold text-ink">No Payslips Found</h3>
+                <p className="text-xs text-ink-soft max-w-sm mx-auto leading-relaxed">
                   {searchQuery || selectedPayrun !== 'all' || selectedStatus !== 'all'
                     ? 'No payslips match your current search or filter criteria. Try clearing filters.'
                     : 'No payruns have generated payslips yet. Start by creating and computing a payrun in the Payruns section.'}
@@ -432,7 +432,7 @@ export const PayslipsPage: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="overflow-x-auto w-full min-w-0">
+              <div className="overflow-x-auto no-scrollbar w-full min-w-0">
                 <table className="w-full text-xs text-left border-collapse min-w-[850px]">
                   <thead>
                     <tr className="border-b border-line bg-bg-raised/70 text-ink-soft font-semibold">

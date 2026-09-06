@@ -58,7 +58,7 @@ export const TeamApprovalsSection: React.FC<TeamApprovalsSectionProps> = ({
   return (
     <div className="space-y-4 font-sans">
       {actionError && <InlineAlert>{actionError}</InlineAlert>}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
         <div>
           <h3 className="text-sm font-semibold text-ink uppercase tracking-wider flex items-center gap-2">
             <span>Direct Reports Approvals</span>
@@ -66,17 +66,17 @@ export const TeamApprovalsSection: React.FC<TeamApprovalsSectionProps> = ({
               {pendingRequests.length} Pending
             </span>
           </h3>
-          <p className="text-xs text-ink-soft">
+          <p className="text-xs text-ink-soft mt-0.5">
             Review and take action on leave requests from team members reporting to you.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4">
         {pendingRequests.map((req) => (
           <div
             key={req.id}
-            className="border border-line rounded-2xl bg-bg p-5 hover:border-line-strong transition-all flex flex-col justify-between"
+            className="border border-line rounded-2xl bg-bg p-4 sm:p-5 hover:border-line-strong transition-all flex flex-col justify-between"
           >
             <div>
               {/* Employee info header */}

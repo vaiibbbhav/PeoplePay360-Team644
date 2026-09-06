@@ -130,12 +130,12 @@ export const DocumentsPage: React.FC = () => {
 
   return (
     <AppLayout title="Policies & Documents">
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-8 font-sans space-y-6">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
         {/* Page Header with Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
-            <h1 className="text-2xl font-sans font-bold text-ink">Policies & Documents</h1>
-            <p className="text-xs text-ink-soft mt-0.5">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">Policies & Documents</h1>
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
               Compliance, Regulations & Employee Acknowledgment
             </p>
           </div>

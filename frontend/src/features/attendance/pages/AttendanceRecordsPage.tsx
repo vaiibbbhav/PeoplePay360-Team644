@@ -97,9 +97,9 @@ export const AttendanceRecordsPage: React.FC = () => {
 
   return (
     <AppLayout title="Attendance Records">
-      <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 font-sans">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
         {/* Page Top Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
@@ -108,10 +108,10 @@ export const AttendanceRecordsPage: React.FC = () => {
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
               <span className="text-[11px] text-ink-soft">Live Operations Ledger</span>
             </div>
-            <h1 className="text-2xl lg:text-3xl font-sans font-medium text-ink">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               Attendance Records
             </h1>
-            <p className="text-xs text-ink-soft mt-1">
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
               Company-wide biometric punch logs, daily hours, and HR exception audit trail.
             </p>
           </div>
@@ -126,7 +126,7 @@ export const AttendanceRecordsPage: React.FC = () => {
         </div>
 
         {/* Company Ledger View */}
-        <div className="space-y-6">
+        <div className="space-y-6 sm:space-y-8">
           {/* Real-time Summary Cards */}
           <AttendanceSummaryCards records={filteredRecords} isLoading={isLoading} />
 

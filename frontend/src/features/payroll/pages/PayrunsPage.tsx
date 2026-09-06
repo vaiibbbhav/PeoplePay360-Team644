@@ -379,8 +379,8 @@ const PayrunDetail: React.FC<{
           >
             ← Back to Payruns
           </button>
-          <h2 className="font-sans text-2xl font-bold text-ink">{payrun.name}</h2>
-          <p className="text-xs text-ink-soft mt-1">
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">{payrun.name}</h2>
+          <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
             {formatDate(payrun.period_start)} — {formatDate(payrun.period_end)} ·{' '}
             {payrun.salary_structure_name}
           </p>
@@ -615,21 +615,21 @@ export const PayrunsPage: React.FC = () => {
 
     // Default: list view
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 sm:space-y-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
-            <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
               Payrun Management
             </h1>
-            <p className="text-xs text-ink-soft mt-1">
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
               Execute payroll runs, validate, and mark payslips as paid.
             </p>
           </div>
           {canWrite && (
             <button
               onClick={() => setView('step1')}
-              className="px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 shrink-0"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 shrink-0 shadow-xs"
             >
               ⚡ New Payrun Wizard
             </button>
@@ -754,7 +754,7 @@ export const PayrunsPage: React.FC = () => {
 
   return (
     <AppLayout title="Payrun Management">
-      <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8">
+      <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
         {renderContent()}
       </main>
     </AppLayout>

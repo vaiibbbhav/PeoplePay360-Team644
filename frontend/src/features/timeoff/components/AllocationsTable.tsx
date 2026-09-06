@@ -28,12 +28,12 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
 
   return (
     <div className="space-y-4 font-sans">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
         <div>
           <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
             Employee Leave Allocations
           </h3>
-          <p className="text-xs text-ink-soft">
+          <p className="text-xs text-ink-soft mt-0.5">
             Annual entitlements, taken quotas, and remaining leave balances.
           </p>
         </div>
@@ -41,7 +41,7 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
           <button
             type="button"
             onClick={() => setIsGrantModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-colors shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-colors shadow-xs cursor-pointer self-start sm:self-auto"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Grant Allocation</span>
@@ -52,12 +52,12 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
       {actionError && <InlineAlert>{actionError}</InlineAlert>}
 
       {isLoading ? (
-        <div className="border border-line rounded-2xl p-12 text-center bg-bg">
+        <div className="border border-line rounded-2xl p-8 sm:p-12 text-center bg-bg">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-2" />
           <p className="text-xs text-ink-soft">Loading allocations ledger...</p>
         </div>
       ) : allocations.length === 0 ? (
-        <div className="border border-line rounded-2xl p-12 text-center bg-bg">
+        <div className="border border-line rounded-2xl p-8 sm:p-12 text-center bg-bg">
           <div className="w-12 h-12 rounded-2xl bg-bg-raised border border-line flex items-center justify-center mx-auto mb-3 text-ink-soft">
             <Calendar className="w-6 h-6" />
           </div>
@@ -69,18 +69,18 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
         </div>
       ) : (
         <div className="border border-line rounded-2xl overflow-hidden bg-bg">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto no-scrollbar">
+            <table className="w-full text-left text-xs min-w-[760px]">
               <thead>
                 <tr className="border-b border-line bg-bg-raised/60 text-ink-soft uppercase tracking-wider text-[11px]">
-                  <th className="py-3 px-4 font-semibold">Employee</th>
-                  <th className="py-3 px-4 font-semibold">Leave Type</th>
-                  <th className="py-3 px-4 font-semibold">Allocated</th>
-                  <th className="py-3 px-4 font-semibold">Taken</th>
-                  <th className="py-3 px-4 font-semibold">Remaining</th>
-                  <th className="py-3 px-4 font-semibold">Validity Period</th>
-                  <th className="py-3 px-4 font-semibold">Status</th>
-                  {canManage && <th className="py-3 px-4 font-semibold text-right">Actions</th>}
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Employee</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Leave Type</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Allocated</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Taken</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Remaining</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Validity Period</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Status</th>
+                  {canManage && <th className="py-3 px-3.5 sm:px-4 font-semibold text-right">Actions</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
