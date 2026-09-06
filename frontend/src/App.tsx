@@ -11,6 +11,7 @@ const VerifyEmailPage = lazy(() => import('./features/auth/pages/VerifyEmailPage
 const DashboardPage = lazy(() => import('./features/dashboard/pages/DashboardPage').then((m) => ({ default: m.DashboardPage })));
 const EmployeeAttendancePage = lazy(() => import('./features/attendance/pages/EmployeeAttendancePage').then((m) => ({ default: m.EmployeeAttendancePage })));
 const AttendanceRecordsPage = lazy(() => import('./features/attendance/pages/AttendanceRecordsPage').then((m) => ({ default: m.AttendanceRecordsPage })));
+const AttendanceTerminalPage = lazy(() => import('./features/attendance/pages/AttendanceTerminalPage').then((m) => ({ default: m.AttendanceTerminalPage })));
 
 const UserManagementPage = lazy(() => import('./features/users/pages/UserManagementPage').then((m) => ({ default: m.UserManagementPage })));
 const EmployeeDirectoryPage = lazy(() => import('./features/employees/pages/EmployeeDirectoryPage').then((m) => ({ default: m.EmployeeDirectoryPage })));
@@ -66,6 +67,7 @@ export function App() {
 
             {/* Attendance */}
             <Route path="/attendance" element={<AttendanceRecordsPage />} />
+            <Route path="/attendance/terminal" element={<AttendanceTerminalPage />} />
             <Route path="/attendance/my" element={<EmployeeAttendancePage />} />
 
             {/* Time Off */}
