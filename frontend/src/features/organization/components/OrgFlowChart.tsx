@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   ReactFlow,
   Controls,
@@ -21,6 +21,7 @@ type OrgFlowChartProps = {
   employees: EmployeeListItem[];
   onSelectEmployee: (emp: EmployeeListItem) => void;
   selectedEmployeeId?: string | null;
+  isFocused?: boolean;
 };
 
 const nodeTypes: NodeTypes = {
@@ -31,9 +32,23 @@ const FlowInner: React.FC<OrgFlowChartProps> = ({
   employees,
   onSelectEmployee,
   selectedEmployeeId = null,
+  isFocused = false,
 }) => {
   const { fitView } = useReactFlow();
-  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
+  const getManagerIds = useCallback(() => {
+    const reportsByManager = new Set(
+      employees.filter((employee) => employee.manager_id).map((employee) => employee.manager_id!),
+    );
+    return reportsByManager;
+  }, [employees]);
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(() =>
+    isFocused ? new Set() : getManagerIds(),
+  );
+
+  // A full company is not a useful starting canvas. Show leadership first, but open focused results.
+  useEffect(() => {
+    setCollapsedIds(isFocused ? new Set() : getManagerIds());
+  }, [getManagerIds, isFocused]);
 
   const handleToggleCollapse = useCallback((id: string) => {
     setCollapsedIds((prev) => {
@@ -54,7 +69,7 @@ const FlowInner: React.FC<OrgFlowChartProps> = ({
       collapsedIds,
       selectedEmployeeId,
       handleToggleCollapse,
-      onSelectEmployee
+      onSelectEmployee,
     );
   }, [employees, collapsedIds, selectedEmployeeId, handleToggleCollapse, onSelectEmployee]);
 
@@ -62,39 +77,38 @@ const FlowInner: React.FC<OrgFlowChartProps> = ({
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
 
   // Re-sync with layout updates
-  React.useEffect(() => {
+  useEffect(() => {
     setNodes(layoutedNodes);
     setEdges(layoutedEdges);
   }, [layoutedNodes, layoutedEdges, setNodes, setEdges]);
 
   // Initial fit view on mount or layout change
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
-      fitView({ padding: 0.15, duration: 400 });
+      fitView({ padding: 0.2, minZoom: 0.45, maxZoom: 0.9, duration: 250 });
     }, 50);
     return () => clearTimeout(timer);
-  }, [collapsedIds, fitView]);
+  }, [collapsedIds, fitView, layoutedNodes]);
 
   const handleExpandAll = () => {
     setCollapsedIds(new Set());
   };
 
   const handleCollapseAll = () => {
-    const managerIds = new Set<string>();
-    employees.forEach((e) => {
-      if (e.manager_id) managerIds.add(e.manager_id);
-    });
-    setCollapsedIds(managerIds);
+    setCollapsedIds(getManagerIds());
   };
 
   return (
-    <div className="relative w-full h-[650px] bg-bg-sunken/30 border border-line rounded-2xl overflow-hidden shadow-xs">
+    <section
+      aria-label="Organization hierarchy"
+      className="relative h-[520px] w-full overflow-hidden rounded-2xl border border-line bg-bg-sunken/30"
+    >
       {/* Top Floating Utility Controls */}
-      <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 flex items-center gap-1 sm:gap-2 bg-bg-raised/90 backdrop-blur-xs p-1 sm:p-1.5 rounded-xl border border-line shadow-sm text-[11px] sm:text-xs">
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-1 bg-bg/90 p-1 rounded-lg border border-line backdrop-blur-xs text-xs">
         <button
-          onClick={() => fitView({ padding: 0.2, duration: 400 })}
-          title="Fit view to all nodes"
-          className="px-2 sm:px-2.5 py-1 font-medium text-ink hover:text-accent rounded-lg hover:bg-bg transition-colors cursor-pointer flex items-center gap-1 sm:gap-1.5"
+          onClick={() => fitView({ padding: 0.2, minZoom: 0.45, maxZoom: 0.9, duration: 250 })}
+          title="Center visible people"
+          className="px-2.5 py-1 font-medium text-ink hover:text-accent rounded-md hover:bg-bg-raised transition-colors cursor-pointer flex items-center gap-1.5"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -104,22 +118,22 @@ const FlowInner: React.FC<OrgFlowChartProps> = ({
               d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
             />
           </svg>
-          <span className="hidden sm:inline">Fit View</span>
+          <span className="hidden sm:inline">Center</span>
         </button>
 
         <div className="w-px h-4 bg-line" />
 
         <button
           onClick={handleExpandAll}
-          title="Expand all branches"
-          className="px-1.5 sm:px-2 py-1 text-ink-soft hover:text-ink rounded-lg hover:bg-bg transition-colors cursor-pointer whitespace-nowrap"
+          title="Show every person"
+          className="px-2 py-1 text-ink-soft hover:text-ink rounded-md hover:bg-bg-raised transition-colors cursor-pointer whitespace-nowrap"
         >
-          Expand
+          Show all
         </button>
         <button
           onClick={handleCollapseAll}
-          title="Collapse all sub-teams"
-          className="px-1.5 sm:px-2 py-1 text-ink-soft hover:text-ink rounded-lg hover:bg-bg transition-colors cursor-pointer whitespace-nowrap"
+          title="Return to leadership overview"
+          className="px-2 py-1 text-ink-soft hover:text-ink rounded-md hover:bg-bg-raised transition-colors cursor-pointer whitespace-nowrap"
         >
           Collapse
         </button>
@@ -131,10 +145,9 @@ const FlowInner: React.FC<OrgFlowChartProps> = ({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
-        fitView
-        minZoom={0.2}
+        nodesDraggable={false}
+        minZoom={0.45}
         maxZoom={1.8}
-        defaultViewport={{ x: 0, y: 0, zoom: 0.85 }}
         proOptions={{ hideAttribution: true }}
         className="touch-none"
       >
@@ -153,7 +166,7 @@ const FlowInner: React.FC<OrgFlowChartProps> = ({
           pannable
         />
       </ReactFlow>
-    </div>
+    </section>
   );
 };
 

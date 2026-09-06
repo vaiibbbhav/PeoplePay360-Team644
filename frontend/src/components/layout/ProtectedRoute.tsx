@@ -8,7 +8,7 @@ type ProtectedRouteProps = {
 };
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allow }) => {
-  const { data: user, isLoading } = useCurrentUser();
+  const { data: user, isLoading, isError } = useCurrentUser();
   const location = useLocation();
 
   if (isLoading) {
@@ -22,8 +22,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allow }) => {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (isError || !user) {
+    return <Navigate to="/login" state={{ from: location, sessionExpired: isError }} replace />;
   }
 
   if (allow && !allow(user.role)) {

@@ -5,19 +5,22 @@ import { useCurrentUser } from '../queries/useAuth';
 import { getDefaultPathForRole } from '@/lib/permissions';
 
 export const LoginPage: React.FC = () => {
-  const { data: user, isLoading } = useCurrentUser();
+  const { data: user, isLoading, isError } = useCurrentUser();
 
   if (isLoading) {
     return null;
   }
 
-  if (user) {
+  if (user && !isError) {
     return <Navigate to={getDefaultPathForRole(user.role)} replace />;
   }
   return (
     <div className="min-h-screen flex flex-col bg-bg text-ink">
       <header className="border-b border-line px-4 sm:px-8 py-3.5 sm:py-4 flex justify-between items-center bg-bg">
-        <Link to="/" className="font-serif text-lg sm:text-xl font-bold tracking-tight text-ink no-underline">
+        <Link
+          to="/"
+          className="font-serif text-lg sm:text-xl font-bold tracking-tight text-ink no-underline"
+        >
           PeoplePay<span className="text-accent">360</span>
         </Link>
       </header>

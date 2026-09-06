@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
+import { Link, useLocation, Outlet } from 'react-router-dom';
 import { Sun, Moon } from 'lucide-react';
 import { useCurrentUser, useLogout } from '@/features/auth/queries/useAuth';
 
@@ -189,7 +189,6 @@ export type AppLayoutProps = {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
   const location = useLocation();
-  const navigate = useNavigate();
   const { data: user, isLoading, isError } = useCurrentUser();
   const logout = useLogout();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -239,21 +238,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
     );
   }
 
-  // Error / unauthenticated
+  // ProtectedRoute owns redirects. This only prevents a stale query result from rendering shell UI.
   if (isError || !user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-bg text-ink font-sans">
-        <div className="max-w-sm w-full p-6 border border-line rounded-xl bg-bg-raised">
-          <p className="text-over-red text-sm font-medium">Session expired or user not found.</p>
-          <button
-            onClick={() => navigate('/login')}
-            className="mt-4 w-full py-2.5 px-4 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer"
-          >
-            Go to Sign In
-          </button>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   // Employee Navigation Items (Exact 12 tabs from specification)
@@ -449,9 +436,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
       : []),
     {
       title: 'Company & Compliance',
-      items: [
-        { label: 'Policies & Documents', path: '/documents', icon: DocumentIcon },
-      ],
+      items: [{ label: 'Policies & Documents', path: '/documents', icon: DocumentIcon }],
     },
   ];
 
@@ -525,7 +510,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
               aria-label="Close menu"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>

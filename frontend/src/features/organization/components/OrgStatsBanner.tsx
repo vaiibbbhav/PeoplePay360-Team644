@@ -16,23 +16,15 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
   onViewChange,
 }) => {
   return (
-    <div className="bg-bg-raised border border-line rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 transition-all">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
+    <div className="border-b border-line pb-5">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide uppercase bg-accent/10 text-accent border border-accent/20">
-              Enterprise Structure
-            </span>
-            <span className="text-xs text-ink-soft">
-              {totalEmployees} active team members across {totalDepartments} departments
-            </span>
-          </div>
-
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-serif text-ink font-normal mt-2 tracking-tight">
-            Organization View & Hierarchy
+          <h1 className="text-2xl sm:text-3xl font-serif text-ink font-normal tracking-tight">
+            Organization
           </h1>
-          <p className="text-xs sm:text-sm text-ink-soft mt-1 max-w-2xl leading-relaxed">
-            Explore reporting lines, department leadership, team structures, and company roster.
+          <p className="text-xs text-ink-soft mt-1">
+            {totalEmployees} people · {totalDepartments} departments · {totalManagers} people
+            managers
           </p>
         </div>
 
@@ -94,34 +86,6 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
               <span>Directory</span>
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Metrics Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-5 border-t border-line-subtle">
-        <div className="p-3 bg-bg-sunken rounded-xl border border-line-subtle">
-          <span className="text-[11px] font-mono text-ink-faint uppercase tracking-wider block">
-            Total Headcount
-          </span>
-          <span className="text-xl font-sans font-bold text-ink mt-0.5 block">
-            {totalEmployees}
-          </span>
-        </div>
-        <div className="p-3 bg-bg-sunken rounded-xl border border-line-subtle">
-          <span className="text-[11px] font-mono text-ink-faint uppercase tracking-wider block">
-            Departments
-          </span>
-          <span className="text-xl font-sans font-bold text-ink mt-0.5 block">
-            {totalDepartments}
-          </span>
-        </div>
-        <div className="p-3 bg-bg-sunken rounded-xl border border-line-subtle col-span-2 sm:col-span-1">
-          <span className="text-[11px] font-mono text-ink-faint uppercase tracking-wider block">
-            People Managers
-          </span>
-          <span className="text-xl font-sans font-bold text-ink mt-0.5 block">
-            {totalManagers}
-          </span>
         </div>
       </div>
     </div>
