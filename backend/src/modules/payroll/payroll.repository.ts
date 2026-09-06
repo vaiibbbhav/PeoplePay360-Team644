@@ -11,7 +11,27 @@ import {
   jobPositions,
 } from '../../db/schema';
 import { eq, and, desc, sql } from 'drizzle-orm';
-import { PayslipLine, SalaryRule } from './rule-engine';
+import { PayslipLine, SalaryRule, ComputationMethod } from './rule-engine';
+
+export type CreateStructureData = {
+  name: string;
+  code: string;
+  description?: string | null;
+  isActive?: boolean;
+};
+
+export type CreateRuleData = {
+  structureId: string;
+  name: string;
+  code: string;
+  category: string;
+  sequence: number;
+  computationMethod: ComputationMethod;
+  amount?: number | string | null;
+  percentageOfCode?: string | null;
+  percentage?: number | string | null;
+  formula?: string | null;
+};
 
 export async function findAllStructures() {
   return await db.select().from(salaryStructures).orderBy(salaryStructures.name);
@@ -22,7 +42,7 @@ export async function findStructureById(id: string) {
   return rows[0] || null;
 }
 
-export async function insertStructure(data: Record<string, any>) {
+export async function insertStructure(data: CreateStructureData) {
   const [created] = await db
     .insert(salaryStructures)
     .values({
@@ -49,7 +69,7 @@ export async function findRulesByStructureId(structureId: string): Promise<Salar
     code: r.code,
     category: r.category,
     sequence: r.sequence,
-    computationMethod: r.computationMethod as any,
+    computationMethod: r.computationMethod as ComputationMethod,
     amount: r.amount ? parseFloat(r.amount) : 0,
     percentageOfCode: r.percentageOfCode || undefined,
     percentage: r.percentage ? parseFloat(r.percentage) : undefined,
@@ -57,7 +77,7 @@ export async function findRulesByStructureId(structureId: string): Promise<Salar
   }));
 }
 
-export async function insertRule(data: Record<string, any>) {
+export async function insertRule(data: CreateRuleData) {
   const [created] = await db
     .insert(salaryRules)
     .values({
@@ -284,10 +304,40 @@ export async function findExistingPayslip(
   return rows[0] || null;
 }
 
+export type PayrunWarning = {
+  code?: string;
+  message: string;
+  severity: 'warning' | 'error' | 'blocking' | 'info';
+  employeeId?: string;
+  employeeName?: string;
+};
+
+export type PayrunInsertData = {
+  name: string;
+  salaryStructureId: string;
+  periodStart: string;
+  periodEnd: string;
+  notes?: string | null;
+};
+
+export type PayslipInsertData = {
+  employeeId: string;
+  contractId: string;
+  structureId: string;
+  periodStart: string;
+  periodEnd: string;
+  workedDays: number | string;
+  basicSalary: number | string;
+  grossSalary: number | string;
+  totalDeductions: number | string;
+  netSalary: number | string;
+  warnings?: unknown[];
+};
+
 export async function executeCreatePayrunTx(
-  payrunData: Record<string, any>,
+  payrunData: PayrunInsertData,
   employeePayslips: Array<{
-    payslip: Record<string, any>;
+    payslip: PayslipInsertData;
     lines: PayslipLine[];
   }>,
   totals: {
@@ -296,7 +346,7 @@ export async function executeCreatePayrunTx(
     deductions: number;
     net: number;
     count: number;
-    warnings: any[];
+    warnings: PayrunWarning[];
   },
 ) {
   return await db.transaction(async (tx) => {

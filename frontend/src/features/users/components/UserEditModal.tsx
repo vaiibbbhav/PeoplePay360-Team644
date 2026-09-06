@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import type { UserItem, EmployeeOption, UpdateUserInput } from '../queries/useUsers';
 import type { UserRole } from '@/features/auth/queries/useAuth';
 import { useClickOutside } from '@/hooks/useClickOutside';

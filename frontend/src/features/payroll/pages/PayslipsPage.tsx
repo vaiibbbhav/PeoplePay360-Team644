@@ -26,6 +26,8 @@ import {
   RefreshCw,
 } from 'lucide-react';
 
+type PayslipSortOption = 'date_desc' | 'date_asc' | 'net_desc' | 'net_asc' | 'name_asc';
+
 export const PayslipsPage: React.FC = () => {
   const {
     data: payslips = [],
@@ -44,7 +46,7 @@ export const PayslipsPage: React.FC = () => {
   const [selectedPayrun, setSelectedPayrun] = useState<string>('all');
   const [selectedStructure, setSelectedStructure] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'date_desc' | 'date_asc' | 'net_desc' | 'net_asc' | 'name_asc'>('date_desc');
+  const [sortBy, setSortBy] = useState<PayslipSortOption>('date_desc');
 
   // Derive unique payruns and salary structures from payslips
   const uniquePayruns = useMemo(() => {
@@ -365,7 +367,7 @@ export const PayslipsPage: React.FC = () => {
             </Select>
 
             {/* Sort Dropdown */}
-            <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as PayslipSortOption)}>
               <SelectTrigger className="w-full sm:w-[170px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>

@@ -3,6 +3,7 @@ import * as usersRepo from '../users/users.repository';
 import { NotFoundError, ConflictError } from '../../shared/errors';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import { CreateEmployeeInput, UpdateEmployeeInput } from './hr.validators';
 
 export async function listEmployees() {
   return await hrRepo.findAllEmployees();
@@ -30,14 +31,14 @@ export async function getEmployeeHubDetails(id: string) {
   };
 }
 
-export async function createEmployee(data: Record<string, any>) {
-  const email = (data.email as string).toLowerCase().trim();
+export async function createEmployee(data: CreateEmployeeInput & { userId?: string }) {
+  const email = data.email.toLowerCase().trim();
   const existing = await hrRepo.findEmployeeByEmail(email);
   if (existing) {
     throw new ConflictError(`Employee with email ${email} already exists`);
   }
 
-  let userId = data.userId as string | undefined;
+  let userId = data.userId;
   if (!userId) {
     const existingUser = await usersRepo.findUserByEmail(email);
     if (existingUser) {
@@ -71,7 +72,7 @@ export async function createEmployee(data: Record<string, any>) {
   return await getEmployeeById(created.id);
 }
 
-export async function updateEmployee(id: string, data: Record<string, unknown>) {
+export async function updateEmployee(id: string, data: UpdateEmployeeInput) {
   await getEmployeeById(id);
   await hrRepo.updateEmployeeById(id, data);
   return await getEmployeeById(id);

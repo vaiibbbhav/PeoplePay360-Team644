@@ -1,3 +1,6 @@
+-- Normalize table names to snake_case
+ALTER TABLE IF EXISTS "jobPositions" RENAME TO job_positions;
+
 -- Enforce payroll and workflow invariants at the database boundary.
 CREATE UNIQUE INDEX IF NOT EXISTS uq_payslips_employee_period
   ON payslips (employee_id, period_start, period_end);

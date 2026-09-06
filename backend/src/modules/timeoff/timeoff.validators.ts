@@ -39,7 +39,11 @@ export const createRequestSchema = z
     path: ['endDate'],
   });
 
-export function validateCreateTimeOffType(data: unknown) {
+export type CreateTimeOffTypeInput = z.infer<typeof createTimeOffTypeSchema>;
+export type CreateAllocationInput = z.infer<typeof createAllocationSchema>;
+export type CreateRequestInput = z.infer<typeof createRequestSchema>;
+
+export function validateCreateTimeOffType(data: unknown): CreateTimeOffTypeInput {
   const result = createTimeOffTypeSchema.safeParse(data);
   if (!result.success) {
     const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
@@ -48,7 +52,7 @@ export function validateCreateTimeOffType(data: unknown) {
   return result.data;
 }
 
-export function validateCreateAllocation(data: unknown) {
+export function validateCreateAllocation(data: unknown): CreateAllocationInput {
   const result = createAllocationSchema.safeParse(data);
   if (!result.success) {
     const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
@@ -57,7 +61,7 @@ export function validateCreateAllocation(data: unknown) {
   return result.data;
 }
 
-export function validateCreateRequest(data: unknown) {
+export function validateCreateRequest(data: unknown): CreateRequestInput {
   const result = createRequestSchema.safeParse(data);
   if (!result.success) {
     const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');

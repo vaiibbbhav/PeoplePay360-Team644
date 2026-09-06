@@ -100,7 +100,18 @@ export async function findScheduleLineForDate(employeeId: string, dayOfWeek: str
   return rows[0] || null;
 }
 
-export async function upsertAttendance(data: Record<string, any>) {
+export type UpsertAttendanceData = {
+  employeeId: string;
+  date: string;
+  checkIn?: string | Date | null;
+  checkOut?: string | Date | null;
+  workedHours?: number | string;
+  status?: string;
+  exceptionNote?: string | null;
+  isManualEdit?: boolean;
+};
+
+export async function upsertAttendance(data: UpsertAttendanceData) {
   const existing = await findAttendanceByEmployeeAndDate(data.employeeId, data.date);
 
   if (existing) {

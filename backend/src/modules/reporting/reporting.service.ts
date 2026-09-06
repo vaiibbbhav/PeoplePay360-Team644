@@ -39,12 +39,12 @@ export async function getDashboardOverview() {
     contracts: contractAndSchedule.contracts,
     schedules: contractAndSchedule.schedules,
     charts: {
-      departmentBreakdown: deptCosts.map((d: any) => ({
+      departmentBreakdown: deptCosts.map((d) => ({
         department: d.department_name,
         headcount: d.employee_count,
         totalCost: parseFloat(d.total_salary_cost),
       })),
-      monthlyTrends: salaryTrends.map((m: any) => ({
+      monthlyTrends: salaryTrends.map((m) => ({
         month: m.month_label,
         netSalary: parseFloat(m.total_net),
         grossSalary: parseFloat(m.total_gross),

@@ -141,7 +141,7 @@ export async function updatePolicy(
     effectiveDate?: string | null;
   },
 ): Promise<PolicyRecord | null> {
-  const payload: Record<string, any> = {
+  const payload: Partial<typeof companyPolicies.$inferInsert> = {
     updatedAt: new Date(),
   };
 

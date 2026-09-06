@@ -38,7 +38,11 @@ export const createPayrunWizardSchema = z
     message: 'periodEnd must be on or after periodStart',
   });
 
-export function validateCreateSalaryStructure(data: unknown) {
+export type CreateSalaryStructureInput = z.infer<typeof createSalaryStructureSchema>;
+export type CreateSalaryRuleInput = z.infer<typeof createSalaryRuleSchema>;
+export type CreatePayrunWizardInput = z.infer<typeof createPayrunWizardSchema>;
+
+export function validateCreateSalaryStructure(data: unknown): CreateSalaryStructureInput {
   const result = createSalaryStructureSchema.safeParse(data);
   if (!result.success) {
     const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
@@ -47,7 +51,7 @@ export function validateCreateSalaryStructure(data: unknown) {
   return result.data;
 }
 
-export function validateCreateSalaryRule(data: unknown) {
+export function validateCreateSalaryRule(data: unknown): CreateSalaryRuleInput {
   const result = createSalaryRuleSchema.safeParse(data);
   if (!result.success) {
     const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
@@ -56,7 +60,7 @@ export function validateCreateSalaryRule(data: unknown) {
   return result.data;
 }
 
-export function validateCreatePayrunWizard(data: unknown) {
+export function validateCreatePayrunWizard(data: unknown): CreatePayrunWizardInput {
   const result = createPayrunWizardSchema.safeParse(data);
   if (!result.success) {
     const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
