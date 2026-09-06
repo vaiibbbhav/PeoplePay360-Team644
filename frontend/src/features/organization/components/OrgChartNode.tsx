@@ -38,7 +38,7 @@ export const OrgChartNode: React.FC<OrgChartNodeProps> = ({
 
         {/* Info */}
         <div className="min-w-0 flex-1">
-          <h4 className="text-sm font-serif font-medium text-ink truncate tracking-tight">
+          <h4 className="text-sm font-sans font-medium text-ink truncate tracking-tight">
             {employee.first_name} {employee.last_name}
           </h4>
           <p className="text-xs text-ink-soft truncate mt-0.5">

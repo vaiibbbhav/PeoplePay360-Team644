@@ -1,5 +1,6 @@
 import React from 'react';
 import type { AttendanceRecord } from '../queries/useAttendance';
+import { formatTimeIST, formatDateTimeIST, getRecordDateIST } from '@/lib/formatters';
 
 type AttendanceDetailCardProps = {
   record: AttendanceRecord | null;
@@ -19,32 +20,11 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
   isToday,
 }) => {
   const formatTime = (isoString?: string | null) => {
-    if (!isoString) return '—';
-    try {
-      return new Date(isoString).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      });
-    } catch {
-      return isoString;
-    }
+    return formatTimeIST(isoString, true);
   };
 
   const formatTimestamp = (isoString?: string | null) => {
-    if (!isoString) return '—';
-    try {
-      return new Date(isoString).toLocaleString([], {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      });
-    } catch {
-      return isoString;
-    }
+    return formatDateTimeIST(isoString);
   };
 
   const getStatusBadge = (status?: string) => {
@@ -87,7 +67,7 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
       {/* Header bar */}
       <div className="flex items-center justify-between pb-4 border-b border-line mb-5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-accent/15 text-accent flex items-center justify-center font-serif font-bold text-base">
+          <div className="w-10 h-10 rounded-xl bg-accent/15 text-accent flex items-center justify-center font-sans font-bold text-base">
             {selectedDateStr.split('-')[2] || '—'}
           </div>
           <div>
@@ -189,7 +169,7 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
 
               <div className="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <span className="text-ink-soft font-medium">date</span>
-                <span className="font-mono text-ink font-semibold">{record.date}</span>
+                <span className="font-mono text-ink font-semibold">{getRecordDateIST(record) || record.date}</span>
               </div>
 
               <div className="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">

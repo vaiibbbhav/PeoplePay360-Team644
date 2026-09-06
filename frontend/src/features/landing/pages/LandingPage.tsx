@@ -351,7 +351,7 @@ export const LandingPage: React.FC = () => {
                 <span className="text-xs text-accent font-semibold mb-4 block">
                   Configuration & Policies
                 </span>
-                <h3 className="font-serif text-xl sm:text-2xl font-semibold mb-5 text-ink m-0">
+                <h3 className="font-sans text-xl sm:text-2xl font-semibold mb-5 text-ink m-0">
                   HR Backend Management
                 </h3>
                 <ul className="list-none m-0 p-0 divide-y divide-line">
@@ -396,7 +396,7 @@ export const LandingPage: React.FC = () => {
                 <span className="text-xs text-accent font-semibold mb-4 block">
                   Operational Experience
                 </span>
-                <h3 className="font-serif text-xl sm:text-2xl font-semibold mb-5 text-ink m-0">
+                <h3 className="font-sans text-xl sm:text-2xl font-semibold mb-5 text-ink m-0">
                   HR & Payroll Operations
                 </h3>
                 <ul className="list-none m-0 p-0 divide-y divide-line">
@@ -594,7 +594,7 @@ export const LandingPage: React.FC = () => {
         <section className="py-12 sm:py-20">
           <div className="max-w-6xl mx-auto px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-14 items-center">
             <div>
-              <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink max-w-[16ch] m-0">
+              <h2 className="font-sans text-2xl sm:text-3xl font-semibold text-ink max-w-[16ch] m-0">
                 Operational integrity ready for demonstration
               </h2>
               <p className="text-ink-soft mt-3 sm:mt-4 max-w-[42ch] text-sm sm:text-base leading-relaxed">

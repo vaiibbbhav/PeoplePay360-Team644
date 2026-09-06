@@ -16,7 +16,7 @@ export const CompensationHeader: React.FC<CompensationHeaderProps> = ({
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 border-b border-line">
       <div>
-        <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+        <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
           Compensation
         </h1>
         <p className="text-xs sm:text-sm text-ink-soft mt-1">

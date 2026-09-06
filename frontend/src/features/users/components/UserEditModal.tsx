@@ -89,7 +89,7 @@ const UserEditForm: React.FC<EditFormProps> = ({ user, isPending, onClose, onSav
       >
         {/* Header */}
         <div className="px-6 pt-5 pb-4 border-b border-line">
-          <h2 className="font-serif text-lg font-semibold text-ink">Edit User</h2>
+          <h2 className="font-sans text-lg font-semibold text-ink">Edit User</h2>
           <p className="text-xs text-ink-soft mt-0.5 truncate">
             Updating access for <span className="font-medium text-ink">{user.email}</span>
           </p>

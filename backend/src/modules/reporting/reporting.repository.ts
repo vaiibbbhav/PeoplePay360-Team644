@@ -4,9 +4,10 @@ import {
   timeOffRequests,
   attendance,
   employees,
+  users,
   departments,
   contracts,
-  users,
+  workingSchedules,
   auditLogs,
 } from '../../db/schema';
 import { eq, and, sql, count, gte, desc, or, isNull } from 'drizzle-orm';
@@ -346,3 +347,66 @@ export async function getRecentAdminActivity(limit = 15) {
   }));
 }
 
+export async function getContractAndScheduleStats() {
+  const [contractRes] = await db
+    .select({
+      total: count(),
+      active: sql<number>`COUNT(CASE WHEN ${contracts.status} = 'active' THEN 1 END)`,
+      draft: sql<number>`COUNT(CASE WHEN ${contracts.status} = 'draft' THEN 1 END)`,
+      expired: sql<number>`COUNT(CASE WHEN ${contracts.status} = 'expired' THEN 1 END)`,
+    })
+    .from(contracts);
+
+  const [scheduleRes] = await db
+    .select({
+      total: count(),
+      active: sql<number>`COUNT(CASE WHEN ${workingSchedules.isActive} = true THEN 1 END)`,
+      avg_weekly_hours: sql<string>`COALESCE(AVG(${workingSchedules.weeklyHours}), 40.0)`,
+    })
+    .from(workingSchedules);
+
+  const recentContracts = await db
+    .select({
+      id: contracts.id,
+      name: contracts.name,
+      employee_id: contracts.employeeId,
+      employee_name: sql<string>`concat(${users.firstName}, ' ', ${users.lastName})`,
+      wage: contracts.wage,
+      wage_type: contracts.wageType,
+      status: contracts.status,
+      start_date: contracts.startDate,
+      end_date: contracts.endDate,
+    })
+    .from(contracts)
+    .leftJoin(employees, eq(contracts.employeeId, employees.id))
+    .leftJoin(users, eq(employees.userId, users.id))
+    .orderBy(desc(contracts.createdAt))
+    .limit(5);
+
+  const activeSchedules = await db
+    .select({
+      id: workingSchedules.id,
+      name: workingSchedules.name,
+      weekly_hours: workingSchedules.weeklyHours,
+      is_active: workingSchedules.isActive,
+    })
+    .from(workingSchedules)
+    .orderBy(desc(workingSchedules.weeklyHours))
+    .limit(5);
+
+  return {
+    contracts: {
+      total: Number(contractRes?.total || 0),
+      active: Number(contractRes?.active || 0),
+      draft: Number(contractRes?.draft || 0),
+      expired: Number(contractRes?.expired || 0),
+      recent: recentContracts,
+    },
+    schedules: {
+      total: Number(scheduleRes?.total || 0),
+      active: Number(scheduleRes?.active || 0),
+      avgWeeklyHours: parseFloat(scheduleRes?.avg_weekly_hours || '40.0'),
+      list: activeSchedules,
+    },
+  };
+}

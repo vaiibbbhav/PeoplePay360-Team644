@@ -12,6 +12,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     'payslip.self.read',
     'contracts.read',
     'employee.read',
+    'schedules.read',
+    'reporting.read',
   ],
   'HR Manager': [
     // HR Manager has full CRUD on Employees, Attendance, Contracts, Working Schedules, Time Off
@@ -30,6 +32,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     'timeoff.read',
     'timeoff.write',
     'timeoff.approve',
+    'payroll.payslip.read'
   ],
   'HR Payroll User': [
     // All HR Manager permissions
@@ -58,6 +61,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     // Read-only salary structure & rules
     'payroll.structure.read',
     'payroll.rule.read',
+    'reporting.read',
+    'payslip.self.read',
   ],
   'HR Payroll Manager': [
     // Full HR and Payroll permissions including full CRUD on Structures & Rules
@@ -91,6 +96,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     'payroll.rule.write',
     'payroll.rule.delete',
     'reporting.read',
+    'payslip.self.read',
   ],
   Admin: ['*'], // Wildcard: full access
 };

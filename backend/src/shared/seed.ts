@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { pool, db, closeDb } from './db';
 import * as schema from '../db/schema';
 import { passwordSchema } from '../modules/auth/auth.validators';
@@ -670,6 +670,118 @@ Manual punch corrections for missed check-ins or biometric failures must be subm
         console.info(`✅ Seeded policy: ${pol.title} (${pol.code})`);
       }
     }
+
+    // 9. Seed Time Off Types
+    const initialTimeOffTypes = [
+      {
+        name: 'Paid Annual Vacation',
+        code: 'ANNUAL',
+        unit: 'days',
+        requiresAllocation: true,
+        approvalType: 'manager_and_hr',
+        isPaid: true,
+        isActive: true,
+      },
+      {
+        name: 'Sick & Medical Leave',
+        code: 'SICK',
+        unit: 'days',
+        requiresAllocation: true,
+        approvalType: 'hr_only',
+        isPaid: true,
+        isActive: true,
+      },
+      {
+        name: 'Casual / Personal Leave',
+        code: 'CASUAL',
+        unit: 'days',
+        requiresAllocation: true,
+        approvalType: 'manager_and_hr',
+        isPaid: true,
+        isActive: true,
+      },
+      {
+        name: 'Parental Leave',
+        code: 'PARENTAL',
+        unit: 'days',
+        requiresAllocation: true,
+        approvalType: 'hr_only',
+        isPaid: true,
+        isActive: true,
+      },
+      {
+        name: 'Unpaid Leave (LWP)',
+        code: 'UNPAID',
+        unit: 'days',
+        requiresAllocation: false,
+        approvalType: 'manager_and_hr',
+        isPaid: false,
+        isActive: true,
+      },
+    ];
+
+    const typeMap = new Map<string, string>();
+
+    for (const tot of initialTimeOffTypes) {
+      const [existing] = await db
+        .select()
+        .from(schema.timeOffTypes)
+        .where(eq(schema.timeOffTypes.code, tot.code))
+        .limit(1);
+
+      if (!existing) {
+        const [inserted] = await db.insert(schema.timeOffTypes).values(tot).returning();
+        typeMap.set(tot.code, inserted.id);
+        console.info(`✅ Seeded time off type: ${tot.name} (${tot.code})`);
+      } else {
+        typeMap.set(tot.code, existing.id);
+      }
+    }
+
+    // 10. Seed default allocations for existing employees
+    const allEmployees = await db.select({ id: schema.employees.id }).from(schema.employees);
+    const currYear = new Date().getFullYear();
+    const validFrom = `${currYear}-01-01`;
+    const validTo = `${currYear}-12-31`;
+
+    const quotaDefaults = [
+      { code: 'ANNUAL', amount: '20.0' },
+      { code: 'SICK', amount: '10.0' },
+      { code: 'CASUAL', amount: '5.0' },
+    ];
+
+    for (const emp of allEmployees) {
+      for (const q of quotaDefaults) {
+        const typeId = typeMap.get(q.code);
+        if (!typeId) continue;
+
+        const [existingAlloc] = await db
+          .select()
+          .from(schema.timeOffAllocations)
+          .where(
+            and(
+              eq(schema.timeOffAllocations.employeeId, emp.id),
+              eq(schema.timeOffAllocations.timeOffTypeId, typeId),
+              eq(schema.timeOffAllocations.validFrom, validFrom),
+            ),
+          )
+          .limit(1);
+
+        if (!existingAlloc) {
+          await db.insert(schema.timeOffAllocations).values({
+            employeeId: emp.id,
+            timeOffTypeId: typeId,
+            allocatedAmount: q.amount,
+            takenAmount: '0.0',
+            remainingAmount: q.amount,
+            validFrom,
+            validTo,
+            status: 'approved',
+          });
+        }
+      }
+    }
+    console.info(`✅ Seeded default leave allocations for ${allEmployees.length} employees`);
 
     console.info(
       `✅ Seeded ${sampleEmployees.length} sample employee accounts (password: ${staffPassword})`,

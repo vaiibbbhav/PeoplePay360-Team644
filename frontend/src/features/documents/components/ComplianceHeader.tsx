@@ -33,7 +33,7 @@ export const ComplianceHeader: React.FC<ComplianceHeaderProps> = ({
             </span>
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-serif text-ink font-normal mt-2 tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-sans text-ink font-normal mt-2 tracking-tight">
             Company Policies & Document Compliance
           </h1>
           <p className="text-sm text-ink-soft mt-1 max-w-2xl leading-relaxed">

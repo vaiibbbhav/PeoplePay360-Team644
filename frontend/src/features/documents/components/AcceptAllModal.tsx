@@ -36,7 +36,7 @@ export const AcceptAllModal: React.FC<AcceptAllModalProps> = ({
             <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-accent block">
               Batch Compliance Signing
             </span>
-            <h3 className="text-xl font-serif text-ink font-medium tracking-tight mt-1">
+            <h3 className="text-xl font-sans text-ink font-medium tracking-tight mt-1">
               Accept All Outstanding Policies
             </h3>
           </div>

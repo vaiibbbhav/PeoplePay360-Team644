@@ -19,7 +19,8 @@ export type AttendanceRecord = {
 export type FingerprintRecord = {
   id: string;
   employee_id: string;
-  encryted_template: string;
+  encrypted_template: string;
+  encryted_template?: string;
   created_at?: string;
   updated_at?: string;
 };
@@ -126,22 +127,27 @@ export function generateFallbackAttendance(
 }
 
 // 1. API Functions
-const getAttendanceApi = async (params: AttendanceFilterParams): Promise<AttendanceRecord[]> => {
+const getAttendanceApi = async (params?: AttendanceFilterParams): Promise<AttendanceRecord[]> => {
   try {
     const { data } = await api.get<AttendanceRecord[]>('/attendance', { params });
-    if (Array.isArray(data) && data.length > 0) {
-      return data;
+    if (Array.isArray(data)) {
+      if (data.length > 0 || !params?.employeeId) {
+        return data;
+      }
     }
   } catch {
-    // Graceful fallback to rich sample dataset if backend offline or unseeded
+    // Graceful fallback to rich sample dataset if backend offline
   }
 
-  const now = new Date();
-  return generateFallbackAttendance(
-    params.employeeId || 'emp-001',
-    now.getFullYear(),
-    now.getMonth(),
-  );
+  if (params?.employeeId) {
+    const now = new Date();
+    return generateFallbackAttendance(
+      params.employeeId,
+      now.getFullYear(),
+      now.getMonth(),
+    );
+  }
+  return [];
 };
 
 const LOCAL_STORAGE_FP_KEY = 'peoplepay_employee_fingerprint_';
@@ -158,6 +164,7 @@ const getFingerprintApi = async (employeeId: string): Promise<FingerprintRecord 
   return {
     id: 'fp-client-001',
     employee_id: employeeId,
+    encrypted_template: 'FP_SHA256_a9c4b78e12d45ef88902bca4710398f5960d7c3b2e1a',
     encryted_template: 'FP_SHA256_a9c4b78e12d45ef88902bca4710398f5960d7c3b2e1a',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -166,12 +173,15 @@ const getFingerprintApi = async (employeeId: string): Promise<FingerprintRecord 
 
 const updateFingerprintApi = async (payload: {
   employeeId: string;
-  encrytedTemplate: string;
+  encryptedTemplate?: string;
+  encrytedTemplate?: string;
 }): Promise<FingerprintRecord> => {
+  const tmpl = payload.encryptedTemplate || payload.encrytedTemplate || 'AES-256-GCM';
   const record: FingerprintRecord = {
     id: `fp-${Date.now()}`,
     employee_id: payload.employeeId,
-    encryted_template: payload.encrytedTemplate,
+    encrypted_template: tmpl,
+    encryted_template: tmpl,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
@@ -195,10 +205,20 @@ const checkOutApi = async (payload: {
   return data;
 };
 
+export type SaveManualAttendancePayload = {
+  employeeId: string;
+  date: string;
+  checkIn?: string | null;
+  checkOut?: string | null;
+  workedHours?: number;
+  status: 'Present' | 'Late' | 'Absent' | 'Overtime' | 'Half-day' | string;
+  exceptionNote?: string | null;
+};
+
 // 2. Exported React Query Hooks
-export const useAttendanceList = (params: AttendanceFilterParams) => {
+export const useAttendanceList = (params?: AttendanceFilterParams) => {
   return useQuery({
-    queryKey: ['attendance', params.employeeId, params.startDate, params.endDate],
+    queryKey: ['attendance', params?.employeeId, params?.startDate, params?.endDate],
     queryFn: () => getAttendanceApi(params),
     staleTime: 60 * 1000,
   });
@@ -239,6 +259,20 @@ export const useCheckOut = () => {
     mutationFn: checkOutApi,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['attendance'] });
+    },
+  });
+};
+
+export const useSaveManualAttendance = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: SaveManualAttendancePayload) => {
+      const { data } = await api.post<AttendanceRecord>('/attendance/manual', payload);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['attendance'] });
+      queryClient.invalidateQueries({ queryKey: ['today-attendance'] });
     },
   });
 };

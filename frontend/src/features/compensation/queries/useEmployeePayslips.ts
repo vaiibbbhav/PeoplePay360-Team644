@@ -29,6 +29,7 @@ export type EmployeePayslip = {
   total_deductions: string | number;
   net_salary: string | number;
   status: string;
+  payrun_status?: string | null;
   warnings?: Array<{ message: string; severity: string }> | null;
   created_at: string;
 };
@@ -84,6 +85,18 @@ export const useEmployeePayslips = (employeeId?: string) => {
     queryKey: ['payslips', employeeId || 'all'],
     queryFn: () => fetchPayslipsApi(employeeId),
     staleTime: 60 * 1000,
+  });
+};
+
+export const useAllCompanyPayslips = (payrunId?: string) => {
+  return useQuery({
+    queryKey: ['payslips', 'company-all', payrunId || 'all'],
+    queryFn: async () => {
+      const params = payrunId ? { payrunId } : {};
+      const { data } = await api.get<EmployeePayslip[]>('/payslips', { params });
+      return data;
+    },
+    staleTime: 30 * 1000,
   });
 };
 

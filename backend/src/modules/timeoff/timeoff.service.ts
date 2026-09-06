@@ -1,5 +1,7 @@
 import * as timeoffRepo from './timeoff.repository';
-import { NotFoundError, ValidationError } from '../../shared/errors';
+import { NotFoundError, ValidationError, ForbiddenError } from '../../shared/errors';
+
+export type RequestFilterOptions = timeoffRepo.RequestFilterOptions;
 
 export async function listTimeOffTypes() {
   return await timeoffRepo.findAllTimeOffTypes();
@@ -28,8 +30,8 @@ export async function approveAllocation(id: string, approverId?: string) {
   return await timeoffRepo.approveAllocation(id, approverId);
 }
 
-export async function listRequests(employeeId?: string) {
-  return await timeoffRepo.findAllRequests(employeeId);
+export async function listRequests(filters?: RequestFilterOptions | string) {
+  return await timeoffRepo.findAllRequests(filters);
 }
 
 export async function getRequestById(id: string) {
@@ -38,6 +40,50 @@ export async function getRequestById(id: string) {
     throw new NotFoundError(`Time off request ${id} not found`);
   }
   return req;
+}
+
+export async function hasDirectReports(employeeId?: string): Promise<boolean> {
+  if (!employeeId) return false;
+  const count = await timeoffRepo.countDirectReports(employeeId);
+  return count > 0;
+}
+
+export async function getEmployeeBalances(employeeId: string) {
+  const types = await timeoffRepo.findAllTimeOffTypes();
+  const allocations = await timeoffRepo.findAllAllocations(employeeId);
+
+  // Group approved allocations by type
+  return types.map((type) => {
+    const typeAllocations = allocations.filter(
+      (a) => a.time_off_type_id === type.id && a.status === 'approved',
+    );
+
+    const totalAllocated = typeAllocations.reduce(
+      (acc, a) => acc + parseFloat(a.allocated_amount || '0'),
+      0,
+    );
+    const totalTaken = typeAllocations.reduce(
+      (acc, a) => acc + parseFloat(a.taken_amount || '0'),
+      0,
+    );
+    const totalRemaining = typeAllocations.reduce(
+      (acc, a) => acc + parseFloat(a.remaining_amount || '0'),
+      0,
+    );
+
+    return {
+      typeId: type.id,
+      typeName: type.name,
+      typeCode: type.code,
+      unit: type.unit,
+      requiresAllocation: type.requiresAllocation,
+      isPaid: type.isPaid,
+      allocated: totalAllocated,
+      taken: totalTaken,
+      remaining: totalRemaining,
+      hasActiveAllocation: typeAllocations.length > 0,
+    };
+  });
 }
 
 export async function createRequest(data: Record<string, unknown>) {
@@ -67,7 +113,7 @@ export async function createRequest(data: Record<string, unknown>) {
   return await timeoffRepo.insertRequest(data);
 }
 
-export async function approveRequest(id: string, approverId?: string) {
+export async function approveRequest(id: string, approverUserId?: string) {
   const request = await getRequestById(id);
   if (request.status !== 'pending') {
     throw new ValidationError(`Cannot approve request with status '${request.status}'`);
@@ -93,13 +139,14 @@ export async function approveRequest(id: string, approverId?: string) {
     allocationId = allocation.id;
   }
 
-  return await timeoffRepo.executeApproveRequestTx(id, allocationId, duration, approverId);
+  return await timeoffRepo.executeApproveRequestTx(id, allocationId, duration, approverUserId);
 }
 
-export async function refuseRequest(id: string, reason?: string) {
+export async function refuseRequest(id: string, reason?: string, _approverUserId?: string) {
   const request = await getRequestById(id);
   if (request.status !== 'pending') {
     throw new ValidationError(`Cannot refuse request with status '${request.status}'`);
   }
+
   return await timeoffRepo.refuseRequest(id, reason);
 }

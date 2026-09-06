@@ -7,17 +7,28 @@ import {
   type ScheduleItem,
   type CreateSchedulePayload,
 } from '../queries/useSchedules';
-import { HrNavHeader } from '@/components/layout/HrNavHeader';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { StatGrid } from '@/components/ui/StatCard';
+import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 import { ScheduleCard } from '../components/ScheduleCard';
 import { ScheduleFormDrawer } from '../components/ScheduleFormDrawer';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { useCurrentUser } from '@/features/auth/queries/useAuth';
 
 export const SchedulesPage: React.FC = () => {
   const { data: schedules = [], isLoading, error } = useSchedulesList();
   const createScheduleMutation = useCreateSchedule();
   const updateScheduleMutation = useUpdateSchedule();
   const deleteScheduleMutation = useDeleteSchedule();
+  const { data: user } = useCurrentUser();
+  const canWrite = user?.role !== 'Employee';
 
   const [search, setSearch] = useState('');
   const [filterActive, setFilterActive] = useState<'all' | 'active' | 'inactive'>('all');
@@ -83,11 +94,10 @@ export const SchedulesPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col">
-      <HrNavHeader
-        title="Work Schedules"
-        subtitle="Weekly Hour Patterns & Day Lines"
-        actionButton={
+    <AppLayout
+      title="Work Schedules"
+      actions={
+        canWrite ? (
           <button
             type="button"
             onClick={handleOpenCreate}
@@ -95,9 +105,9 @@ export const SchedulesPage: React.FC = () => {
           >
             <span>+</span> New Schedule
           </button>
-        }
-      />
-
+        ) : undefined
+      }
+    >
       <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* KPI Cards */}
         <StatGrid
@@ -124,48 +134,32 @@ export const SchedulesPage: React.FC = () => {
               subtext: 'Covered under schedules',
             },
           ]}
+          isLoading={isLoading}
+          skeletonCount={4}
         />
 
         {/* Search & Filter Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-3.5 sm:p-4 rounded-2xl border border-line bg-bg">
-          <div className="flex-1 w-full sm:w-auto relative">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search schedules by name..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl border border-line bg-bg-raised text-ink text-xs placeholder:text-ink-soft/60 focus:outline-none focus:border-accent"
-            />
-            <svg
-              className="w-4 h-4 text-ink-soft absolute left-3 top-2.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
+          <SearchInput
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search schedules by name..."
+          />
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            {(['all', 'active', 'inactive'] as const).map((filter) => (
-              <button
-                key={filter}
-                type="button"
-                onClick={() => setFilterActive(filter)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors cursor-pointer border ${
-                  filterActive === filter
-                    ? 'border-accent bg-accent-soft text-accent'
-                    : 'border-line bg-bg text-ink-soft hover:text-ink'
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
+          <div className="w-full sm:w-auto">
+            <Select
+              value={filterActive}
+              onValueChange={(val) => setFilterActive(val as 'all' | 'active' | 'inactive')}
+            >
+              <SelectTrigger className="w-full sm:w-40">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -194,7 +188,7 @@ export const SchedulesPage: React.FC = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div className="border border-line rounded-2xl p-16 text-center bg-bg">
-            <h3 className="font-serif text-lg font-bold text-ink mb-1">No schedules found</h3>
+            <h3 className="font-sans text-lg font-bold text-ink mb-1">No schedules found</h3>
             <p className="text-xs text-ink-soft mb-4">
               {search || filterActive !== 'all'
                 ? 'Try adjusting your search or filters'
@@ -209,7 +203,7 @@ export const SchedulesPage: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6">
             {filtered.map((schedule) => (
               <ScheduleCard
                 key={schedule.id}
@@ -265,6 +259,6 @@ export const SchedulesPage: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 };

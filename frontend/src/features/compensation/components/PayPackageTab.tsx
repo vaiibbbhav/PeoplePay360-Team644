@@ -54,14 +54,15 @@ export const PayPackageTab: React.FC<PayPackageTabProps> = ({ employeeId, showVa
   }, Boolean(selectedContractForBreakdown));
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between pb-2 border-b border-line">
+    <div className="space-y-6 pt-2">
+      <div className="flex justify-between items-center pb-2 border-b border-line">
         <div>
-          <h2 className="text-base font-semibold text-ink">Pay Package & CTC Breakdown</h2>
-          <p className="text-xs text-ink-soft">
+          <h2 className="font-sans text-lg sm:text-xl font-semibold text-ink">Pay Package & CTC Breakdown</h2>
+          <p className="text-xs text-ink-soft mt-0.5">
             Historical and active compensation contracts with salary rule decomposition.
           </p>
         </div>
+        <span className="text-xs text-ink-soft font-mono shrink-0">FY 2026-27</span>
       </div>
 
       {contracts.length === 0 ? (
@@ -137,7 +138,7 @@ export const PayPackageTab: React.FC<PayPackageTabProps> = ({ employeeId, showVa
           >
             <div className="flex items-center justify-between border-b border-line pb-4 mb-4">
               <div>
-                <h3 className="font-serif text-lg font-bold text-ink">
+                <h3 className="font-sans text-lg font-bold text-ink">
                   CTC Compensation Structure Breakdown
                 </h3>
                 <p className="text-xs text-ink-soft mt-0.5">

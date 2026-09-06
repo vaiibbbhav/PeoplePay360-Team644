@@ -75,13 +75,19 @@ export const CompensationPage: React.FC = () => {
 
           {activeTab === 'tax-sheet' && <TaxSheetTab showValues={showValues} />}
 
-          {activeTab === 'it-declaration' && <ITDeclarationTab />}
+          {activeTab === 'it-declaration' && (
+            <ITDeclarationTab
+              financialYear={financialYear}
+              showValues={showValues}
+              employeeId={targetEmployeeId}
+            />
+          )}
 
           {(activeTab === 'extra-payments' ||
             activeTab === 'loans' ||
             activeTab === 'payroll-docs') && (
             <div className="py-14 border border-line rounded-xl bg-bg-raised text-center p-8">
-              <h3 className="font-serif text-base font-semibold text-ink mb-1">
+              <h3 className="font-sans text-base font-semibold text-ink mb-1">
                 No Records for FY {financialYear}
               </h3>
               <p className="text-xs text-ink-soft max-w-sm mx-auto">

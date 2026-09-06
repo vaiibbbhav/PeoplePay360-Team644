@@ -218,7 +218,7 @@ export const ScheduleFormDrawer: React.FC<ScheduleFormDrawerProps> = ({
                 </span>
               </div>
               <div className="text-right">
-                <span className="font-serif text-2xl font-bold text-accent">
+                <span className="font-sans text-2xl font-bold text-accent">
                   {totalWeeklyHours}
                 </span>
                 <span className="text-xs text-ink-soft block -mt-1">hrs / week</span>

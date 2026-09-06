@@ -129,7 +129,7 @@ export const DocumentsPage: React.FC = () => {
         {/* Page Header with Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
           <div>
-            <h1 className="text-2xl font-serif font-bold text-ink">Policies & Documents</h1>
+            <h1 className="text-2xl font-sans font-bold text-ink">Policies & Documents</h1>
             <p className="text-xs text-ink-soft mt-0.5">Compliance, Regulations & Employee Acknowledgment</p>
           </div>
           {isHrAdmin && (
@@ -258,7 +258,7 @@ export const DocumentsPage: React.FC = () => {
                         />
                       </svg>
                     </div>
-                    <h4 className="text-sm font-serif font-medium text-ink">No policies found</h4>
+                    <h4 className="text-sm font-sans font-medium text-ink">No policies found</h4>
                     <p className="text-xs text-ink-soft mt-1">
                       Try adjusting your search query or switching filters.
                     </p>

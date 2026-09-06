@@ -17,37 +17,16 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
     {
       id: 'attendance',
       title: 'Attendance & Punches',
-      desc: 'Check-in, check-out logs, and daily attendance history.',
+      desc: 'Check-in, check-out logs, daily attendance history, and punch terminal.',
       tag: 'Time & Attendance',
       link: '/attendance',
     },
     {
-      id: 'task-box',
-      title: 'Task Box',
-      desc: 'Pending tasks, personal action items, and task completions.',
-      tag: 'Workspace',
-      link: '/dashboard/task-box',
-    },
-    {
-      id: 'profile',
-      title: 'Profile & Documents',
-      desc: 'Personal details, emergency contacts, and employment history.',
-      tag: 'Account',
-      link: '/profile',
-    },
-    {
-      id: 'time-management',
-      title: 'Time Management',
-      desc: 'Work schedule hours, punch clock, shifts, and attendance tracking.',
-      tag: 'Schedules',
-      link: '/attendance',
-    },
-    {
-      id: 'team',
-      title: 'Org View & Directory',
-      desc: 'Visual reporting hierarchy, leadership tree, and team rosters.',
-      tag: 'Organization',
-      link: '/employee/org-view',
+      id: 'time-off',
+      title: 'Time Off & Leaves',
+      desc: 'Submit leave requests, review available balances, and track approvals.',
+      tag: 'Leaves',
+      link: '/time-off',
     },
     {
       id: 'compensation',
@@ -57,6 +36,20 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
       link: '/compensation',
     },
     {
+      id: 'profile',
+      title: 'My Profile',
+      desc: 'Personal details, emergency contacts, and employment history.',
+      tag: 'Account',
+      link: '/profile',
+    },
+    {
+      id: 'team',
+      title: 'Org View & Directory',
+      desc: 'Visual reporting hierarchy, leadership tree, and team rosters.',
+      tag: 'Organization',
+      link: '/employee/org-view',
+    },
+    {
       id: 'documents',
       title: 'Policies & Documents',
       desc: 'Mandatory company policies, code of conduct, and compliance acknowledgments.',
@@ -64,41 +57,21 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
       link: '/employee/docs',
     },
     {
-      id: 'recruitment',
-      title: 'Recruitment & Referrals',
-      desc: 'Internal vacancies, candidate referrals, and application status.',
-      tag: 'Careers',
-      link: '/dashboard/recruitment',
+      id: 'contracts',
+      title: 'My Contracts',
+      desc: 'View your current and historical employment contracts and wage details.',
+      tag: 'Employment',
+      link: '/contracts',
     },
     {
-      id: 'calendar',
-      title: 'Company Calendar',
-      desc: 'Public holidays, planned leave dates, and company events.',
-      tag: 'Planning',
-      link: '/dashboard/calendar',
-    },
-    {
-      id: 'performance',
-      title: 'Performance & Goals',
-      desc: 'Review goals, periodic feedback, and key quarterly milestones.',
-      tag: 'Growth',
-      link: '/dashboard/performance',
-    },
-    {
-      id: 'flows',
-      title: 'Workflows & Approvals',
-      desc: 'Submit approval requests, review pending flows, and sign-offs.',
-      tag: 'Operations',
-      link: '/dashboard/flows',
-    },
-    {
-      id: 'org-view',
-      title: 'Org View',
-      desc: 'Organizational hierarchy, department mapping, and teams structure.',
-      tag: 'Company',
-      link: '/employee/org-view',
+      id: 'schedules',
+      title: 'Work Schedules',
+      desc: 'View your assigned working schedule, shift hours, and break times.',
+      tag: 'Schedules',
+      link: '/schedules',
     },
   ];
+
 
   return (
     <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
@@ -147,8 +120,8 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
         </div>
       )}
 
-      {/* Quick Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Quick Summary Cards: Identity, Contract, Schedule, Biometrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-xs text-ink-soft font-medium">Session Role</span>
           <div className="text-base font-semibold text-ink mt-1">{user.role}</div>
@@ -157,25 +130,35 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
           </span>
         </div>
         <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
+          <span className="text-xs text-ink-soft font-medium">Employment Contract</span>
+          <div className="text-base font-semibold text-ink mt-1">Active Agreement</div>
+          <Link
+            to="/compensation"
+            className="text-[11px] text-accent font-medium mt-1 block hover:underline no-underline"
+          >
+            View wage & contract →
+          </Link>
+        </div>
+        <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
+          <span className="text-xs text-ink-soft font-medium">Working Schedule</span>
+          <div className="text-base font-semibold text-ink mt-1">Standard 40h Shift</div>
+          <Link
+            to="/attendance"
+            className="text-[11px] text-accent font-medium mt-1 block hover:underline no-underline"
+          >
+            Check shift timetable →
+          </Link>
+        </div>
+        <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-xs text-ink-soft font-medium">Biometrics & Punches</span>
           <div className="text-base font-semibold text-ink mt-1">
-            {hasFingerprint ? 'Fingerprint Enrolled' : 'Punch Clock Active'}
+            {hasFingerprint ? 'Enrolled & Verified' : 'Punch Clock Ready'}
           </div>
           <Link
             to="/attendance"
             className="text-[11px] text-accent font-medium mt-1 block hover:underline no-underline"
           >
-            Open attendance terminal →
-          </Link>
-        </div>
-        <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
-          <span className="text-xs text-ink-soft font-medium">Compensation</span>
-          <div className="text-base font-semibold text-ink mt-1">Payslips Ready</div>
-          <Link
-            to="/compensation"
-            className="text-[11px] text-accent font-medium mt-1 block hover:underline no-underline"
-          >
-            Open compensation hub →
+            Open punch terminal →
           </Link>
         </div>
       </div>

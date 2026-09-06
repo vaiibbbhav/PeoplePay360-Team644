@@ -52,7 +52,7 @@ export const DeleteConfirmDialog: React.FC<Props> = ({
               />
             </svg>
           </div>
-          <h2 className="font-serif text-base font-semibold text-ink">Are you sure?</h2>
+          <h2 className="font-sans text-base font-semibold text-ink">Are you sure?</h2>
           <p className="text-xs text-ink-soft mt-1 leading-relaxed">
             This action cannot be undone. This will permanently delete the user from the system.
           </p>

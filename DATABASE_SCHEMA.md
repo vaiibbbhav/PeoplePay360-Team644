@@ -29,7 +29,7 @@ users (canonical identity & auth) ──1:1── employees (HR operational exte
 - `manager_id` (UUID, nullable)
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 
-### `jobPositions`
+### `job_positions` (TypeScript export: `jobPositions`)
 - `id` (UUID, Primary Key, default random)
 - `title` (VARCHAR(100), NOT NULL)
 - `department_id` (UUID, references `departments.id` ON DELETE SET NULL)
@@ -134,8 +134,10 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 
 ### `fingerprint`
 - `id` (UUID, Primary Key, default random)
-- `employee_id` (UUID, NOT NULL, references `employees.id` ON DELETE CASCADE)
-- `encryted_template` (TEXT, NOT NULL)
+- `employee_id` (UUID, NOT NULL, unique, references `employees.id` ON DELETE CASCADE)
+- `encrypted_template` (TEXT, NOT NULL)
+- `iv` (VARCHAR(64), NOT NULL)
+- `key_version` (VARCHAR(20), NOT NULL, default 'v1')
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 - `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
 

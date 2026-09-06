@@ -1,5 +1,6 @@
 import React from 'react';
 import type { AttendanceRecord } from '../queries/useAttendance';
+import { formatTimeIST, getTodayIST } from '@/lib/formatters';
 
 type AttendanceCalendarGridProps = {
   currentDate: Date;
@@ -36,22 +37,11 @@ export const AttendanceCalendarGrid: React.FC<AttendanceCalendarGridProps> = ({
   // Number of days in current month
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Today string YYYY-MM-DD
-  const now = new Date();
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
-    now.getDate(),
-  ).padStart(2, '0')}`;
+  // Today string YYYY-MM-DD in Indian Standard Time
+  const todayStr = getTodayIST();
 
   const formatShortTime = (isoString?: string | null) => {
-    if (!isoString) return '';
-    try {
-      return new Date(isoString).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch {
-      return '';
-    }
+    return formatTimeIST(isoString);
   };
 
   return (

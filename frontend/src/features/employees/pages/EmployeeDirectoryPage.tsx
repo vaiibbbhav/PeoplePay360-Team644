@@ -3,6 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useEmployeesList, useEmployeeMeta, useCreateEmployee } from '../queries/useEmployees';
 import { EmployeeFormModal } from '../components/EmployeeFormModal';
 import { AppLayout } from '../../../components/layout/AppLayout';
+import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 
 export const EmployeeDirectoryPage: React.FC = () => {
   const navigate = useNavigate();
@@ -60,55 +68,46 @@ export const EmployeeDirectoryPage: React.FC = () => {
         </div>
 
         {/* Toolbar & Filter Controls */}
-        <div className="bg-bg border border-line rounded-2xl p-3.5 sm:p-4 mb-6 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              placeholder="Search by name, email or job..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-lg border border-line bg-bg text-ink placeholder:text-ink-soft focus:outline-none focus:border-accent"
-            />
-            <svg
-              className="w-4 h-4 text-ink-soft absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-              />
-            </svg>
-          </div>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-3.5 sm:p-4 rounded-2xl border border-line bg-bg mb-6">
+          <SearchInput
+            placeholder="Search by employee name, email or job title..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-          <div className="grid grid-cols-2 gap-2.5 sm:flex sm:items-center">
-            <select
-              value={departmentFilter}
-              onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="w-full sm:w-auto px-3 py-2 text-xs rounded-lg border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer truncate"
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+            <Select
+              value={departmentFilter || 'all'}
+              onValueChange={(val) => setDepartmentFilter(val === 'all' ? '' : val)}
             >
-              <option value="">All Departments</option>
-              {meta?.departments.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full sm:w-44">
+                <SelectValue placeholder="All Departments" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="all">All Departments</SelectItem>
+                {meta?.departments.map((d) => (
+                  <SelectItem key={d.id} value={d.id}>
+                    {d.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full sm:w-auto px-3 py-2 text-xs rounded-lg border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer truncate"
+            <Select
+              value={statusFilter || 'all'}
+              onValueChange={(val) => setStatusFilter(val === 'all' ? '' : val)}
             >
-              <option value="">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="on_leave">On Leave</option>
-              <option value="inactive">Inactive</option>
-              <option value="terminated">Terminated</option>
-            </select>
+              <SelectTrigger className="w-full sm:w-36">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="on_leave">On Leave</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="terminated">Terminated</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -204,7 +203,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
 
                   <div className="pt-3 mt-3 border-t border-line flex items-center justify-between text-[11px] text-accent font-medium">
                     <span>View Profile & Details →</span>
-                    <span className="text-ink-soft">{emp.email}</span>
+                    <span className="text-ink-soft truncate max-w-[150px]">{emp.email}</span>
                   </div>
                 </div>
               );

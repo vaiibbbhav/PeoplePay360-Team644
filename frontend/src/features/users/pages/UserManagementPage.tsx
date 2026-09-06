@@ -13,13 +13,14 @@ import { UserEditModal } from '../components/UserEditModal';
 import { DeleteConfirmDialog } from '../components/DeleteConfirmDialog';
 import { useNavigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { SearchInput } from '@/components/ui/SearchInput';
 import {
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 
 // ── Helper ─────────────────────────────────────────────────────────────────
 const roleBadge: Record<string, string> = {
@@ -142,56 +143,36 @@ export const UserManagementPage: React.FC = () => {
         {/* ── Divider ── */}
         <div className="border-t border-line my-5 sm:my-6" />
 
-        {/* ── Toolbar ── */}
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between mb-5">
-          {/* Search */}
-          <div className="relative w-full sm:w-1/3">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-soft pointer-events-none"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-line bg-bg text-ink placeholder:text-ink-soft/60 focus:outline-none focus:border-accent transition-colors"
-            />
-          </div>
+        {/* ── Top controls (search + filter + add) ── */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-line bg-bg">
+          <SearchInput
+            placeholder="Search users by name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
           {/* Right: role filter + add button */}
-          <div className="flex items-center gap-2.5 w-full sm:w-auto">
-            <div className="flex-1 sm:w-48 sm:flex-initial">
-              <Select
-                value={roleFilter || 'all'}
-                onValueChange={(val) => setRoleFilter(val === 'all' ? '' : val)}
-              >
-                <SelectTrigger className="h-9.5 text-sm w-full">
-                  <SelectValue placeholder="All Roles" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="Admin">Admin</SelectItem>
-                  <SelectItem value="HR Manager">HR Manager</SelectItem>
-                  <SelectItem value="HR Payroll Manager">HR Payroll Manager</SelectItem>
-                  <SelectItem value="HR Payroll User">HR Payroll User</SelectItem>
-                  <SelectItem value="Employee">Employee</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <Select
+              value={roleFilter || 'all'}
+              onValueChange={(val) => setRoleFilter(val === 'all' ? '' : val)}
+            >
+              <SelectTrigger className="w-full sm:w-44">
+                <SelectValue placeholder="All Roles" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value="Admin">Admin</SelectItem>
+                <SelectItem value="HR Manager">HR Manager</SelectItem>
+                <SelectItem value="HR Payroll Manager">HR Payroll Manager</SelectItem>
+                <SelectItem value="HR Payroll User">HR Payroll User</SelectItem>
+                <SelectItem value="Employee">Employee</SelectItem>
+              </SelectContent>
+            </Select>
 
             <button
               onClick={() => setAddOpen(true)}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-lg text-sm font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap shrink-0 shadow-xs"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -207,7 +188,7 @@ export const UserManagementPage: React.FC = () => {
         </div>
 
         {/* ── Table ── */}
-        <div className="border border-line rounded-xl overflow-x-auto bg-bg">
+        <div className="border border-line rounded-xl overflow-x-auto bg-bg mt-6">
           <table className="w-full min-w-[620px] text-sm text-left">
             <thead>
               <tr className="bg-bg-raised border-b border-line text-xs font-semibold text-ink-soft uppercase tracking-wider">

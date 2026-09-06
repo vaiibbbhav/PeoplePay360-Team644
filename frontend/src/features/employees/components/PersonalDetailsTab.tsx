@@ -73,7 +73,7 @@ export const PersonalDetailsTab: React.FC<PersonalDetailsTabProps> = ({ employee
       {/* Banking & Settlement Information */}
       <div className="bg-bg border border-line rounded-2xl p-4 sm:p-8">
         <div className="flex items-center justify-between pb-3 border-b border-line mb-6">
-          <h3 className="font-serif text-lg font-semibold text-ink">
+          <h3 className="font-sans text-lg font-semibold text-ink">
             Banking & Payroll Payout Details
           </h3>
           <span className="text-xs text-ink-soft">Direct Deposit Destination</span>

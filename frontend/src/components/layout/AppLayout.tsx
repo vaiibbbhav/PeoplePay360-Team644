@@ -237,24 +237,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       ),
     },
     {
-      label: 'Task Box',
-      path: '/employee/dashboard/task-box',
-      hasSubmenu: true,
-      icon: ({ className }) => (
-        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-          />
-        </svg>
-      ),
-    },
-    {
-      label: 'Profile',
-      path: '/profile',
-      hasSubmenu: true,
+      label: 'My Profile',
+      path: '/employees',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -267,9 +251,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       ),
     },
     {
-      label: 'Time Management',
+      label: 'Attendance',
       path: '/attendance',
-      hasSubmenu: true,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -282,18 +265,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       ),
     },
     {
-      label: 'Team',
-      path: '/employees',
-      icon: ({ className }) => (
-        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-          />
-        </svg>
-      ),
+      label: 'Time Off',
+      path: '/time-off',
+      icon: TimeOffIcon,
     },
     {
       label: 'Compensation',
@@ -310,66 +284,35 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       ),
     },
     {
-      label: 'Recruitment',
-      path: '/employee/dashboard/recruitment',
-      hasSubmenu: true,
+      label: 'Team Directory',
+      path: '/employees',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
           />
         </svg>
       ),
     },
     {
-      label: 'Calendar',
-      path: '/employee/dashboard/calendar',
+      label: 'Org View',
+      path: '/organization',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM9 20a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM7 10v4a1 1 0 001 1h8a1 1 0 001-1v-4M12 15v3"
           />
         </svg>
       ),
     },
     {
-      label: 'Performance',
-      path: '/employee/dashboard/performance',
-      hasSubmenu: true,
-      icon: ({ className }) => (
-        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-          />
-        </svg>
-      ),
-    },
-    {
-      label: 'Flows',
-      path: '/employee/dashboard/flows',
-      hasSubmenu: true,
-      icon: ({ className }) => (
-        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-          />
-        </svg>
-      ),
-    },
-    {
-      label: 'Docs',
+      label: 'Documents',
       path: '/documents',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -382,43 +325,29 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </svg>
       ),
     },
-    {
-      label: 'Org View',
-      path: '/employee/dashboard/org-view',
-      icon: ({ className }) => (
-        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM9 20a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM7 10v4a1 1 0 001 1h8a1 1 0 001-1v-4M12 15v3"
-          />
-        </svg>
-      ),
-    },
   ];
 
   const isEmployeeActive = (itemPath: string) => {
-    if (itemPath === '/employee/dashboard' || itemPath === '/dashboard') {
-      return (
-        (location.pathname === '/employee/dashboard' || location.pathname === '/dashboard') &&
-        (!location.hash || location.hash === '')
-      );
+    if (itemPath === '/dashboard') {
+      return location.pathname === '/dashboard' && (!location.hash || location.hash === '');
     }
     if (itemPath === '/attendance') {
       return location.pathname === '/attendance' || location.pathname === '/employee/attendance';
     }
-    if (itemPath === '/profile') {
-      return location.pathname === '/profile' || location.pathname.startsWith('/employees/');
-    }
     if (itemPath === '/employees') {
-      return location.pathname === '/employees';
+      return location.pathname.startsWith('/employees');
     }
     if (itemPath === '/compensation') {
       return location.pathname === '/compensation' || location.pathname.startsWith('/payslip');
     }
+    if (itemPath === '/time-off') {
+      return location.pathname.startsWith('/time-off');
+    }
     if (itemPath === '/documents') {
-      return location.pathname === '/documents' || location.pathname === '/policies';
+      return location.pathname.startsWith('/documents');
+    }
+    if (itemPath === '/organization') {
+      return location.pathname === '/organization';
     }
     return location.pathname === itemPath;
   };
@@ -428,11 +357,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   };
 
   // Build nav groups tailored to role
-  const isHRManagerOnly = user.role === 'HR Manager';
+  const isHRManager = user.role === 'HR Manager';
   const canAccessPayroll =
     user.role === 'Admin' ||
     user.role === 'HR Payroll Manager' ||
     user.role === 'HR Payroll User';
+  const canAccessPayslips = canAccessPayroll || isHRManager;
 
   const navGroups: NavGroup[] = [
     {
@@ -459,13 +389,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         { label: 'Time Off Requests', path: '/time-off', icon: TimeOffIcon },
       ],
     },
-    ...(canAccessPayroll && !isHRManagerOnly
+    ...(canAccessPayslips
       ? [
           {
             title: 'Payroll',
             items: [
-              { label: 'Payrun Wizard', path: '/payruns', icon: PayrunIcon },
-              { label: 'Analytics', path: '/analytics', icon: AnalyticsIcon },
+              ...(canAccessPayroll ? [{ label: 'Payruns', path: '/payruns', icon: PayrunIcon }] : []),
+              { label: 'Payslips', path: '/payslips', icon: AnalyticsIcon },
             ],
           },
         ]
@@ -487,7 +417,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const isEmployeeRole = user.role === 'Employee';
 
   return (
-    <div className="min-h-screen flex bg-bg text-ink font-sans">
+    <div className="min-h-screen flex bg-bg text-ink font-sans w-full min-w-0 overflow-x-hidden">
       {/* -------- SIDEBAR -------- */}
       <aside
         className={`fixed inset-y-0 left-0 z-40 border-r border-line bg-bg-raised/95 backdrop-blur-md flex flex-col transition-transform duration-200 ease-in-out w-64 ${
@@ -503,9 +433,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <Link
             to="/"
             title="PeoplePay360"
-            className="flex items-center no-underline"
+            className="flex items-center gap-2 no-underline overflow-hidden"
           >
-            <span className="font-serif font-bold tracking-tight text-ink whitespace-nowrap text-lg">
+            <span className="font-serif text-lg font-bold tracking-tight text-ink whitespace-nowrap">
               {sidebarCollapsed ? (
                 <>
                   <span className="lg:hidden">
@@ -619,7 +549,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 )}
                 <div className="space-y-0.5">
                   {group.items.map((item) => {
-                    const isActive = location.pathname === item.path;
+                    const isActive =
+                      location.pathname === item.path ||
+                      (item.path !== '/' && location.pathname.startsWith(`${item.path}/`));
                     return (
                       <Link
                         key={item.label}
@@ -684,7 +616,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
       {/* -------- MAIN CANVAS -------- */}
       <div
-        className={`flex-1 flex flex-col min-h-screen min-w-0 ${
+        className={`flex-1 flex flex-col min-h-screen min-w-0 w-full overflow-x-hidden ${
           sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'
         }`}
       >
@@ -730,7 +662,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 w-full min-w-0">{children ?? <Outlet />}</main>
+        <main className="flex-1 min-w-0 w-full">{children ?? <Outlet />}</main>
       </div>
     </div>
   );

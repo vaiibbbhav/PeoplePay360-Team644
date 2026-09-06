@@ -76,7 +76,6 @@ export const ContractTable: React.FC<ContractTableProps> = ({
               <th className="py-3 px-4 font-semibold">Employee</th>
               <th className="py-3 px-4 font-semibold">Contract Ref</th>
               <th className="py-3 px-4 font-semibold">Wage & Rate</th>
-              <th className="py-3 px-4 font-semibold">Structure & Schedule</th>
               <th className="py-3 px-4 font-semibold">Duration</th>
               <th className="py-3 px-4 font-semibold">Status</th>
               <th className="py-3 px-4 font-semibold text-right">Actions</th>
@@ -99,7 +98,7 @@ export const ContractTable: React.FC<ContractTableProps> = ({
                         className="w-8 h-8 rounded-full object-cover border border-line"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-accent-soft border border-accent/20 text-accent font-serif font-bold text-xs flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-accent-soft border border-accent/20 text-accent font-sans font-bold text-xs flex items-center justify-center">
                         {(contract.employee_name || 'E').slice(0, 2).toUpperCase()}
                       </div>
                     )}
@@ -126,16 +125,6 @@ export const ContractTable: React.FC<ContractTableProps> = ({
                   </span>
                   <span className="text-[10px] text-ink-soft capitalize">
                     {contract.wage_type} baseline
-                  </span>
-                </td>
-
-                {/* Structure & Schedule */}
-                <td className="py-3.5 px-4">
-                  <span className="text-ink font-medium block">
-                    {contract.salary_structure_name || 'Standard Structure'}
-                  </span>
-                  <span className="text-[10px] text-ink-soft block">
-                    {contract.working_schedule_name || '40h Standard'}
                   </span>
                 </td>
 

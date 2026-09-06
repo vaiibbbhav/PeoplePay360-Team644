@@ -22,18 +22,10 @@ export const ScheduleCard: React.FC<ScheduleCardProps> = ({
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-serif text-lg font-bold text-ink m-0">
+              <h3 className="text-lg font-bold tracking-tight text-ink m-0">
                 {schedule.name}
               </h3>
-              {schedule.isActive ? (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  Active
-                </span>
-              ) : (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-bg-raised text-ink-soft border border-line">
-                  Inactive
-                </span>
-              )}
+
             </div>
             <p className="text-xs text-ink-soft mt-1 mb-0">
               {workingDayCount} working days per week · {schedule.employeeCount || 0} employees assigned
@@ -41,7 +33,7 @@ export const ScheduleCard: React.FC<ScheduleCardProps> = ({
           </div>
 
           <div className="text-right">
-            <span className="font-serif text-2xl font-bold text-ink">
+            <span className="text-2xl font-bold tracking-tight text-ink">
               {schedule.weeklyHours}
             </span>
             <span className="text-xs text-ink-soft block -mt-1">hrs / week</span>

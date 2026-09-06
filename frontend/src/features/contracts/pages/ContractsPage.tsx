@@ -7,16 +7,27 @@ import {
   type CreateContractPayload,
   type ContractStatus,
 } from '../queries/useContracts';
-import { HrNavHeader } from '@/components/layout/HrNavHeader';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { StatGrid } from '@/components/ui/StatCard';
+import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 import { ContractTable } from '../components/ContractTable';
 import { ContractDetailModal } from '../components/ContractDetailModal';
 import { ContractFormDrawer } from '../components/ContractFormDrawer';
+import { useCurrentUser } from '@/features/auth/queries/useAuth';
 
 export const ContractsPage: React.FC = () => {
   const { data: contracts = [], isLoading, error } = useContractsList();
   const createContractMutation = useCreateContract();
   const updateContractMutation = useUpdateContract();
+  const { data: user } = useCurrentUser();
+  const canWrite = user?.role !== 'Employee';
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ContractStatus | 'all'>('all');
@@ -73,11 +84,10 @@ export const ContractsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-ink flex flex-col">
-      <HrNavHeader
-        title="Contracts"
-        subtitle="Employment Terms & Wage Baseline"
-        actionButton={
+    <AppLayout
+      title="Contracts"
+      actions={
+        canWrite ? (
           <button
             type="button"
             onClick={handleOpenCreate}
@@ -85,9 +95,9 @@ export const ContractsPage: React.FC = () => {
           >
             <span>+</span> New Contract
           </button>
-        }
-      />
-
+        ) : undefined
+      }
+    >
       <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Stat Cards */}
         <StatGrid
@@ -114,48 +124,34 @@ export const ContractsPage: React.FC = () => {
               subtext: 'Requires extension or renewal',
             },
           ]}
+          isLoading={isLoading}
+          skeletonCount={4}
         />
 
         {/* Filter & Search Toolbar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-3.5 sm:p-4 rounded-2xl border border-line bg-bg">
-          <div className="flex-1 w-full sm:w-auto relative">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by employee, title, position, or department..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl border border-line bg-bg-raised text-ink text-xs placeholder:text-ink-soft/60 focus:outline-none focus:border-accent"
-            />
-            <svg
-              className="w-4 h-4 text-ink-soft absolute left-3 top-2.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
+          <SearchInput
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by employee, title, position, or department..."
+          />
 
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 no-scrollbar">
-            {(['all', 'active', 'draft', 'expired', 'cancelled'] as const).map((st) => (
-              <button
-                key={st}
-                type="button"
-                onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors cursor-pointer border shrink-0 ${
-                  statusFilter === st
-                    ? 'border-accent bg-accent-soft text-accent'
-                    : 'border-line bg-bg text-ink-soft hover:text-ink'
-                }`}
-              >
-                {st}
-              </button>
-            ))}
+          <div className="w-full sm:w-auto">
+            <Select
+              value={statusFilter}
+              onValueChange={(val) => setStatusFilter(val as ContractStatus | 'all')}
+            >
+              <SelectTrigger className="w-full sm:w-44">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="expired">Expired</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -171,7 +167,7 @@ export const ContractsPage: React.FC = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div className="border border-line rounded-2xl p-16 text-center bg-bg">
-            <h3 className="font-serif text-lg font-bold text-ink mb-1">No contracts found</h3>
+            <h3 className="font-sans text-lg font-bold text-ink mb-1">No contracts found</h3>
             <p className="text-xs text-ink-soft mb-4">
               {search || statusFilter !== 'all'
                 ? 'Try adjusting your search criteria'
@@ -212,6 +208,6 @@ export const ContractsPage: React.FC = () => {
         initialData={editingContract}
         isSubmitting={createContractMutation.isPending || updateContractMutation.isPending}
       />
-    </div>
+    </AppLayout>
   );
 };

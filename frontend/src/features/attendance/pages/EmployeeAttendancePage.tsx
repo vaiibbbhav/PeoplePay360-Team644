@@ -8,11 +8,12 @@ import {
   type AttendanceRecord,
 } from '../queries/useAttendance';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
-import { useFingerprintStatus } from '@/features/attendance/queries/useFingerprint';
+import { useFingerprintStatus } from '../queries/useFingerprint';
 import { AttendanceStatsHeader } from '../components/AttendanceStatsHeader';
 import { AttendanceCalendarGrid } from '../components/AttendanceCalendarGrid';
 import { AttendanceDetailCard } from '../components/AttendanceDetailCard';
 import { FingerprintModal } from '../components/FingerprintModal';
+import { getTodayIST, getRecordDateIST } from '@/lib/formatters';
 
 export const EmployeeAttendancePage: React.FC = () => {
   const location = useLocation();
@@ -20,14 +21,28 @@ export const EmployeeAttendancePage: React.FC = () => {
   const employeeId = user?.employeeId || user?.employee?.id || user?.id || 'emp-001';
 
   // Date state for calendar
+  const todayStr = getTodayIST();
   const [calendarDate, setCalendarDate] = useState(() => new Date());
-  const now = new Date();
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
-    now.getDate(),
-  ).padStart(2, '0')}`;
-
   const [selectedDateStr, setSelectedDateStr] = useState<string>(todayStr);
   const [isFingerprintModalOpen, setIsFingerprintModalOpen] = useState<boolean>(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
+
+  // Close modal on Escape and prevent body scroll when modal is open
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsDetailModalOpen(false);
+      }
+    };
+    if (isDetailModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [isDetailModalOpen]);
 
   // Auto-open modal if navigated with ?register=true
   useEffect(() => {
@@ -44,7 +59,7 @@ export const EmployeeAttendancePage: React.FC = () => {
   const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
 
   // Queries & Mutations
-  const { data: records = [] } = useAttendanceList({
+  const { data: records = [], isLoading } = useAttendanceList({
     employeeId,
     startDate,
     endDate,
@@ -59,7 +74,11 @@ export const EmployeeAttendancePage: React.FC = () => {
   const recordsMap = useMemo(() => {
     const map = new Map<string, AttendanceRecord>();
     records.forEach((rec) => {
-      map.set(rec.date, rec);
+      // Map strictly to the single true calendar date in Indian Standard Time
+      const dateKey = getRecordDateIST(rec) || rec.date;
+      if (dateKey) {
+        map.set(dateKey, rec);
+      }
     });
     return map;
   }, [records]);
@@ -114,7 +133,7 @@ export const EmployeeAttendancePage: React.FC = () => {
 
           <div className="flex items-center gap-2.5">
             <Link
-              to="/attendance"
+              to="/attendance/terminal"
               className="px-3.5 py-2 rounded-lg text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline inline-flex items-center gap-2 shadow-xs"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,11 +144,10 @@ export const EmployeeAttendancePage: React.FC = () => {
 
             <button
               onClick={() => setIsFingerprintModalOpen(true)}
-              className={`px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs ${
-                !isEnrolled
-                  ? 'border-accent bg-accent/10 text-accent font-semibold'
-                  : 'border-line bg-bg hover:bg-bg-raised text-ink'
-              }`}
+              className={`px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs ${!isEnrolled
+                ? 'border-accent bg-accent/10 text-accent font-semibold'
+                : 'border-line bg-bg hover:bg-bg-raised text-ink'
+                }`}
             >
               <svg
                 className="w-4 h-4 text-accent"
@@ -153,7 +171,6 @@ export const EmployeeAttendancePage: React.FC = () => {
         {!isEnrolled && (
           <div className="p-4 rounded-xl border border-accent/40 bg-accent/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in">
             <div className="flex items-center gap-3">
-              <span className="w-2.5 h-2.5 rounded-full bg-accent animate-ping" />
               <div>
                 <span className="text-xs font-semibold text-ink block">
                   Fingerprint Not Registered
@@ -176,22 +193,12 @@ export const EmployeeAttendancePage: React.FC = () => {
         {/* Top States Header & Summary */}
         <AttendanceStatsHeader
           records={records}
-          fingerprint={isEnrolled ? { id: 'fp-active', employee_id: employeeId, encryted_template: 'AES-256-GCM' } : null}
+          fingerprint={isEnrolled ? { id: 'fp-active', employee_id: employeeId, encrypted_template: 'AES-256-GCM' } : null}
           onOpenFingerprintModal={() => setIsFingerprintModalOpen(true)}
           monthName={monthName}
           year={year}
+          isLoading={isLoading}
         />
-
-        {/* Higher View Card of Selected Date (Show when clicked) */}
-        <div id="attendance-detail-section" className="scroll-mt-24">
-          <AttendanceDetailCard
-            record={selectedRecord}
-            selectedDateStr={selectedDateStr}
-            isToday={selectedDateStr === todayStr}
-            onCheckIn={handleCheckInToday}
-            onCheckOut={handleCheckOutToday}
-          />
-        </div>
 
         {/* Calendar-like View */}
         <div>
@@ -211,15 +218,33 @@ export const EmployeeAttendancePage: React.FC = () => {
             selectedDateStr={selectedDateStr}
             onSelectDate={(dateStr) => {
               setSelectedDateStr(dateStr);
-              // Smooth scroll to higher view card on mobile/narrow screens
-              const elem = document.getElementById('attendance-detail-section');
-              if (elem) {
-                elem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-              }
+              setIsDetailModalOpen(true);
             }}
           />
         </div>
       </div>
+
+      {/* Attendance Detail Modal (opens on cell click, closes on click outside or cross button) */}
+      {isDetailModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs font-sans animate-in fade-in overflow-y-auto"
+          onClick={() => setIsDetailModalOpen(false)}
+        >
+          <div
+            className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-bg border border-line rounded-2xl shadow-2xl my-auto animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <AttendanceDetailCard
+              record={selectedRecord}
+              selectedDateStr={selectedDateStr}
+              isToday={selectedDateStr === todayStr}
+              onClose={() => setIsDetailModalOpen(false)}
+              onCheckIn={handleCheckInToday}
+              onCheckOut={handleCheckOutToday}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Change Fingerprint Modal */}
       <FingerprintModal

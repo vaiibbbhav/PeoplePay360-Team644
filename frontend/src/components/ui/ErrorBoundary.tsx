@@ -51,7 +51,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               />
             </svg>
           </div>
-          <h3 className="font-serif text-lg font-bold text-ink mb-1">Something went wrong</h3>
+          <h3 className="font-sans text-lg font-bold text-ink mb-1">Something went wrong</h3>
           <p className="text-xs text-ink-soft max-w-md mb-4">
             {this.state.error.message ||
               'An unexpected runtime error occurred while rendering this section.'}

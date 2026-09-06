@@ -41,16 +41,15 @@ public class FingerprintCryptoService {
         if (key == null || key.trim().isEmpty()) {
             key = System.getProperty("FINGERPRINT_ENCRYPTION_KEY");
         }
-
         if (key == null || key.trim().isEmpty()) {
-            logger.warn("FINGERPRINT_ENCRYPTION_KEY is not set. Generating an ephemeral in-memory 256-bit AES key for security.");
-            byte[] ephemeral = new byte[32];
-            new SecureRandom().nextBytes(ephemeral);
-            this.secretKey = new SecretKeySpec(ephemeral, "AES");
-        } else {
-            this.secretKey = deriveAesKey(key.trim());
-            logger.info("Initialized AES-256-GCM encryption with configured FINGERPRINT_ENCRYPTION_KEY (version: {})", DEFAULT_KEY_VERSION);
+            throw new IllegalStateException(
+                "CRITICAL SECURITY CONFIGURATION ERROR: 'FINGERPRINT_ENCRYPTION_KEY' is missing. " +
+                "Please configure a 256-bit AES hex or base64 key in your environment or .env file."
+            );
         }
+
+        this.secretKey = deriveAesKey(key.trim());
+        logger.info("Initialized AES-256-GCM encryption with configured master key (version: {})", DEFAULT_KEY_VERSION);
     }
 
     /**
@@ -92,14 +91,13 @@ public class FingerprintCryptoService {
             throw new IllegalArgumentException("IV cannot be empty for AES-GCM");
         }
 
-        try {
-            byte[] cipherText = Base64.getDecoder().decode(cipherTextBase64.trim());
-            byte[] iv = Base64.getDecoder().decode(ivBase64.trim());
+        byte[] cipherText = Base64.getDecoder().decode(cipherTextBase64.trim());
+        byte[] iv = Base64.getDecoder().decode(ivBase64.trim());
 
+        try {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             GCMParameterSpec parameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
             cipher.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec);
-
             return cipher.doFinal(cipherText);
         } catch (Exception e) {
             logger.error("Failed to decrypt biometric template: {}", e.getMessage());

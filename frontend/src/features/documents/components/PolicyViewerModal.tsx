@@ -45,7 +45,7 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
         return (
           <h4
             key={idx}
-            className="text-base font-serif font-semibold text-ink mt-6 mb-2 tracking-tight"
+            className="text-base font-sans font-semibold text-ink mt-6 mb-2 tracking-tight"
           >
             {line.replace('### ', '')}
           </h4>
@@ -134,7 +134,7 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
             <p className="text-[11px] uppercase tracking-widest text-ink-faint font-mono">
               Anchorage Technologies Pvt. Ltd. • Corporate Policy Register
             </p>
-            <h2 className="text-2xl md:text-3xl font-serif text-ink font-normal mt-2 tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-sans text-ink font-normal mt-2 tracking-tight">
               {policy.title}
             </h2>
             <div className="flex items-center justify-center gap-4 mt-3 text-xs text-ink-faint font-mono">

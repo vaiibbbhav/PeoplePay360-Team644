@@ -3,7 +3,9 @@ import { queryClient } from './queryClient';
 
 export const API_URL = import.meta.env.VITE_API_URL;
 
-const PUBLIC_PAGES = ['/', '/login', '/forgot-password', '/reset-password'];
+const PUBLIC_PAGES = ['/', '/login', '/forgot-password', '/reset-password', '/verify-email'];
+
+let isRedirecting = false;
 
 export const isAuthPage = (): boolean =>
   PUBLIC_PAGES.some(
@@ -86,7 +88,8 @@ api.interceptors.response.use(
         await getRefreshPromise();
         return api(originalRequest);
       } catch (refreshErr) {
-        if (!isAuthPage()) {
+        if (!isAuthPage() && !isRedirecting) {
+          isRedirecting = true;
           queryClient.clear();
           window.location.href = '/login';
         }

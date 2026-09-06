@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { EmployeeLayout } from '@/features/employee/components/EmployeeLayout';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { useEmployeesList, type EmployeeListItem } from '@/features/employees/queries/useEmployees';
 import { OrgStatsBanner } from '../components/OrgStatsBanner';
 import { OrgFlowChart } from '../components/OrgFlowChart';
@@ -69,8 +69,8 @@ export const OrgViewPage: React.FC = () => {
   }, [employees]);
 
   return (
-    <EmployeeLayout title="Org View & Hierarchy">
-      <div className="w-full font-sans">
+    <AppLayout title="Org View & Hierarchy">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 font-sans">
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-3" />
@@ -194,7 +194,7 @@ export const OrgViewPage: React.FC = () => {
                             </span>
                           )}
                         </div>
-                        <h4 className="text-sm font-serif font-medium text-ink truncate">
+                        <h4 className="text-sm font-sans font-medium text-ink truncate">
                           {emp.first_name} {emp.last_name}
                         </h4>
                         <p className="text-xs text-ink-soft truncate mt-0.5">
@@ -226,6 +226,6 @@ export const OrgViewPage: React.FC = () => {
           </>
         )}
       </div>
-    </EmployeeLayout>
+    </AppLayout>
   );
 };

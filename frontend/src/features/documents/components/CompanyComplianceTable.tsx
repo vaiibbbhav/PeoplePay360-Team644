@@ -33,7 +33,7 @@ export const CompanyComplianceTable: React.FC<CompanyComplianceTableProps> = ({
     <div className="border border-line rounded-2xl overflow-hidden bg-bg">
       <div className="px-4 sm:px-6 py-4 border-b border-line flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="font-serif text-base font-semibold text-ink m-0">
+          <h3 className="font-sans text-base font-semibold text-ink m-0">
             Company-Wide Policy Sign-off Audit
           </h3>
           <p className="text-xs text-ink-soft mt-0.5 mb-0">
