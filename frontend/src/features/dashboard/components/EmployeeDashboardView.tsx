@@ -43,7 +43,7 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
       title: 'My Profile',
       desc: 'Personal details, emergency contacts, and employment history.',
       tag: 'Account',
-      link: '/employees',
+      link: user.employee?.id || user.employeeId ? `/employees/${user.employee?.id || user.employeeId}` : '/employees',
     },
     {
       id: 'team',

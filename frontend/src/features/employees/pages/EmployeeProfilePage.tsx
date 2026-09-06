@@ -30,6 +30,12 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
   const updateEmployeeMutation = useUpdateEmployee();
   const deleteEmployeeMutation = useDeleteEmployee();
 
+  const { data: currentUser } = useCurrentUser();
+  const isHrAdmin =
+    currentUser?.role === 'Admin' ||
+    currentUser?.role === 'HR Manager' ||
+    currentUser?.role === 'HR Payroll Manager';
+
   const [activeTab, setActiveTab] = useState<
     'overview' | 'personal' | 'employment' | 'contracts' | 'payslips'
   >('overview');
@@ -55,28 +61,33 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
     <AppLayout
       title={`${employee.first_name} ${employee.last_name}`}
       actions={
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setIsEditModalOpen(true)}
-            className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-bg border border-line text-ink hover:bg-bg-raised transition-colors cursor-pointer"
-          >
-            Edit Profile
-          </button>
-          <button
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="px-3.5 py-1.5 rounded-lg text-xs font-medium border border-line bg-transparent text-over-red hover:bg-bg-raised transition-colors cursor-pointer disabled:opacity-50"
-          >
-            {isDeleting ? 'Deleting...' : 'Delete'}
-          </button>
-        </div>
+        isHrAdmin ? (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsEditModalOpen(true)}
+              className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-bg border border-line text-ink hover:bg-bg-raised transition-colors cursor-pointer"
+            >
+              Edit Profile
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="px-3.5 py-1.5 rounded-lg text-xs font-medium border border-line bg-transparent text-over-red hover:bg-bg-raised transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </button>
+          </div>
+        ) : undefined
       }
     >
       {/* Main Container */}
       <div className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8">
         {deleteError && <InlineAlert>{deleteError}</InlineAlert>}
         {/* Template Hero Banner */}
-        <EmployeeHeaderCard employee={employee} onEdit={() => setIsEditModalOpen(true)} />
+        <EmployeeHeaderCard
+          employee={employee}
+          onEdit={isHrAdmin ? () => setIsEditModalOpen(true) : undefined}
+        />
 
         {/* Primary Sub-Navigation Tabs matching template */}
         <div className="flex items-center gap-4 sm:gap-8 border-b border-line mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
