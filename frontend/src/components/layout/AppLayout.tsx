@@ -390,10 +390,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
   };
 
   // Build nav groups tailored to role
-  const isHRManager = user.role === 'HR Manager';
   const canAccessPayroll =
     user.role === 'Admin' || user.role === 'HR Payroll Manager' || user.role === 'HR Payroll User';
-  const canAccessPayslips = canAccessPayroll || isHRManager;
+  const hasHRAdminAccess =
+    user.role === 'Admin' ||
+    user.role === 'HR Manager' ||
+    user.role === 'HR Payroll Manager' ||
+    user.role === 'HR Payroll User';
 
   const navGroups: NavGroup[] = [
     {
@@ -419,26 +422,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
       items: [
         { label: 'Attendance Records', path: '/attendance', icon: AttendanceIcon },
         { label: 'Time Off Requests', path: '/time-off', icon: TimeOffIcon },
-        ...(user.role === 'Admin' || isHRManager
+        ...(hasHRAdminAccess
           ? [{ label: 'Kiosk Terminal', path: '/attendance/terminal', icon: TerminalIcon }]
           : []),
       ],
     },
-    ...(canAccessPayslips
+    ...(canAccessPayroll
       ? [
           {
             title: 'Payroll & Compensation',
             items: [
-              ...(canAccessPayroll
-                ? [{ label: 'Payruns', path: '/payruns', icon: PayrunIcon }]
-                : []),
+              { label: 'Payruns', path: '/payruns', icon: PayrunIcon },
               { label: 'Payslips', path: '/payslips', icon: AnalyticsIcon },
-              ...(canAccessPayroll
-                ? [{ label: 'Compensation', path: '/compensation', icon: CompensationIcon }]
-                : []),
-              ...(user.role === 'Admin' || user.role === 'HR Payroll Manager'
-                ? [{ label: 'Salary Structures', path: '/salary-structures', icon: ContractIcon }]
-                : []),
+              { label: 'Compensation', path: '/compensation', icon: CompensationIcon },
+              { label: 'Salary Structures', path: '/salary-structures', icon: ContractIcon },
             ],
           },
         ]

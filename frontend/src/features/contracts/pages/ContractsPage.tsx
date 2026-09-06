@@ -165,6 +165,7 @@ export const ContractsPage: React.FC = () => {
                 <SelectItem value="draft">Draft</SelectItem>
                 <SelectItem value="expired">Expired</SelectItem>
                 <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="terminated">Terminated</SelectItem>
               </SelectContent>
             </Select>
           </div>

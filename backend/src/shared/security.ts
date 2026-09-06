@@ -26,7 +26,11 @@ export const securityHeaders = (_req: Request, res: Response, next: NextFunction
   next();
 };
 
-export const loginRateLimit = (req: Request, _res: Response, next: NextFunction): void => {
+export const loginRateLimit = (_req: Request, _res: Response, next: NextFunction): void => {
+  // Temporarily commented out for hackathon / development convenience:
+  return next();
+
+  /*
   const key = req.ip || req.socket.remoteAddress || 'unknown';
   const now = Date.now();
 
@@ -44,4 +48,5 @@ export const loginRateLimit = (req: Request, _res: Response, next: NextFunction)
   }
   current.count += 1;
   next();
+  */
 };

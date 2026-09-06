@@ -77,6 +77,27 @@ export async function findRulesByStructureId(structureId: string): Promise<Salar
   }));
 }
 
+export async function findAllRules(structureId?: string): Promise<SalaryRule[]> {
+  const baseQuery = db.select().from(salaryRules);
+  const rows = structureId
+    ? await baseQuery.where(eq(salaryRules.structureId, structureId)).orderBy(salaryRules.sequence)
+    : await baseQuery.orderBy(salaryRules.sequence);
+
+  return rows.map((r) => ({
+    id: r.id,
+    structureId: r.structureId,
+    name: r.name,
+    code: r.code,
+    category: r.category,
+    sequence: r.sequence,
+    computationMethod: r.computationMethod as ComputationMethod,
+    amount: r.amount ? parseFloat(r.amount) : 0,
+    percentageOfCode: r.percentageOfCode || undefined,
+    percentage: r.percentage ? parseFloat(r.percentage) : undefined,
+    formula: r.formula || undefined,
+  }));
+}
+
 export async function insertRule(data: CreateRuleData) {
   const [created] = await db
     .insert(salaryRules)

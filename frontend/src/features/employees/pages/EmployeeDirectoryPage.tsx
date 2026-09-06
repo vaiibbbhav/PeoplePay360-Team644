@@ -247,7 +247,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
                     </span>
                     <span className="text-[10px] text-ink-soft">{colEmployees.length}</span>
                   </div>
-                  <div className="space-y-2 min-h-[80px] rounded-2xl bg-bg-raised/40 border border-line p-2">
+                  <div className="space-y-2 min-h-[140px] max-h-[calc(100vh-280px)] overflow-y-auto no-scrollbar rounded-2xl bg-bg-raised/40 border border-line p-2">
                     {colEmployees.length === 0 ? (
                       <p className="text-[11px] text-ink-soft/50 text-center py-6">None</p>
                     ) : (

@@ -29,6 +29,12 @@ router.post(
 );
 
 // Salary Rules
+router.get(
+  '/rules',
+  requirePermission('payroll.structure.read'),
+  payrollController.listSalaryRules,
+);
+
 router.post(
   '/rules',
   requirePermission('payroll.rule.write'),
@@ -88,7 +94,7 @@ router.get(
 );
 
 router.get(
-  ['/payslips/:id', '/:id'],
+  ['/payslips/:id', '/:id([0-9a-fA-F-]{36})'],
   requireAnyPermission(['payroll.payslip.read', 'payslip.self.read']),
   payrollController.getPayslipById,
 );

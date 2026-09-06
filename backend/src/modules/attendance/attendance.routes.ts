@@ -16,7 +16,7 @@ router.get(
   attendanceController.listAttendance,
 );
 router.get(
-  '/:id',
+  '/:id([0-9a-fA-F-]{36})',
   requireAnyPermission(['attendance.read', 'attendance.self.read']),
   attendanceController.getAttendanceById,
 );

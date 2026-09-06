@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Mail } from 'lucide-react';
 import { useLoginMutation, useResendVerificationMutation, type UserRole } from '../queries/useAuth';
 import { getDefaultPathForRole } from '@/lib/permissions';
 
@@ -184,9 +185,7 @@ export const LoginForm: React.FC = () => {
         {isUnverifiedEmail ? (
           <div className="p-4 rounded-xl border border-amber-500/25 bg-amber-500/5 dark:bg-amber-950/20 text-xs space-y-2">
             <div className="flex items-start gap-2.5">
-              <span className="text-amber-600 dark:text-amber-400 text-base font-bold leading-none mt-0.5">
-                ✉
-              </span>
+              <Mail className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
               <div className="flex-1 space-y-1">
                 <h3 className="font-medium text-ink text-xs m-0">Email verification required</h3>
                 <p className="text-ink-soft leading-relaxed text-[11px] m-0">

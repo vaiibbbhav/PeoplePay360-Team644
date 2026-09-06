@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Mail, Check, AlertTriangle } from 'lucide-react';
 import { StatGrid } from '@/components/ui/StatCard';
 import {
   useValidatePayrun,
@@ -125,7 +126,8 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
               disabled={sendPayslipsMutation.isPending}
               className="px-4 py-1.5 rounded-lg text-xs font-semibold border border-line bg-bg text-ink hover:bg-bg-raised transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
             >
-              {sendPayslipsMutation.isPending ? 'Sending…' : '✉ Send Payslips'}
+              <Mail className="w-3.5 h-3.5" />
+              <span>{sendPayslipsMutation.isPending ? 'Sending…' : 'Send Payslips'}</span>
             </button>
           )}
         </div>
@@ -138,8 +140,9 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
       )}
 
       {sendResult && (
-        <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-medium">
-          ✓ Payslip emails dispatched — {sendResult.sent} sent{sendResult.failed > 0 ? `, ${sendResult.failed} failed` : ''}.
+        <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-950/30 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-medium flex items-center gap-2">
+          <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>Payslip emails dispatched — {sendResult.sent} sent{sendResult.failed > 0 ? `, ${sendResult.failed} failed` : ''}.</span>
           {sendResult.sent === 0 && ' No SMTP configured — check server console for delivery log.'}
         </div>
       )}
@@ -174,8 +177,9 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
       {/* Warnings */}
       {warnings.length > 0 && (
         <div className="rounded-2xl border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950 p-4 space-y-2">
-          <h3 className="text-xs font-semibold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
-            ⚠ Payrun Warnings ({warnings.length})
+          <h3 className="text-xs font-semibold text-amber-800 dark:text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>Payrun Warnings ({warnings.length})</span>
           </h3>
           <div className="space-y-1.5">
             {warnings.map((w, i) => (

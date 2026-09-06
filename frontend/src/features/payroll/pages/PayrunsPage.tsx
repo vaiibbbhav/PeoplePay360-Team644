@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { Play } from 'lucide-react';
 import { StatGrid } from '@/components/ui/StatCard';
 import {
   usePayrunsList,
@@ -189,8 +190,8 @@ export const PayrunsPage: React.FC = () => {
           </div>
         ) : payruns.length === 0 ? (
           <div className="py-16 text-center border border-line border-dashed rounded-2xl bg-bg">
-            <div className="w-12 h-12 rounded-full bg-accent-soft text-accent flex items-center justify-center mx-auto mb-4 text-2xl">
-              ⚡
+            <div className="w-12 h-12 rounded-full bg-accent-soft text-accent flex items-center justify-center mx-auto mb-4">
+              <Play className="w-5 h-5 fill-current ml-0.5" />
             </div>
             <h3 className="font-sans text-base font-semibold text-ink mb-1">No Payruns Yet</h3>
             <p className="text-xs text-ink-soft max-w-xs mx-auto">
@@ -199,9 +200,10 @@ export const PayrunsPage: React.FC = () => {
             {canWrite && (
               <button
                 onClick={() => setView('step1')}
-                className="mt-4 px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer"
+                className="mt-4 px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer inline-flex items-center gap-1.5"
               >
-                ⚡ Launch Payrun Wizard
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Launch Payrun Wizard</span>
               </button>
             )}
           </div>

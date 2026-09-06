@@ -1,4 +1,5 @@
 import React from 'react';
+import { AlertCircle } from 'lucide-react';
 import { formatCurrency } from '@/lib/formatters';
 
 export type HraPanelProps = {
@@ -124,8 +125,9 @@ export const HraPanel: React.FC<HraPanelProps> = ({
             className="w-full px-3 py-2 text-xs rounded-xl border border-line bg-bg text-ink font-mono uppercase focus:outline-none focus:border-accent"
           />
           {annualRentPaid > 100000 && !landlordPan && (
-            <span className="text-[11px] text-amber-600 font-semibold block">
-              ⚠️ Landlord PAN is mandatory under IT rules for rent exceeding ₹1,00,000 per annum.
+            <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 mt-1">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>Landlord PAN is mandatory under IT rules for rent exceeding ₹1,00,000 per annum.</span>
             </span>
           )}
         </div>

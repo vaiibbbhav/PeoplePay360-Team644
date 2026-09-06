@@ -43,6 +43,10 @@ export async function createSalaryRule(data: CreateSalaryRuleInput) {
   return await payrollRepo.insertRule(data);
 }
 
+export async function listSalaryRules(structureId?: string) {
+  return await payrollRepo.findAllRules(structureId);
+}
+
 export async function listPayruns() {
   return await payrollRepo.findAllPayruns();
 }
