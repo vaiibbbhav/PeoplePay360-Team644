@@ -12,3 +12,14 @@ CREATE TABLE IF NOT EXISTS fingerprint (
 );
 
 CREATE INDEX IF NOT EXISTS idx_fingerprint_employee ON fingerprint(employee_id);
+
+-- Ensure column name is encrypted_template if previously created with typo encryted_template
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'fingerprint' AND column_name = 'encryted_template'
+    ) THEN
+        ALTER TABLE fingerprint RENAME COLUMN encryted_template TO encrypted_template;
+    END IF;
+END $$;
