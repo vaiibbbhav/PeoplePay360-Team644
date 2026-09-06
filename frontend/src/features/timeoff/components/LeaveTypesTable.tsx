@@ -13,12 +13,12 @@ export const LeaveTypesTable: React.FC<LeaveTypesTableProps> = ({ canManage }) =
 
   return (
     <div className="space-y-4 font-sans">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
         <div>
           <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
             Time Off Policies & Types
           </h3>
-          <p className="text-xs text-ink-soft">
+          <p className="text-xs text-ink-soft mt-0.5">
             Define leave categories, tracking units, approval rules, and payroll integration.
           </p>
         </div>
@@ -26,7 +26,7 @@ export const LeaveTypesTable: React.FC<LeaveTypesTableProps> = ({ canManage }) =
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-colors shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-colors shadow-xs cursor-pointer self-start sm:self-auto"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>New Leave Policy</span>
@@ -35,12 +35,12 @@ export const LeaveTypesTable: React.FC<LeaveTypesTableProps> = ({ canManage }) =
       </div>
 
       {isLoading ? (
-        <div className="border border-line rounded-2xl p-12 text-center bg-bg">
+        <div className="border border-line rounded-2xl p-8 sm:p-12 text-center bg-bg">
           <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-2" />
           <p className="text-xs text-ink-soft">Loading policies...</p>
         </div>
       ) : types.length === 0 ? (
-        <div className="border border-line rounded-2xl p-12 text-center bg-bg">
+        <div className="border border-line rounded-2xl p-8 sm:p-12 text-center bg-bg">
           <div className="w-12 h-12 rounded-2xl bg-bg-raised border border-line flex items-center justify-center mx-auto mb-3 text-ink-soft">
             <Settings className="w-6 h-6" />
           </div>
@@ -51,17 +51,17 @@ export const LeaveTypesTable: React.FC<LeaveTypesTableProps> = ({ canManage }) =
         </div>
       ) : (
         <div className="border border-line rounded-2xl overflow-hidden bg-bg">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto no-scrollbar">
+            <table className="w-full text-left text-xs min-w-[720px]">
               <thead>
                 <tr className="border-b border-line bg-bg-raised/60 text-ink-soft uppercase tracking-wider text-[11px]">
-                  <th className="py-3 px-4 font-semibold">Policy Name</th>
-                  <th className="py-3 px-4 font-semibold">Code</th>
-                  <th className="py-3 px-4 font-semibold">Unit</th>
-                  <th className="py-3 px-4 font-semibold">Compensation</th>
-                  <th className="py-3 px-4 font-semibold">Allocation</th>
-                  <th className="py-3 px-4 font-semibold">Approval Flow</th>
-                  <th className="py-3 px-4 font-semibold text-right">Status</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Policy Name</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Code</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Unit</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Compensation</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Allocation</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold">Approval Flow</th>
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">

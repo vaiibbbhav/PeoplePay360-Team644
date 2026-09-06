@@ -24,7 +24,10 @@ export const createEmployeeSchema = z.object({
 
 export const updateEmployeeSchema = createEmployeeSchema.partial();
 
-export function validateCreateEmployee(data: unknown) {
+export type CreateEmployeeInput = z.infer<typeof createEmployeeSchema>;
+export type UpdateEmployeeInput = z.infer<typeof updateEmployeeSchema>;
+
+export function validateCreateEmployee(data: unknown): CreateEmployeeInput {
   const result = createEmployeeSchema.safeParse(data);
   if (!result.success) {
     const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
@@ -33,7 +36,7 @@ export function validateCreateEmployee(data: unknown) {
   return result.data;
 }
 
-export function validateUpdateEmployee(data: unknown) {
+export function validateUpdateEmployee(data: unknown): UpdateEmployeeInput {
   const result = updateEmployeeSchema.safeParse(data);
   if (!result.success) {
     const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');

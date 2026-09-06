@@ -66,7 +66,7 @@ export async function enrollFingerprint(employeeId: string, imageBase64: string)
 export async function punchWithFingerprint(imageBase64: string): Promise<PunchResult> {
   try {
     const res = await fingerprintApi.post('/punch', { image: imageBase64 });
-    const payload = (res.data?.data || res.data) as Record<string, any>;
+    const payload = (res.data?.data || res.data) as Partial<PunchResult> & Record<string, unknown>;
     const matched = Boolean(payload?.matched);
     const rawScore = payload?.score;
     const numScore =

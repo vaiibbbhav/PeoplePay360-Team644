@@ -102,17 +102,17 @@ export const TimeOffPage: React.FC = () => {
 
   return (
     <AppLayout title="Time Off & Leaves">
-      <div className="space-y-6 max-w-7xl mx-auto font-sans">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
         {/* Sleek Editorial Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
             <span className="text-xs font-mono uppercase tracking-widest text-accent font-semibold">
               Time & Absence Management
             </span>
-            <h1 className="text-2xl lg:text-3xl font-sans font-medium text-ink tracking-tight mt-1">
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-ink tracking-tight mt-1">
               Time Off & Leaves
             </h1>
-            <p className="text-xs text-ink-soft mt-1 max-w-2xl">
+            <p className="text-xs text-ink-soft mt-1 max-w-2xl leading-relaxed">
               Track personal leave quotas, review team requests, and govern organizational absence
               allocations.
             </p>
@@ -122,7 +122,7 @@ export const TimeOffPage: React.FC = () => {
             <button
               type="button"
               onClick={() => handleOpenApply()}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-all shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 sm:py-2.5 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-all shadow-xs cursor-pointer self-start sm:self-auto"
             >
               <Plus className="w-4 h-4" />
               <span>Apply for Leave</span>
@@ -130,14 +130,13 @@ export const TimeOffPage: React.FC = () => {
           </div>
         </div>
 
-
         {/* Editorial Sub-Navigation Tabs */}
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-bg-raised border border-line overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-bg-raised border border-line overflow-x-auto no-scrollbar">
           {/* Tab 1: My Leave & Balances */}
           <button
             type="button"
             onClick={() => setActiveTab('my_leave')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+            className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'my_leave'
                 ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
                 : 'text-ink-soft hover:text-ink'
@@ -219,7 +218,7 @@ export const TimeOffPage: React.FC = () => {
 
         {/* Tab 1 Content: My Leave & Balances */}
         {activeTab === 'my_leave' && (
-          <div className="space-y-6">
+          <div className="space-y-6 sm:space-y-8">
             <LeaveBalanceCards
               balances={balances}
               onApplyLeave={handleOpenApply}
@@ -241,7 +240,7 @@ export const TimeOffPage: React.FC = () => {
 
         {/* Tab 2 Content: Team Approvals */}
         {activeTab === 'team_approvals' && (
-          <div className="space-y-6">
+          <div className="space-y-6 sm:space-y-8">
             <TeamApprovalsSection requests={teamRequests} isLoading={isTeamRequestsLoading} />
 
             <div className="space-y-3 pt-4 border-t border-line">
@@ -259,23 +258,23 @@ export const TimeOffPage: React.FC = () => {
 
         {/* Tab 3 Content: Company Requests */}
         {activeTab === 'company_requests' && (
-          <div className="space-y-6">
+          <div className="space-y-6 sm:space-y-8">
             <TimeOffSummaryCards requests={allRequests} isLoading={isAllRequestsLoading} />
 
             {/* Filter Toolbar */}
-            <div className="p-4 rounded-2xl border border-line bg-bg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+            <div className="p-3.5 sm:p-4 rounded-2xl border border-line bg-bg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
               <SearchInput
                 placeholder="Filter by employee name, department, or leave type..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
 
-              <div className="w-full md:w-auto">
+              <div className="w-full sm:w-auto">
                 <Select
                   value={statusFilter}
                   onValueChange={(val) => setStatusFilter(val)}
                 >
-                  <SelectTrigger className="w-full md:w-44">
+                  <SelectTrigger className="w-full sm:w-44">
                     <SelectValue placeholder="All Requests" />
                   </SelectTrigger>
                   <SelectContent align="end">

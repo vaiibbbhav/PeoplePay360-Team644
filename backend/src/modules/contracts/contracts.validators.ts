@@ -37,7 +37,10 @@ export const updateContractSchema = baseContractSchema.partial().refine(
   { message: 'End date cannot be earlier than start date', path: ['endDate'] },
 );
 
-export function validateCreateContract(data: unknown) {
+export type CreateContractInput = z.infer<typeof createContractSchema>;
+export type UpdateContractInput = z.infer<typeof updateContractSchema>;
+
+export function validateCreateContract(data: unknown): CreateContractInput {
   const result = createContractSchema.safeParse(data);
   if (!result.success) {
     const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
@@ -46,7 +49,7 @@ export function validateCreateContract(data: unknown) {
   return result.data;
 }
 
-export function validateUpdateContract(data: unknown) {
+export function validateUpdateContract(data: unknown): UpdateContractInput {
   const result = updateContractSchema.safeParse(data);
   if (!result.success) {
     const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');

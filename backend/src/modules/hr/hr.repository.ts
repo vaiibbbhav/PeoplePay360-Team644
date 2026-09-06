@@ -128,8 +128,15 @@ export async function findEmployeeByUserId(userId: string) {
   return rows[0] || null;
 }
 
-export async function insertEmployee(data: Record<string, any>) {
-  const employeeCode = await generateEmployeeCode();
+export type InsertEmployeeData = typeof employees.$inferInsert;
+export type UpdateEmployeeData = Partial<InsertEmployeeData> & {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+};
+
+export async function insertEmployee(data: InsertEmployeeData) {
+  const employeeCode = data.employeeCode || (await generateEmployeeCode());
   const [created] = await db
     .insert(employees)
     .values({
@@ -155,44 +162,36 @@ export async function insertEmployee(data: Record<string, any>) {
   return created;
 }
 
-export async function updateEmployeeById(id: string, data: Record<string, any>) {
+export async function updateEmployeeById(id: string, data: UpdateEmployeeData) {
   const emp = await findEmployeeById(id);
   if (
     emp &&
     emp.user_id &&
     (data.firstName !== undefined || data.lastName !== undefined || data.email !== undefined)
   ) {
-    const userUpdate: Record<string, any> = { updatedAt: new Date() };
+    const userUpdate: Partial<typeof users.$inferInsert> = { updatedAt: new Date() };
     if (data.firstName !== undefined) userUpdate.firstName = data.firstName;
     if (data.lastName !== undefined) userUpdate.lastName = data.lastName;
     if (data.email !== undefined) userUpdate.email = (data.email as string).toLowerCase().trim();
     await db.update(users).set(userUpdate).where(eq(users.id, emp.user_id));
   }
 
-  const values: Record<string, any> = {};
-  const mapping: Record<string, keyof typeof employees.$inferInsert> = {
-    phone: 'phone',
-    departmentId: 'departmentId',
-    jobPositionId: 'jobPositionId',
-    managerId: 'managerId',
-    workingScheduleId: 'workingScheduleId',
-    employmentStatus: 'employmentStatus',
-    dateOfJoining: 'dateOfJoining',
-    dateOfBirth: 'dateOfBirth',
-    gender: 'gender',
-    identificationNumber: 'identificationNumber',
-    location: 'location',
-    bankName: 'bankName',
-    bankAccountNumber: 'bankAccountNumber',
-    bankRoutingCode: 'bankRoutingCode',
-    avatarUrl: 'avatarUrl',
-  };
-
-  for (const [key, col] of Object.entries(mapping)) {
-    if (data[key] !== undefined) {
-      values[col] = data[key];
-    }
-  }
+  const values: Partial<typeof employees.$inferInsert> = {};
+  if (data.phone !== undefined) values.phone = data.phone;
+  if (data.departmentId !== undefined) values.departmentId = data.departmentId;
+  if (data.jobPositionId !== undefined) values.jobPositionId = data.jobPositionId;
+  if (data.managerId !== undefined) values.managerId = data.managerId;
+  if (data.workingScheduleId !== undefined) values.workingScheduleId = data.workingScheduleId;
+  if (data.employmentStatus !== undefined) values.employmentStatus = data.employmentStatus;
+  if (data.dateOfJoining !== undefined) values.dateOfJoining = data.dateOfJoining;
+  if (data.dateOfBirth !== undefined) values.dateOfBirth = data.dateOfBirth;
+  if (data.gender !== undefined) values.gender = data.gender;
+  if (data.identificationNumber !== undefined) values.identificationNumber = data.identificationNumber;
+  if (data.location !== undefined) values.location = data.location;
+  if (data.bankName !== undefined) values.bankName = data.bankName;
+  if (data.bankAccountNumber !== undefined) values.bankAccountNumber = data.bankAccountNumber;
+  if (data.bankRoutingCode !== undefined) values.bankRoutingCode = data.bankRoutingCode;
+  if (data.avatarUrl !== undefined) values.avatarUrl = data.avatarUrl;
 
   values.updatedAt = new Date();
   const [updated] = await db.update(employees).set(values).where(eq(employees.id, id)).returning();

@@ -197,12 +197,13 @@ Security Notice: After signing in, you can change your password in your settings
       `[MAILER] Welcome credentials email dispatched to ${toEmail} (Message ID: ${info.messageId})`,
     );
     return { success: true, messageId: info.messageId };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
     console.error(
       `[MAILER] Failed to send credentials email to ${toEmail}:`,
-      error.message || error,
+      errorMsg,
     );
-    return { success: false, error: error.message || 'Unknown email dispatch error' };
+    return { success: false, error: errorMsg };
   }
 };
 
@@ -312,11 +313,12 @@ This link is valid for 8 hours.
       `[MAILER] Verification email dispatched to ${toEmail} (Message ID: ${info.messageId})`,
     );
     return { success: true, messageId: info.messageId };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
     console.error(
       `[MAILER] Failed to send verification email to ${toEmail}:`,
-      error.message || error,
+      errorMsg,
     );
-    return { success: false, error: error.message || 'Unknown email dispatch error' };
+    return { success: false, error: errorMsg };
   }
 };

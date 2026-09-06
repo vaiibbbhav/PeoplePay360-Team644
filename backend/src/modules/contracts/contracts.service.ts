@@ -1,5 +1,6 @@
 import * as contractsRepo from './contracts.repository';
 import { NotFoundError, ConflictError, ValidationError } from '../../shared/errors';
+import { CreateContractInput, UpdateContractInput } from './contracts.validators';
 
 export async function listContracts(employeeId?: string) {
   return await contractsRepo.findAllContracts(employeeId);
@@ -29,12 +30,12 @@ export async function getActiveContractsForEmployees(
   return await contractsRepo.findActiveContractsForEmployees(employeeIds, periodStart, periodEnd);
 }
 
-export async function createContract(data: Record<string, unknown>) {
+export async function createContract(data: CreateContractInput) {
   if (data.status === 'active') {
     const overlapping = await contractsRepo.findOverlappingActiveContracts(
-      data.employeeId as string,
-      data.startDate as string,
-      (data.endDate as string) || null,
+      data.employeeId,
+      data.startDate,
+      data.endDate || null,
     );
     if (overlapping.length > 0) {
       throw new ConflictError(
@@ -43,19 +44,19 @@ export async function createContract(data: Record<string, unknown>) {
     }
   }
 
-  if (data.endDate && (data.endDate as string) < (data.startDate as string)) {
+  if (data.endDate && data.endDate < data.startDate) {
     throw new ValidationError('End date cannot be prior to start date');
   }
 
   return await contractsRepo.insertContract(data);
 }
 
-export async function updateContract(id: string, data: Record<string, unknown>) {
+export async function updateContract(id: string, data: UpdateContractInput) {
   const existing = await getContractById(id);
 
-  const newStatus = (data.status as string) || existing.status;
-  const newStart = (data.startDate as string) || existing.start_date;
-  const newEnd = data.endDate !== undefined ? (data.endDate as string | null) : existing.end_date;
+  const newStatus = data.status || existing.status;
+  const newStart = data.startDate || existing.start_date;
+  const newEnd = data.endDate !== undefined ? data.endDate : existing.end_date;
 
   if (newStatus === 'active') {
     const overlapping = await contractsRepo.findOverlappingActiveContracts(

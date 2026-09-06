@@ -65,7 +65,7 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
 
   if (isLoading) {
     return (
-      <div className="border border-line rounded-2xl p-12 text-center bg-bg font-sans">
+      <div className="border border-line rounded-2xl p-8 sm:p-12 text-center bg-bg font-sans">
         <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-2" />
         <p className="text-xs text-ink-soft">Loading leave requests ledger...</p>
       </div>
@@ -74,7 +74,7 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
 
   if (requests.length === 0) {
     return (
-      <div className="border border-line rounded-2xl p-12 text-center bg-bg font-sans">
+      <div className="border border-line rounded-2xl p-8 sm:p-12 text-center bg-bg font-sans">
         <div className="w-12 h-12 rounded-2xl bg-bg-raised border border-line flex items-center justify-center mx-auto mb-3 text-ink-soft">
           <Calendar className="w-6 h-6" />
         </div>
@@ -90,17 +90,17 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
     <div className="space-y-3 font-sans">
       {actionError && <InlineAlert>{actionError}</InlineAlert>}
       <div className="border border-line rounded-2xl overflow-hidden bg-bg">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto no-scrollbar">
+          <table className="w-full text-left text-xs min-w-[720px]">
             <thead>
               <tr className="border-b border-line bg-bg-raised/60 text-ink-soft uppercase tracking-wider text-[11px]">
-                <th className="py-3 px-4 font-semibold">Employee</th>
-                <th className="py-3 px-4 font-semibold">Leave Type</th>
-                <th className="py-3 px-4 font-semibold">Date Range</th>
-                <th className="py-3 px-4 font-semibold">Duration</th>
-                <th className="py-3 px-4 font-semibold">Status</th>
-                <th className="py-3 px-4 font-semibold">Reason / Audit</th>
-                {canManage && <th className="py-3 px-4 font-semibold text-right">Actions</th>}
+                <th className="py-3 px-3.5 sm:px-4 font-semibold">Employee</th>
+                <th className="py-3 px-3.5 sm:px-4 font-semibold">Leave Type</th>
+                <th className="py-3 px-3.5 sm:px-4 font-semibold">Date Range</th>
+                <th className="py-3 px-3.5 sm:px-4 font-semibold">Duration</th>
+                <th className="py-3 px-3.5 sm:px-4 font-semibold">Status</th>
+                <th className="py-3 px-3.5 sm:px-4 font-semibold">Reason / Audit</th>
+                {canManage && <th className="py-3 px-3.5 sm:px-4 font-semibold text-right">Actions</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-line">

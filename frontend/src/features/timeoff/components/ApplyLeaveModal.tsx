@@ -7,6 +7,8 @@ import {
   type CreateLeaveRequestPayload,
 } from '../queries/useTimeOff';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
+import { useClickOutside } from '@/hooks/useClickOutside';
+import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
 
 type ApplyLeaveModalProps = {
   isOpen: boolean;
@@ -201,6 +203,16 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
     }
   };
 
+  const dialogRef = useDialogAccessibility({ isOpen, onClose });
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!createMutation.isPending) onClose();
+  }, isOpen);
+
+  const setCombinedRef = (node: HTMLDivElement | null) => {
+    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto font-sans">
       <div
@@ -208,29 +220,36 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
         onClick={onClose}
       />
 
-      <div className="min-h-full flex items-center justify-center p-4">
-        <div className="relative w-full max-w-lg bg-bg border border-line rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="min-h-full flex items-center justify-center p-3 sm:p-4">
+        <div
+          ref={setCombinedRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="apply-leave-title"
+          tabIndex={-1}
+          className="relative w-full max-w-lg bg-bg border border-line rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        >
           {/* Header */}
-          <div className="px-6 py-5 border-b border-line flex items-center justify-between bg-bg-raised/40">
+          <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-line flex items-center justify-between bg-bg-raised/40">
             <div>
               <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
                 Time Off Request
               </span>
-              <h2 className="text-xl font-sans font-medium text-ink mt-0.5">
+              <h2 id="apply-leave-title" className="text-lg sm:text-xl font-serif font-bold text-ink mt-0.5">
                 Apply for Leave
               </h2>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-lg text-ink-soft hover:text-ink hover:bg-bg-raised transition-colors"
+              className="p-1.5 rounded-lg text-ink-soft hover:text-ink hover:bg-bg-raised transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
             {errorMessage && (
               <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-rose-600 dark:text-rose-400 text-xs flex items-start gap-2.5">
                 <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />

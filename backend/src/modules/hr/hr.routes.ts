@@ -1,7 +1,5 @@
 import { Router } from 'express';
-import { asyncHandler } from '../../shared/async-handler';
-import { validateCreateEmployee, validateUpdateEmployee } from './hr.validators';
-import * as hrService from './hr.service';
+import * as hrController from './hr.controller';
 import {
   authenticateToken,
   requirePermission,
@@ -11,87 +9,19 @@ import {
 const router = Router();
 router.use(authenticateToken);
 
-router.get(
-  '/',
-  requirePermission('employee.read'),
-  asyncHandler(async (_req, res) => {
-    const employees = await hrService.listEmployees();
-    res.json(employees);
-  }),
-);
+// Employee listings and metadata
+router.get('/', requirePermission('employee.read'), hrController.listEmployees);
+router.get('/meta', requirePermission('employee.read'), hrController.getMetadataOptions);
+router.get('/kanban', requirePermission('employee.read'), hrController.getEmployeesForKanban);
 
-router.get(
-  '/meta',
-  requirePermission('employee.read'),
-  asyncHandler(async (_req, res) => {
-    const meta = await hrService.getMetadataOptions();
-    res.json(meta);
-  }),
-);
+// Individual employee operational views
+router.get('/:id', requireEmployeeRead, hrController.getEmployeeById);
+router.get('/:id/hub', requireEmployeeRead, hrController.getEmployeeHubDetails);
+router.get('/:id/payslips', requireEmployeeRead, hrController.getEmployeePayslips);
 
-router.get(
-  '/kanban',
-  requirePermission('employee.read'),
-  asyncHandler(async (_req, res) => {
-    const kanban = await hrService.getEmployeesForKanban();
-    res.json(kanban);
-  }),
-);
-
-router.get(
-  '/:id',
-  requireEmployeeRead,
-  asyncHandler(async (req, res) => {
-    const employee = await hrService.getEmployeeById(req.params.id);
-    res.json(employee);
-  }),
-);
-
-router.get(
-  '/:id/hub',
-  requireEmployeeRead,
-  asyncHandler(async (req, res) => {
-    const hubData = await hrService.getEmployeeHubDetails(req.params.id);
-    res.json(hubData);
-  }),
-);
-
-router.get(
-  '/:id/payslips',
-  requireEmployeeRead,
-  asyncHandler(async (req, res) => {
-    const payslips = await hrService.getEmployeePayslips(req.params.id);
-    res.json(payslips);
-  }),
-);
-
-router.post(
-  '/',
-  requirePermission('employee.write'),
-  asyncHandler(async (req, res) => {
-    const validated = validateCreateEmployee(req.body);
-    const created = await hrService.createEmployee(validated);
-    res.status(201).json(created);
-  }),
-);
-
-router.put(
-  '/:id',
-  requirePermission('employee.write'),
-  asyncHandler(async (req, res) => {
-    const validated = validateUpdateEmployee(req.body);
-    const updated = await hrService.updateEmployee(req.params.id, validated);
-    res.json(updated);
-  }),
-);
-
-router.delete(
-  '/:id',
-  requirePermission('employee.delete'),
-  asyncHandler(async (req, res) => {
-    await hrService.deleteEmployee(req.params.id);
-    res.status(204).send();
-  }),
-);
+// Mutations
+router.post('/', requirePermission('employee.write'), hrController.createEmployee);
+router.put('/:id', requirePermission('employee.write'), hrController.updateEmployee);
+router.delete('/:id', requirePermission('employee.delete'), hrController.deleteEmployee);
 
 export default router;

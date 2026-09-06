@@ -97,12 +97,14 @@ export async function recordCheckOut(employeeId: string, checkOutTime?: string) 
   });
 }
 
-export async function saveManualAttendance(data: Record<string, unknown>) {
-  let workedHours = data.workedHours as number | undefined;
+import { ManualAttendanceInput } from './attendance.validators';
+
+export async function saveManualAttendance(data: ManualAttendanceInput) {
+  let workedHours = data.workedHours;
 
   if (data.checkIn && data.checkOut && !workedHours) {
-    const start = new Date(data.checkIn as string);
-    const end = new Date(data.checkOut as string);
+    const start = new Date(data.checkIn);
+    const end = new Date(data.checkOut);
     const diffMs = end.getTime() - start.getTime();
     workedHours = roundToTwoDecimals(Math.max(0, diffMs / (1000 * 60 * 60)));
   }

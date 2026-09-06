@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import { useRefuseLeaveRequest, type TimeOffRequest } from '../queries/useTimeOff';
+import { useClickOutside } from '@/hooks/useClickOutside';
+import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
 
 type RefuseLeaveModalProps = {
   isOpen: boolean;
@@ -42,6 +44,16 @@ export const RefuseLeaveModal: React.FC<RefuseLeaveModalProps> = ({
     }
   };
 
+  const dialogRef = useDialogAccessibility({ isOpen, onClose });
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!refuseMutation.isPending) onClose();
+  }, isOpen);
+
+  const setCombinedRef = (node: HTMLDivElement | null) => {
+    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto font-sans">
       <div
@@ -49,23 +61,32 @@ export const RefuseLeaveModal: React.FC<RefuseLeaveModalProps> = ({
         onClick={onClose}
       />
 
-      <div className="min-h-full flex items-center justify-center p-4">
-        <div className="relative w-full max-w-md bg-bg border border-line rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-          <div className="px-6 py-5 border-b border-line flex items-center justify-between bg-bg-raised/40">
+      <div className="min-h-full flex items-center justify-center p-3 sm:p-4">
+        <div
+          ref={setCombinedRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="refuse-leave-title"
+          tabIndex={-1}
+          className="relative w-full max-w-md bg-bg border border-line rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        >
+          <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-line flex items-center justify-between bg-bg-raised/40">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-rose-500" />
-              <h2 className="text-lg font-sans font-medium text-ink">Refuse Leave Request</h2>
+              <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0" />
+              <h2 id="refuse-leave-title" className="text-base sm:text-lg font-serif font-bold text-ink">
+                Refuse Leave Request
+              </h2>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-lg text-ink-soft hover:text-ink hover:bg-bg-raised transition-colors"
+              className="p-1.5 rounded-lg text-ink-soft hover:text-ink hover:bg-bg-raised transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
             <div className="p-3.5 bg-bg-raised rounded-xl border border-line text-xs space-y-1">
               <div className="font-semibold text-ink">
                 {request.employee_name} ({request.type_name})

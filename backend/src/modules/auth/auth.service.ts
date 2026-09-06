@@ -199,7 +199,7 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
       },
       token,
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err instanceof EmailNotVerifiedError || err instanceof UnauthorizedError) {
       throw err;
     }
@@ -227,7 +227,7 @@ export const verifyEmail = async (token: string): Promise<{ email: string }> => 
     await authRepository.markEmailVerified(user.id);
 
     return { email: user.email };
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err instanceof UnauthorizedError || err instanceof NotFoundError) {
       throw err;
     }

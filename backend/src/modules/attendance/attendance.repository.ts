@@ -88,7 +88,19 @@ export async function findScheduleLineForDate(employeeId: string, dayOfWeek: str
   return rows[0] || null;
 }
 
-export async function upsertAttendance(data: Record<string, any>) {
+export type UpsertAttendanceData = {
+  id?: string | null;
+  employeeId: string;
+  date: string;
+  checkIn?: string | Date | null;
+  checkOut?: string | Date | null;
+  workedHours?: number | string;
+  status?: string;
+  exceptionNote?: string | null;
+  isManualEdit?: boolean;
+};
+
+export async function upsertAttendance(data: UpsertAttendanceData) {
   let existing = null;
   if (data.id) {
     existing = await findAttendanceById(data.id);

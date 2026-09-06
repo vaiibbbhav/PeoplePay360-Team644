@@ -318,7 +318,220 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
         </div>
       </div>
 
-      {/* ── Section 2: Access snapshot ── */}
+      {/* ── Section 2: Enterprise Operations Hub ── */}
+      <div className="mb-8">
+        <div className="flex justify-between items-baseline mb-4">
+          <div>
+            <h2 className="text-base sm:text-lg font-semibold text-ink">Enterprise Operations Hub</h2>
+            <p className="text-xs text-ink-soft mt-0.5">
+              Direct access to all administrative modules, workforce hierarchy, and governance consoles
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Org View */}
+          <Link
+            to="/organization"
+            className="group p-5 rounded-xl border border-line bg-bg hover:border-accent/50 hover:bg-bg-raised/30 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM9 20a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM7 10v4a1 1 0 001 1h8a1 1 0 001-1v-4M12 15v3"
+                    />
+                  </svg>
+                </span>
+                <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-full border border-line text-ink-soft">
+                  Hierarchy
+                </span>
+              </div>
+              <h3 className="text-sm font-bold text-ink group-hover:text-accent transition-colors">
+                Organization & Hierarchy
+              </h3>
+              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+                Interactive corporate chart, leadership tree, direct reports map, and department roster.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-line text-xs font-medium text-accent flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              <span>View Org Chart</span>
+              <span>→</span>
+            </div>
+          </Link>
+
+          {/* Policies & Documents */}
+          <Link
+            to="/documents"
+            className="group p-5 rounded-xl border border-line bg-bg hover:border-accent/50 hover:bg-bg-raised/30 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                </span>
+                <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-full border border-line text-ink-soft">
+                  Compliance
+                </span>
+              </div>
+              <h3 className="text-sm font-bold text-ink group-hover:text-accent transition-colors">
+                Policies & Compliance
+              </h3>
+              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+                Mandatory regulations, code of conduct catalog, and employee acknowledgment audit trails.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-line text-xs font-medium text-accent flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              <span>Manage Compliance</span>
+              <span>→</span>
+            </div>
+          </Link>
+
+          {/* User Management */}
+          <Link
+            to="/users"
+            className="group p-5 rounded-xl border border-line bg-bg hover:border-accent/50 hover:bg-bg-raised/30 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                </span>
+                <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-full border border-line text-ink-soft">
+                  Security
+                </span>
+              </div>
+              <h3 className="text-sm font-bold text-ink group-hover:text-accent transition-colors">
+                User Management & Roles
+              </h3>
+              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+                Credentials, role-based authorization matrix, account status, and system access.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-line text-xs font-medium text-accent flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              <span>Configure Users</span>
+              <span>→</span>
+            </div>
+          </Link>
+
+          {/* Payruns & Compensation */}
+          <Link
+            to="/payruns"
+            className="group p-5 rounded-xl border border-line bg-bg hover:border-accent/50 hover:bg-bg-raised/30 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </span>
+                <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-full border border-line text-ink-soft">
+                  Payroll
+                </span>
+              </div>
+              <h3 className="text-sm font-bold text-ink group-hover:text-accent transition-colors">
+                Payruns & Payslips
+              </h3>
+              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+                2-step payrun execution wizard, salary rules computation, and company-wide payslip archive.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-line text-xs font-medium text-accent flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              <span>Execute Payruns</span>
+              <span>→</span>
+            </div>
+          </Link>
+
+          {/* Contracts & Schedules */}
+          <Link
+            to="/contracts"
+            className="group p-5 rounded-xl border border-line bg-bg hover:border-accent/50 hover:bg-bg-raised/30 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                </span>
+                <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-full border border-line text-ink-soft">
+                  Contracts
+                </span>
+              </div>
+              <h3 className="text-sm font-bold text-ink group-hover:text-accent transition-colors">
+                Contracts & Work Schedules
+              </h3>
+              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+                Governing wage agreements, duration terms, and working schedule hour rules.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-line text-xs font-medium text-accent flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              <span>Manage Contracts</span>
+              <span>→</span>
+            </div>
+          </Link>
+
+          {/* Biometric Terminal & Attendance */}
+          <Link
+            to="/attendance/terminal"
+            className="group p-5 rounded-xl border border-line bg-bg hover:border-accent/50 hover:bg-bg-raised/30 transition-all flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                </span>
+                <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-full border border-line text-ink-soft">
+                  Biometrics
+                </span>
+              </div>
+              <h3 className="text-sm font-bold text-ink group-hover:text-accent transition-colors">
+                Kiosk Terminal & Attendance
+              </h3>
+              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+                Live punch kiosk, scanner hardware logs, daily worked hours, and exception audit.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-line text-xs font-medium text-accent flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              <span>Open Kiosk Terminal</span>
+              <span>→</span>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* ── Section 3: Access snapshot ── */}
       <div className="mb-8">
         <div className="flex justify-between items-baseline mb-4">
           <h2 className="text-base sm:text-lg font-semibold text-ink">Access snapshot</h2>

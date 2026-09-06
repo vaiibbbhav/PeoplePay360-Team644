@@ -1,6 +1,7 @@
 import React from 'react';
 import type { PayslipDetail } from '../queries/useEmployeePayslips';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
 
 export type MonthlyPayslipDocumentProps = {
   payslip: PayslipDetail;
@@ -61,7 +62,7 @@ function numberToWords(num: number): string {
   if (thousand > 0) res += convertLessThanOneThousand(thousand) + 'Thousand ';
   if (remainder > 0) res += convertLessThanOneThousand(remainder);
 
-  return (res.trim() || 'Zero') + ' Rupees Only.';
+  return (res.trim() || 'Zero') + ' Rupees Only';
 }
 
 export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
@@ -86,29 +87,39 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
   const maxRows = Math.max(earnings.length, deductions.length, 1);
   const netAmount = Math.round(Number(payslip.net_salary) || 0);
 
+  const dialogRef = useDialogAccessibility({ isOpen: true, onClose });
   const modalRef = useClickOutside<HTMLDivElement>(() => {
     onClose();
   });
 
+  const setCombinedRef = (node: HTMLDivElement | null) => {
+    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-2 sm:p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto font-sans">
       <div
-        ref={modalRef}
-        className="bg-white text-black border border-neutral-300 rounded-lg max-w-4xl w-full max-h-[95vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95"
+        ref={setCombinedRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="monthly-payslip-title"
+        tabIndex={-1}
+        className="bg-white text-black border border-neutral-300 rounded-2xl max-w-4xl w-full max-h-[95vh] flex flex-col shadow-2xl animate-in fade-in zoom-in-95 overflow-hidden"
       >
         {/* Modal Controls Toolbar (Hidden on print) */}
-        <div className="flex items-center justify-between px-6 py-3 border-b border-neutral-300 bg-neutral-100 print:hidden">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-3.5 border-b border-neutral-300 bg-neutral-100 print:hidden">
           <div className="flex items-center gap-2">
-            <span className="font-sans text-xs sm:text-sm font-bold text-neutral-800">
+            <h2 id="monthly-payslip-title" className="font-serif text-xs sm:text-sm font-bold text-neutral-800">
               Monthly Salary Slip ({monthName} - {yearNum})
-            </span>
+            </h2>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               type="button"
               onClick={handlePrint}
-              className="px-3.5 py-1.5 rounded text-xs font-semibold bg-purple-800 text-white hover:bg-purple-900 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path

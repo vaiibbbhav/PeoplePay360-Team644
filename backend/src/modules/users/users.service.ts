@@ -94,8 +94,9 @@ export const createUser = async (input: CreateUserInput, actor?: any) => {
         err?.message || err,
       );
     });
-  } catch (err: any) {
-    console.error('[USERS_SERVICE] Non-blocking error signing token:', err?.message || err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[USERS_SERVICE] Non-blocking error signing token:', message);
   }
 
   return user;

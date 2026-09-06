@@ -10,6 +10,9 @@ type PolicyFormDrawerProps = {
   isSubmitting?: boolean;
 };
 
+type PolicyCategory = 'compliance' | 'security' | 'workplace' | 'hr';
+const VALID_CATEGORIES: readonly PolicyCategory[] = ['compliance', 'security', 'workplace', 'hr'];
+
 export const PolicyFormDrawer: React.FC<PolicyFormDrawerProps> = ({
   isOpen,
   onClose,
@@ -19,7 +22,7 @@ export const PolicyFormDrawer: React.FC<PolicyFormDrawerProps> = ({
 }) => {
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
-  const [category, setCategory] = useState<'compliance' | 'security' | 'workplace' | 'hr'>('hr');
+  const [category, setCategory] = useState<PolicyCategory>('hr');
   const [version, setVersion] = useState('1.0');
   const [summary, setSummary] = useState('');
   const [content, setContent] = useState('');
@@ -31,11 +34,8 @@ export const PolicyFormDrawer: React.FC<PolicyFormDrawerProps> = ({
     if (initialData) {
       setTitle(initialData.title);
       setCode(initialData.code);
-      setCategory(
-        (['compliance', 'security', 'workplace', 'hr'].includes(initialData.category)
-          ? initialData.category
-          : 'hr') as any,
-      );
+      const matchedCategory = VALID_CATEGORIES.find((c) => c === initialData.category) || 'hr';
+      setCategory(matchedCategory);
       setVersion(initialData.version || '1.0');
       setSummary(initialData.summary || '');
       setContent(initialData.content || '');
@@ -180,7 +180,7 @@ export const PolicyFormDrawer: React.FC<PolicyFormDrawerProps> = ({
                 </label>
                 <select
                   value={category}
-                  onChange={(e) => setCategory(e.target.value as any)}
+                  onChange={(e) => setCategory(e.target.value as PolicyCategory)}
                   className="w-full px-3 py-2 rounded-xl border border-line bg-bg text-ink text-xs focus:outline-none focus:border-accent capitalize"
                 >
                   <option value="compliance">Compliance</option>
