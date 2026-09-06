@@ -4,11 +4,13 @@ import { fingerprintSdk } from '../services/fingerprintSdk';
 type ReaderStatusCardProps = {
   selectedReader: string;
   onSelectReader: (readerUid: string) => void;
+  compact?: boolean;
 };
 
 export const ReaderStatusCard: React.FC<ReaderStatusCardProps> = ({
   selectedReader,
   onSelectReader,
+  compact = false,
 }) => {
   const [readers, setReaders] = useState<string[]>([]);
   const [sdkAvailable, setSdkAvailable] = useState<boolean>(false);
@@ -47,6 +49,72 @@ export const ReaderStatusCard: React.FC<ReaderStatusCardProps> = ({
       fingerprintSdk.off('deviceDisconnected', handleDisconnected);
     };
   }, []);
+
+  if (compact) {
+    return (
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-sans">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+              />
+            </svg>
+          </div>
+          <div className="flex items-center gap-2">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                readers.length > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+              }`}
+            />
+            <span className="font-semibold text-ink">
+              {readers.length > 0
+                ? 'Optical Sensor Online'
+                : sdkAvailable
+                  ? 'Sensor Standby'
+                  : 'Sensor Ready'}
+            </span>
+            <span className="text-line hidden sm:inline">•</span>
+            <span className="text-[11px] text-ink-soft hidden sm:inline">U.are.U 4500</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 self-end sm:self-auto">
+          {readers.length > 1 && (
+            <select
+              value={selectedReader}
+              onChange={(e) => onSelectReader(e.target.value)}
+              className="px-2 py-1 text-[11px] rounded border border-line bg-bg text-ink focus:border-accent outline-none font-mono"
+            >
+              {readers.map((uid) => (
+                <option key={uid} value={uid}>
+                  Reader ({uid.slice(0, 6)}...)
+                </option>
+              ))}
+            </select>
+          )}
+          <button
+            type="button"
+            onClick={refreshDevices}
+            disabled={scanningDevices}
+            className="text-[11px] text-accent hover:underline cursor-pointer flex items-center gap-1 font-medium"
+          >
+            {scanningDevices ? (
+              <>
+                <div className="w-2.5 h-2.5 border border-accent border-t-transparent rounded-full animate-spin" />
+                <span>Scanning...</span>
+              </>
+            ) : (
+              <span>Refresh Devices</span>
+            )}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-line bg-bg-raised/40 p-4 font-sans">

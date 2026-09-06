@@ -6,6 +6,8 @@ type FingerprintScannerPadProps = {
   isProcessing: boolean;
   onScanComplete: (imageBase64: string, dataUrl: string) => void | Promise<void>;
   statusText?: string;
+  targetEmployeeCode?: string;
+  borderless?: boolean;
 };
 
 export const FingerprintScannerPad: React.FC<FingerprintScannerPadProps> = ({
@@ -13,6 +15,8 @@ export const FingerprintScannerPad: React.FC<FingerprintScannerPadProps> = ({
   isProcessing,
   onScanComplete,
   statusText,
+  targetEmployeeCode,
+  borderless = false,
 }) => {
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [lastScannedUrl, setLastScannedUrl] = useState<string | null>(null);
@@ -89,7 +93,11 @@ export const FingerprintScannerPad: React.FC<FingerprintScannerPadProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 sm:p-8 rounded-2xl border border-line bg-bg font-sans">
+    <div
+      className={`flex flex-col items-center justify-center font-sans ${
+        borderless ? 'p-2 w-full' : 'p-6 sm:p-8 rounded-2xl border border-line bg-bg'
+      }`}
+    >
       <style>{`
         @keyframes scanLaserSweep {
           0% { top: 2%; opacity: 0.85; }
@@ -99,16 +107,17 @@ export const FingerprintScannerPad: React.FC<FingerprintScannerPadProps> = ({
       `}</style>
 
       {/* Biometric Sensor Target Canvas */}
-      <div className="relative group mb-5">
+      <div className="relative group mb-4">
         <button
           type="button"
           onClick={isScanning ? handleStopScan : handleStartScan}
           disabled={isProcessing}
           aria-label="Scan Fingerprint"
-          className={`relative w-44 h-56 rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-300 cursor-pointer outline-none overflow-hidden bg-black/90 shadow-inner ${isScanning || isProcessing
+          className={`relative w-40 h-50 rounded-2xl border-2 flex flex-col items-center justify-center transition-all duration-300 cursor-pointer outline-none overflow-hidden bg-black/90 shadow-inner ${
+            isScanning || isProcessing
               ? 'border-accent ring-2 ring-accent/30'
               : 'border-line hover:border-accent'
-            }`}
+          }`}
         >
           {/* Reticle Corner Crosshair Brackets */}
           <span className="absolute top-2 left-2 w-3.5 h-3.5 border-t-2 border-l-2 border-accent/80 pointer-events-none z-30" />
@@ -127,34 +136,59 @@ export const FingerprintScannerPad: React.FC<FingerprintScannerPadProps> = ({
             </div>
           )}
 
-          {/* Fingerprint Image Display */}
-          {lastScannedUrl ? (
-            <div className="relative w-full h-full flex items-center justify-center p-2">
-              <img
-                src={lastScannedUrl}
-                alt="Captured Fingerprint"
-                className="max-w-[150px] max-h-[195px] w-full h-full object-contain rounded-md filter contrast-125 brightness-105 transition-all"
-              />
-              <div className="absolute bottom-2 inset-x-0 text-center">
-                <span className="text-[9px] uppercase tracking-widest font-mono text-emerald-400 bg-black/80 px-2 py-0.5 rounded border border-emerald-500/40">
-                  500 DPI Captured
-                </span>
-              </div>
-            </div>
-          ) : (
-            <div className="text-ink-soft group-hover:text-accent transition-colors flex flex-col items-center p-4">
-              <svg className="w-16 h-16 stroke-1.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* Optical Sensor Surface Visual */}
+          <div className="flex flex-col items-center justify-center p-4 transition-all w-full h-full select-none">
+            <div
+              className={`relative w-24 h-24 rounded-full flex items-center justify-center transition-all ${
+                lastScannedUrl
+                  ? 'bg-emerald-500/10 text-emerald-400 ring-2 ring-emerald-500/30'
+                  : isScanning
+                    ? 'bg-accent/20 text-accent ring-2 ring-accent/40'
+                    : 'bg-white/5 text-ink-soft group-hover:text-accent group-hover:bg-accent/10'
+              }`}
+            >
+              {/* Concentric Sensor Guidance Rings */}
+              <span className="absolute inset-2 rounded-full border border-white/5 pointer-events-none" />
+              <span className="absolute inset-4 rounded-full border border-white/5 pointer-events-none" />
+
+              {/* Biometric Sensor Icon */}
+              <svg
+                className={`w-12 h-12 stroke-1.5 transition-transform duration-300 ${
+                  isScanning ? 'scale-105 animate-pulse text-accent' : lastScannedUrl ? 'scale-100 text-emerald-400' : 'opacity-70 group-hover:scale-105'
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 004.07 9m5.918 8d.5.5 0 01.5.5v2a.5.5 0 01-.5.5h-2a.5.5 0 01-.5-.5v-2a.5.5 0 01.5-.5h2z"
                 />
               </svg>
-              <span className="text-[10px] uppercase font-semibold tracking-wider mt-2 text-ink-soft">
-                Touch Sensor
-              </span>
+
+              {lastScannedUrl && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 text-black text-[10px] font-bold flex items-center justify-center shadow-xs">
+                  ✓
+                </span>
+              )}
             </div>
-          )}
+
+            <span
+              className={`text-[10px] uppercase font-semibold tracking-wider mt-3 font-mono transition-colors ${
+                lastScannedUrl
+                  ? 'text-emerald-400'
+                  : isScanning
+                    ? 'text-accent'
+                    : 'text-ink-soft group-hover:text-ink'
+              }`}
+            >
+              {lastScannedUrl ? 'Scan Acquired' : isScanning ? 'Acquiring Sample...' : 'Touch Sensor'}
+            </span>
+            <span className="text-[9px] text-ink-soft/70 font-mono mt-0.5">
+              {lastScannedUrl ? 'Touch to Re-Scan' : '500 DPI Optical Glass'}
+            </span>
+          </div>
         </button>
 
         {/* Circular indicator pill */}
@@ -166,16 +200,20 @@ export const FingerprintScannerPad: React.FC<FingerprintScannerPadProps> = ({
                   ? 'bg-emerald-500 text-white border-emerald-500 animate-pulse shadow-sm'
                   : lastScannedUrl
                     ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                    : 'bg-bg border-line text-ink-soft'
+                    : targetEmployeeCode
+                      ? 'bg-accent/15 text-accent border-accent/40 font-mono font-bold'
+                      : 'bg-bg border-line text-ink-soft'
               }`}
           >
             {isProcessing
-              ? 'Matching Minutiae...'
+              ? (targetEmployeeCode ? `1:1 Verifying: ${targetEmployeeCode}...` : 'Matching Minutiae...')
               : isScanning
-                ? 'Sensor Active — Scanning Ridges'
+                ? (targetEmployeeCode ? `Scanning for ${targetEmployeeCode}...` : 'Sensor Active — Scanning Ridges')
                 : lastScannedUrl
                   ? 'Sample Acquired'
-                  : 'Sensor Ready'}
+                  : targetEmployeeCode
+                    ? `1:1 Target: ${targetEmployeeCode}`
+                    : 'Sensor Ready'}
           </span>
         </div>
       </div>
