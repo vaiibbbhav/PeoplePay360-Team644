@@ -25,13 +25,10 @@ import {
 
 // ── Helper ─────────────────────────────────────────────────────────────────
 const roleBadge: Record<string, string> = {
-  Admin: 'bg-accent text-white border border-accent',
-  'HR Manager':
-    'bg-black text-white border border-black dark:bg-neutral-950 dark:border-neutral-700',
-  'HR Payroll Manager':
-    'bg-black text-white border border-black dark:bg-neutral-950 dark:border-neutral-700',
-  'HR Payroll User':
-    'bg-black text-white border border-black dark:bg-neutral-950 dark:border-neutral-700',
+  Admin: 'bg-accent text-accent-ink border border-accent',
+  'HR Manager': 'bg-bg-raised text-ink border border-line font-medium',
+  'HR Payroll Manager': 'bg-bg-raised text-ink border border-line font-medium',
+  'HR Payroll User': 'bg-bg-raised text-ink-soft border border-line font-medium',
   Employee: 'bg-bg text-ink-soft border border-line',
 };
 
@@ -138,29 +135,42 @@ export const UserManagementPage: React.FC = () => {
 
   return (
     <AppLayout title="User Management">
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8">
-        {/* ── Page heading ── */}
-        <div className="mb-1">
-          <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
-            User Management
-          </h1>
-          <p className="text-xs sm:text-sm text-ink-soft mt-1">
-            Manage users and their assigned roles within the organization.
-          </p>
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
+        {/* ── Page Top Header ── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
+          <div>
+            <div className="mb-1">
+              <span className="text-xs font-mono text-accent font-medium">
+                Governance & Security
+              </span>
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
+              User Management
+            </h1>
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
+              Manage system credentials, portal access, and role-based permissions across the organization.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setAddOpen(true)}
+            className="px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 self-start sm:self-auto shrink-0 shadow-2xs"
+          >
+            <span>+</span>
+            <span>Add User</span>
+          </button>
         </div>
 
-        {/* ── Divider ── */}
-        <div className="border-t border-line my-5 sm:my-6" />
-
-        {/* ── Top controls (search + filter + add) ── */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-line bg-bg">
+        {/* ── Top controls (search + filter) ── */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-3.5 sm:p-4 rounded-2xl border border-line bg-bg">
           <SearchInput
             placeholder="Search users by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          {/* Right: role filter + add button */}
+          {/* Right: role filter */}
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <Select
               value={roleFilter || 'all'}
@@ -178,21 +188,6 @@ export const UserManagementPage: React.FC = () => {
                 <SelectItem value="Employee">Employee</SelectItem>
               </SelectContent>
             </Select>
-
-            <button
-              onClick={() => setAddOpen(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap shrink-0 shadow-xs"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              <span>Add User</span>
-            </button>
           </div>
         </div>
 
