@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Download, RefreshCw } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import {
@@ -37,7 +37,7 @@ export const AttendanceRecordsPage: React.FC = () => {
   const [selectedRecord, setSelectedRecord] = useState<AttendanceRecord | null>(null);
 
   // Query: for non-employee users, fetch company-wide attendance records
-  const { data: allRecords = [], isLoading, refetch } = useAttendanceList({
+  const { data: allRecords = [], isLoading } = useAttendanceList({
     // If not employee-only, don't pass employeeId so backend returns all attendance logs
     employeeId: isEmployeeOnly ? (user?.employeeId || undefined) : undefined,
     startDate: filter.startDate || undefined,
@@ -164,20 +164,10 @@ export const AttendanceRecordsPage: React.FC = () => {
               type="button"
               onClick={handleExportCSV}
               disabled={filteredRecords.length === 0}
-              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-xs disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg-raised/50 hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-2xs disabled:opacity-50"
             >
               <Download className="w-3.5 h-3.5 text-ink-soft" />
               <span>Export CSV</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => refetch()}
-              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-xs"
-              title="Refresh attendance records"
-            >
-              <RefreshCw className="w-3.5 h-3.5 text-ink-soft" />
-              <span>Refresh</span>
             </button>
           </div>
         </div>

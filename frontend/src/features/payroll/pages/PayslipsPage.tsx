@@ -21,7 +21,6 @@ import {
   Eye,
   CheckCircle2,
   Clock,
-  RefreshCw,
   AlertTriangle,
 } from 'lucide-react';
 
@@ -242,20 +241,10 @@ export const PayslipsPage: React.FC = () => {
               type="button"
               onClick={handleExportCSV}
               disabled={filteredPayslips.length === 0}
-              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-xs disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg-raised/50 hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-2xs disabled:opacity-50"
             >
               <Download className="w-3.5 h-3.5 text-ink-soft" />
               <span>Export CSV</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => refetch()}
-              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-xs"
-              title="Refresh payslips"
-            >
-              <RefreshCw className="w-3.5 h-3.5 text-ink-soft" />
-              <span>Refresh</span>
             </button>
           </div>
         </div>
