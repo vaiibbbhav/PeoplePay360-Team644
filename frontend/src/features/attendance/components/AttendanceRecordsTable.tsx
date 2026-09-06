@@ -1,10 +1,8 @@
 import React from 'react';
 import {
-  Clock,
   Fingerprint,
   FileEdit,
   AlertTriangle,
-  User,
   Calendar,
   ArrowRight,
 } from 'lucide-react';
@@ -58,40 +56,40 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
     const s = status?.toLowerCase() || '';
     if (s.includes('present')) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
           Present
         </span>
       );
     }
     if (s.includes('late')) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
           Late Arrival
         </span>
       );
     }
     if (s.includes('half')) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-200/80 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/60">
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
           Half-Day
         </span>
       );
     }
     if (s.includes('overtime')) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent-soft text-accent border border-accent/30">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent-soft text-accent border border-accent/40">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
           Overtime
         </span>
       );
     }
     if (s.includes('absent')) {
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
-          <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/80 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/60">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
           Absent
         </span>
       );
@@ -132,15 +130,15 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-line bg-bg-raised/60 text-ink-soft uppercase tracking-wider text-[11px]">
-              <th className="py-3 px-4 font-semibold">Employee</th>
-              <th className="py-3 px-4 font-semibold">Date</th>
-              <th className="py-3 px-4 font-semibold">Check In</th>
-              <th className="py-3 px-4 font-semibold">Check Out</th>
-              <th className="py-3 px-4 font-semibold">Hours Logged</th>
-              <th className="py-3 px-4 font-semibold">Status</th>
-              <th className="py-3 px-4 font-semibold">Source / Exception</th>
-              {canManage && <th className="py-3 px-4 font-semibold text-right">Actions</th>}
+            <tr className="border-b border-line bg-bg-raised/70 text-ink-soft font-semibold text-xs">
+              <th className="py-3 px-4">Employee</th>
+              <th className="py-3 px-4">Date</th>
+              <th className="py-3 px-4">Check In</th>
+              <th className="py-3 px-4">Check Out</th>
+              <th className="py-3 px-4">Hours</th>
+              <th className="py-3 px-4 text-center">Status</th>
+              <th className="py-3 px-4">Source & Exceptions</th>
+              {canManage && <th className="py-3 px-4 text-right">Actions</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -151,26 +149,33 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                   ? record.worked_hours.toFixed(2)
                   : parseFloat(String(record.worked_hours || '0')).toFixed(2);
 
+              const initials = (record.employee_name || 'E')
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+                .toUpperCase()
+                .slice(0, 2);
+
               return (
                 <tr
                   key={record.id}
                   className="hover:bg-bg-raised/40 transition-colors group"
                 >
                   {/* Employee identity */}
-                  <td className="py-3.5 px-4">
+                  <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-accent-soft border border-accent/30 text-accent flex items-center justify-center text-xs font-semibold shrink-0">
-                        {record.employee_name
-                          ? record.employee_name.charAt(0).toUpperCase()
-                          : <User className="w-4 h-4" />}
+                      <div className="w-8 h-8 rounded-full bg-accent/10 border border-accent/20 text-accent flex items-center justify-center text-xs font-bold shrink-0">
+                        {initials}
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-ink truncate">
-                          {record.employee_name || record.employee_id}
-                        </div>
-                        <div className="text-[10px] text-ink-soft font-mono">
-                          {record.employee_id}
-                        </div>
+                        <span className="font-semibold text-ink block text-xs truncate">
+                          {record.employee_name || 'Unnamed Employee'}
+                        </span>
+                        {record.employee_email ? (
+                          <span className="text-[11px] text-ink-soft block font-mono truncate">
+                            {record.employee_email}
+                          </span>
+                        ) : null}
                       </div>
                     </div>
                   </td>
@@ -178,39 +183,31 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                   {/* Date */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="font-medium text-ink">{dayMonthYear}</div>
-                    <div className="text-[10px] text-ink-soft uppercase tracking-wider">
+                    <div className="text-[11px] text-ink-soft">
                       {weekday}
                     </div>
                   </td>
 
                   {/* Check In */}
-                  <td className="py-3.5 px-4 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5 font-mono text-ink">
-                      <Clock className="w-3.5 h-3.5 text-ink-soft shrink-0" />
-                      <span>{formatTime(record.check_in)}</span>
-                    </div>
+                  <td className="py-3.5 px-4 whitespace-nowrap font-mono text-ink text-xs">
+                    {formatTime(record.check_in) || '—'}
                   </td>
 
                   {/* Check Out */}
-                  <td className="py-3.5 px-4 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5 font-mono text-ink">
-                      <Clock className="w-3.5 h-3.5 text-ink-soft shrink-0" />
-                      <span>{formatTime(record.check_out)}</span>
-                    </div>
+                  <td className="py-3.5 px-4 whitespace-nowrap font-mono text-ink text-xs">
+                    {formatTime(record.check_out) || '—'}
                   </td>
 
                   {/* Worked Hours */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="font-semibold text-ink font-mono">{hrs} hrs</div>
-                    {Number(hrs) > 8 ? (
-                      <span className="text-[10px] text-accent font-medium">Standard + OT</span>
-                    ) : (
-                      <span className="text-[10px] text-ink-soft">Standard Shift</span>
+                    {Number(hrs) > 8 && (
+                      <span className="text-[10px] text-accent font-medium block">+{(Number(hrs) - 8).toFixed(1)}h OT</span>
                     )}
                   </td>
 
                   {/* Status Badge */}
-                  <td className="py-3.5 px-4 whitespace-nowrap">
+                  <td className="py-3.5 px-4 whitespace-nowrap text-center">
                     {getStatusBadge(record.status)}
                   </td>
 
@@ -219,14 +216,14 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                     <div className="space-y-1">
                       <div className="flex items-center gap-1.5">
                         {record.is_manual_edit ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
-                            <FileEdit className="w-3 h-3" />
-                            HR Manual Edit
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md border border-amber-200/80 dark:border-amber-800/60">
+                            <FileEdit className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                            Manual Edit
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-ink-soft bg-bg-raised px-1.5 py-0.5 rounded border border-line">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-ink-soft bg-bg-raised/70 px-2 py-0.5 rounded-md border border-line">
                             <Fingerprint className="w-3 h-3 text-accent" />
-                            Biometric Sensor
+                            Biometric
                           </span>
                         )}
                       </div>
@@ -246,8 +243,9 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                   {canManage && (
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
                       <button
+                        type="button"
                         onClick={() => onEditRecord(record)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-lg border border-line bg-bg hover:bg-bg-raised text-ink transition-colors"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg border border-line bg-bg hover:bg-bg-raised text-ink transition-colors cursor-pointer"
                       >
                         <span>Adjust</span>
                         <ArrowRight className="w-3 h-3 text-ink-soft" />

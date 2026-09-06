@@ -5,6 +5,7 @@ export type AttendanceRecord = {
   id: string;
   employee_id: string;
   employee_name?: string;
+  employee_email?: string;
   date: string; // YYYY-MM-DD
   check_in: string | null;
   check_out: string | null;
