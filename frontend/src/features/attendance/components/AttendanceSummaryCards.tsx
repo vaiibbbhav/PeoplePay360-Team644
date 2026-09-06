@@ -42,30 +42,18 @@ export const AttendanceSummaryCards: React.FC<AttendanceSummaryCardsProps> = ({ 
     },
     {
       label: 'On-Time / Present',
-      value: (
-        <span className="text-emerald-600 dark:text-emerald-400">
-          {present}
-        </span>
-      ),
-      subtext: `${attendanceRate}% health rate`,
+      value: String(present),
+      subtext: `${attendanceRate}% punctuality rate`,
     },
     {
       label: 'Late Arrivals',
-      value: (
-        <span className={late > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-ink'}>
-          {late}
-        </span>
-      ),
-      subtext: late > 0 ? 'Exceeded threshold' : 'Optimal punctuality',
+      value: String(late),
+      subtext: late > 0 ? `${late} exceeded threshold` : 'Zero late arrivals',
     },
     {
       label: 'Exceptions & Edits',
-      value: (
-        <span className={exceptions > 0 ? 'text-accent' : 'text-ink'}>
-          {exceptions}
-        </span>
-      ),
-      subtext: `${halfDay} half-day, ${overtime} overtime`,
+      value: String(exceptions),
+      subtext: exceptions > 0 ? `${halfDay} half-day · ${overtime} overtime` : 'No audit exceptions',
     },
   ];
 

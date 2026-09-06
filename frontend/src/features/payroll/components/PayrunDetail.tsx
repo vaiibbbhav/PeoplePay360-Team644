@@ -15,8 +15,8 @@ export type PayrunDetailProps = {
 
 const STATUS_COLORS: Record<string, string> = {
   draft: 'text-ink-soft border-line bg-bg-raised',
-  computed: 'text-blue-700 border-blue-300 bg-blue-50 dark:text-blue-300 dark:bg-blue-950',
-  validated: 'text-emerald-700 border-emerald-300 bg-emerald-50 dark:text-emerald-300 dark:bg-emerald-950',
+  computed: 'text-sky-700 dark:text-sky-300 border-sky-200/80 dark:border-sky-800/60 bg-sky-50 dark:bg-sky-950/40',
+  validated: 'text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/40',
   paid: 'text-accent border-accent/40 bg-accent-soft',
 };
 

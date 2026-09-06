@@ -38,52 +38,56 @@ export const PolicyFilterBar: React.FC<PolicyFilterBarProps> = ({
         />
 
         {/* Status Filter Toggle */}
-        <div className="flex items-center p-1 bg-bg-sunken rounded-xl border border-line-subtle text-[11px] sm:text-xs shrink-0 self-start sm:self-auto">
+        <div className="flex items-center p-1 bg-bg-raised rounded-xl border border-line text-xs shrink-0 self-start sm:self-auto">
           <button
+            type="button"
             onClick={() => onStatusFilterChange('all')}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
               statusFilter === 'all'
-                ? 'bg-bg-raised text-ink shadow-xs'
+                ? 'bg-bg text-ink shadow-2xs'
                 : 'text-ink-soft hover:text-ink'
             }`}
           >
             All
           </button>
           <button
+            type="button"
             onClick={() => onStatusFilterChange('pending')}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
               statusFilter === 'pending'
-                ? 'bg-bg-raised text-accent shadow-xs'
+                ? 'bg-accent-soft text-accent shadow-2xs font-semibold'
                 : 'text-ink-soft hover:text-ink'
             }`}
           >
             Action Required
           </button>
           <button
+            type="button"
             onClick={() => onStatusFilterChange('accepted')}
-            className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
               statusFilter === 'accepted'
-                ? 'bg-bg-raised text-emerald-700 shadow-xs'
+                ? 'bg-bg text-ink shadow-2xs'
                 : 'text-ink-soft hover:text-ink'
             }`}
           >
-            Accepted
+            Acknowledged
           </button>
         </div>
       </div>
 
       {/* Category Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
         {CATEGORIES.map((cat) => {
           const isActive = selectedCategory === cat.id;
           return (
             <button
               key={cat.id}
+              type="button"
               onClick={() => onCategoryChange(cat.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors cursor-pointer border ${
                 isActive
-                  ? 'bg-ink text-bg font-semibold'
-                  : 'bg-bg-raised text-ink-soft border border-line hover:border-ink hover:text-ink'
+                  ? 'border-accent bg-accent-soft text-accent font-semibold'
+                  : 'border-line bg-bg text-ink-soft hover:bg-bg-raised hover:text-ink'
               }`}
             >
               {cat.label}

@@ -48,7 +48,7 @@ export const CompanyComplianceTable: React.FC<CompanyComplianceTableProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs min-w-[680px]">
           <thead>
-            <tr className="border-b border-line bg-bg-raised text-ink-soft uppercase tracking-wider text-[11px]">
+            <tr className="border-b border-line bg-bg-raised/70 text-ink-soft font-semibold text-xs">
               <th className="py-3 px-6 font-semibold">Policy Name & Ref</th>
               <th className="py-3 px-4 font-semibold">Category</th>
               <th className="py-3 px-4 font-semibold">Version</th>
