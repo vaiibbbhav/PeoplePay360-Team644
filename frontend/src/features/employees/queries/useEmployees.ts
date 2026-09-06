@@ -70,10 +70,33 @@ export type CreateEmployeeInput = {
 
 export type UpdateEmployeeInput = Partial<CreateEmployeeInput>;
 
+export type EmployeeDirectoryQueryParams = {
+  search?: string;
+  departmentId?: string;
+  employmentStatus?: EmploymentStatus;
+  page: number;
+  pageSize: number;
+};
+
+export type EmployeeDirectoryResponse = {
+  employees: EmployeeListItem[];
+  total: number;
+};
+
 // 1. API Fetchers
 const fetchEmployees = async (): Promise<EmployeeListItem[]> => {
   const { data } = await api.get<EmployeeListItem[]>('/employees');
   return data;
+};
+
+const fetchEmployeeDirectory = async (
+  params: EmployeeDirectoryQueryParams,
+): Promise<EmployeeDirectoryResponse> => {
+  const { data } = await api.get<EmployeeDirectoryResponse>('/employees', { params });
+  return {
+    employees: Array.isArray(data?.employees) ? data.employees : [],
+    total: typeof data?.total === 'number' ? data.total : 0,
+  };
 };
 
 const fetchEmployeeHub = async (id: string): Promise<EmployeeHubDetails> => {
@@ -107,10 +130,23 @@ const deleteEmployeeApi = async (id: string): Promise<void> => {
 };
 
 // 2. Exported React Query Hooks
-export const useEmployeesList = () => {
+export const useEmployeesList = (enabled = true) => {
   return useQuery({
     queryKey: ['employees', 'list'],
     queryFn: fetchEmployees,
+    enabled,
+  });
+};
+
+export const useEmployeeDirectoryList = (
+  params: EmployeeDirectoryQueryParams,
+  enabled = true,
+) => {
+  return useQuery({
+    queryKey: ['employees', 'directory', params],
+    queryFn: () => fetchEmployeeDirectory(params),
+    enabled,
+    staleTime: 30 * 1000,
   });
 };
 

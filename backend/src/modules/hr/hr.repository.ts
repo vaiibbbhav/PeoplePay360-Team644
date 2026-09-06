@@ -10,7 +10,7 @@ import {
   timeOffRequests,
   payslips,
 } from '../../db/schema';
-import { eq, desc, count, sql } from 'drizzle-orm';
+import { and, desc, eq, ilike, or, count, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { generateEmployeeCode } from '../../shared/employee-code';
 
@@ -57,6 +57,90 @@ export async function findAllEmployees() {
     .leftJoin(managers, eq(employees.managerId, managers.id))
     .leftJoin(managerUsers, eq(managers.userId, managerUsers.id))
     .orderBy(desc(employees.createdAt));
+}
+
+export async function findPaginatedEmployees(filters: {
+  search?: string;
+  departmentId?: string;
+  employmentStatus?: 'active' | 'inactive' | 'on_leave' | 'terminated';
+  page: number;
+  pageSize: number;
+}) {
+  const conditions = [];
+
+  if (filters.departmentId) {
+    conditions.push(eq(employees.departmentId, filters.departmentId));
+  }
+
+  if (filters.employmentStatus) {
+    conditions.push(eq(employees.employmentStatus, filters.employmentStatus));
+  }
+
+  if (filters.search) {
+    const term = `%${filters.search}%`;
+    conditions.push(
+      or(
+        ilike(users.firstName, term),
+        ilike(users.lastName, term),
+        ilike(users.email, term),
+        ilike(jobPositions.title, term),
+      ),
+    );
+  }
+
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const offset = (filters.page - 1) * filters.pageSize;
+
+  const [rows, [{ total }]] = await Promise.all([
+    db
+      .select({
+        id: employees.id,
+        employee_code: employees.employeeCode,
+        user_id: employees.userId,
+        first_name: users.firstName,
+        last_name: users.lastName,
+        email: users.email,
+        phone: employees.phone,
+        department_id: employees.departmentId,
+        department_name: departments.name,
+        job_position_id: employees.jobPositionId,
+        job_position_title: jobPositions.title,
+        manager_id: employees.managerId,
+        manager_name: sql<string | null>`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
+        working_schedule_id: employees.workingScheduleId,
+        working_schedule_name: workingSchedules.name,
+        employment_status: employees.employmentStatus,
+        date_of_joining: employees.dateOfJoining,
+        date_of_birth: employees.dateOfBirth,
+        gender: employees.gender,
+        identification_number: employees.identificationNumber,
+        location: employees.location,
+        bank_name: employees.bankName,
+        bank_account_number: employees.bankAccountNumber,
+        bank_routing_code: employees.bankRoutingCode,
+        avatar_url: employees.avatarUrl,
+        created_at: employees.createdAt,
+      })
+      .from(employees)
+      .innerJoin(users, eq(employees.userId, users.id))
+      .leftJoin(departments, eq(employees.departmentId, departments.id))
+      .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
+      .leftJoin(workingSchedules, eq(employees.workingScheduleId, workingSchedules.id))
+      .leftJoin(managers, eq(employees.managerId, managers.id))
+      .leftJoin(managerUsers, eq(managers.userId, managerUsers.id))
+      .where(whereClause)
+      .orderBy(desc(employees.createdAt))
+      .limit(filters.pageSize)
+      .offset(offset),
+    db
+      .select({ total: count() })
+      .from(employees)
+      .innerJoin(users, eq(employees.userId, users.id))
+      .leftJoin(jobPositions, eq(employees.jobPositionId, jobPositions.id))
+      .where(whereClause),
+  ]);
+
+  return { employees: rows, total };
 }
 
 export async function findEmployeeById(id: string) {

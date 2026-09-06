@@ -24,8 +24,17 @@ export const createEmployeeSchema = z.object({
 
 export const updateEmployeeSchema = createEmployeeSchema.partial();
 
+export const employeeListQuerySchema = z.object({
+  search: z.string().trim().optional(),
+  departmentId: z.string().uuid().optional(),
+  employmentStatus: z.enum(['active', 'inactive', 'on_leave', 'terminated']).optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(12),
+});
+
 export type CreateEmployeeInput = z.infer<typeof createEmployeeSchema>;
 export type UpdateEmployeeInput = z.infer<typeof updateEmployeeSchema>;
+export type EmployeeListQueryInput = z.infer<typeof employeeListQuerySchema>;
 
 export function validateCreateEmployee(data: unknown): CreateEmployeeInput {
   const result = createEmployeeSchema.safeParse(data);

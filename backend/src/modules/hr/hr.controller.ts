@@ -1,10 +1,21 @@
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../../shared/async-handler';
-import { validateCreateEmployee, validateUpdateEmployee } from './hr.validators';
+import {
+  employeeListQuerySchema,
+  validateCreateEmployee,
+  validateUpdateEmployee,
+} from './hr.validators';
 import * as hrService from './hr.service';
 
-export const listEmployees = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
-  const employees = await hrService.listEmployees();
+export const listEmployees = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (req.query.page === undefined) {
+    const employees = await hrService.listEmployees();
+    res.json(employees);
+    return;
+  }
+
+  const query = employeeListQuerySchema.parse(req.query);
+  const employees = await hrService.listPaginatedEmployees(query);
   res.json(employees);
 });
 

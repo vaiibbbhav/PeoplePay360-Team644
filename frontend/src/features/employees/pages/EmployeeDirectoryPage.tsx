@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useEmployeesList, useEmployeeMeta, useCreateEmployee } from '../queries/useEmployees';
+import {
+  useEmployeeDirectoryList,
+  useEmployeesList,
+  useEmployeeMeta,
+  useCreateEmployee,
+  type EmployeeListItem,
+  type EmploymentStatus,
+} from '../queries/useEmployees';
 import { EmployeeFormModal } from '../components/EmployeeFormModal';
 import { AppLayout } from '../../../components/layout/AppLayout';
 import { SearchInput } from '@/components/ui/SearchInput';
-import { Pagination, usePagination } from '@/components/ui/Pagination';
+import { Pagination } from '@/components/ui/Pagination';
 import {
   Select,
   SelectTrigger,
@@ -31,38 +38,73 @@ const STATUS_BADGE: Record<string, string> = {
 
 export const EmployeeDirectoryPage: React.FC = () => {
   const navigate = useNavigate();
-  const { data: employees = [], isLoading } = useEmployeesList();
-  const { data: meta } = useEmployeeMeta();
-  const createEmployeeMutation = useCreateEmployee();
-
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState<EmploymentStatus | ''>('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('kanban');
 
-  const filteredEmployees = employees.filter((emp) => {
-    const firstName = emp.first_name || '';
-    const lastName = emp.last_name || '';
-    const email = emp.email || '';
-    const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [search]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
+
+  const { data: kanbanEmployees = [], isLoading: isKanbanLoading } = useEmployeesList(
+    viewMode === 'kanban',
+  );
+  const { data: directoryResponse, isLoading: isDirectoryLoading } = useEmployeeDirectoryList(
+    {
+      search: debouncedSearch || undefined,
+      departmentId: departmentFilter || undefined,
+      employmentStatus: statusFilter || undefined,
+      page: currentPage,
+      pageSize,
+    },
+    viewMode === 'list',
+  );
+  const kanbanFilteredEmployees = kanbanEmployees.filter((employee) => {
+    const searchTerm = search.trim().toLowerCase();
+    const fullName = `${employee.first_name} ${employee.last_name}`.toLowerCase();
     const matchesSearch =
-      !search ||
-      fullName.includes(search.toLowerCase()) ||
-      email.toLowerCase().includes(search.toLowerCase()) ||
-      (emp.job_position_title &&
-        emp.job_position_title.toLowerCase().includes(search.toLowerCase()));
+      !searchTerm ||
+      fullName.includes(searchTerm) ||
+      employee.email.toLowerCase().includes(searchTerm) ||
+      employee.job_position_title?.toLowerCase().includes(searchTerm);
 
-    const matchesDept = !departmentFilter || emp.department_id === departmentFilter;
-    const matchesStatus = !statusFilter || emp.employment_status === statusFilter;
-
-    return matchesSearch && matchesDept && matchesStatus;
+    return (
+      matchesSearch &&
+      (!departmentFilter || employee.department_id === departmentFilter) &&
+      (!statusFilter || employee.employment_status === statusFilter)
+    );
   });
+  const employees =
+    viewMode === 'kanban' ? kanbanFilteredEmployees : (directoryResponse?.employees ?? []);
+  const totalEmployees = directoryResponse?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalEmployees / pageSize));
+  const isLoading = viewMode === 'kanban' ? isKanbanLoading : isDirectoryLoading;
+  const { data: meta } = useEmployeeMeta();
+  const createEmployeeMutation = useCreateEmployee();
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const getInitials = (first: string, last: string) =>
     `${first[0] || ''}${last[0] || ''}`.toUpperCase() || 'EM';
 
-  const EmployeeCard = ({ emp }: { emp: (typeof filteredEmployees)[0] }) => {
+  const EmployeeCard = ({ emp }: { emp: EmployeeListItem }) => {
     const firstName = emp.first_name || '';
     const lastName = emp.last_name || '';
     const fullName = `${firstName} ${lastName}`.trim() || 'Unnamed Employee';
@@ -105,13 +147,6 @@ export const EmployeeDirectoryPage: React.FC = () => {
     );
   };
 
-  const {
-    currentPage,
-    setCurrentPage,
-    pageSize,
-    setPageSize,
-    paginatedItems: paginatedEmployees,
-  } = usePagination(filteredEmployees, 12);
 
   return (
     <AppLayout
@@ -160,7 +195,10 @@ export const EmployeeDirectoryPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <Select
               value={departmentFilter || 'all'}
-              onValueChange={(val) => setDepartmentFilter(val === 'all' ? '' : val)}
+              onValueChange={(val) => {
+                setDepartmentFilter(val === 'all' ? '' : val);
+                setCurrentPage(1);
+              }} 
             >
               <SelectTrigger className="w-full sm:w-44">
                 <SelectValue placeholder="All Departments" />
@@ -175,7 +213,10 @@ export const EmployeeDirectoryPage: React.FC = () => {
 
             <Select
               value={statusFilter || 'all'}
-              onValueChange={(val) => setStatusFilter(val === 'all' ? '' : val)}
+              onValueChange={(val) => {
+                setStatusFilter(val === 'all' ? '' : (val as EmploymentStatus));
+                setCurrentPage(1);
+              }} 
             >
               <SelectTrigger className="w-full sm:w-36">
                 <SelectValue placeholder="All Statuses" />
@@ -219,7 +260,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
             <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             Loading employees...
           </div>
-        ) : filteredEmployees.length === 0 ? (
+        ) : employees.length === 0 ? (
           <div className="bg-bg border border-line rounded-2xl p-12 sm:p-16 text-center">
             <h3 className="font-serif text-lg font-semibold text-ink mb-1">No employees found</h3>
             <p className="text-xs text-ink-soft mb-4">
@@ -238,7 +279,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
           // --- Kanban View ---
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             {KANBAN_COLUMNS.map(({ status, label }) => {
-              const colEmployees = filteredEmployees.filter((e) => e.employment_status === status);
+              const colEmployees = employees.filter((e) => e.employment_status === status);
               return (
                 <div key={status} className="space-y-2">
                   <div className="flex items-center gap-2 px-1">
@@ -273,7 +314,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedEmployees.map((emp, idx) => {
+                  {employees.map((emp, idx) => {
                     const firstName = emp.first_name || '';
                     const lastName = emp.last_name || '';
                     const fullName = `${firstName} ${lastName}`.trim() || 'Unnamed Employee';
@@ -319,7 +360,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
               <Pagination
                 variant="standalone"
                 currentPage={currentPage}
-                totalItems={filteredEmployees.length}
+                totalItems={totalEmployees}
                 pageSize={pageSize}
                 pageSizeOptions={[12, 24, 48, 96]}
                 itemName="employees"
