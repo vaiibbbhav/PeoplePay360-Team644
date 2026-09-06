@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { X, Check, Clock, User, AlertCircle } from 'lucide-react';
+import { X, Check, Clock, User, AlertCircle, Trash2 } from 'lucide-react';
 import { useEmployeesList } from '@/features/employees/queries/useEmployees';
 import {
   useSaveManualAttendance,
+  useDeleteAttendance,
   type AttendanceRecord,
   type SaveManualAttendancePayload,
 } from '../queries/useAttendance';
@@ -37,6 +38,8 @@ export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
 }) => {
   const { data: employees = [] } = useEmployeesList();
   const saveMutation = useSaveManualAttendance();
+  const deleteMutation = useDeleteAttendance();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [employeeId, setEmployeeId] = useState('');
   const [date, setDate] = useState('');
@@ -112,6 +115,7 @@ export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
     const checkOutIso = checkOutTime ? new Date(`${date}T${checkOutTime}:00+05:30`).toISOString() : null;
 
     const payload: SaveManualAttendancePayload = {
+      id: initialRecord?.id || undefined,
       employeeId,
       date,
       checkIn: checkInIso,
@@ -131,6 +135,26 @@ export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
           : (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
             'Failed to save attendance record.';
       setErrorMessage(msg);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!initialRecord?.id) return;
+    if (!window.confirm('Are you sure you want to delete this attendance record?')) return;
+    setIsDeleting(true);
+    setErrorMessage('');
+    try {
+      await deleteMutation.mutateAsync(initialRecord.id);
+      onClose();
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+            'Failed to delete attendance record.';
+      setErrorMessage(msg);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -310,26 +334,41 @@ export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
             </div>
 
             {/* Submit buttons */}
-            <div className="pt-4 flex items-center justify-end gap-3 border-t border-line">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-xs font-medium text-ink-soft hover:text-ink transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={saveMutation.isPending}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-colors disabled:opacity-50 shadow-xs"
-              >
-                {saveMutation.isPending ? (
-                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <Check className="w-3.5 h-3.5" />
+            <div className="pt-4 flex items-center justify-between gap-3 border-t border-line">
+              <div>
+                {initialRecord?.id && (
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={isDeleting || saveMutation.isPending}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>{isDeleting ? 'Deleting...' : 'Delete Log'}</span>
+                  </button>
                 )}
-                <span>{initialRecord ? 'Save Adjustment' : 'Save Attendance'}</span>
-              </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 text-xs font-medium text-ink-soft hover:text-ink transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saveMutation.isPending || isDeleting}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-colors disabled:opacity-50 shadow-xs cursor-pointer"
+                >
+                  {saveMutation.isPending ? (
+                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Check className="w-3.5 h-3.5" />
+                  )}
+                  <span>{initialRecord ? 'Save Adjustment' : 'Save Attendance'}</span>
+                </button>
+              </div>
             </div>
           </form>
         </div>

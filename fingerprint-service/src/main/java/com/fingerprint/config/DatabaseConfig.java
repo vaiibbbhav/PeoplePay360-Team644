@@ -89,7 +89,8 @@ public class DatabaseConfig {
     }
 
     @Bean
+    @SuppressWarnings("null")
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
+        return new JdbcTemplate(java.util.Objects.requireNonNull(dataSource));
     }
 }

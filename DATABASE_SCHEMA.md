@@ -78,6 +78,7 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 | Column | Type | Constraints | Description |
 |---|---|---|---|
 | `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique employee ID |
+| `employeeCode` | `VARCHAR(20)` | Nullable, `UNIQUE` | Unique human-readable employee code (e.g., EMP-001) |
 | `userId` | `UUID` | `NOT NULL`, `UNIQUE`, FK `users.id` (`CASCADE`) | Linked user identity account |
 | `phone` | `VARCHAR(30)` | Nullable | Contact number |
 | `departmentId` | `UUID` | FK `departments.id` (`SET NULL`) | Department binding |
@@ -138,6 +139,7 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `id` (UUID, Primary Key, default random)
 - `employee_id` (UUID, NOT NULL, unique, references `employees.id` ON DELETE CASCADE)
 - `encrypted_template` (TEXT, NOT NULL)
+- `encryted_template` (TEXT, synchronized compatibility alias)
 - `iv` (VARCHAR(64), NOT NULL)
 - `key_version` (VARCHAR(20), NOT NULL, default 'v1')
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)

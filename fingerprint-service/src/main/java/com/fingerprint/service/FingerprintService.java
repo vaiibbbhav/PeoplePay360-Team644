@@ -107,11 +107,126 @@ public class FingerprintService {
      *    - Updates NeonDB `attendance` table.
      * 5. If no match found: returns "No user exists".
      */
-    public Map<String, Object> punchAttendance(String imageBase64) {
+    /**
+     * Biometric punch terminal with support for 1:1 verification when employeeIdentifier (e.g. employee code) is given,
+     * or 1:N discovery when employeeIdentifier is omitted.
+     */
+    public Map<String, Object> punchAttendance(String employeeIdentifier, String imageBase64) {
         if (imageBase64 == null || imageBase64.trim().isEmpty()) {
             throw new IllegalArgumentException("Fingerprint image data is required for matching");
         }
 
+        if (employeeIdentifier != null && !employeeIdentifier.trim().isEmpty()) {
+            return punchAttendance1to1(employeeIdentifier.trim(), imageBase64);
+        }
+
+        return punchAttendance1toN(imageBase64);
+    }
+
+    public Map<String, Object> punchAttendance(String imageBase64) {
+        return punchAttendance(null, imageBase64);
+    }
+
+    /**
+     * 1:1 Biometric Verification:
+     * Directly maps the scan to the specific employee designated by employee code (e.g. EMP-003),
+     * retrieving and decrypting ONLY that employee's enrolled biometric template.
+     */
+    @SuppressWarnings("deprecation")
+    public Map<String, Object> punchAttendance1to1(String employeeIdentifier, String imageBase64) {
+        String employeeId = resolveEmployeeId(employeeIdentifier);
+        if (employeeId == null) {
+            logger.warn("1:1 biometric verification failed: employee not found for code {}", employeeIdentifier);
+            Map<String, Object> notFound = new HashMap<>();
+            notFound.put("success", false);
+            notFound.put("matched", false);
+            notFound.put("score", 0.0);
+            notFound.put("employeeCode", employeeIdentifier);
+            notFound.put("message", "Employee code '" + employeeIdentifier + "' not found");
+            notFound.put("announcement", "Employee code not found");
+            return notFound;
+        }
+
+        // Query ONLY this employee's enrolled fingerprint from NeonDB
+        String querySql = "SELECT employee_id, encrypted_template, iv, key_version FROM fingerprint WHERE employee_id = ?::uuid LIMIT 1";
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(querySql, employeeId);
+
+        if (rows.isEmpty()) {
+            logger.warn("1:1 biometric verification: no enrolled template for employee {}", employeeIdentifier);
+            Map<String, Object> notEnrolled = new HashMap<>();
+            notEnrolled.put("success", false);
+            notEnrolled.put("matched", false);
+            notEnrolled.put("score", 0.0);
+            notEnrolled.put("employeeId", employeeId);
+            notEnrolled.put("employeeCode", employeeIdentifier);
+            notEnrolled.put("message", "No fingerprint template enrolled for employee " + employeeIdentifier);
+            notEnrolled.put("announcement", "No fingerprint enrolled for this employee");
+            return notEnrolled;
+        }
+
+        Map<String, Object> row = rows.get(0);
+        String cipherText = (String) row.get("encrypted_template");
+        String iv = (String) row.get("iv");
+        String keyVersion = (String) row.get("key_version");
+
+        if (cipherText == null || iv == null) {
+            Map<String, Object> corrupt = new HashMap<>();
+            corrupt.put("success", false);
+            corrupt.put("matched", false);
+            corrupt.put("score", 0.0);
+            corrupt.put("message", "Corrupt biometric record for " + employeeIdentifier);
+            return corrupt;
+        }
+
+        byte[] probeBytes = decodeBase64Image(imageBase64);
+        FingerprintImage probeImage = new FingerprintImage().dpi(500).decode(probeBytes);
+        FingerprintTemplate probeTemplate = new FingerprintTemplate(probeImage);
+        FingerprintMatcher matcher = new FingerprintMatcher(probeTemplate);
+
+        byte[] decryptedTemplate = null;
+        double score = 0.0;
+        try {
+            // Decrypt ONLY the single candidate's template
+            decryptedTemplate = cryptoService.decrypt(cipherText, iv, keyVersion);
+            FingerprintTemplate candidateTemplate = new FingerprintTemplate(decryptedTemplate);
+            score = matcher.match(candidateTemplate);
+            logger.info("1:1 match score for {}: {}", employeeIdentifier, score);
+        } catch (Exception e) {
+            logger.error("Error during 1:1 decryption/matching for {}: {}", employeeIdentifier, e.getMessage(), e);
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("matched", false);
+            err.put("score", 0.0);
+            err.put("message", "Biometric decryption failed: " + e.getMessage());
+            return err;
+        } finally {
+            if (decryptedTemplate != null) {
+                cryptoService.wipe(decryptedTemplate);
+            }
+        }
+
+        if (score < MATCH_THRESHOLD) {
+            logger.info("1:1 Match failed for {}. Score: {}, Threshold: {}", employeeIdentifier, score, MATCH_THRESHOLD);
+            Map<String, Object> mismatch = new HashMap<>();
+            mismatch.put("success", false);
+            mismatch.put("matched", false);
+            mismatch.put("score", Math.round(score * 10.0) / 10.0);
+            mismatch.put("employeeId", employeeId);
+            mismatch.put("employeeCode", employeeIdentifier);
+            mismatch.put("message", "Fingerprint does not match " + employeeIdentifier);
+            mismatch.put("announcement", "Fingerprint verification failed");
+            return mismatch;
+        }
+
+        // Matched! Execute punch in NeonDB attendance
+        return executePunch(employeeId, score);
+    }
+
+    /**
+     * 1:N Biometric Matching fallback when no employee identifier is specified.
+     */
+    @SuppressWarnings("deprecation")
+    public Map<String, Object> punchAttendance1toN(String imageBase64) {
         byte[] probeBytes = decodeBase64Image(imageBase64);
         FingerprintImage probeImage = new FingerprintImage().dpi(500).decode(probeBytes);
         FingerprintTemplate probeTemplate = new FingerprintTemplate(probeImage);
@@ -186,7 +301,7 @@ public class FingerprintService {
     private Map<String, Object> executePunch(String employeeId, double score) {
         // Fetch employee details from users table joined via employees.user_id
         String empSql = """
-            SELECT e.id, u.email,
+            SELECT e.id, e.employee_code, u.email,
                    COALESCE(u.first_name, 'Employee') as first_name,
                    COALESCE(u.last_name, 'User') as last_name
             FROM employees e
@@ -198,10 +313,12 @@ public class FingerprintService {
         List<Map<String, Object>> empList = jdbcTemplate.queryForList(empSql, employeeId);
         String employeeName = "Employee";
         String employeeEmail = "";
+        String employeeCode = "";
         if (!empList.isEmpty()) {
             Map<String, Object> emp = empList.get(0);
             employeeName = emp.get("first_name") + " " + emp.get("last_name");
             employeeEmail = emp.get("email") != null ? (String) emp.get("email") : "";
+            employeeCode = emp.get("employee_code") != null ? (String) emp.get("employee_code") : "";
         }
 
         // Query today's attendance record in Indian Standard Time (Asia/Kolkata)
@@ -313,6 +430,7 @@ public class FingerprintService {
         response.put("matched", true);
         response.put("action", action);
         response.put("employeeId", employeeId);
+        response.put("employeeCode", employeeCode);
         response.put("employeeName", employeeName);
         response.put("employeeEmail", employeeEmail);
         response.put("status", status);
@@ -410,6 +528,19 @@ public class FingerprintService {
             }
 
             return clean;
+        }
+
+        // Look up by employee_code in employees table (e.g. 3, EMP-3, EMP-003)
+        String codeQuery = """
+            SELECT id FROM employees
+            WHERE LOWER(employee_code) = LOWER(?)
+               OR regexp_replace(LOWER(employee_code), '^emp-0*', 'emp-') = regexp_replace(LOWER(?), '^emp-0*', 'emp-')
+               OR regexp_replace(LOWER(employee_code), '^emp-0*', '') = regexp_replace(LOWER(?), '^emp-0*', '')
+            LIMIT 1
+            """;
+        List<String> codeList = jdbcTemplate.query(codeQuery, (rs, rowNum) -> rs.getString("id"), clean, clean, clean);
+        if (!codeList.isEmpty()) {
+            return codeList.get(0);
         }
 
         // Look up by email in users table joined to employees

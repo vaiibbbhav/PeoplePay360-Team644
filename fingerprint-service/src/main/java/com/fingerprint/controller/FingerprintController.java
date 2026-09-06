@@ -72,7 +72,12 @@ public class FingerprintController {
                 return ResponseEntity.badRequest().body(ApiResponse.error("Fingerprint image data is required for matching"));
             }
 
-            Map<String, Object> result = fingerprintService.punchAttendance(request.getImage());
+            String identifier = request.getEmployeeCode();
+            if (identifier == null || identifier.trim().isEmpty()) {
+                identifier = request.getEmployeeId();
+            }
+
+            Map<String, Object> result = fingerprintService.punchAttendance(identifier, request.getImage());
             boolean matched = Boolean.TRUE.equals(result.get("matched"));
             String message = (String) result.get("message");
 

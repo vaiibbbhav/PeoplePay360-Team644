@@ -13,6 +13,7 @@ import {
   uniqueIndex,
   index,
   check,
+  foreignKey,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -71,6 +72,7 @@ export const employees = pgTable(
   'employees',
   {
     id: uuid('id').defaultRandom().primaryKey(),
+    employeeCode: varchar('employee_code', { length: 20 }).unique(),
     userId: uuid('user_id')
       .notNull()
       .unique()
@@ -80,7 +82,7 @@ export const employees = pgTable(
     jobPositionId: uuid('job_position_id').references(() => jobPositions.id, {
       onDelete: 'set null',
     }),
-    managerId: uuid('manager_id').references((): any => employees.id, { onDelete: 'set null' }),
+    managerId: uuid('manager_id'),
     workingScheduleId: uuid('working_schedule_id').references(() => workingSchedules.id, {
       onDelete: 'set null',
     }),
@@ -100,6 +102,11 @@ export const employees = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
   },
   (table) => [
+    foreignKey({
+      columns: [table.managerId],
+      foreignColumns: [table.id],
+      name: 'employees_manager_id_fk',
+    }).onDelete('set null'),
     index('idx_employees_department_id').on(table.departmentId),
     index('idx_employees_job_position_id').on(table.jobPositionId),
     index('idx_employees_manager_id').on(table.managerId),
@@ -227,6 +234,7 @@ export const fingerprint = pgTable('fingerprint', {
     .unique()
     .references(() => employees.id, { onDelete: 'cascade' }),
   encryptedTemplate: text('encrypted_template').notNull(),
+  encrytedTemplate: text('encryted_template'),
   iv: varchar('iv', { length: 64 }).notNull(),
   keyVersion: varchar('key_version', { length: 20 }).notNull().default('v1'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),

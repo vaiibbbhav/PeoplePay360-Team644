@@ -24,6 +24,7 @@ export const LoginForm: React.FC = () => {
   const resendMutation = useResendVerificationMutation();
 
   const isVerified = searchParams.get('verified') === 'true';
+  const isSessionExpired = searchParams.get('reason') === 'session-expired';
   const initialEmail = searchParams.get('email') || '';
 
   const [email, setEmail] = useState(initialEmail);
@@ -127,6 +128,15 @@ export const LoginForm: React.FC = () => {
         <div className="px-3.5 py-3 rounded-lg border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-xs mb-5 bg-emerald-500/10 flex items-center gap-2 font-medium">
           <span>✓</span>
           <span>Email verified successfully. Please enter your password to sign in.</span>
+        </div>
+      )}
+
+      {isSessionExpired && (
+        <div
+          role="status"
+          className="px-3.5 py-3 rounded-lg border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs mb-5 bg-amber-500/10"
+        >
+          Your session has expired. Sign in again to continue.
         </div>
       )}
 

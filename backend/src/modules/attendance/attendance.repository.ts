@@ -37,19 +37,7 @@ export async function findAllAttendance(employeeId?: string, startDate?: string,
 
 export async function findAttendanceById(id: string) {
   const rows = await db
-    .select({
-      id: attendance.id,
-      employee_id: attendance.employeeId,
-      date: attendance.date,
-      check_in: attendance.checkIn,
-      check_out: attendance.checkOut,
-      worked_hours: attendance.workedHours,
-      status: attendance.status,
-      exception_note: attendance.exceptionNote,
-      is_manual_edit: attendance.isManualEdit,
-      created_at: attendance.createdAt,
-      updated_at: attendance.updatedAt,
-    })
+    .select()
     .from(attendance)
     .where(eq(attendance.id, id))
     .limit(1);
@@ -101,6 +89,7 @@ export async function findScheduleLineForDate(employeeId: string, dayOfWeek: str
 }
 
 export type UpsertAttendanceData = {
+  id?: string | null;
   employeeId: string;
   date: string;
   checkIn?: string | Date | null;
@@ -112,12 +101,19 @@ export type UpsertAttendanceData = {
 };
 
 export async function upsertAttendance(data: UpsertAttendanceData) {
-  const existing = await findAttendanceByEmployeeAndDate(data.employeeId, data.date);
+  let existing = null;
+  if (data.id) {
+    existing = await findAttendanceById(data.id);
+  }
+  if (!existing) {
+    existing = await findAttendanceByEmployeeAndDate(data.employeeId, data.date);
+  }
 
   if (existing) {
     const [updated] = await db
       .update(attendance)
       .set({
+        date: data.date || existing.date,
         checkIn: data.checkIn ? new Date(data.checkIn) : existing.checkIn,
         checkOut: data.checkOut ? new Date(data.checkOut) : existing.checkOut,
         workedHours:
@@ -147,6 +143,14 @@ export async function upsertAttendance(data: UpsertAttendanceData) {
     })
     .returning();
   return created;
+}
+
+export async function deleteAttendance(id: string) {
+  const [deleted] = await db
+    .delete(attendance)
+    .where(eq(attendance.id, id))
+    .returning();
+  return deleted || null;
 }
 
 export async function countWorkedDaysForPeriod(

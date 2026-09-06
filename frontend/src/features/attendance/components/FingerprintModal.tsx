@@ -8,9 +8,15 @@ type FingerprintModalProps = {
   isOpen: boolean;
   onClose: () => void;
   employeeId: string;
+  employeeCode?: string | null;
 };
 
-export const FingerprintModal: React.FC<FingerprintModalProps> = ({ isOpen, onClose, employeeId }) => {
+export const FingerprintModal: React.FC<FingerprintModalProps> = ({
+  isOpen,
+  onClose,
+  employeeId,
+  employeeCode,
+}) => {
   const { data: fpStatus, refetch } = useFingerprintStatus(employeeId);
   const enrollMutation = useEnrollFingerprint();
 
@@ -109,7 +115,13 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ isOpen, onCl
             </span>
           </div>
           <span className="font-mono text-[11px] text-ink-soft">
-            {employeeId.slice(0, 8)}...
+            {employeeCode ? (
+              <span className="px-2 py-0.5 rounded bg-accent/10 text-accent font-semibold border border-accent/20">
+                {employeeCode.replace(/^EMP-0*(\d+)$/i, 'EMP-$1')}
+              </span>
+            ) : (
+              `${employeeId.slice(0, 8)}...`
+            )}
           </span>
         </div>
 
@@ -140,6 +152,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ isOpen, onCl
           selectedReader={selectedReader}
           isProcessing={enrollMutation.isPending}
           onScanComplete={handleScanComplete}
+          targetEmployeeCode={employeeCode || undefined}
           statusText="Touch the sensor to scan and register your biometric template."
         />
       </div>

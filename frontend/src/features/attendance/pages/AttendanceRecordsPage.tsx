@@ -13,7 +13,6 @@ import {
 import { AttendanceRecordsTable } from '../components/AttendanceRecordsTable';
 import { ManualAttendanceDrawer } from '../components/ManualAttendanceDrawer';
 import { EmployeeAttendancePage } from './EmployeeAttendancePage';
-import { Users } from 'lucide-react';
 
 export const AttendanceRecordsPage: React.FC = () => {
   const { data: user } = useCurrentUser();
@@ -114,14 +113,6 @@ export const AttendanceRecordsPage: React.FC = () => {
             <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
               Company-wide biometric punch logs, daily hours, and HR exception audit trail.
             </p>
-          </div>
-
-          {/* Company Ledger Status */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium bg-bg-raised border border-line text-ink">
-              <Users className="w-3.5 h-3.5 text-accent" />
-              <span>Company Ledger</span>
-            </div>
           </div>
         </div>
 

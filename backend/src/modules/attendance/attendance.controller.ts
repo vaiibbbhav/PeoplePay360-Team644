@@ -16,7 +16,7 @@ export const listAttendance = asyncHandler(async (req: Request, res: Response): 
 export const getAttendanceById = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const record = await attendanceService.getAttendanceById(req.params.id);
-    assertEmployeeAccess(req, record.employee_id);
+    assertEmployeeAccess(req, record.employeeId);
     res.json(record);
   },
 );
@@ -38,5 +38,12 @@ export const saveManualAttendance = asyncHandler(
     const validated = validateAttendanceRecord(req.body);
     const record = await attendanceService.saveManualAttendance(validated);
     res.status(201).json(record);
+  },
+);
+
+export const deleteAttendance = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    await attendanceService.deleteAttendance(req.params.id);
+    res.status(204).send();
   },
 );

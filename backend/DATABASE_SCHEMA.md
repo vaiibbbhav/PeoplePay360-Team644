@@ -13,7 +13,7 @@ This document describes the schema architecture and table definitions in `src/db
 ---
 
 ## 2. Employees & Users
-- `employees`: `id (uuid, pk)`, `first_name (varchar 100)`, `last_name (varchar 100)`, `email (varchar 150, unique)`, `phone (varchar 30)`, `department_id (uuid, fk)`, `job_position_id (uuid, fk)`, `manager_id (uuid, fk)`, `working_schedule_id (uuid, fk)`, `employment_status (varchar 30)`, `date_of_joining (date)`, `date_of_birth (date)`, `gender (varchar 20)`, `identification_number (varchar 50)`, `bank_name (varchar 100)`, `bank_account_number (varchar 50)`, `bank_routing_code (varchar 50)`, `avatar_url (text)`, `created_at`, `updated_at`
+- `employees`: `id (uuid, pk)`, `employee_code (varchar 20, unique)`, `first_name (varchar 100)`, `last_name (varchar 100)`, `email (varchar 150, unique)`, `phone (varchar 30)`, `department_id (uuid, fk)`, `job_position_id (uuid, fk)`, `manager_id (uuid, fk)`, `working_schedule_id (uuid, fk)`, `employment_status (varchar 30)`, `date_of_joining (date)`, `date_of_birth (date)`, `gender (varchar 20)`, `identification_number (varchar 50)`, `bank_name (varchar 100)`, `bank_account_number (varchar 50)`, `bank_routing_code (varchar 50)`, `avatar_url (text)`, `created_at`, `updated_at`
 - `users`: `id (uuid, pk)`, `email (varchar 150, unique)`, `password_hash (varchar 255)`, `role (varchar 50)`, `employee_id (uuid, fk)`, `is_active (boolean)`, `created_at`, `updated_at`
 
 ---

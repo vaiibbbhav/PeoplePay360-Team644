@@ -23,7 +23,8 @@ export const checkOutSchema = z.object({
   checkOut: pastOrPresentDateTimeSchema.optional(),
 });
 
-export const baseAttendanceRecordSchema = z.object({
+const baseAttendanceRecordSchema = z.object({
+  id: z.string().uuid('Invalid record ID').optional().nullable(),
   employeeId: z.string().uuid('Invalid employee ID'),
   date: realCalendarDateSchema,
   checkIn: pastOrPresentDateTimeSchema.optional().nullable(),
@@ -35,7 +36,7 @@ export const baseAttendanceRecordSchema = z.object({
 });
 
 export const attendanceRecordSchema = baseAttendanceRecordSchema.refine(
-  (data) => {
+  (data: any) => {
     if (data.checkIn && data.checkOut) {
       return Date.parse(data.checkOut) >= Date.parse(data.checkIn);
     }
@@ -47,7 +48,7 @@ export const attendanceRecordSchema = baseAttendanceRecordSchema.refine(
 export type ManualAttendanceInput = z.infer<typeof attendanceRecordSchema>;
 
 export const updateAttendanceSchema = baseAttendanceRecordSchema.partial().refine(
-  (data) => {
+  (data: any) => {
     if (data.checkIn && data.checkOut) {
       return Date.parse(data.checkOut) >= Date.parse(data.checkIn);
     }
@@ -59,7 +60,7 @@ export const updateAttendanceSchema = baseAttendanceRecordSchema.partial().refin
 export function validateAttendanceRecord(data: unknown) {
   const result = attendanceRecordSchema.safeParse(data);
   if (!result.success) {
-    const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
+    const errorMsg = result.error.errors.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ');
     throw new ValidationError(errorMsg);
   }
   return result.data;
@@ -68,7 +69,7 @@ export function validateAttendanceRecord(data: unknown) {
 export function validateUpdateAttendance(data: unknown) {
   const result = updateAttendanceSchema.safeParse(data);
   if (!result.success) {
-    const errorMsg = result.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
+    const errorMsg = result.error.errors.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ');
     throw new ValidationError(errorMsg);
   }
   return result.data;

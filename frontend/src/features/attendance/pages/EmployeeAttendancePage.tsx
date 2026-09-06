@@ -251,6 +251,7 @@ export const EmployeeAttendancePage: React.FC = () => {
         isOpen={isFingerprintModalOpen}
         onClose={() => setIsFingerprintModalOpen(false)}
         employeeId={employeeId}
+        employeeCode={user?.employeeCode}
       />
     </AppLayout>
   );

@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '../../shared/db';
 import { users, employees } from '../../db/schema';
 import { UserRole } from '../../shared/auth-middleware';
+import { generateEmployeeCode } from '../../shared/employee-code';
 
 export type UserRecord = typeof users.$inferSelect;
 export type NewUserRecord = typeof users.$inferInsert;
@@ -40,10 +41,12 @@ export const createUser = async (data: {
 };
 
 export const createEmployeeForUser = async (data: { userId: string }): Promise<EmployeeRecord> => {
+  const employeeCode = await generateEmployeeCode();
   const [employee] = await db
     .insert(employees)
     .values({
       userId: data.userId,
+      employeeCode,
       employmentStatus: 'incomplete',
     })
     .returning();

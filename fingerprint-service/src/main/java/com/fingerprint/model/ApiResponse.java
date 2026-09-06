@@ -1,7 +1,5 @@
 package com.fingerprint.model;
 
-import java.util.Map;
-
 public class ApiResponse {
     private boolean success;
     private String message;

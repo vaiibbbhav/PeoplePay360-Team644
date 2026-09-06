@@ -5,6 +5,7 @@ export type PunchResult = {
   matched: boolean;
   action?: 'PUNCH_IN' | 'PUNCH_OUT';
   employeeId?: string;
+  employeeCode?: string;
   employeeName?: string;
   employeeEmail?: string;
   status?: string;
@@ -60,11 +61,26 @@ export async function enrollFingerprint(employeeId: string, imageBase64: string)
   return data;
 }
 
+export type PunchFingerprintParams = {
+  imageBase64: string;
+  employeeCode?: string;
+};
+
 /**
  * Biometric match and Punch In / Punch Out
+ * When employeeCode is provided, performs direct 1:1 biometric verification.
  */
-export async function punchWithFingerprint(imageBase64: string): Promise<PunchResult> {
+export async function punchWithFingerprint(
+  params: string | PunchFingerprintParams,
+): Promise<PunchResult> {
+  const imageBase64 = typeof params === 'string' ? params : params.imageBase64;
+  const employeeCode = typeof params === 'object' ? params.employeeCode?.trim() : undefined;
+
   try {
+    const res = await fingerprintApi.post('/punch', {
+      image: imageBase64,
+      employeeCode: employeeCode || undefined,
+    });
     const payload = (res.data?.data || res.data) as Partial<PunchResult> & Record<string, unknown>;
     const matched = Boolean(payload?.matched);
     const rawScore = payload?.score;
@@ -142,7 +158,7 @@ export function useEnrollFingerprint() {
 export function usePunchFingerprint() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (imageBase64: string) => punchWithFingerprint(imageBase64),
+    mutationFn: (params: string | PunchFingerprintParams) => punchWithFingerprint(params),
     onSuccess: (data) => {
       if (data.employeeId) {
         queryClient.invalidateQueries({ queryKey: ['today-attendance', data.employeeId] });

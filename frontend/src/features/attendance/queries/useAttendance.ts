@@ -206,6 +206,7 @@ const checkOutApi = async (payload: {
 };
 
 export type SaveManualAttendancePayload = {
+  id?: string;
   employeeId: string;
   date: string;
   checkIn?: string | null;
@@ -269,6 +270,19 @@ export const useSaveManualAttendance = () => {
     mutationFn: async (payload: SaveManualAttendancePayload) => {
       const { data } = await api.post<AttendanceRecord>('/attendance/manual', payload);
       return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['attendance'] });
+      queryClient.invalidateQueries({ queryKey: ['today-attendance'] });
+    },
+  });
+};
+
+export const useDeleteAttendance = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/attendance/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['attendance'] });

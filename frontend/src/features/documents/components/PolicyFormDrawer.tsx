@@ -56,6 +56,10 @@ export const PolicyFormDrawer: React.FC<PolicyFormDrawerProps> = ({
     setErrorMessage(null);
   }, [initialData, isOpen]);
 
+  const drawerRef = useClickOutside<HTMLDivElement>(() => {
+    onClose();
+  }, isOpen);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,10 +101,6 @@ export const PolicyFormDrawer: React.FC<PolicyFormDrawerProps> = ({
       );
     }
   };
-
-  const drawerRef = useClickOutside<HTMLDivElement>(() => {
-    onClose();
-  }, isOpen);
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">

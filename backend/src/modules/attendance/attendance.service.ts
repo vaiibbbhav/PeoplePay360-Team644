@@ -115,3 +115,11 @@ export async function saveManualAttendance(data: ManualAttendanceInput) {
     isManualEdit: true,
   });
 }
+
+export async function deleteAttendance(id: string) {
+  const record = await attendanceRepo.findAttendanceById(id);
+  if (!record) {
+    throw new NotFoundError(`Attendance record with ID ${id} not found`);
+  }
+  return await attendanceRepo.deleteAttendance(id);
+}

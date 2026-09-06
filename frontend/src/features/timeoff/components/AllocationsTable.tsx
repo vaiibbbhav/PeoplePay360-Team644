@@ -3,6 +3,7 @@ import { Plus, Check, Calendar, ShieldCheck, AlertCircle } from 'lucide-react';
 import { useTimeOffAllocations, useApproveAllocation } from '../queries/useTimeOff';
 import { GrantAllocationModal } from './GrantAllocationModal';
 import { InlineAlert } from '@/components/ui/InlineAlert';
+import { Pagination, usePagination } from '@/components/ui/Pagination';
 
 type AllocationsTableProps = {
   canManage?: boolean;
@@ -10,6 +11,13 @@ type AllocationsTableProps = {
 
 export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage }) => {
   const { data: allocations = [], isLoading } = useTimeOffAllocations();
+  const {
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    paginatedItems: paginatedAllocations,
+  } = usePagination(allocations, 15);
   const approveMutation = useApproveAllocation();
   const [isGrantModalOpen, setIsGrantModalOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -84,7 +92,7 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {allocations.map((alloc) => (
+                {paginatedAllocations.map((alloc) => (
                   <tr key={alloc.id} className="hover:bg-bg-raised/40 transition-colors">
                     {/* Employee */}
                     <td className="py-3.5 px-4 whitespace-nowrap">
@@ -159,6 +167,18 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
               </tbody>
             </table>
           </div>
+          <Pagination
+            currentPage={currentPage}
+            totalItems={allocations.length}
+            pageSize={pageSize}
+            pageSizeOptions={[10, 15, 25, 50]}
+            itemName="allocations"
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(newSize) => {
+              setPageSize(newSize);
+              setCurrentPage(1);
+            }}
+          />
         </div>
       )}
 

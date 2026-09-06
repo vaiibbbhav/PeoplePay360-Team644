@@ -14,6 +14,7 @@ import { DeleteConfirmDialog } from '../components/DeleteConfirmDialog';
 import { useNavigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { SearchInput } from '@/components/ui/SearchInput';
+import { Pagination, usePagination } from '@/components/ui/Pagination';
 import {
   Select,
   SelectTrigger,
@@ -127,12 +128,20 @@ export const UserManagementPage: React.FC = () => {
     );
   });
 
+  const {
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    paginatedItems: paginatedUsers,
+  } = usePagination(filteredUsers, 15);
+
   return (
     <AppLayout title="User Management">
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8">
         {/* ── Page heading ── */}
         <div className="mb-1">
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+          <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
             User Management
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft mt-1">
@@ -219,12 +228,13 @@ export const UserManagementPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((u, idx) => {
+                paginatedUsers.map((u, idx) => {
                   const displayName = `${u.firstName || ''} ${u.lastName || ''}`.trim() || '—';
+                  const serialNum = (currentPage - 1) * pageSize + idx + 1;
                   return (
                     <tr key={u.id} className="bg-bg hover:bg-bg-raised/50 transition-colors">
                       {/* S.No. */}
-                      <td className="py-3 px-4 text-ink-soft text-xs">{idx + 1}.</td>
+                      <td className="py-3 px-4 text-ink-soft text-xs">{serialNum}.</td>
 
                       {/* Name */}
                       <td className="py-3 px-4 font-medium text-ink">{displayName}</td>
@@ -275,6 +285,18 @@ export const UserManagementPage: React.FC = () => {
               )}
             </tbody>
           </table>
+          <Pagination
+            currentPage={currentPage}
+            totalItems={filteredUsers.length}
+            pageSize={pageSize}
+            pageSizeOptions={[10, 15, 25, 50]}
+            itemName="users"
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(newSize) => {
+              setPageSize(newSize);
+              setCurrentPage(1);
+            }}
+          />
         </div>
 
         {/* ── Modals ── */}

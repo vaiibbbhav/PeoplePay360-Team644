@@ -83,6 +83,10 @@ export const ContractFormDrawer: React.FC<ContractFormDrawerProps> = ({
     setErrorMessage(null);
   }, [initialData, defaultEmployeeId, isOpen, meta]);
 
+  const drawerRef = useClickOutside<HTMLDivElement>(() => {
+    onClose();
+  }, isOpen);
+
   if (!isOpen) return null;
 
   const handleEmployeeChange = (id: string) => {
@@ -146,10 +150,6 @@ export const ContractFormDrawer: React.FC<ContractFormDrawerProps> = ({
       );
     }
   };
-
-  const drawerRef = useClickOutside<HTMLDivElement>(() => {
-    onClose();
-  }, isOpen);
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">

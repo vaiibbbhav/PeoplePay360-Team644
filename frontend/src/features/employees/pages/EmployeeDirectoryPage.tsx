@@ -4,6 +4,7 @@ import { useEmployeesList, useEmployeeMeta, useCreateEmployee } from '../queries
 import { EmployeeFormModal } from '../components/EmployeeFormModal';
 import { AppLayout } from '../../../components/layout/AppLayout';
 import { SearchInput } from '@/components/ui/SearchInput';
+import { Pagination, usePagination } from '@/components/ui/Pagination';
 import {
   Select,
   SelectTrigger,
@@ -103,6 +104,14 @@ export const EmployeeDirectoryPage: React.FC = () => {
       </div>
     );
   };
+
+  const {
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    paginatedItems: paginatedEmployees,
+  } = usePagination(filteredEmployees, 12);
 
   return (
     <AppLayout
@@ -243,59 +252,79 @@ export const EmployeeDirectoryPage: React.FC = () => {
             })}
           </div>
         ) : (
-          // --- List View ---
-          <div className="rounded-2xl border border-line overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="bg-bg-raised border-b border-line">
-                  <th className="text-left px-4 py-3 font-semibold text-ink-soft">Employee</th>
-                  <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden sm:table-cell">Department</th>
-                  <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden md:table-cell">Manager</th>
-                  <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden lg:table-cell">Schedule</th>
-                  <th className="text-left px-4 py-3 font-semibold text-ink-soft">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredEmployees.map((emp, idx) => {
-                  const firstName = emp.first_name || '';
-                  const lastName = emp.last_name || '';
-                  const fullName = `${firstName} ${lastName}`.trim() || 'Unnamed Employee';
-                  const initials = getInitials(firstName, lastName);
-                  return (
-                    <tr
-                      key={emp.id}
-                      onClick={() => navigate(`/employees/${emp.id}`)}
-                      className={`border-b border-line last:border-0 cursor-pointer hover:bg-bg-raised/60 transition-colors ${idx % 2 === 0 ? 'bg-bg' : 'bg-bg-raised/20'}`}
-                    >
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent font-serif font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden">
-                            {emp.avatar_url ? (
-                              <img src={emp.avatar_url} alt={fullName} className="w-full h-full object-cover" />
-                            ) : (
-                              <span>{initials}</span>
-                            )}
+          // --- List View with Pagination ---
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-line overflow-hidden bg-bg">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="bg-bg-raised border-b border-line">
+                    <th className="text-left px-4 py-3 font-semibold text-ink-soft">Employee</th>
+                    <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden sm:table-cell">Department</th>
+                    <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden md:table-cell">Manager</th>
+                    <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden lg:table-cell">Schedule</th>
+                    <th className="text-left px-4 py-3 font-semibold text-ink-soft">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedEmployees.map((emp, idx) => {
+                    const firstName = emp.first_name || '';
+                    const lastName = emp.last_name || '';
+                    const fullName = `${firstName} ${lastName}`.trim() || 'Unnamed Employee';
+                    const initials = getInitials(firstName, lastName);
+                    return (
+                      <tr
+                        key={emp.id}
+                        onClick={() => navigate(`/employees/${emp.id}`)}
+                        className={`border-b border-line last:border-0 cursor-pointer hover:bg-bg-raised/60 transition-colors ${idx % 2 === 0 ? 'bg-bg' : 'bg-bg-raised/20'}`}
+                      >
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent font-serif font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden">
+                              {emp.avatar_url ? (
+                                <img src={emp.avatar_url} alt={fullName} className="w-full h-full object-cover" />
+                              ) : (
+                                <span>{initials}</span>
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="font-serif font-bold text-ink truncate">{fullName}</div>
+                              <div className="text-[11px] text-ink-soft truncate">{emp.job_position_title || '—'}</div>
+                            </div>
                           </div>
-                          <div className="min-w-0">
-                            <div className="font-serif font-bold text-ink truncate">{fullName}</div>
-                            <div className="text-[11px] text-ink-soft truncate">{emp.job_position_title || '—'}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-ink-soft hidden sm:table-cell">{emp.department_name || '—'}</td>
-                      <td className="px-4 py-3 text-ink-soft hidden md:table-cell">{emp.manager_name || '—'}</td>
-                      <td className="px-4 py-3 text-ink-soft hidden lg:table-cell">{emp.working_schedule_name || '—'}</td>
-                      <td className="px-4 py-3">
-                        <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${STATUS_BADGE[emp.employment_status] || STATUS_BADGE.inactive}`}>
-                          {emp.employment_status.replace('_', ' ')}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td className="px-4 py-3 text-ink-soft hidden sm:table-cell">{emp.department_name || '—'}</td>
+                        <td className="px-4 py-3 text-ink-soft hidden md:table-cell">{emp.manager_name || '—'}</td>
+                        <td className="px-4 py-3 text-ink-soft hidden lg:table-cell">{emp.working_schedule_name || '—'}</td>
+                        <td className="px-4 py-3">
+                          <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${STATUS_BADGE[emp.employment_status] || STATUS_BADGE.inactive}`}>
+                            {emp.employment_status.replace('_', ' ')}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="mt-4">
+              <Pagination
+                variant="standalone"
+                currentPage={currentPage}
+                totalItems={filteredEmployees.length}
+                pageSize={pageSize}
+                pageSizeOptions={[12, 24, 48, 96]}
+                itemName="employees"
+                onPageChange={setCurrentPage}
+                onPageSizeChange={(newSize) => {
+                  setPageSize(newSize);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
           </div>
+        )
         )}
       </div>
 
