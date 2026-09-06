@@ -90,3 +90,8 @@ export const getPayslipById = asyncHandler(async (req: Request, res: Response): 
   }
   res.json(payslip);
 });
+
+export const sendPayslips = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const result = await payrollService.sendPayrunPayslips(req.params.id);
+  res.json(result);
+});

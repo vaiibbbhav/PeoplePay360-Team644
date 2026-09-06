@@ -4,6 +4,7 @@ import { StatGrid } from '@/components/ui/StatCard';
 import {
   useValidatePayrun,
   useMarkPayrunPaid,
+  useSendPayslips,
   type PayrunItem,
 } from '../queries/usePayruns';
 
@@ -39,7 +40,9 @@ const formatDate = (dateStr: string) => {
 export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canManage }) => {
   const validateMutation = useValidatePayrun();
   const markPaidMutation = useMarkPayrunPaid();
+  const sendPayslipsMutation = useSendPayslips();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [sendResult, setSendResult] = useState<{ sent: number; failed: number; total: number } | null>(null);
 
   const handleValidate = async () => {
     setActionError(null);
@@ -58,6 +61,18 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
     } catch (err: unknown) {
       const errorObj = err as { response?: { data?: { error?: string } }; message?: string };
       setActionError(errorObj?.response?.data?.error || errorObj?.message || 'Failed to mark payrun as paid');
+    }
+  };
+
+  const handleSendPayslips = async () => {
+    setActionError(null);
+    setSendResult(null);
+    try {
+      const res = await sendPayslipsMutation.mutateAsync(payrun.id);
+      setSendResult(res);
+    } catch (err: unknown) {
+      const errorObj = err as { response?: { data?: { error?: string } }; message?: string };
+      setActionError(errorObj?.response?.data?.error || errorObj?.message || 'Failed to send payslip emails');
     }
   };
 
@@ -104,12 +119,28 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
               Mark Paid
             </button>
           )}
+          {canManage && payrun.status === 'paid' && (
+            <button
+              onClick={handleSendPayslips}
+              disabled={sendPayslipsMutation.isPending}
+              className="px-4 py-1.5 rounded-lg text-xs font-semibold border border-line bg-bg text-ink hover:bg-bg-raised transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+            >
+              {sendPayslipsMutation.isPending ? 'Sending…' : '✉ Send Payslips'}
+            </button>
+          )}
         </div>
       </div>
 
       {actionError && (
         <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-medium">
           {actionError}
+        </div>
+      )}
+
+      {sendResult && (
+        <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-medium">
+          ✓ Payslip emails dispatched — {sendResult.sent} sent{sendResult.failed > 0 ? `, ${sendResult.failed} failed` : ''}.
+          {sendResult.sent === 0 && ' No SMTP configured — check server console for delivery log.'}
         </div>
       )}
 

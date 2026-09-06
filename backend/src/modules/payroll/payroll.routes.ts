@@ -74,6 +74,12 @@ router.post(
   payrollController.markPayrunPaid,
 );
 
+router.post(
+  '/payruns/:id/send-payslips',
+  requirePermission('payroll.payrun.update'),
+  payrollController.sendPayslips,
+);
+
 // Payslips
 router.get(
   ['/payslips', '/'],

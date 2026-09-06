@@ -8,6 +8,7 @@ import {
   useDeleteEmployee,
 } from '../queries/useEmployees';
 import { EmployeeHeaderCard } from '../components/EmployeeHeaderCard';
+import { SmartButtonBar } from '../components/SmartButtonBar';
 import { OverviewTab } from '../components/OverviewTab';
 import { PersonalDetailsTab } from '../components/PersonalDetailsTab';
 import { EmploymentDetailsTab } from '../components/EmploymentDetailsTab';
@@ -87,6 +88,15 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
         <EmployeeHeaderCard
           employee={employee}
           onEdit={isHrAdmin ? () => setIsEditModalOpen(true) : undefined}
+        />
+
+        {/* Smart Button Counters */}
+        <SmartButtonBar
+          employeeId={employee.id}
+          contractCount={employee.smartCounts?.contracts ?? 0}
+          attendanceCount={employee.smartCounts?.attendance ?? 0}
+          timeOffCount={employee.smartCounts?.timeOff ?? 0}
+          payslipCount={employee.smartCounts?.payslips ?? 0}
         />
 
         {/* Primary Sub-Navigation Tabs matching template */}

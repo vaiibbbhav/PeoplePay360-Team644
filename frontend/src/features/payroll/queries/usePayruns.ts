@@ -177,3 +177,14 @@ export const useMarkPayrunPaid = () => {
     },
   });
 };
+
+const sendPayslipsApi = async (id: string): Promise<{ sent: number; failed: number; total: number }> => {
+  const { data } = await api.post<{ sent: number; failed: number; total: number }>(`/payroll/payruns/${id}/send-payslips`);
+  return data;
+};
+
+export const useSendPayslips = () => {
+  return useMutation({
+    mutationFn: sendPayslipsApi,
+  });
+};

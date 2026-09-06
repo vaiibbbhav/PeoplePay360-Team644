@@ -322,3 +322,88 @@ This link is valid for 8 hours.
     return { success: false, error: errorMsg };
   }
 };
+
+export type PayslipEmailOptions = {
+  toEmail: string;
+  employeeName: string;
+  period: string;
+  netSalary: number;
+  grossSalary: number;
+  totalDeductions: number;
+  payrunName: string;
+};
+
+export const sendPayslipEmail = async (
+  options: PayslipEmailOptions,
+): Promise<{ success: boolean; messageId?: string; error?: string }> => {
+  const { toEmail, employeeName, period, netSalary, grossSalary, totalDeductions, payrunName } = options;
+  const appUrl = process.env.APP_URL || 'http://localhost:5173';
+  const from = process.env.SMTP_FROM || 'PeoplePay360 <noreply@peoplepay360.com>';
+
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Payslip — ${period}</title>
+</head>
+<body style="margin:0;padding:0;font-family:'IBM Plex Sans',Arial,sans-serif;background:#f9f9f7;color:#1a1a1a;">
+  <div style="max-width:560px;margin:40px auto;background:#ffffff;border:1px solid #e5e5e0;border-radius:12px;overflow:hidden;">
+    <div style="padding:24px 28px;border-bottom:1px solid #e5e5e0;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:0.06em;color:#6A3FA0;text-transform:uppercase;">PeoplePay360</div>
+      <h1 style="margin:8px 0 4px;font-size:22px;font-weight:700;color:#1a1a1a;">Your Payslip is Ready</h1>
+      <p style="margin:0;font-size:13px;color:#6b6b6b;">${payrunName} · ${period}</p>
+    </div>
+    <div style="padding:28px;">
+      <p style="font-size:14px;color:#1a1a1a;margin:0 0 20px;">Hello ${employeeName},</p>
+      <p style="font-size:13px;color:#6b6b6b;margin:0 0 24px;">Your payslip for the period <strong style="color:#1a1a1a;">${period}</strong> has been processed and is available in PeoplePay360.</p>
+
+      <div style="background:#f9f9f7;border:1px solid #e5e5e0;border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-size:12px;color:#6b6b6b;">Gross Salary</span>
+          <span style="font-size:13px;font-weight:600;color:#1a1a1a;">${formatCurrency(grossSalary)}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-size:12px;color:#6b6b6b;">Total Deductions</span>
+          <span style="font-size:13px;font-weight:600;color:#c0392b;">-${formatCurrency(totalDeductions)}</span>
+        </div>
+        <div style="border-top:1px solid #e5e5e0;margin:12px 0;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:700;color:#1a1a1a;">Net Salary</span>
+          <span style="font-size:16px;font-weight:700;color:#6A3FA0;">${formatCurrency(netSalary)}</span>
+        </div>
+      </div>
+
+      <a href="${appUrl}/payslips" style="display:inline-block;background:#6A3FA0;color:#ffffff;text-decoration:none;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;">View Full Payslip →</a>
+    </div>
+    <div style="padding:16px 28px;border-top:1px solid #e5e5e0;font-size:11px;color:#a0a09b;">
+      This is an automated email from PeoplePay360 HR &amp; Payroll. Please do not reply directly to this message.
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const text = `Hello ${employeeName},\n\nYour payslip for ${period} is ready.\n\nGross Salary: ${formatCurrency(grossSalary)}\nDeductions: ${formatCurrency(totalDeductions)}\nNet Salary: ${formatCurrency(netSalary)}\n\nLog in at ${appUrl}/payslips to view your full payslip.`;
+
+  const transporter = await getTransporter();
+
+  if (!transporter) {
+    console.log(
+      `[MAILER] SMTP not configured. Payslip email to ${toEmail} (${employeeName}) — Net: ${formatCurrency(netSalary)} — skipped.`,
+    );
+    return { success: false, error: 'SMTP credentials missing; logged to console' };
+  }
+
+  try {
+    const info = await transporter.sendMail({ from, to: toEmail, subject: `Your Payslip — ${period} | PeoplePay360`, text, html });
+    return { success: true, messageId: info.messageId };
+  } catch (error: unknown) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error(`[MAILER] Failed to send payslip email to ${toEmail}:`, errorMsg);
+    return { success: false, error: errorMsg };
+  }
+};
