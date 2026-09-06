@@ -56,36 +56,35 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
           </p>
         </div>
 
-        {/* Change Fingerprint Option button */}
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onOpenFingerprintModal}
-            className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-line bg-bg hover:bg-bg-raised text-ink text-xs font-medium transition-colors cursor-pointer shadow-xs"
-          >
-            <svg
-              className="w-4 h-4 text-accent shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        {fingerprint && (
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onOpenFingerprintModal}
+              className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-line bg-bg hover:bg-bg-raised text-ink text-xs font-medium transition-colors cursor-pointer shadow-xs"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 004.07 9m5.918 8d.5.5 0 01.5.5v2a.5.5 0 01-.5.5h-2a.5.5 0 01-.5-.5v-2a.5.5 0 01.5-.5h2z"
-              />
-            </svg>
-            <div className="text-left">
-              <span className="block text-xs font-semibold leading-tight text-ink">
-                Change Fingerprint
-              </span>
-              <span className="text-[10px] text-ink-soft leading-tight">
-                {fingerprint?.encrypted_template || fingerprint?.encryted_template ? 'Enrolled Key Active' : 'Configure Biometrics'}
-              </span>
-            </div>
-          </button>
-        </div>
+              <svg
+                className="w-4 h-4 text-accent shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 004.07 9m5.918 8d.5.5 0 01.5.5v2a.5.5 0 01-.5.5h-2a.5.5 0 01-.5-.5v-2a.5.5 0 01.5-.5h2z"
+                />
+              </svg>
+              <div className="text-left">
+                <span className="block text-xs font-semibold leading-tight text-ink">
+                  Change Fingerprint
+                </span>
+                <span className="text-[10px] text-ink-soft leading-tight">Enrolled Key Active</span>
+              </div>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Top States & Statistics Grid */}

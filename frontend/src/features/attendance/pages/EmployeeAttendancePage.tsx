@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import {
   useAttendanceList,
@@ -137,17 +137,8 @@ export const EmployeeAttendancePage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <Link
-              to="/attendance/terminal"
-              className="px-3.5 py-2 rounded-lg text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline inline-flex items-center gap-2 shadow-xs"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Punch Station</span>
-            </Link>
-
             <button
+              type="button"
               onClick={() => setIsFingerprintModalOpen(true)}
               className={`px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs ${!isEnrolled
                 ? 'border-accent bg-accent/10 text-accent font-semibold'
