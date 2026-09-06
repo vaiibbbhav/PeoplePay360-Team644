@@ -9,6 +9,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import type { AttendanceRecord } from '../queries/useAttendance';
+import { Pagination, usePagination } from '@/components/ui/Pagination';
 
 import { formatTimeIST, formatDateIST } from '@/lib/formatters';
 
@@ -25,6 +26,13 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
   onEditRecord,
   canManage,
 }) => {
+  const {
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    paginatedItems: paginatedRecords,
+  } = usePagination(records, 20);
   const formatTime = (isoString?: string | null) => {
     return formatTimeIST(isoString);
   };
@@ -136,7 +144,7 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
-            {records.map((record) => {
+            {paginatedRecords.map((record) => {
               const { weekday, dayMonthYear } = formatDate(record.date, record.check_in);
               const hrs =
                 typeof record.worked_hours === 'number'
@@ -252,14 +260,18 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
           </tbody>
         </table>
       </div>
-      <div className="px-4 py-3 bg-bg-raised/40 border-t border-line flex items-center justify-between text-xs text-ink-soft">
-        <div>
-          Showing <span className="font-semibold text-ink">{records.length}</span> recorded attendance logs
-        </div>
-        <div className="text-[11px]">
-          All timestamps synced to company timezone
-        </div>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalItems={records.length}
+        pageSize={pageSize}
+        pageSizeOptions={[15, 20, 50, 100]}
+        itemName="attendance records"
+        onPageChange={setCurrentPage}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setCurrentPage(1);
+        }}
+      />
     </div>
   );
 };

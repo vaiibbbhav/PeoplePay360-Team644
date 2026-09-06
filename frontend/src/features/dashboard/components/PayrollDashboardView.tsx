@@ -55,7 +55,7 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
       {/* Welcome Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+          <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
             Payroll Operations & Finance Console
           </h1>
           <p className="text-ink-soft text-xs sm:text-sm mt-1">

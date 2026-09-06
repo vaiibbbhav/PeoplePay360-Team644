@@ -32,7 +32,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     'timeoff.read',
     'timeoff.write',
     'timeoff.approve',
-    'payroll.payslip.read'
+    'payroll.payslip.read',
+    'reporting.read',
   ],
   'HR Payroll User': [
     // All HR Manager permissions

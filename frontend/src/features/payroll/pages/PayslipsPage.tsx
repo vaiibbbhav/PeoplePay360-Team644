@@ -5,6 +5,7 @@ import { formatCurrency, formatPeriod } from '@/lib/formatters';
 import { PayslipDetailModal } from '@/features/compensation/components/PayslipDetailModal';
 import { MonthlyPayslipDocument } from '@/features/compensation/components/MonthlyPayslipDocument';
 import { SearchInput } from '@/components/ui/SearchInput';
+import { Pagination, usePagination } from '@/components/ui/Pagination';
 import {
   Select,
   SelectTrigger,
@@ -123,6 +124,14 @@ export const PayslipsPage: React.FC = () => {
         return 0;
       });
   }, [payslips, searchQuery, selectedPayrun, selectedStructure, selectedStatus, sortBy]);
+
+  const {
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    paginatedItems: paginatedPayslips,
+  } = usePagination(filteredPayslips, 15);
 
   // KPI Calculations
   const totalCount = filteredPayslips.length;
@@ -451,7 +460,7 @@ export const PayslipsPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-line">
-                    {filteredPayslips.map((p) => {
+                    {paginatedPayslips.map((p) => {
                       const initials = (p.employee_name || 'E')
                         .split(' ')
                         .map((n) => n[0])
@@ -558,6 +567,18 @@ export const PayslipsPage: React.FC = () => {
                 </table>
               </div>
             )}
+            <Pagination
+              currentPage={currentPage}
+              totalItems={filteredPayslips.length}
+              pageSize={pageSize}
+              pageSizeOptions={[15, 25, 50, 100]}
+              itemName="payslips"
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(newSize) => {
+                setPageSize(newSize);
+                setCurrentPage(1);
+              }}
+            />
           </div>
         )}
       </div>

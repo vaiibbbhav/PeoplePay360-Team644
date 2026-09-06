@@ -3,6 +3,7 @@ import { Calendar, AlertTriangle } from 'lucide-react';
 import { useApproveLeaveRequest, type TimeOffRequest } from '../queries/useTimeOff';
 import { RefuseLeaveModal } from './RefuseLeaveModal';
 import { InlineAlert } from '@/components/ui/InlineAlert';
+import { Pagination, usePagination } from '@/components/ui/Pagination';
 
 type LeaveRequestsTableProps = {
   requests: TimeOffRequest[];
@@ -15,6 +16,13 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
   isLoading,
   canManage,
 }) => {
+  const {
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    paginatedItems: paginatedRequests,
+  } = usePagination(requests, 15);
   const approveMutation = useApproveLeaveRequest();
   const [selectedForRefusal, setSelectedForRefusal] = useState<TimeOffRequest | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -104,7 +112,7 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
-              {requests.map((req) => (
+              {paginatedRequests.map((req) => (
                 <tr key={req.id} className="hover:bg-bg-raised/40 transition-colors">
                   {/* Employee */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
@@ -209,12 +217,18 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
             </tbody>
           </table>
         </div>
-      </div>
-
-      <div className="px-4 py-3 bg-bg-raised/40 border-t border-line flex items-center justify-between text-xs text-ink-soft">
-        <div>
-          Showing <span className="font-semibold text-ink">{requests.length}</span> leave requests
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalItems={requests.length}
+          pageSize={pageSize}
+          pageSizeOptions={[10, 15, 25, 50]}
+          itemName="leave requests"
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setCurrentPage(1);
+          }}
+        />
       </div>
 
       <RefuseLeaveModal

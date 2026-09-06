@@ -4,6 +4,7 @@ import { useEmployeesList, useEmployeeMeta, useCreateEmployee } from '../queries
 import { EmployeeFormModal } from '../components/EmployeeFormModal';
 import { AppLayout } from '../../../components/layout/AppLayout';
 import { SearchInput } from '@/components/ui/SearchInput';
+import { Pagination, usePagination } from '@/components/ui/Pagination';
 import {
   Select,
   SelectTrigger,
@@ -41,6 +42,14 @@ export const EmployeeDirectoryPage: React.FC = () => {
 
     return matchesSearch && matchesDept && matchesStatus;
   });
+
+  const {
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    paginatedItems: paginatedEmployees,
+  } = usePagination(filteredEmployees, 12);
 
   return (
     <AppLayout
@@ -138,82 +147,100 @@ export const EmployeeDirectoryPage: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredEmployees.map((emp) => {
-              const firstName = emp.first_name || '';
-              const lastName = emp.last_name || '';
-              const fullName = `${firstName} ${lastName}`.trim() || 'Unnamed Employee';
-              const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || 'EM';
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {paginatedEmployees.map((emp) => {
+                const firstName = emp.first_name || '';
+                const lastName = emp.last_name || '';
+                const fullName = `${firstName} ${lastName}`.trim() || 'Unnamed Employee';
+                const initials = `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase() || 'EM';
 
-              return (
-                <div
-                  key={emp.id}
-                  onClick={() => navigate(`/employees/${emp.id}`)}
-                  className="bg-bg border border-line rounded-2xl p-4 sm:p-5 hover:border-ink-soft/40 transition-colors cursor-pointer flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-start justify-between gap-2.5 mb-3">
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-accent-soft text-accent font-serif font-bold text-base flex items-center justify-center shrink-0 overflow-hidden">
-                          {emp.avatar_url ? (
-                            <img
-                              src={emp.avatar_url}
-                              alt={fullName}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <span>{initials}</span>
-                          )}
+                return (
+                  <div
+                    key={emp.id}
+                    onClick={() => navigate(`/employees/${emp.id}`)}
+                    className="bg-bg border border-line rounded-2xl p-4 sm:p-5 hover:border-ink-soft/40 transition-colors cursor-pointer flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-start justify-between gap-2.5 mb-3">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-accent-soft text-accent font-serif font-bold text-base flex items-center justify-center shrink-0 overflow-hidden">
+                            {emp.avatar_url ? (
+                              <img
+                                src={emp.avatar_url}
+                                alt={fullName}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <span>{initials}</span>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-serif text-base font-bold text-ink leading-tight truncate">
+                              {fullName}
+                            </h3>
+                            <span className="text-xs text-ink-soft block mt-0.5 truncate">
+                              {emp.job_position_title || 'Unassigned Role'}
+                            </span>
+                          </div>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <h3 className="font-serif text-base font-bold text-ink leading-tight truncate">
-                            {fullName}
-                          </h3>
-                          <span className="text-xs text-ink-soft block mt-0.5 truncate">
-                            {emp.job_position_title || 'Unassigned Role'}
+
+                        <span
+                          className={`text-[10px] sm:text-[11px] font-medium px-2 py-0.5 rounded-full border border-line shrink-0 ${emp.employment_status === 'active'
+                              ? 'bg-bg-raised text-ink'
+                              : emp.employment_status === 'on_leave'
+                                ? 'bg-accent-soft text-accent'
+                                : 'bg-bg-raised text-ink-soft'
+                            }`}
+                        >
+                          {emp.employment_status.replace('_', ' ')}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1 pt-2 border-t border-line text-xs text-ink-soft">
+                        <div className="flex justify-between">
+                          <span>Department:</span>
+                          <span className="font-medium text-ink">{emp.department_name || '—'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Manager:</span>
+                          <span className="font-medium text-ink">{emp.manager_name || '—'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Work Schedule:</span>
+                          <span className="font-medium text-ink">
+                            {emp.working_schedule_name || 'Standard 40h'}
                           </span>
                         </div>
                       </div>
-
-                      <span
-                        className={`text-[10px] sm:text-[11px] font-medium px-2 py-0.5 rounded-full border border-line shrink-0 ${
-                          emp.employment_status === 'active'
-                            ? 'bg-bg-raised text-ink'
-                            : emp.employment_status === 'on_leave'
-                              ? 'bg-accent-soft text-accent'
-                              : 'bg-bg-raised text-ink-soft'
-                        }`}
-                      >
-                        {emp.employment_status.replace('_', ' ')}
-                      </span>
                     </div>
 
-                    <div className="space-y-1 pt-2 border-t border-line text-xs text-ink-soft">
-                      <div className="flex justify-between">
-                        <span>Department:</span>
-                        <span className="font-medium text-ink">{emp.department_name || '—'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Manager:</span>
-                        <span className="font-medium text-ink">{emp.manager_name || '—'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Work Schedule:</span>
-                        <span className="font-medium text-ink">
-                          {emp.working_schedule_name || 'Standard 40h'}
-                        </span>
-                      </div>
+                    <div className="pt-3 mt-3 border-t border-line flex items-center justify-between text-[11px] text-accent font-medium">
+                      <span>View Profile & Details →</span>
+                      <span className="text-ink-soft truncate max-w-[150px]">{emp.email}</span>
                     </div>
                   </div>
+                );
+              })}
+            </div>
 
-                  <div className="pt-3 mt-3 border-t border-line flex items-center justify-between text-[11px] text-accent font-medium">
-                    <span>View Profile & Details →</span>
-                    <span className="text-ink-soft truncate max-w-[150px]">{emp.email}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+            {/* Pagination Controls */}
+            <div className="mt-6">
+              <Pagination
+                variant="standalone"
+                currentPage={currentPage}
+                totalItems={filteredEmployees.length}
+                pageSize={pageSize}
+                pageSizeOptions={[12, 24, 48, 96]}
+                itemName="employees"
+                onPageChange={setCurrentPage}
+                onPageSizeChange={(newSize) => {
+                  setPageSize(newSize);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+          </>
         )}
       </div>
 
