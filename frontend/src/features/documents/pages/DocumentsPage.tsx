@@ -131,7 +131,7 @@ export const DocumentsPage: React.FC = () => {
 
   return (
     <AppLayout title="Policies & Documents">
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-8 sm:py-10 space-y-6 sm:space-y-8 font-sans">
         {/* Page Header with Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
@@ -170,14 +170,14 @@ export const DocumentsPage: React.FC = () => {
 
         {/* If Admin/HR Manager, show sub-tabs between catalog and company audit */}
         {isHrAdmin && (
-          <div className="flex items-center gap-2 border-b border-line pb-3 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-bg-raised border border-line overflow-x-auto no-scrollbar">
             <button
               type="button"
               onClick={() => setActiveTab('catalog')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer border shrink-0 ${
+              className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'catalog'
-                  ? 'border-accent bg-accent-soft text-accent font-semibold'
-                  : 'border-line bg-bg text-ink-soft hover:text-ink'
+                  ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
+                  : 'text-ink-soft hover:text-ink'
               }`}
             >
               Policies
@@ -185,16 +185,17 @@ export const DocumentsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('audit')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer border shrink-0 ${
+              className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'audit'
-                  ? 'border-accent bg-accent-soft text-accent font-semibold'
-                  : 'border-line bg-bg text-ink-soft hover:text-ink'
+                  ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
+                  : 'text-ink-soft hover:text-ink'
               }`}
             >
-              Acknowledgement audit
+              Acknowledgement Audit
             </button>
           </div>
         )}
+
 
         {activeTab === 'audit' && isHrAdmin ? (
           <CompanyComplianceTable
@@ -208,12 +209,6 @@ export const DocumentsPage: React.FC = () => {
           />
         ) : (
           <>
-            {isLoading && (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-3" />
-                <p className="text-xs text-ink-soft">Loading compliance documents...</p>
-              </div>
-            )}
 
             {isError && (
               <div className="p-8 text-center bg-bg-raised border border-line rounded-2xl">
@@ -250,7 +245,7 @@ export const DocumentsPage: React.FC = () => {
 
                 {/* Grid of Policies */}
                 {filteredPolicies.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {filteredPolicies.map((policy) => (
                       <PolicyCard
                         key={policy.id}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Plus, Clock, ShieldCheck } from 'lucide-react';
+import { Calendar, Plus, Clock } from 'lucide-react';
 import type { LeaveBalanceItem } from '../queries/useTimeOff';
 
 type LeaveBalanceCardsProps = {
@@ -23,7 +23,7 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
           </div>
           <div className="h-8 w-28 bg-ink/10 rounded-xl animate-pulse" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
@@ -97,7 +97,7 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {balances.map((item) => {
           const percentUsed =
             item.allocated > 0
@@ -107,7 +107,7 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
           return (
             <div
               key={item.typeId}
-              className="p-4 sm:p-5 rounded-2xl border border-line bg-bg hover:border-line-strong transition-all flex flex-col justify-between shadow-2xs"
+              className="p-5 sm:p-6 rounded-2xl border border-line bg-bg hover:border-line-strong transition-all flex flex-col justify-between shadow-2xs"
             >
               <div>
                 {/* Header: Name + Badge */}
@@ -116,12 +116,11 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
                     {item.typeName}
                   </h4>
                   {item.isPaid ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/80 dark:bg-emerald-950/40 dark:text-emerald-300 shrink-0">
-                      <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                    <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 shrink-0">
                       Paid
                     </span>
                   ) : (
-                    <span className="text-[11px] font-medium text-ink-soft bg-bg-raised px-2 py-0.5 rounded-full border border-line shrink-0">
+                    <span className="text-[11px] font-medium text-ink-soft shrink-0">
                       Unpaid
                     </span>
                   )}

@@ -1,5 +1,12 @@
 import React from 'react';
 import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 
 type PolicyFilterBarProps = {
   search: string;
@@ -27,73 +34,43 @@ export const PolicyFilterBar: React.FC<PolicyFilterBarProps> = ({
   onStatusFilterChange,
 }) => {
   return (
-    <div className="flex flex-col gap-4 mb-6">
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        {/* Search */}
-        <SearchInput
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search policies by keyword or code..."
-          wrapperClassName="max-w-md"
-        />
+    <div className="p-3.5 sm:p-4 rounded-2xl border border-line bg-bg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 font-sans">
+      <SearchInput
+        value={search}
+        onChange={(e) => onSearchChange(e.target.value)}
+        placeholder="Search policies by name or keyword..."
+      />
 
-        {/* Status Filter Toggle */}
-        <div className="flex items-center p-1 bg-bg-raised rounded-xl border border-line text-xs shrink-0 self-start sm:self-auto">
-          <button
-            type="button"
-            onClick={() => onStatusFilterChange('all')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
-              statusFilter === 'all'
-                ? 'bg-bg text-ink shadow-2xs'
-                : 'text-ink-soft hover:text-ink'
-            }`}
-          >
-            All
-          </button>
-          <button
-            type="button"
-            onClick={() => onStatusFilterChange('pending')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
-              statusFilter === 'pending'
-                ? 'bg-accent-soft text-accent shadow-2xs font-semibold'
-                : 'text-ink-soft hover:text-ink'
-            }`}
-          >
-            Action Required
-          </button>
-          <button
-            type="button"
-            onClick={() => onStatusFilterChange('accepted')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
-              statusFilter === 'accepted'
-                ? 'bg-bg text-ink shadow-2xs'
-                : 'text-ink-soft hover:text-ink'
-            }`}
-          >
-            Acknowledged
-          </button>
-        </div>
-      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        <Select
+          value={selectedCategory}
+          onValueChange={onCategoryChange}
+        >
+          <SelectTrigger className="w-full sm:w-48">
+            <SelectValue placeholder="All Categories" />
+          </SelectTrigger>
+          <SelectContent align="end">
+            {CATEGORIES.map((cat) => (
+              <SelectItem key={cat.id} value={cat.id}>
+                {cat.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      {/* Category Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
-        {CATEGORIES.map((cat) => {
-          const isActive = selectedCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => onCategoryChange(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-colors cursor-pointer border ${
-                isActive
-                  ? 'border-accent bg-accent-soft text-accent font-semibold'
-                  : 'border-line bg-bg text-ink-soft hover:bg-bg-raised hover:text-ink'
-              }`}
-            >
-              {cat.label}
-            </button>
-          );
-        })}
+        <Select
+          value={statusFilter}
+          onValueChange={(val) => onStatusFilterChange(val as 'all' | 'pending' | 'accepted')}
+        >
+          <SelectTrigger className="w-full sm:w-44">
+            <SelectValue placeholder="All Statuses" />
+          </SelectTrigger>
+          <SelectContent align="end">
+            <SelectItem value="all">All Statuses</SelectItem>
+            <SelectItem value="pending">Action Required</SelectItem>
+            <SelectItem value="accepted">Acknowledged</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

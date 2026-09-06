@@ -243,6 +243,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
     return null;
   }
 
+  const currentEmployeeId = user.employee?.id || user.employeeId;
+  const myProfilePath = currentEmployeeId ? `/employees/${currentEmployeeId}` : '/employees';
+
   // Employee Navigation Items (Exact 12 tabs from specification)
   type EmployeeNavItem = {
     label: string;
@@ -269,7 +272,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
     },
     {
       label: 'My Profile',
-      path: '/employees',
+      path: myProfilePath,
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -365,8 +368,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
     if (itemPath === '/attendance/my') {
       return location.pathname === '/attendance/my';
     }
+    if (itemPath === myProfilePath) {
+      return location.pathname === myProfilePath;
+    }
     if (itemPath === '/employees') {
-      return location.pathname.startsWith('/employees');
+      return location.pathname === '/employees';
     }
     if (itemPath === '/compensation') {
       return location.pathname === '/compensation' || location.pathname.startsWith('/payslip');
@@ -644,22 +650,25 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
         {/* Bottom: User card + Sign Out */}
         <div className="p-2.5 border-t border-line space-y-2">
           {/* User card */}
-          <div
-            className={`flex items-center ${sidebarCollapsed ? 'justify-center p-1' : 'gap-2.5 px-2 py-2'}`}
+          <Link
+            to={myProfilePath}
+            title={sidebarCollapsed ? `${displayName} (${user.email})` : 'View Profile'}
+            className={`flex items-center ${
+              sidebarCollapsed ? 'justify-center p-1' : 'gap-2.5 px-2 py-2'
+            } rounded-xl hover:bg-bg-raised transition-colors cursor-pointer text-ink no-underline group`}
           >
             <div
-              title={sidebarCollapsed ? `${displayName} (${user.email})` : undefined}
-              className="w-8 h-8 rounded-full bg-accent/15 text-accent font-semibold flex items-center justify-center text-xs shrink-0"
+              className="w-8 h-8 rounded-full bg-accent/15 text-accent font-semibold flex items-center justify-center text-xs shrink-0 group-hover:bg-accent group-hover:text-accent-ink transition-colors"
             >
               {initials}
             </div>
             {!sidebarCollapsed && (
               <div className="min-w-0 flex-1">
-                <div className="text-xs font-semibold text-ink truncate">{displayName}</div>
+                <div className="text-xs font-semibold text-ink truncate group-hover:text-accent transition-colors">{displayName}</div>
                 <div className="text-[11px] text-ink-soft truncate">{user.email}</div>
               </div>
             )}
-          </div>
+          </Link>
 
           {/* Sign Out */}
           <button

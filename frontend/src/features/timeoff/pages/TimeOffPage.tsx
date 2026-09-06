@@ -102,7 +102,7 @@ export const TimeOffPage: React.FC = () => {
 
   return (
     <AppLayout title="Time Off & Leaves">
-      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10 font-sans">
         {/* Sleek Editorial Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
