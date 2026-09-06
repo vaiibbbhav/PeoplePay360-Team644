@@ -61,9 +61,10 @@ export const ContractTable: React.FC<ContractTableProps> = ({
           </span>
         );
       case 'cancelled':
+      case 'terminated':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium border border-red-500/30 bg-red-500/10 text-over-red">
-            Cancelled
+          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium border border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400">
+            {status === 'terminated' ? 'Terminated' : 'Cancelled'}
           </span>
         );
       default:

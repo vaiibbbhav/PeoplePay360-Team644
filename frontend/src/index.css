@@ -34,6 +34,7 @@
   --accent-soft: #ede4f7;
   --over-red: #a4483b;
   color-scheme: light;
+  accent-color: var(--accent);
 }
 
 html.dark {
@@ -50,6 +51,14 @@ html.dark {
   --accent-soft: #241e33;
   --over-red: #d97c6c;
   color-scheme: dark;
+  accent-color: var(--accent);
+}
+
+/* Ensure native checkboxes, radios, and range inputs use the brand accent color */
+input[type='checkbox'],
+input[type='radio'],
+input[type='range'] {
+  accent-color: var(--accent);
 }
 
 * {

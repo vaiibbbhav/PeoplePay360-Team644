@@ -618,13 +618,22 @@ export const seedDatabase = async (): Promise<void> => {
       const birthMonth = String((i % 12) + 1).padStart(2, '0');
       const birthDay = String(((i * 5) % 27) + 1).padStart(2, '0');
 
+      let empStatus = 'active';
+      if (i >= 15 && i < 23) {
+        empStatus = 'on_leave';
+      } else if (i >= 23 && i < 28) {
+        empStatus = 'inactive';
+      } else if (i >= 28 && i < 33) {
+        empStatus = 'terminated';
+      }
+
       return {
         userId: u.id,
         departmentId: insertedDepts[c.deptIndex].id,
         jobPositionId: insertedJobs[c.jobIndex].id,
         workingScheduleId: insertedSchedules[i % insertedSchedules.length].id,
         location: c.location,
-        employmentStatus: 'active',
+        employmentStatus: empStatus,
         dateOfJoining: c.joiningDate,
         dateOfBirth: `${birthYear}-${birthMonth}-${birthDay}`,
         gender: c.gender,
@@ -675,8 +684,9 @@ export const seedDatabase = async (): Promise<void> => {
         departmentId: emp.departmentId,
         jobPositionId: emp.jobPositionId,
         startDate: c.joiningDate < '2026-04-01' ? '2026-04-01' : c.joiningDate,
-        status: 'active',
-        notes: 'Standard permanent corporate employment contract with FY26 compensation schedule',
+        endDate: i >= 28 && i < 33 ? '2026-08-15' : undefined,
+        status: i >= 28 && i < 33 ? 'terminated' : 'active',
+        notes: i >= 28 && i < 33 ? 'Resigned and relieved following handover completion.' : 'Standard permanent corporate employment contract with FY26 compensation schedule',
       };
     });
 

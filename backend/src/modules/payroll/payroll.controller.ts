@@ -40,6 +40,12 @@ export const createSalaryRule = asyncHandler(async (req: Request, res: Response)
   res.status(201).json(created);
 });
 
+export const listSalaryRules = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const structureId = req.query.structureId as string | undefined;
+  const rules = await payrollService.listSalaryRules(structureId);
+  res.json(rules);
+});
+
 export const getEligibleEmployeesForPeriod = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const query = wizardEligibilityQuerySchema.parse(req.query);
   const eligible = await payrollService.getEligibleEmployeesForPeriod(query.periodStart, query.periodEnd);

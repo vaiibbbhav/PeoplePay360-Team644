@@ -46,8 +46,7 @@ const canAccessPayroll = (role: UserRole) =>
 const canAccessPayslips = (role: UserRole) =>
   role === 'Admin' ||
   role === 'HR Payroll Manager' ||
-  role === 'HR Payroll User' ||
-  role === 'HR Manager';
+  role === 'HR Payroll User';
 
 export function App() {
   return (

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/api/apiClient';
 
-export type ContractStatus = 'draft' | 'active' | 'expired' | 'cancelled';
+export type ContractStatus = 'draft' | 'active' | 'expired' | 'cancelled' | 'terminated';
 export type WageType = 'monthly' | 'hourly';
 
 export type ContractItem = {

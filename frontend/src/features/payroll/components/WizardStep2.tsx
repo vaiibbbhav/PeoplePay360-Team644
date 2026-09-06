@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Play } from 'lucide-react';
 import { useEligibleEmployees } from '../queries/usePayruns';
 
 export type WizardStep2Props = {
@@ -188,7 +189,10 @@ export const WizardStep2: React.FC<WizardStep2Props> = ({
               Computing Payrun...
             </>
           ) : (
-            `⚡ Compute Payrun (${selectedIds.size} employees)`
+            <>
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Compute Payrun ({selectedIds.size} employees)</span>
+            </>
           )}
         </button>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Play, SlidersHorizontal } from 'lucide-react';
 import { useDashboardOverview } from '@/features/dashboard/queries/useDashboard';
 import { StatGrid } from '@/components/ui/StatCard';
 import type { User } from '@/features/auth/queries/useAuth';
@@ -59,6 +60,7 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
 
   const [selectedDept, setSelectedDept] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedEmployeeType, setSelectedEmployeeType] = useState('');
 
   const filteredDeptBreakdown = selectedDept
     ? departmentBreakdown.filter((d) => d.department === selectedDept)
@@ -89,16 +91,18 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
         <div className="flex items-center gap-3">
           <Link
             to="/payruns"
-            className="py-2.5 px-4 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline inline-flex items-center gap-1.5 shadow-sm"
+            className="py-2.5 px-4 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline inline-flex items-center gap-1.5"
           >
-            ⚡ Launch Payrun Wizard
+            <Play className="w-3.5 h-3.5 fill-current" />
+            <span>Launch Payrun Wizard</span>
           </Link>
           {isPayrollManager && (
             <Link
-              to="/compensation"
-              className="py-2.5 px-4 rounded-xl text-xs font-medium border border-line bg-bg-raised hover:border-ink-soft text-ink transition-colors no-underline inline-flex items-center gap-1.5"
+              to="/salary-structures"
+              className="py-2.5 px-4 rounded-xl text-xs font-medium border border-line bg-transparent hover:bg-bg-raised text-ink transition-colors no-underline inline-flex items-center gap-1.5"
             >
-              ⚙️ Salary Rules Engine
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>Salary Rules Engine</span>
             </Link>
           )}
         </div>
@@ -127,9 +131,20 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
             <option key={m} value={m}>{m}</option>
           ))}
         </select>
-        {(selectedDept || selectedMonth) && (
+        <select
+          value={selectedEmployeeType}
+          onChange={(e) => setSelectedEmployeeType(e.target.value)}
+          className="px-3 py-1.5 border border-line rounded-lg bg-bg-raised text-xs text-ink focus:outline-none focus:border-accent cursor-pointer"
+        >
+          <option value="">All Employee Types</option>
+          <option value="full_time">Full-time Staff</option>
+          <option value="contract">Contract Staff</option>
+          <option value="part_time">Part-time Staff</option>
+          <option value="intern">Interns</option>
+        </select>
+        {(selectedDept || selectedMonth || selectedEmployeeType) && (
           <button
-            onClick={() => { setSelectedDept(''); setSelectedMonth(''); }}
+            onClick={() => { setSelectedDept(''); setSelectedMonth(''); setSelectedEmployeeType(''); }}
             className="text-xs text-accent font-medium hover:opacity-80 cursor-pointer"
           >
             Clear
@@ -432,58 +447,6 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
         </div>
       </div>
 
-      {/* Operations Launchpad */}
-      <div>
-        <h2 className="text-sm font-semibold text-ink uppercase tracking-wider mb-4">
-          Payroll Subsystems & Tools
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link
-            to="/payruns"
-            className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
-          >
-            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
-              ⚡
-            </div>
-            <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
-              Payrun Execution Wizard
-            </h4>
-            <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Step 1 period selection → Step 2 employee filter → Compute, validate & mark paid.
-            </p>
-          </Link>
-
-          <Link
-            to="/compensation"
-            className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
-          >
-            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
-              💵
-            </div>
-            <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
-              Salary Structures & Rules
-            </h4>
-            <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Base salary, allowances, deductions, and sequenced computation rules.
-            </p>
-          </Link>
-
-          <Link
-            to="/contracts"
-            className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
-          >
-            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
-              📄
-            </div>
-            <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
-              Active Contracts
-            </h4>
-            <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Applicable period contracts, wages, and structure assignments.
-            </p>
-          </Link>
-        </div>
-      </div>
     </div>
   );
 };

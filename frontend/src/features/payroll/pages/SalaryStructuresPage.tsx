@@ -10,6 +10,7 @@ import {
   type CreateSalaryStructureInput,
   type CreateSalaryRuleInput,
 } from '../queries/useSalaryStructures';
+import { useCurrentUser } from '@/features/auth/queries/useAuth';
 
 // --- Category badge colour mapping ---
 const CATEGORY_STYLES: Record<SalaryRuleCategory | string, string> = {
@@ -241,6 +242,9 @@ const NewRuleForm: React.FC<NewRuleFormProps> = ({ structureId, existingRules, o
 // --- Main Page ---
 
 export const SalaryStructuresPage: React.FC = () => {
+  const { data: currentUser } = useCurrentUser();
+  const canWrite = currentUser?.role === 'Admin' || currentUser?.role === 'HR Payroll Manager';
+
   const { data: structures = [], isLoading } = useSalaryStructuresList();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { data: detail, isLoading: detailLoading } = useSalaryStructureDetail(selectedId);
@@ -252,12 +256,14 @@ export const SalaryStructuresPage: React.FC = () => {
   const [showNewRule, setShowNewRule] = useState(false);
 
   const handleCreateStructure = async (data: CreateSalaryStructureInput) => {
+    if (!canWrite) return;
     const created = await createStructureMutation.mutateAsync(data);
     setShowNewStructure(false);
     setSelectedId(created.id);
   };
 
   const handleCreateRule = async (data: CreateSalaryRuleInput) => {
+    if (!canWrite) return;
     await createRuleMutation.mutateAsync(data);
     setShowNewRule(false);
   };
@@ -268,12 +274,18 @@ export const SalaryStructuresPage: React.FC = () => {
     <AppLayout
       title="Salary Structures"
       actions={
-        <button
-          onClick={() => { setShowNewStructure(true); setSelectedId(null); }}
-          className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
-        >
-          <span>+</span> New Structure
-        </button>
+        canWrite ? (
+          <button
+            onClick={() => { setShowNewStructure(true); setSelectedId(null); }}
+            className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
+          >
+            <span>+</span> New Structure
+          </button>
+        ) : (
+          <span className="text-[11px] font-mono px-3 py-1 rounded-full border border-line bg-bg-raised text-ink-soft">
+            Read-Only Structure View
+          </span>
+        )
       }
     >
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 font-sans">
@@ -285,12 +297,14 @@ export const SalaryStructuresPage: React.FC = () => {
               Configure salary computation rules applied during payrun processing.
             </p>
           </div>
-          <button
-            onClick={() => { setShowNewStructure(true); setSelectedId(null); }}
-            className="sm:hidden self-start px-3.5 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer"
-          >
-            + New Structure
-          </button>
+          {canWrite && (
+            <button
+              onClick={() => { setShowNewStructure(true); setSelectedId(null); }}
+              className="sm:hidden self-start px-3.5 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer"
+            >
+              + New Structure
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -298,7 +312,7 @@ export const SalaryStructuresPage: React.FC = () => {
           <div className="lg:col-span-1 space-y-3">
             <p className="text-[11px] font-semibold text-ink-soft uppercase tracking-widest px-1">Structures</p>
 
-            {showNewStructure && (
+            {canWrite && showNewStructure && (
               <NewStructureForm
                 onSave={handleCreateStructure}
                 onCancel={() => setShowNewStructure(false)}
@@ -314,10 +328,12 @@ export const SalaryStructuresPage: React.FC = () => {
             ) : structures.length === 0 ? (
               <div className="p-8 text-center rounded-2xl border border-dashed border-line">
                 <p className="text-xs text-ink-soft">No salary structures yet.</p>
-                <button onClick={() => setShowNewStructure(true)}
-                  className="mt-3 text-xs font-semibold text-accent cursor-pointer hover:opacity-80">
-                  + Create first structure
-                </button>
+                {canWrite && (
+                  <button onClick={() => setShowNewStructure(true)}
+                    className="mt-3 text-xs font-semibold text-accent cursor-pointer hover:opacity-80">
+                    + Create first structure
+                  </button>
+                )}
               </div>
             ) : (
               structures.map((s) => (
@@ -377,7 +393,7 @@ export const SalaryStructuresPage: React.FC = () => {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <p className="text-[11px] font-semibold text-ink-soft uppercase tracking-widest">Salary Rules (in sequence)</p>
-                        {!showNewRule && (
+                        {canWrite && !showNewRule && (
                           <button
                             onClick={() => setShowNewRule(true)}
                             className="text-xs font-semibold text-accent hover:opacity-80 cursor-pointer"
@@ -387,7 +403,7 @@ export const SalaryStructuresPage: React.FC = () => {
                         )}
                       </div>
 
-                      {showNewRule && (
+                      {canWrite && showNewRule && (
                         <NewRuleForm
                           structureId={selectedId}
                           existingRules={sortedRules.length}
@@ -400,10 +416,12 @@ export const SalaryStructuresPage: React.FC = () => {
                       {sortedRules.length === 0 && !showNewRule ? (
                         <div className="p-8 text-center rounded-2xl border border-dashed border-line">
                           <p className="text-xs text-ink-soft">No rules defined yet.</p>
-                          <button onClick={() => setShowNewRule(true)}
-                            className="mt-2 text-xs font-semibold text-accent cursor-pointer hover:opacity-80">
-                            + Add first rule
-                          </button>
+                          {canWrite && (
+                            <button onClick={() => setShowNewRule(true)}
+                              className="mt-2 text-xs font-semibold text-accent cursor-pointer hover:opacity-80">
+                              + Add first rule
+                            </button>
+                          )}
                         </div>
                       ) : (
                         <div className="rounded-2xl border border-line overflow-hidden">
