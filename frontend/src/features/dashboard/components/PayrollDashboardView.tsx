@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useDashboardOverview } from '@/features/dashboard/queries/useDashboard';
 import { StatGrid } from '@/components/ui/StatCard';
@@ -50,6 +50,24 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
 
   const isPayrollManager = user.role === 'HR Payroll Manager';
 
+  // --- Filters ---
+  const allDepts = useMemo(() => [
+    ...new Set(departmentBreakdown.map((d) => d.department)),
+  ], [departmentBreakdown]);
+
+  const allMonths = useMemo(() => monthlyTrends.map((m) => m.month), [monthlyTrends]);
+
+  const [selectedDept, setSelectedDept] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
+
+  const filteredDeptBreakdown = selectedDept
+    ? departmentBreakdown.filter((d) => d.department === selectedDept)
+    : departmentBreakdown;
+
+  const filteredMonthlyTrends = selectedMonth
+    ? monthlyTrends.filter((m) => m.month === selectedMonth)
+    : monthlyTrends;
+
   return (
     <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
       {/* Welcome Banner */}
@@ -79,6 +97,39 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
             </Link>
           )}
         </div>
+      </div>
+
+      {/* Filter Bar */}
+      <div className="flex flex-wrap items-center gap-3 p-3.5 rounded-2xl border border-line bg-bg">
+        <span className="text-[11px] font-semibold text-ink-soft uppercase tracking-widest">Filters:</span>
+        <select
+          value={selectedDept}
+          onChange={(e) => setSelectedDept(e.target.value)}
+          className="px-3 py-1.5 border border-line rounded-lg bg-bg-raised text-xs text-ink focus:outline-none focus:border-accent cursor-pointer"
+        >
+          <option value="">All Departments</option>
+          {allDepts.map((d) => (
+            <option key={d} value={d}>{d}</option>
+          ))}
+        </select>
+        <select
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+          className="px-3 py-1.5 border border-line rounded-lg bg-bg-raised text-xs text-ink focus:outline-none focus:border-accent cursor-pointer"
+        >
+          <option value="">All Periods</option>
+          {allMonths.map((m) => (
+            <option key={m} value={m}>{m}</option>
+          ))}
+        </select>
+        {(selectedDept || selectedMonth) && (
+          <button
+            onClick={() => { setSelectedDept(''); setSelectedMonth(''); }}
+            className="text-xs text-accent font-medium hover:opacity-80 cursor-pointer"
+          >
+            Clear
+          </button>
+        )}
       </div>
 
       {/* Live Payroll KPI StatGrid */}
@@ -187,7 +238,9 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
             <span className="text-xs text-ink-soft">{departmentBreakdown.length} Depts</span>
           </div>
           <div className="space-y-3">
-            {departmentBreakdown.map((dept) => (
+            {filteredDeptBreakdown.length === 0 ? (
+              <p className="text-xs text-ink-soft py-4 text-center">No data for selected department.</p>
+            ) : filteredDeptBreakdown.map((dept) => (
               <div
                 key={dept.department}
                 className="flex items-center justify-between text-xs py-1.5 border-b border-line/50 last:border-0"
@@ -219,7 +272,9 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
           <span className="text-xs text-accent font-medium">3-Month Trajectory</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {monthlyTrends.map((trend) => (
+          {filteredMonthlyTrends.length === 0 ? (
+            <p className="text-xs text-ink-soft py-4 text-center col-span-3">No data for selected period.</p>
+          ) : filteredMonthlyTrends.map((trend) => (
             <div
               key={trend.month}
               className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2"

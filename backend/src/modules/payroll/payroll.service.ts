@@ -5,6 +5,7 @@ import * as hrService from '../hr/hr.service';
 import { computePayslipLines } from './rule-engine';
 import { ConflictError, NotFoundError, ValidationError } from '../../shared/errors';
 import { roundToTwoDecimals } from '../../shared/formatters';
+import { sendPayslipEmail } from '../../shared/mailer';
 
 function countPeriodDays(periodStart: string, periodEnd: string): number {
   const start = Date.parse(`${periodStart}T00:00:00Z`);
@@ -279,4 +280,41 @@ export async function getPayslipById(id: string) {
     throw new NotFoundError(`Payslip with ID ${id} not found`);
   }
   return payslip;
+}
+
+export async function sendPayrunPayslips(id: string): Promise<{ sent: number; failed: number; total: number }> {
+  const payrun = await getPayrunById(id);
+  if (payrun.status !== 'paid') {
+    throw new ValidationError('Payslips can only be sent for paid payruns');
+  }
+
+  const payslips = payrun.payslips ?? [];
+  if (payslips.length === 0) {
+    return { sent: 0, failed: 0, total: 0 };
+  }
+
+  const periodLabel = `${new Date(payrun.period_start).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}`;
+
+  let sent = 0;
+  let failed = 0;
+
+  for (const payslip of payslips) {
+    if (!payslip.employee_email) {
+      failed++;
+      continue;
+    }
+    const result = await sendPayslipEmail({
+      toEmail: payslip.employee_email,
+      employeeName: payslip.employee_name,
+      period: periodLabel,
+      netSalary: Number(payslip.net_salary),
+      grossSalary: Number(payslip.gross_salary),
+      totalDeductions: Number(payslip.total_deductions),
+      payrunName: payrun.name,
+    });
+    if (result.success) sent++;
+    else failed++;
+  }
+
+  return { sent, failed, total: payslips.length };
 }

@@ -25,6 +25,7 @@ const SchedulesPage = lazy(() => import('./features/schedules/pages/SchedulesPag
 const TimeOffPage = lazy(() => import('./features/timeoff/pages/TimeOffPage').then((m) => ({ default: m.TimeOffPage })));
 const PayrunsPage = lazy(() => import('./features/payroll/pages/PayrunsPage').then((m) => ({ default: m.PayrunsPage })));
 const PayslipsPage = lazy(() => import('./features/payroll/pages/PayslipsPage').then((m) => ({ default: m.PayslipsPage })));
+const SalaryStructuresPage = lazy(() => import('./features/payroll/pages/SalaryStructuresPage').then((m) => ({ default: m.SalaryStructuresPage })));
 
 function RouteLoadingFallback() {
   return (
@@ -100,6 +101,7 @@ export function App() {
           {/* Payroll routes — payroll roles + admin only */}
           <Route element={<ProtectedRoute allow={canAccessPayroll} />}>
             <Route path="/payruns" element={<PayrunsPage />} />
+            <Route path="/salary-structures" element={<SalaryStructuresPage />} />
           </Route>
 
           {/* Admin only route */}

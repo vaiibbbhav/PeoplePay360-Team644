@@ -10,6 +10,7 @@ import {
   useCreatePayrun,
   useValidatePayrun,
   useMarkPayrunPaid,
+  useSendPayslips,
   type PayrunItem,
   type CreatePayrunPayload,
 } from '../queries/usePayruns';
@@ -346,7 +347,9 @@ const PayrunDetail: React.FC<{
 }> = ({ payrun, onBack, canManage }) => {
   const validateMutation = useValidatePayrun();
   const markPaidMutation = useMarkPayrunPaid();
+  const sendPayslipsMutation = useSendPayslips();
   const [actionError, setActionError] = useState<string | null>(null);
+  const [sendResult, setSendResult] = useState<{ sent: number; failed: number; total: number } | null>(null);
 
   const handleValidate = async () => {
     setActionError(null);
@@ -363,6 +366,17 @@ const PayrunDetail: React.FC<{
       await markPaidMutation.mutateAsync(payrun.id);
     } catch (err: any) {
       setActionError(err?.response?.data?.error || err.message || 'Failed to mark payrun as paid');
+    }
+  };
+
+  const handleSendPayslips = async () => {
+    setActionError(null);
+    setSendResult(null);
+    try {
+      const result = await sendPayslipsMutation.mutateAsync(payrun.id);
+      setSendResult(result);
+    } catch (err: any) {
+      setActionError(err?.response?.data?.error || err.message || 'Failed to send payslips');
     }
   };
 
@@ -409,12 +423,28 @@ const PayrunDetail: React.FC<{
               Mark Paid
             </button>
           )}
+          {canManage && payrun.status === 'paid' && (
+            <button
+              onClick={handleSendPayslips}
+              disabled={sendPayslipsMutation.isPending}
+              className="px-4 py-1.5 rounded-lg text-xs font-semibold border border-line bg-bg text-ink hover:bg-bg-raised transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+            >
+              {sendPayslipsMutation.isPending ? 'Sending…' : '✉ Send Payslips'}
+            </button>
+          )}
         </div>
       </div>
 
       {actionError && (
         <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-medium">
           {actionError}
+        </div>
+      )}
+
+      {sendResult && (
+        <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-medium">
+          ✓ Payslip emails dispatched — {sendResult.sent} sent{sendResult.failed > 0 ? `, ${sendResult.failed} failed` : ''}.
+          {sendResult.sent === 0 && ' No SMTP configured — check server console for delivery log.'}
         </div>
       )}
 

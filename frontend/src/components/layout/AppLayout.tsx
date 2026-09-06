@@ -443,6 +443,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
               ...(canAccessPayroll
                 ? [{ label: 'Compensation', path: '/compensation', icon: CompensationIcon }]
                 : []),
+              ...(user.role === 'Admin' || user.role === 'HR Payroll Manager'
+                ? [{ label: 'Salary Structures', path: '/salary-structures', icon: ContractIcon }]
+                : []),
             ],
           },
         ]

@@ -8,6 +8,7 @@ import {
   useDeleteEmployee,
 } from '../queries/useEmployees';
 import { EmployeeHeaderCard } from '../components/EmployeeHeaderCard';
+import { SmartButtonBar } from '../components/SmartButtonBar';
 import { OverviewTab } from '../components/OverviewTab';
 import { PersonalDetailsTab } from '../components/PersonalDetailsTab';
 import { EmploymentDetailsTab } from '../components/EmploymentDetailsTab';
@@ -77,6 +78,15 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
         {deleteError && <InlineAlert>{deleteError}</InlineAlert>}
         {/* Template Hero Banner */}
         <EmployeeHeaderCard employee={employee} onEdit={() => setIsEditModalOpen(true)} />
+
+        {/* Smart Button Counters */}
+        <SmartButtonBar
+          employeeId={employee.id}
+          contractCount={employee.smartCounts?.contracts ?? 0}
+          attendanceCount={employee.smartCounts?.attendance ?? 0}
+          timeOffCount={employee.smartCounts?.timeOff ?? 0}
+          payslipCount={employee.smartCounts?.payslips ?? 0}
+        />
 
         {/* Primary Sub-Navigation Tabs matching template */}
         <div className="flex items-center gap-4 sm:gap-8 border-b border-line mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
