@@ -16,8 +16,8 @@ type WizardStep = 'list' | 'step1' | 'step2' | 'detail';
 
 const STATUS_COLORS: Record<string, string> = {
   draft: 'text-ink-soft border-line bg-bg-raised',
-  computed: 'text-blue-700 border-blue-300 bg-blue-50 dark:text-blue-300 dark:bg-blue-950',
-  validated: 'text-emerald-700 border-emerald-300 bg-emerald-50 dark:text-emerald-300 dark:bg-emerald-950',
+  computed: 'text-sky-700 dark:text-sky-300 border-sky-200/80 dark:border-sky-800/60 bg-sky-50 dark:bg-sky-950/40',
+  validated: 'text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/40',
   paid: 'text-accent border-accent/40 bg-accent-soft',
 };
 
@@ -122,21 +122,27 @@ export const PayrunsPage: React.FC = () => {
     return (
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
-            <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+            <div className="mb-1">
+              <span className="text-xs font-mono text-accent font-medium">
+                Payroll & Compensation
+              </span>
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               Payrun Management
             </h1>
-            <p className="text-xs text-ink-soft mt-1">
-              Execute payroll runs, validate, and mark payslips as paid.
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
+              Execute payroll runs, validate computations, and mark payslips as paid.
             </p>
           </div>
           {canWrite && (
             <button
               onClick={() => setView('step1')}
-              className="px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 shrink-0"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 shrink-0 shadow-2xs"
             >
-              ⚡ New Payrun Wizard
+              <span>+</span>
+              <span>New Payrun Wizard</span>
             </button>
           )}
         </div>
@@ -206,11 +212,11 @@ export const PayrunsPage: React.FC = () => {
                 <thead>
                   <tr className="border-b border-line bg-bg-raised/60">
                     <th className="py-3 px-4 text-left font-semibold text-ink-soft">Payrun</th>
-                    <th className="py-3 px-4 text-left font-semibold text-ink-soft">Period</th>
-                    <th className="py-3 px-4 text-right font-semibold text-ink-soft">Payslips</th>
-                    <th className="py-3 px-4 text-right font-semibold text-ink-soft">Net Total</th>
-                    <th className="py-3 px-4 text-center font-semibold text-ink-soft">Status</th>
-                    <th className="py-3 px-4 text-right font-semibold text-ink-soft">Action</th>
+                    <th className="py-3 px-4 text-left font-semibold text-ink-soft w-64 min-w-[220px]">Period</th>
+                    <th className="py-3 px-4 text-right font-semibold text-ink-soft w-24">Payslips</th>
+                    <th className="py-3 px-4 text-right font-semibold text-ink-soft w-32">Net Total</th>
+                    <th className="py-3 px-4 text-center font-semibold text-ink-soft w-28">Status</th>
+                    <th className="py-3 px-4 text-right font-semibold text-ink-soft w-20">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line/40">
@@ -220,17 +226,20 @@ export const PayrunsPage: React.FC = () => {
                         <div className="font-semibold text-ink">{pr.name}</div>
                         <div className="text-ink-soft text-[11px]">{pr.salary_structure_name}</div>
                       </td>
-                      <td className="py-3 px-4">
-                        <div className="text-ink">{formatDate(pr.period_start)}</div>
-                        <div className="text-ink-soft">→ {formatDate(pr.period_end)}</div>
+                      <td className="py-3 px-4 whitespace-nowrap min-w-[220px]">
+                        <div className="text-xs font-medium text-ink flex items-center gap-1.5">
+                          <span>{formatDate(pr.period_start)}</span>
+                          <span className="text-ink-soft/60 text-[11px]">→</span>
+                          <span>{formatDate(pr.period_end)}</span>
+                        </div>
                       </td>
                       <td className="py-3 px-4 text-right text-ink font-medium">{pr.payslip_count}</td>
                       <td className="py-3 px-4 text-right font-mono font-bold text-accent">
                         {formatCurrency(pr.total_net)}
                       </td>
-                      <td className="py-3 px-4 text-center">
+                      <td className="py-3 px-4 text-center whitespace-nowrap">
                         <span
-                          className={`text-[10px] px-2 py-0.5 rounded-full border font-semibold uppercase tracking-wide ${STATUS_COLORS[pr.status] || ''}`}
+                          className={`text-[10px] px-2.5 py-0.5 rounded-full border font-semibold uppercase tracking-wide ${STATUS_COLORS[pr.status] || ''}`}
                         >
                           {pr.status}
                         </span>

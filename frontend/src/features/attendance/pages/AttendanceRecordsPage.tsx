@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Download } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import {
@@ -50,10 +51,14 @@ export const AttendanceRecordsPage: React.FC = () => {
       if (filter.search.trim()) {
         const query = filter.search.toLowerCase();
         const empName = (record.employee_name || '').toLowerCase();
+        const empEmail = (record.employee_email || '').toLowerCase();
         const empId = (record.employee_id || '').toLowerCase();
         const note = (record.exception_note || '').toLowerCase();
         const matches =
-          empName.includes(query) || empId.includes(query) || note.includes(query);
+          empName.includes(query) ||
+          empEmail.includes(query) ||
+          empId.includes(query) ||
+          note.includes(query);
         if (!matches) return false;
       }
 
@@ -94,18 +99,55 @@ export const AttendanceRecordsPage: React.FC = () => {
     setIsDrawerOpen(true);
   };
 
+  const handleExportCSV = () => {
+    if (filteredRecords.length === 0) return;
+    const headers = [
+      'Employee Name',
+      'Employee Email',
+      'Date',
+      'Check In',
+      'Check Out',
+      'Worked Hours',
+      'Status',
+      'Source',
+      'Exception Note',
+    ];
+    const rows = filteredRecords.map((r) => [
+      `"${r.employee_name || ''}"`,
+      `"${r.employee_email || ''}"`,
+      r.date,
+      r.check_in || '',
+      r.check_out || '',
+      r.worked_hours,
+      r.status,
+      r.is_manual_edit ? 'Manual Edit' : 'Biometric Sensor',
+      `"${r.exception_note || ''}"`,
+    ]);
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute(
+      'download',
+      `attendance_records_${new Date().toISOString().slice(0, 10)}.csv`,
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <AppLayout title="Attendance Records">
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
         {/* Page Top Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
-                Workforce Tracking & Biometrics
+            <div className="mb-1">
+              <span className="text-xs font-mono text-accent font-medium">
+                Time & Attendance
               </span>
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span className="text-[11px] text-ink-soft">Live Operations Ledger</span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               Attendance Records
@@ -113,6 +155,18 @@ export const AttendanceRecordsPage: React.FC = () => {
             <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
               Company-wide biometric punch logs, daily hours, and HR exception audit trail.
             </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 flex-wrap">
+            <button
+              type="button"
+              onClick={handleExportCSV}
+              disabled={filteredRecords.length === 0}
+              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg-raised/50 hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+            >
+              <Download className="w-3.5 h-3.5 text-ink-soft" />
+              <span>Export CSV</span>
+            </button>
           </div>
         </div>
 

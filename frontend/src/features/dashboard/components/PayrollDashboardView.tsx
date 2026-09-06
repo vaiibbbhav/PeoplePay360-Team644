@@ -71,12 +71,17 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
   return (
     <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
       {/* Welcome Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
         <div>
-          <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
-            Payroll Operations & Finance Console
+          <div className="mb-1">
+            <span className="text-xs font-mono text-accent font-medium">
+              Overview
+            </span>
+          </div>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
+            Payroll Operations &amp; Finance Console
           </h1>
-          <p className="text-ink-soft text-xs sm:text-sm mt-1">
+          <p className="text-ink-soft text-xs sm:text-sm mt-1 leading-relaxed">
             Payrun execution, salary structure rules, and payroll analytics · Logged in as{' '}
             <b className="text-ink">{user.email}</b> ({user.role})
           </p>

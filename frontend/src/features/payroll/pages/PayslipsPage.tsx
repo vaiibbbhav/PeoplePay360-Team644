@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useAllCompanyPayslips, usePayslipDetail } from '@/features/compensation/queries/useEmployeePayslips';
-import { formatCurrency, formatPeriod } from '@/lib/formatters';
+import { formatPeriod } from '@/lib/formatters';
+import { StatGrid } from '@/components/ui/StatCard';
 import { PayslipDetailModal } from '@/features/compensation/components/PayslipDetailModal';
 import { MonthlyPayslipDocument } from '@/features/compensation/components/MonthlyPayslipDocument';
 import { SearchInput } from '@/components/ui/SearchInput';
@@ -18,13 +19,9 @@ import {
   Download,
   Printer,
   Eye,
-  AlertTriangle,
   CheckCircle2,
   Clock,
-  DollarSign,
-  Users,
-  Layers,
-  RefreshCw,
+  AlertTriangle,
 } from 'lucide-react';
 
 type PayslipSortOption = 'date_desc' | 'date_asc' | 'net_desc' | 'net_asc' | 'name_asc';
@@ -186,6 +183,14 @@ export const PayslipsPage: React.FC = () => {
     setIsPrintModalOpen(true);
   };
 
+  const formatMoney = (amount: string | number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(Number(amount) || 0);
+  };
+
   const renderStatusBadge = (status?: string | null, payrunStatus?: string | null) => {
     const raw = (
       (status && status.toLowerCase() !== 'draft' ? status : payrunStatus) ||
@@ -195,22 +200,22 @@ export const PayslipsPage: React.FC = () => {
     switch (raw) {
       case 'paid':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/50">
-            <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent-soft text-accent border border-accent/40">
+            <CheckCircle2 className="w-3 h-3 text-accent" />
             Paid
           </span>
         );
       case 'validated':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-200/60 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/50">
-            <Clock className="w-3 h-3 text-sky-600 dark:text-sky-400" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">
+            <Clock className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
             Validated
           </span>
         );
       case 'computed':
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/50">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-200/80 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800/60">
             Computed
           </span>
         );
@@ -223,14 +228,16 @@ export const PayslipsPage: React.FC = () => {
         {/* Editorial Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-accent font-semibold">
-              Payroll Administration
-            </span>
+            <div className="mb-1">
+              <span className="text-xs font-mono text-accent font-medium">
+                Payroll & Compensation
+              </span>
+            </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               All Employee Payslips
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1 max-w-2xl leading-relaxed">
-              Complete organizational registry of all computed, validated, and paid employee payslips across all payruns.
+              Complete organizational registry of all computed, validated, and paid employee payslips.
             </p>
           </div>
 
@@ -239,81 +246,42 @@ export const PayslipsPage: React.FC = () => {
               type="button"
               onClick={handleExportCSV}
               disabled={filteredPayslips.length === 0}
-              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-xs disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg-raised/50 hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-2xs disabled:opacity-50"
             >
               <Download className="w-3.5 h-3.5 text-ink-soft" />
               <span>Export CSV</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => refetch()}
-              className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold border border-line bg-bg hover:bg-bg-raised text-ink transition-all cursor-pointer shadow-xs"
-              title="Refresh payslips"
-            >
-              <RefreshCw className="w-3.5 h-3.5 text-ink-soft" />
-              <span>Refresh</span>
             </button>
           </div>
         </div>
 
         {/* KPI Stat Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
-          <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs">
-            <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-ink-soft" />
-              Total Payslips
-            </span>
-            <span className="text-xl font-sans font-bold text-ink mt-1.5 block">
-              {totalCount}
-            </span>
-            <span className="text-[11px] text-ink-soft mt-0.5 block">Issued across runs</span>
-          </div>
-
-          <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs">
-            <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
-              <DollarSign className="w-3.5 h-3.5 text-ink-soft" />
-              Total Gross
-            </span>
-            <span className="text-xl font-bold text-ink mt-1.5 block font-mono">
-              {formatCurrency(totalGross, true)}
-            </span>
-            <span className="text-[11px] text-ink-soft mt-0.5 block">Earnings computed</span>
-          </div>
-
-          <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs">
-            <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
-              <AlertTriangle className="w-3.5 h-3.5 text-ink-soft" />
-              Total Deductions
-            </span>
-            <span className="text-xl font-bold text-ink mt-1.5 block font-mono">
-              {formatCurrency(totalDeductions, true)}
-            </span>
-            <span className="text-[11px] text-ink-soft mt-0.5 block">PF, PT, TDS withheld</span>
-          </div>
-
-          <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs">
-            <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-ink-soft" />
-              Net Disbursed
-            </span>
-            <span className="text-xl font-bold text-ink mt-1.5 block font-mono">
-              {formatCurrency(totalNet, true)}
-            </span>
-            <span className="text-[11px] text-ink-soft mt-0.5 block">Take-home salary</span>
-          </div>
-
-          <div className="p-4 rounded-2xl border border-line bg-bg shadow-2xs col-span-2 lg:col-span-1">
-            <span className="text-xs font-medium text-ink-soft flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-ink-soft" />
-              Average Net
-            </span>
-            <span className="text-xl font-bold text-ink mt-1.5 block font-mono">
-              {formatCurrency(avgNet, true)}
-            </span>
-            <span className="text-[11px] text-ink-soft mt-0.5 block">Per employee / cycle</span>
-          </div>
-        </div>
+        <StatGrid
+          columns={4}
+          isLoading={isLoading}
+          skeletonCount={4}
+          items={[
+            {
+              label: 'Total Payslips',
+              value: String(totalCount),
+              subtext: `${uniquePayruns.length} active cycles`,
+            },
+            {
+              label: 'Total Net Disbursed',
+              value: formatMoney(totalNet),
+              subtext: `Gross: ${formatMoney(totalGross)}`,
+            },
+            {
+              label: 'Total Deductions',
+              value: formatMoney(totalDeductions),
+              subtext: 'PF, PT, TDS withheld',
+            },
+            {
+              label: 'Average Net Pay',
+              value: formatMoney(avgNet),
+              subtext: 'Per employee / cycle',
+            },
+          ]}
+        />
 
         {/* Filter and Search Toolbar */}
         <div className="p-3.5 sm:p-4 rounded-2xl border border-line bg-bg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 shadow-2xs">
@@ -444,14 +412,12 @@ export const PayslipsPage: React.FC = () => {
               </div>
             ) : (
               <div className="overflow-x-auto no-scrollbar w-full min-w-0">
-                <table className="w-full text-xs text-left border-collapse min-w-[850px]">
+                <table className="w-full text-xs text-left border-collapse">
                   <thead>
                     <tr className="border-b border-line bg-bg-raised/70 text-ink-soft font-semibold">
                       <th className="py-3 px-4">Employee</th>
-                      <th className="py-3 px-4">Pay Run / Period</th>
-                      <th className="py-3 px-4">Salary Structure</th>
-                      <th className="py-3 px-3 text-center">Worked Days</th>
-                      <th className="py-3 px-4 text-right">Basic</th>
+                      <th className="py-3 px-4">Payrun & Package</th>
+                      <th className="py-3 px-3 text-center">Days</th>
                       <th className="py-3 px-4 text-right">Gross</th>
                       <th className="py-3 px-4 text-right">Deductions</th>
                       <th className="py-3 px-4 text-right font-bold text-ink">Net Salary</th>
@@ -467,6 +433,8 @@ export const PayslipsPage: React.FC = () => {
                         .join('')
                         .toUpperCase()
                         .slice(0, 2);
+
+                      const workedDaysClean = Math.round(Number(p.worked_days)) || p.worked_days;
 
                       return (
                         <tr
@@ -491,44 +459,34 @@ export const PayslipsPage: React.FC = () => {
                             </div>
                           </td>
 
-                          {/* Payrun & Period */}
+                          {/* Payrun & Structure */}
                           <td className="py-3 px-4 whitespace-nowrap">
                             <span className="font-medium text-ink block">
                               {p.payrun_name || 'Standard Payrun'}
                             </span>
                             <span className="text-[11px] text-ink-soft block font-mono">
-                              {formatPeriod(p.period_start)}
+                              {formatPeriod(p.period_start)} · {p.structure_name || 'Standard'}
                             </span>
-                          </td>
-
-                          {/* Structure */}
-                          <td className="py-3 px-4 whitespace-nowrap text-ink-soft">
-                            <span className="font-mono text-xs">{p.structure_name || 'Standard Package'}</span>
                           </td>
 
                           {/* Worked Days */}
                           <td className="py-3 px-3 text-center whitespace-nowrap font-mono text-ink">
-                            {p.worked_days}d
-                          </td>
-
-                          {/* Basic Salary */}
-                          <td className="py-3 px-4 text-right whitespace-nowrap font-mono text-ink-soft">
-                            {formatCurrency(Number(p.basic_salary), true)}
+                            {workedDaysClean}d
                           </td>
 
                           {/* Gross Salary */}
                           <td className="py-3 px-4 text-right whitespace-nowrap font-mono font-medium text-ink">
-                            {formatCurrency(Number(p.gross_salary), true)}
+                            {formatMoney(p.gross_salary)}
                           </td>
 
                           {/* Deductions */}
                           <td className="py-3 px-4 text-right whitespace-nowrap font-mono text-ink-soft font-medium">
-                            -{formatCurrency(Number(p.total_deductions), true)}
+                            -{formatMoney(p.total_deductions)}
                           </td>
 
                           {/* Net Salary */}
-                          <td className="py-3 px-4 text-right whitespace-nowrap font-mono font-bold text-ink text-sm">
-                            {formatCurrency(Number(p.net_salary), true)}
+                          <td className="py-3 px-4 text-right whitespace-nowrap font-mono font-bold text-accent text-sm">
+                            {formatMoney(p.net_salary)}
                           </td>
 
                           {/* Status */}

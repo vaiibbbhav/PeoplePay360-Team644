@@ -129,7 +129,14 @@ export const EmployeeDirectoryPage: React.FC = () => {
         {/* Page Title */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-5 sm:pb-6">
           <div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">Employee Directory</h1>
+            <div className="mb-1">
+              <span className="text-xs font-mono text-accent font-medium">
+                Core HR
+              </span>
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
+              Employee Directory
+            </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
               Company-wide employee directory, departmental structure, and employment profiles.
             </p>
