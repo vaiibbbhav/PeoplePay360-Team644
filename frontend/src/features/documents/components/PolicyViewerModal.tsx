@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
 import type { Policy } from '../queries/useDocuments';
 import { useClickOutside } from '@/hooks/useClickOutside';
 
@@ -18,6 +19,7 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
   isAccepting = false,
 }) => {
   const [agreedPolicyId, setAgreedPolicyId] = useState<string | null>(null);
+  const dialogRef = useDialogAccessibility({ isOpen, onClose });
 
   const modalRef = useClickOutside<HTMLDivElement>(() => {
     if (!isAccepting) onClose();
@@ -69,10 +71,19 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
     });
   };
 
+  const setCombinedRef = (node: HTMLDivElement | null) => {
+    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink/40 backdrop-blur-xs animate-in fade-in duration-150">
       <div
-        ref={modalRef}
+        ref={setCombinedRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Policy: ${policy.title}`}
+        tabIndex={-1}
         className="relative w-full max-w-3xl max-h-[90vh] flex flex-col bg-bg-raised border border-line rounded-2xl shadow-xl overflow-hidden"
       >
         {/* Modal Topbar */}

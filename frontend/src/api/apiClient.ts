@@ -30,6 +30,15 @@ export const api = axios.create({
   timeout: 60000,
 });
 
+/**
+ * Biometric client for fingerprint terminal operations.
+ */
+export const fingerprintApi = axios.create({
+  baseURL: import.meta.env.VITE_FINGERPRINT_API_URL || '/api/fingerprint',
+  withCredentials: true,
+  timeout: 30000,
+});
+
 // Single-flight refresh promise lock
 let refreshPromise: Promise<void> | null = null;
 
@@ -102,3 +111,4 @@ api.interceptors.response.use(
 );
 
 publicApi.interceptors.response.use(handleResponseSuccess, handleRateLimitAndErrors);
+fingerprintApi.interceptors.response.use(handleResponseSuccess, handleRateLimitAndErrors);

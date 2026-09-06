@@ -59,7 +59,7 @@ export async function createSchedule(input: CreateScheduleInput) {
 }
 
 export async function updateSchedule(id: string, input: UpdateScheduleInput) {
-  const existing = await getScheduleById(id);
+  await getScheduleById(id);
 
   let weeklyHours: string | undefined = undefined;
   if (input.lines) {

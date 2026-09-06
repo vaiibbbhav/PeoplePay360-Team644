@@ -82,7 +82,7 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 | `phone` | `VARCHAR(30)` | Nullable | Contact number |
 | `departmentId` | `UUID` | FK `departments.id` (`SET NULL`) | Department binding |
 | `jobPositionId` | `UUID` | FK `jobPositions.id` (`SET NULL`) | Job role binding |
-| `managerId` | `UUID` | Nullable | Reporting manager employee ID |
+| `managerId` | `UUID` | FK `employees.id` (`SET NULL`) | Reporting manager employee ID |
 | `workingScheduleId`| `UUID` | FK `working_schedules.id` (`SET NULL`) | Assigned schedule |
 | `employmentStatus` | `VARCHAR(30)` | `NOT NULL`, default `'incomplete'` | `incomplete`, `active`, `on_leave`, `inactive`, `terminated` |
 | `dateOfJoining` | `DATE` | `NOT NULL`, default `CURRENT_DATE` | Date hired |
@@ -128,6 +128,8 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `check_out` (TIMESTAMP WITH TIME ZONE)
 - `worked_hours` (NUMERIC(5, 2))
 - `status` (VARCHAR(30), NOT NULL, default 'present')
+- A unique index `uq_attendance_emp_date` enforces at most one attendance record per employee and date.
+- Database checks prevent a check-out timestamp earlier than check-in.
 - `is_manual_edit` (BOOLEAN, NOT NULL, default false)
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 - `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
@@ -201,6 +203,7 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `percentage` (NUMERIC(6, 3))
 - `formula` (TEXT)
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+- A unique index `uq_structure_rule_code` enforces unique rule code per salary structure `(structure_id, code)`.
 
 ### `payruns`
 - `id` (UUID, Primary Key, default random)
@@ -216,6 +219,7 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `warnings` (JSONB, default '[]')
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 - `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
+- Database checks enforce `period_end >= period_start` and valid payrun states (`draft`, `computed`, `validated`, `paid`, `sent`).
 
 ### `payslips`
 - `id` (UUID, Primary Key, default random)
@@ -234,6 +238,7 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `warnings` (JSONB, default '[]')
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 - `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
+- A unique index prevents more than one payslip for the same employee and payroll period. Database checks enforce date ordering and valid payslip states (`draft`, `validated`, `paid`).
 
 ### `payslip_lines`
 - `id` (UUID, Primary Key, default random)

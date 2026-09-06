@@ -10,6 +10,7 @@ import {
 } from './users.validators';
 import { UserRole } from '../../shared/auth-middleware';
 import { sendWelcomeCredentialsEmail } from '../../shared/mailer';
+import { getJwtSecret } from '../auth/auth.service';
 
 export const listUsers = async (query: UserQueryInput) => {
   return usersRepository.listUsers({
@@ -74,7 +75,7 @@ export const createUser = async (input: CreateUserInput, actor?: any) => {
   try {
     const employeeName = `${user.firstName} ${user.lastName}`.trim();
 
-    const JWT_SECRET = process.env.JWT_SECRET || 'peoplepay360-hackathon-super-secret-jwt-key';
+    const JWT_SECRET = getJwtSecret();
     const verificationToken = jwt.sign(
       { userId: user.id, email: user.email, purpose: 'email-verification' },
       JWT_SECRET,
@@ -83,7 +84,7 @@ export const createUser = async (input: CreateUserInput, actor?: any) => {
 
     sendWelcomeCredentialsEmail({
       toEmail: normalizedEmail,
-      temporaryPassword: input.password,
+      temporaryPassword: 'Set securely via verification link',
       role: input.role,
       employeeName,
       verificationToken,

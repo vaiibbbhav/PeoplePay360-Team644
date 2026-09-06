@@ -19,6 +19,7 @@ import { AcceptAllModal } from '../components/AcceptAllModal';
 import { PolicyFormDrawer } from '../components/PolicyFormDrawer';
 import { CompanyComplianceTable } from '../components/CompanyComplianceTable';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { InlineAlert } from '@/components/ui/InlineAlert';
 
 export const DocumentsPage: React.FC = () => {
   const { data: currentUser } = useCurrentUser();
@@ -44,6 +45,7 @@ export const DocumentsPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<Policy | null>(null);
   const [deletingPolicy, setDeletingPolicy] = useState<{ id: string; title: string } | null>(null);
+  const [acceptError, setAcceptError] = useState<string | null>(null);
 
   const deleteModalRef = useClickOutside<HTMLDivElement>(
     () => setDeletingPolicy(null),
@@ -82,12 +84,15 @@ export const DocumentsPage: React.FC = () => {
 
   const handleAcceptSingle = async (policy: Policy) => {
     try {
+      setAcceptError(null);
       await acceptMutation.mutateAsync({ id: policy.id, version: policy.version });
       if (viewingPolicy?.id === policy.id) {
         setViewingPolicy(null);
       }
     } catch {
-      alert(`Failed to submit acknowledgment for ${policy.title}. Please check server connection.`);
+      setAcceptError(
+        `Failed to submit acknowledgment for ${policy.title}. Please check server connection.`,
+      );
     }
   };
 
@@ -130,7 +135,9 @@ export const DocumentsPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
           <div>
             <h1 className="text-2xl font-sans font-bold text-ink">Policies & Documents</h1>
-            <p className="text-xs text-ink-soft mt-0.5">Compliance, Regulations & Employee Acknowledgment</p>
+            <p className="text-xs text-ink-soft mt-0.5">
+              Compliance, Regulations & Employee Acknowledgment
+            </p>
           </div>
           {isHrAdmin && (
             <button
@@ -142,6 +149,8 @@ export const DocumentsPage: React.FC = () => {
             </button>
           )}
         </div>
+
+        {acceptError && <InlineAlert>{acceptError}</InlineAlert>}
 
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -249,7 +258,12 @@ export const DocumentsPage: React.FC = () => {
                 ) : (
                   <div className="p-12 text-center bg-bg-raised border border-line rounded-2xl">
                     <div className="w-12 h-12 rounded-full bg-bg border border-line flex items-center justify-center mx-auto mb-3 text-ink-soft">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"

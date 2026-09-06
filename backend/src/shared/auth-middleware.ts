@@ -119,39 +119,32 @@ export const requireEmployeeRead = (req: Request, res: Response, next: NextFunct
   return requirePermission('employee.read')(req, res, next);
 };
 
-export const assertCanViewTimeOffRequest = (
+export const assertOwnerOrPermission = (
   req: Request,
-  request: { employee_id: string; manager_id?: string | null },
+  ownerEmployeeId: string,
+  permission: string,
+  errorMessage = 'You are not authorized to access this record',
 ): void => {
   if (!req.user) throw new UnauthorizedError();
-  if (hasPermission(req.user.role, 'timeoff.read')) {
-    return;
-  }
-  if (req.user.role === 'Employee') {
-    if (
-      req.user.employeeId === request.employee_id ||
-      (request.manager_id && req.user.employeeId === request.manager_id)
-    ) {
-      return;
-    }
-  }
-  throw new ForbiddenError('You are not authorized to view this request');
+  if (hasPermission(req.user.role, permission)) return;
+  if (req.user.role === 'Employee' && req.user.employeeId === ownerEmployeeId) return;
+  throw new ForbiddenError(errorMessage);
 };
 
-export const assertCanApproveTimeOffRequest = (
+export const assertManagerOrPermission = (
   req: Request,
-  request: { employee_id: string; manager_id?: string | null },
+  managerEmployeeId: string | null | undefined,
+  permission: string,
+  errorMessage = 'Only HR administrators or the direct reporting manager can perform this action',
 ): void => {
   if (!req.user) throw new UnauthorizedError();
-  if (hasPermission(req.user.role, 'timeoff.approve')) {
+  if (hasPermission(req.user.role, permission)) return;
+  if (
+    req.user.role === 'Employee' &&
+    req.user.employeeId &&
+    managerEmployeeId === req.user.employeeId
+  ) {
     return;
   }
-  if (req.user.role === 'Employee' && req.user.employeeId) {
-    if (request.manager_id && req.user.employeeId === request.manager_id) {
-      return;
-    }
-  }
-  throw new ForbiddenError(
-    'Only HR administrators or the direct reporting manager can approve or refuse this request',
-  );
+  throw new ForbiddenError(errorMessage);
 };

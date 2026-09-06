@@ -15,6 +15,7 @@ import { ContractsTab } from '../components/ContractsTab';
 import { PayslipsTab } from '../components/PayslipsTab';
 import { EmployeeFormModal } from '../components/EmployeeFormModal';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { InlineAlert } from '@/components/ui/InlineAlert';
 
 import { AppLayout } from '@/components/layout/AppLayout';
 
@@ -34,15 +35,17 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
   >('overview');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to remove this employee record from the system?')) {
       setIsDeleting(true);
+      setDeleteError(null);
       try {
         await deleteEmployeeMutation.mutateAsync(employeeId);
         navigate('/employees');
       } catch (err: any) {
-        alert(err.response?.data?.error || err.message || 'Failed to delete employee');
+        setDeleteError(err.response?.data?.error || err.message || 'Failed to delete employee');
         setIsDeleting(false);
       }
     }
@@ -71,6 +74,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
     >
       {/* Main Container */}
       <div className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8">
+        {deleteError && <InlineAlert>{deleteError}</InlineAlert>}
         {/* Template Hero Banner */}
         <EmployeeHeaderCard employee={employee} onEdit={() => setIsEditModalOpen(true)} />
 
@@ -214,7 +218,7 @@ export const EmployeeProfilePage: React.FC = () => {
             Your user account is not linked to an employee profile record yet.
           </p>
           <Link
-            to="/employee/dashboard"
+            to="/dashboard"
             className="px-4 py-2 text-xs font-medium bg-accent text-accent-ink rounded-lg no-underline inline-block"
           >
             Return to Dashboard

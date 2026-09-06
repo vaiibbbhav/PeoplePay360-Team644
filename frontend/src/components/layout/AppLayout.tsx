@@ -143,7 +143,7 @@ export type AppLayoutProps = {
   actions?: React.ReactNode;
 };
 
-export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: user, isLoading, isError } = useCurrentUser();
@@ -224,7 +224,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const employeeNavItems: EmployeeNavItem[] = [
     {
       label: 'Dashboard',
-      path: '/employee/dashboard',
+      path: '/dashboard',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -252,7 +252,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     },
     {
       label: 'Attendance',
-      path: '/attendance',
+      path: '/attendance/my',
       icon: ({ className }) => (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -331,8 +331,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     if (itemPath === '/dashboard') {
       return location.pathname === '/dashboard' && (!location.hash || location.hash === '');
     }
-    if (itemPath === '/attendance') {
-      return location.pathname === '/attendance' || location.pathname === '/employee/attendance';
+    if (itemPath === '/attendance/my') {
+      return location.pathname === '/attendance/my';
     }
     if (itemPath === '/employees') {
       return location.pathname.startsWith('/employees');
@@ -352,16 +352,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     return location.pathname === itemPath;
   };
 
-  const getEmployeeTargetUrl = (itemPath: string) => {
-    return itemPath;
-  };
-
   // Build nav groups tailored to role
   const isHRManager = user.role === 'HR Manager';
   const canAccessPayroll =
-    user.role === 'Admin' ||
-    user.role === 'HR Payroll Manager' ||
-    user.role === 'HR Payroll User';
+    user.role === 'Admin' || user.role === 'HR Payroll Manager' || user.role === 'HR Payroll User';
   const canAccessPayslips = canAccessPayroll || isHRManager;
 
   const navGroups: NavGroup[] = [
@@ -394,7 +388,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           {
             title: 'Payroll',
             items: [
-              ...(canAccessPayroll ? [{ label: 'Payruns', path: '/payruns', icon: PayrunIcon }] : []),
+              ...(canAccessPayroll
+                ? [{ label: 'Payruns', path: '/payruns', icon: PayrunIcon }]
+                : []),
               { label: 'Payslips', path: '/payslips', icon: AnalyticsIcon },
             ],
           },
@@ -418,6 +414,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex bg-bg text-ink font-sans w-full min-w-0 overflow-x-hidden">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-xs focus:font-semibold focus:text-accent-ink"
+      >
+        Skip to main content
+      </a>
       {/* -------- SIDEBAR -------- */}
       <aside
         className={`fixed inset-y-0 left-0 z-40 border-r border-line bg-bg-raised/95 backdrop-blur-md flex flex-col transition-transform duration-200 ease-in-out w-64 ${
@@ -473,31 +475,40 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </div>
 
         {/* Sidebar Nav Items */}
-        <nav className="flex-1 px-2.5 py-4 overflow-y-auto space-y-1">
+        <nav
+          id="primary-navigation"
+          aria-label="Primary navigation"
+          className="flex-1 px-2.5 py-4 overflow-y-auto space-y-1"
+        >
           {isEmployeeRole ? (
             <>
               {!sidebarCollapsed && (
-                <div className={` ${sidebarCollapsed ? 'invisible' : 'block'} px-2.5 mb-2 text-[10px] font-semibold uppercase tracking-wider text-ink-soft/70`}>
+                <div
+                  className={` ${sidebarCollapsed ? 'invisible' : 'block'} px-2.5 mb-2 text-[10px] font-semibold uppercase tracking-wider text-ink-soft/70`}
+                >
                   Workspace
                 </div>
               )}
               {employeeNavItems.map((item) => {
                 const active = isEmployeeActive(item.path);
-                const targetUrl = getEmployeeTargetUrl(item.path);
-
                 return (
                   <Link
                     key={item.label}
-                    to={targetUrl}
+                    to={item.path}
                     title={sidebarCollapsed ? item.label : undefined}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-3'
-                      } py-2 rounded-lg text-xs font-medium no-underline ${active
+                    aria-current={active ? 'page' : undefined}
+                    className={`flex items-center ${
+                      sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-3'
+                    } py-2 rounded-lg text-xs font-medium no-underline ${
+                      active
                         ? 'bg-accent text-accent-ink shadow-xs'
                         : 'text-ink hover:bg-bg-raised hover:text-ink'
-                      }`}
+                    }`}
                   >
-                    <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-2.5'} truncate`}>
+                    <div
+                      className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-2.5'} truncate`}
+                    >
                       <item.icon className="w-4 h-4 shrink-0 opacity-80" />
                       {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                     </div>
@@ -506,18 +517,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                       <div className="flex items-center gap-1.5 shrink-0">
                         {item.badge && (
                           <span
-                            className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${active
-                              ? 'bg-accent-ink/20 text-accent-ink'
-                              : 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
-                              }`}
+                            className={`text-[9px] px-1.5 py-0.5 rounded font-semibold uppercase ${
+                              active
+                                ? 'bg-accent-ink/20 text-accent-ink'
+                                : 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300'
+                            }`}
                           >
                             {item.badge}
                           </span>
                         )}
                         {item.hasSubmenu && (
                           <svg
-                            className={`w-3.5 h-3.5 opacity-60 ${active ? 'text-accent-ink' : 'text-ink-soft'
-                              }`}
+                            className={`w-3.5 h-3.5 opacity-60 ${
+                              active ? 'text-accent-ink' : 'text-ink-soft'
+                            }`}
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -558,11 +571,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                         to={item.path}
                         title={sidebarCollapsed ? item.label : undefined}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2' : 'gap-2.5 px-3'
-                          } py-2 rounded-lg text-xs font-medium no-underline ${isActive
+                        aria-current={isActive ? 'page' : undefined}
+                        className={`flex items-center ${
+                          sidebarCollapsed ? 'justify-center px-2' : 'gap-2.5 px-3'
+                        } py-2 rounded-lg text-xs font-medium no-underline ${
+                          isActive
                             ? 'bg-accent text-accent-ink'
                             : 'text-ink hover:bg-bg-raised hover:text-ink'
-                          }`}
+                        }`}
                       >
                         <item.icon className="w-4 h-4 shrink-0 opacity-80" />
                         {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
@@ -578,7 +594,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         {/* Bottom: User card + Sign Out */}
         <div className="p-2.5 border-t border-line space-y-2">
           {/* User card */}
-          <div className={`flex items-center ${sidebarCollapsed ? 'justify-center p-1' : 'gap-2.5 px-2 py-2'}`}>
+          <div
+            className={`flex items-center ${sidebarCollapsed ? 'justify-center p-1' : 'gap-2.5 px-2 py-2'}`}
+          >
             <div
               title={sidebarCollapsed ? `${displayName} (${user.email})` : undefined}
               className="w-8 h-8 rounded-full bg-accent/15 text-accent font-semibold flex items-center justify-center text-xs shrink-0"
@@ -597,8 +615,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <button
             onClick={logout}
             title={sidebarCollapsed ? 'Sign Out' : undefined}
-            className={`w-full flex items-center justify-center ${sidebarCollapsed ? 'p-2' : 'gap-2 px-3 py-2'
-              } rounded-lg text-xs font-medium border border-line bg-bg hover:bg-bg-raised text-ink cursor-pointer`}
+            className={`w-full flex items-center justify-center ${
+              sidebarCollapsed ? 'p-2' : 'gap-2 px-3 py-2'
+            } rounded-lg text-xs font-medium border border-line bg-bg hover:bg-bg-raised text-ink cursor-pointer`}
           >
             <SignOutIcon className="w-3.5 h-3.5 text-ink-soft" />
             {!sidebarCollapsed && <span>Sign Out</span>}
@@ -608,9 +627,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
       {/* Mobile Overlay */}
       {mobileMenuOpen && (
-        <div
+        <button
+          type="button"
           onClick={() => setMobileMenuOpen(false)}
           className="fixed inset-0 z-30 bg-black/40 backdrop-blur-xs lg:hidden"
+          aria-label="Close navigation menu"
         />
       )}
 
@@ -626,8 +647,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="primary-navigation"
+              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
               className="lg:hidden p-2 rounded-lg border border-line bg-bg text-ink cursor-pointer"
-              aria-label="Open navigation menu"
             >
               <MenuIcon className="w-4 h-4" />
             </button>
@@ -662,7 +685,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 min-w-0 w-full">{children ?? <Outlet />}</main>
+        <main id="main-content" tabIndex={-1} aria-label={title} className="flex-1 min-w-0 w-full">
+          {children ?? <Outlet />}
+        </main>
       </div>
     </div>
   );

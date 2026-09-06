@@ -7,7 +7,7 @@ import * as authRepository from './auth.repository';
 import { AuthUser, UserRole } from '../../shared/auth-middleware';
 import { sendVerificationEmail } from '../../shared/mailer';
 
-const getJwtSecret = (): string => {
+export const getJwtSecret = (): string => {
   const secret = process.env.JWT_SECRET;
   if (!secret || secret.length < 32) {
     throw new Error('JWT_SECRET must be configured with at least 32 characters');
@@ -139,7 +139,14 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
   try {
     const decoded = jwt.verify(currentToken, getJwtSecret(), {
       ignoreExpiration: true,
-    }) as AuthUser;
+    }) as AuthUser & { exp?: number; iat?: number };
+
+    // Prevent reviving ancient or revoked tokens: refresh only permitted within 7 days of expiration
+    const MAX_REFRESH_GRACE_SECONDS = 7 * 24 * 60 * 60; // 7 days
+    if (decoded.exp && Math.floor(Date.now() / 1000) > decoded.exp + MAX_REFRESH_GRACE_SECONDS) {
+      throw new UnauthorizedError('Session expired. Please log in again.');
+    }
+
     const user = await authRepository.findUserById(decoded.id);
     if (!user) {
       throw new UnauthorizedError('User does not exist');

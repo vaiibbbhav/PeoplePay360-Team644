@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Check, X, Calendar, Users } from 'lucide-react';
-import {
-  useApproveLeaveRequest,
-  type TimeOffRequest,
-} from '../queries/useTimeOff';
+import { useApproveLeaveRequest, type TimeOffRequest } from '../queries/useTimeOff';
 import { RefuseLeaveModal } from './RefuseLeaveModal';
+import { InlineAlert } from '@/components/ui/InlineAlert';
 
 type TeamApprovalsSectionProps = {
   requests: TimeOffRequest[];
@@ -17,14 +15,16 @@ export const TeamApprovalsSection: React.FC<TeamApprovalsSectionProps> = ({
 }) => {
   const approveMutation = useApproveLeaveRequest();
   const [selectedForRefusal, setSelectedForRefusal] = useState<TimeOffRequest | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const pendingRequests = requests.filter((r) => r.status === 'pending');
 
   const handleApprove = async (id: string) => {
     try {
+      setActionError(null);
       await approveMutation.mutateAsync(id);
     } catch (err: unknown) {
-      alert(
+      setActionError(
         (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
           'Failed to approve request.',
       );
@@ -57,6 +57,7 @@ export const TeamApprovalsSection: React.FC<TeamApprovalsSectionProps> = ({
 
   return (
     <div className="space-y-4 font-sans">
+      {actionError && <InlineAlert>{actionError}</InlineAlert>}
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold text-ink uppercase tracking-wider flex items-center gap-2">

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ValidationError } from '../../shared/errors';
+import { realCalendarDateSchema } from '../../shared/validators';
 
 export const createTimeOffTypeSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -11,22 +12,32 @@ export const createTimeOffTypeSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-export const createAllocationSchema = z.object({
-  employeeId: z.string().uuid('Invalid employee ID'),
-  timeOffTypeId: z.string().uuid('Invalid time off type ID'),
-  allocatedAmount: z.number().positive('Allocated amount must be greater than 0'),
-  validFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid validFrom date format (YYYY-MM-DD)'),
-  validTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid validTo date format (YYYY-MM-DD)'),
-});
+export const createAllocationSchema = z
+  .object({
+    employeeId: z.string().uuid('Invalid employee ID'),
+    timeOffTypeId: z.string().uuid('Invalid time off type ID'),
+    allocatedAmount: z.number().positive('Allocated amount must be greater than 0'),
+    validFrom: realCalendarDateSchema,
+    validTo: realCalendarDateSchema,
+  })
+  .refine((data) => data.validTo >= data.validFrom, {
+    message: 'validTo cannot be earlier than validFrom',
+    path: ['validTo'],
+  });
 
-export const createRequestSchema = z.object({
-  employeeId: z.string().uuid('Invalid employee ID'),
-  timeOffTypeId: z.string().uuid('Invalid time off type ID'),
-  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid startDate format (YYYY-MM-DD)'),
-  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid endDate format (YYYY-MM-DD)'),
-  duration: z.number().positive('Duration must be greater than 0'),
-  reason: z.string().optional().nullable(),
-});
+export const createRequestSchema = z
+  .object({
+    employeeId: z.string().uuid('Invalid employee ID'),
+    timeOffTypeId: z.string().uuid('Invalid time off type ID'),
+    startDate: realCalendarDateSchema,
+    endDate: realCalendarDateSchema,
+    duration: z.number().positive('Duration must be greater than 0'),
+    reason: z.string().optional().nullable(),
+  })
+  .refine((data) => data.endDate >= data.startDate, {
+    message: 'endDate cannot be earlier than startDate',
+    path: ['endDate'],
+  });
 
 export function validateCreateTimeOffType(data: unknown) {
   const result = createTimeOffTypeSchema.safeParse(data);
