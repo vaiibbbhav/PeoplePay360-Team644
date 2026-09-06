@@ -66,6 +66,10 @@ export type PunchFingerprintParams = {
   employeeCode?: string;
 };
 
+type PunchApiPayload = Partial<PunchResult> & {
+  employee_name?: string;
+};
+
 /**
  * Biometric match and Punch In / Punch Out
  * When employeeCode is provided, performs direct 1:1 biometric verification.
@@ -81,8 +85,17 @@ export async function punchWithFingerprint(
       image: imageBase64,
       employeeCode: employeeCode || undefined,
     });
-    const payload = (res.data?.data || res.data) as Partial<PunchResult> & Record<string, unknown>;
-    const matched = Boolean(payload?.matched);
+    const payload = (res.data?.data ?? res.data) as PunchApiPayload;
+    const employeeName = payload.employeeName ?? payload.employee_name;
+    const matched = Boolean(payload.matched);
+
+    console.info('[Fingerprint punch] Resolved response', {
+      action: payload.action,
+      employeeCode: payload.employeeCode,
+      employeeId: payload.employeeId,
+      employeeName,
+      matched,
+    });
     const rawScore = payload?.score;
     const numScore =
       typeof rawScore === 'number' && !isNaN(rawScore)
@@ -93,7 +106,8 @@ export async function punchWithFingerprint(
 
     return {
       ...payload,
-      success: Boolean(payload?.success || matched),
+      employeeName,
+      success: Boolean(payload.success || matched),
       matched,
       score: numScore,
       message: payload?.message || (matched ? 'Successfully Punched' : 'No user exists'),

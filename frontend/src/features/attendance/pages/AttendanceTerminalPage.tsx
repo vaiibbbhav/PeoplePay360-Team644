@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+
 import { usePunchFingerprint, type PunchResult } from '../queries/useFingerprint';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import { formatTimeIST } from '@/lib/formatters';
@@ -78,11 +79,12 @@ export const AttendanceTerminalPage: React.FC = () => {
 
       if (result.matched && result.success) {
         const timeStr = result.time || formatTimeIST(new Date().toISOString());
+        const employeeName = result.employeeName?.trim() || 'Employee name unavailable';
         const text =
           result.announcement ||
           (result.action === 'PUNCH_IN'
-            ? `Welcome ${result.employeeName}! Punched in at ${timeStr}`
-            : `Goodbye ${result.employeeName}! Punched out at ${timeStr}`);
+            ? `Welcome ${employeeName}! Punched in at ${timeStr}`
+            : `Goodbye ${employeeName}! Punched out at ${timeStr}`);
         speak(text);
       } else {
         const failureText =
@@ -113,36 +115,13 @@ export const AttendanceTerminalPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg text-ink font-sans flex flex-col selection:bg-accent/20">
-      {/* Top Bar Navigation */}
-      <header className="h-16 border-b border-line px-4 sm:px-10 flex items-center justify-between bg-bg-raised/30 backdrop-blur-md sticky top-0 z-20">
-        <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2 no-underline">
-            <span className="font-sans text-lg font-bold tracking-tight text-ink">
-              PeoplePay<span className="text-accent">360</span>
-            </span>
-          </Link>
-          <span className="text-line hidden sm:inline">/</span>
-          <span className="text-xs text-ink-soft hidden sm:inline font-medium">
-            Biometric Terminal
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3 text-xs">
-          <Link
-            to="/dashboard"
-            className="px-3 py-1.5 rounded-lg border border-line bg-bg hover:bg-bg-raised text-ink transition-colors no-underline font-medium"
-          >
-            Employee Portal
-          </Link>
-          <Link
-            to="/login"
-            className="px-3 py-1.5 rounded-lg bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline font-medium"
-          >
-            Sign In
-          </Link>
-        </div>
-      </header>
+    <div className="relative min-h-screen bg-bg text-ink font-sans flex flex-col selection:bg-accent/20">
+      <Link
+        to="/"
+        className="absolute top-3 left-3 inline-flex items-center text-[11px] font-medium text-ink-soft hover:text-ink transition-colors no-underline"
+      >
+        ← Back
+      </Link>
 
       {/* Main Punch Canvas */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-8 py-8 sm:py-12 space-y-8">
@@ -396,8 +375,8 @@ export const AttendanceTerminalPage: React.FC = () => {
                             <div className="flex items-center gap-2 flex-wrap">
                               <h3 className="text-lg font-bold text-ink">
                                 {punchResult.action === 'PUNCH_IN'
-                                  ? `Welcome, ${punchResult.employeeName}!`
-                                  : `Goodbye, ${punchResult.employeeName}!`}
+                                  ? `Welcome, ${punchResult.employeeName?.trim() || 'Employee name unavailable'}!`
+                                  : `Goodbye, ${punchResult.employeeName?.trim() || 'Employee name unavailable'}!`}
                               </h3>
                               <span className="font-mono text-xs px-2.5 py-0.5 rounded-md bg-accent/15 text-accent border border-accent/30 font-semibold">
                                 {formatEmpCode(punchResult.employeeCode || fullEmployeeCode)}

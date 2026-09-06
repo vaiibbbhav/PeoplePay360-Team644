@@ -302,8 +302,7 @@ public class FingerprintService {
         // Fetch employee details from users table joined via employees.user_id
         String empSql = """
             SELECT e.id, e.employee_code, u.email,
-                   COALESCE(u.first_name, 'Employee') as first_name,
-                   COALESCE(u.last_name, 'User') as last_name
+                   TRIM(CONCAT(u.first_name, ' ', u.last_name)) AS employee_name
             FROM employees e
             JOIN users u ON e.user_id = u.id
             WHERE e.id = ?::uuid
@@ -316,9 +315,11 @@ public class FingerprintService {
         String employeeCode = "";
         if (!empList.isEmpty()) {
             Map<String, Object> emp = empList.get(0);
-            employeeName = emp.get("first_name") + " " + emp.get("last_name");
+            employeeName = String.valueOf(emp.get("employee_name")).trim();
             employeeEmail = emp.get("email") != null ? (String) emp.get("email") : "";
             employeeCode = emp.get("employee_code") != null ? (String) emp.get("employee_code") : "";
+        } else {
+            logger.warn("Matched fingerprint has no employee details for employee ID {}", employeeId);
         }
 
         // Query today's attendance record in Indian Standard Time (Asia/Kolkata)
@@ -449,6 +450,10 @@ public class FingerprintService {
         response.put("score", Math.round(normalizedScore * 10.0) / 10.0);
         response.put("message", action.equals("PUNCH_IN") ? "Successfully Punched In" : "Successfully Punched Out");
 
+        logger.info(
+            "Fingerprint punch completed: employeeId={}, employeeCode={}, employeeName={}, action={}",
+            employeeId, employeeCode, employeeName, action
+        );
         return response;
     }
 

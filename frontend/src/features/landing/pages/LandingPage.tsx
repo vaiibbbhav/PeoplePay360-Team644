@@ -95,6 +95,9 @@ export const LandingPage: React.FC = () => {
             <a href="#roles" className="no-underline hover:text-ink transition-colors">
               Roles
             </a>
+            <Link to="/attendance/terminal" className="no-underline hover:text-ink transition-colors">
+              Biometric Punch
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2.5 sm:gap-3.5">
