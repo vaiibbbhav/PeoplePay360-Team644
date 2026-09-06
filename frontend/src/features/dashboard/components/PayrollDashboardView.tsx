@@ -59,6 +59,7 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
 
   const [selectedDept, setSelectedDept] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
+  const [selectedEmployeeType, setSelectedEmployeeType] = useState('');
 
   const filteredDeptBreakdown = selectedDept
     ? departmentBreakdown.filter((d) => d.department === selectedDept)
@@ -127,9 +128,20 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
             <option key={m} value={m}>{m}</option>
           ))}
         </select>
-        {(selectedDept || selectedMonth) && (
+        <select
+          value={selectedEmployeeType}
+          onChange={(e) => setSelectedEmployeeType(e.target.value)}
+          className="px-3 py-1.5 border border-line rounded-lg bg-bg-raised text-xs text-ink focus:outline-none focus:border-accent cursor-pointer"
+        >
+          <option value="">All Employee Types</option>
+          <option value="full_time">Full-time Staff</option>
+          <option value="contract">Contract Staff</option>
+          <option value="part_time">Part-time Staff</option>
+          <option value="intern">Interns</option>
+        </select>
+        {(selectedDept || selectedMonth || selectedEmployeeType) && (
           <button
-            onClick={() => { setSelectedDept(''); setSelectedMonth(''); }}
+            onClick={() => { setSelectedDept(''); setSelectedMonth(''); setSelectedEmployeeType(''); }}
             className="text-xs text-accent font-medium hover:opacity-80 cursor-pointer"
           >
             Clear

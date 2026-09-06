@@ -23,6 +23,16 @@ export const NewLeaveTypeModal: React.FC<NewLeaveTypeModalProps> = ({ isOpen, on
   const [isPaid, setIsPaid] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const dialogRef = useDialogAccessibility({ isOpen, onClose });
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!createMutation.isPending) onClose();
+  }, isOpen);
+
+  const setCombinedRef = (node: HTMLDivElement | null) => {
+    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,16 +69,6 @@ export const NewLeaveTypeModal: React.FC<NewLeaveTypeModalProps> = ({ isOpen, on
             'Failed to create leave policy.';
       setErrorMessage(msg);
     }
-  };
-
-  const dialogRef = useDialogAccessibility({ isOpen, onClose });
-  const modalRef = useClickOutside<HTMLDivElement>(() => {
-    if (!createMutation.isPending) onClose();
-  }, isOpen);
-
-  const setCombinedRef = (node: HTMLDivElement | null) => {
-    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
   };
 
   return (

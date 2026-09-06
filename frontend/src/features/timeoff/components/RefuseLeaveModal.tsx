@@ -19,6 +19,16 @@ export const RefuseLeaveModal: React.FC<RefuseLeaveModalProps> = ({
   const [errorMessage, setErrorMessage] = useState('');
   const refuseMutation = useRefuseLeaveRequest();
 
+  const dialogRef = useDialogAccessibility({ isOpen, onClose });
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!refuseMutation.isPending) onClose();
+  }, isOpen);
+
+  const setCombinedRef = (node: HTMLDivElement | null) => {
+    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
+
   if (!isOpen || !request) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,16 +52,6 @@ export const RefuseLeaveModal: React.FC<RefuseLeaveModalProps> = ({
             'Failed to refuse leave request.';
       setErrorMessage(msg);
     }
-  };
-
-  const dialogRef = useDialogAccessibility({ isOpen, onClose });
-  const modalRef = useClickOutside<HTMLDivElement>(() => {
-    if (!refuseMutation.isPending) onClose();
-  }, isOpen);
-
-  const setCombinedRef = (node: HTMLDivElement | null) => {
-    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
   };
 
   return (
