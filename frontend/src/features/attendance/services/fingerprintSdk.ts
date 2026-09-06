@@ -111,24 +111,27 @@ class FingerprintService {
   }
 
   public on<K extends keyof ListenerMap>(event: K, callback: ListenerMap[K][number]): void {
-    if (this.listeners[event]) {
-      (this.listeners[event] as any[]).push(callback);
+    const list = this.listeners[event] as Array<ListenerMap[K][number]>;
+    if (list) {
+      list.push(callback);
     }
   }
 
   public off<K extends keyof ListenerMap>(event: K, callback: ListenerMap[K][number]): void {
-    if (this.listeners[event]) {
-      this.listeners[event] = (this.listeners[event] as any[]).filter((cb) => cb !== callback);
+    const list = this.listeners[event] as Array<ListenerMap[K][number]>;
+    if (list) {
+      this.listeners[event] = list.filter((cb) => cb !== callback) as ListenerMap[K];
     }
   }
 
-  private emit<K extends keyof ListenerMap>(event: K, data: any): void {
-    if (this.listeners[event]) {
-      this.listeners[event].forEach((cb: any) => {
+  private emit<K extends keyof ListenerMap>(event: K, data: Parameters<ListenerMap[K][number]>[0]): void {
+    const list = this.listeners[event];
+    if (list) {
+      list.forEach((cb) => {
         try {
-          cb(data);
+          (cb as (arg: typeof data) => void)(data);
         } catch (e) {
-          console.error(`Error in ${event} listener:`, e);
+          console.error(`Error in ${String(event)} listener:`, e);
         }
       });
     }

@@ -1,5 +1,10 @@
 import * as timeoffRepo from './timeoff.repository';
 import { NotFoundError, ValidationError } from '../../shared/errors';
+import {
+  CreateTimeOffTypeInput,
+  CreateAllocationInput,
+  CreateRequestInput,
+} from './timeoff.validators';
 
 export type RequestFilterOptions = timeoffRepo.RequestFilterOptions;
 
@@ -7,7 +12,7 @@ export async function listTimeOffTypes() {
   return await timeoffRepo.findAllTimeOffTypes();
 }
 
-export async function createTimeOffType(data: Record<string, unknown>) {
+export async function createTimeOffType(data: CreateTimeOffTypeInput) {
   return await timeoffRepo.insertTimeOffType(data);
 }
 
@@ -15,8 +20,8 @@ export async function listAllocations(employeeId?: string) {
   return await timeoffRepo.findAllAllocations(employeeId);
 }
 
-export async function createAllocation(data: Record<string, unknown>) {
-  if ((data.validTo as string) < (data.validFrom as string)) {
+export async function createAllocation(data: CreateAllocationInput) {
+  if (data.validTo < data.validFrom) {
     throw new ValidationError('Validity end date cannot be earlier than start date');
   }
   return await timeoffRepo.insertAllocation(data);
@@ -86,8 +91,8 @@ export async function getEmployeeBalances(employeeId: string) {
   });
 }
 
-export async function createRequest(data: Record<string, unknown>) {
-  const type = await timeoffRepo.findTimeOffTypeById(data.timeOffTypeId as string);
+export async function createRequest(data: CreateRequestInput) {
+  const type = await timeoffRepo.findTimeOffTypeById(data.timeOffTypeId);
   if (!type) {
     throw new NotFoundError('Invalid time off type');
   }
@@ -110,9 +115,9 @@ export async function createRequest(data: Record<string, unknown>) {
   }
   if (type.requiresAllocation) {
     const allocation = await timeoffRepo.findValidAllocation(
-      data.employeeId as string,
+      data.employeeId,
       type.id,
-      data.startDate as string,
+      data.startDate,
     );
     if (!allocation) {
       throw new ValidationError('No active approved allocation found for this period');

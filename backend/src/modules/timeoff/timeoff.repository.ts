@@ -27,7 +27,17 @@ export async function findTimeOffTypeById(id: string) {
   return rows[0] || null;
 }
 
-export async function insertTimeOffType(data: Record<string, any>) {
+export type InsertTimeOffTypeData = {
+  name: string;
+  code: string;
+  unit?: 'days' | 'hours';
+  requiresAllocation?: boolean;
+  approvalType?: 'hr_only' | 'manager_and_hr' | 'auto';
+  isPaid?: boolean;
+  isActive?: boolean;
+};
+
+export async function insertTimeOffType(data: InsertTimeOffTypeData) {
   const [created] = await db
     .insert(timeOffTypes)
     .values({
@@ -132,7 +142,17 @@ export async function findValidAllocation(employeeId: string, typeId: string, da
   return rows[0] || null;
 }
 
-export async function insertAllocation(data: Record<string, any>) {
+export type InsertAllocationData = {
+  employeeId: string;
+  timeOffTypeId: string;
+  allocatedAmount: number | string;
+  validFrom: string;
+  validTo: string;
+  status?: string;
+  approvedBy?: string | null;
+};
+
+export async function insertAllocation(data: InsertAllocationData) {
   const [created] = await db
     .insert(timeOffAllocations)
     .values({
@@ -289,7 +309,16 @@ export async function findRequestById(id: string) {
   return rows[0] || null;
 }
 
-export async function insertRequest(data: Record<string, any>) {
+export type InsertRequestData = {
+  employeeId: string;
+  timeOffTypeId: string;
+  startDate: string;
+  endDate: string;
+  duration: number | string;
+  reason?: string | null;
+};
+
+export async function insertRequest(data: InsertRequestData) {
   const [created] = await db
     .insert(timeOffRequests)
     .values({

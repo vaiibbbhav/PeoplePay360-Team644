@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useLoginMutation, useResendVerificationMutation } from '../queries/useAuth';
+import { useLoginMutation, useResendVerificationMutation, type UserRole } from '../queries/useAuth';
 import { getDefaultPathForRole } from '@/lib/permissions';
 
 type QuickRole = {
-  role: string;
+  role: UserRole;
   email: string;
   pass: string;
 };
@@ -96,7 +96,7 @@ export const LoginForm: React.FC = () => {
 
     try {
       const res = await loginMutation.mutateAsync({ email: acc.email, password: acc.pass });
-      const targetRole = res?.user?.role || (acc.role as any);
+      const targetRole: UserRole = res?.user?.role || acc.role;
       navigate(getDefaultPathForRole(targetRole));
     } catch (err: any) {
       const errorCode = err.response?.data?.code;

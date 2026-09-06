@@ -128,7 +128,7 @@ export async function updateScheduleWithLines(
   lines?: ScheduleLineInput[],
 ) {
   return await db.transaction(async (tx) => {
-    const updatePayload: Record<string, any> = {};
+    const updatePayload: Partial<typeof workingSchedules.$inferInsert> = {};
     if (scheduleData.name !== undefined) updatePayload.name = scheduleData.name;
     if (scheduleData.weeklyHours !== undefined) updatePayload.weeklyHours = scheduleData.weeklyHours;
     if (scheduleData.isActive !== undefined) updatePayload.isActive = scheduleData.isActive;

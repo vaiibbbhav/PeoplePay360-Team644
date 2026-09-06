@@ -44,6 +44,8 @@ export const attendanceRecordSchema = baseAttendanceRecordSchema.refine(
   { message: 'Check-out timestamp cannot be earlier than check-in', path: ['checkOut'] },
 );
 
+export type ManualAttendanceInput = z.infer<typeof attendanceRecordSchema>;
+
 export const updateAttendanceSchema = baseAttendanceRecordSchema.partial().refine(
   (data) => {
     if (data.checkIn && data.checkOut) {

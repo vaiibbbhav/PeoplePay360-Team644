@@ -172,7 +172,7 @@ export const updateUser = async (
     passwordHash?: string;
   },
 ): Promise<UserWithEmployee> => {
-  const updatePayload: Record<string, any> = {
+  const updatePayload: Partial<typeof schema.users.$inferInsert> = {
     updatedAt: new Date(),
   };
 

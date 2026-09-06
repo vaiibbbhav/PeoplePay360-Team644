@@ -188,7 +188,24 @@ export async function findOverlappingActiveContracts(
     .where(and(...conditions));
 }
 
-export async function insertContract(data: Record<string, any>) {
+export type InsertContractData = {
+  employeeId: string;
+  name: string;
+  wage: number | string;
+  wageType?: 'monthly' | 'hourly';
+  salaryStructureId: string;
+  workingScheduleId?: string | null;
+  departmentId?: string | null;
+  jobPositionId?: string | null;
+  startDate: string;
+  endDate?: string | null;
+  status?: 'draft' | 'active' | 'expired' | 'cancelled';
+  notes?: string | null;
+};
+
+export type UpdateContractData = Partial<InsertContractData>;
+
+export async function insertContract(data: InsertContractData) {
   const [created] = await db
     .insert(contracts)
     .values({
@@ -209,8 +226,8 @@ export async function insertContract(data: Record<string, any>) {
   return created;
 }
 
-export async function updateContract(id: string, data: Record<string, any>) {
-  const values: Record<string, any> = {};
+export async function updateContract(id: string, data: UpdateContractData) {
+  const values: Partial<typeof contracts.$inferInsert> = {};
   if (data.name !== undefined) values.name = data.name;
   if (data.wage !== undefined) values.wage = String(data.wage);
   if (data.wageType !== undefined) values.wageType = data.wageType;

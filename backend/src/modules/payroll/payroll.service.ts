@@ -15,6 +15,11 @@ function countPeriodDays(periodStart: string, periodEnd: string): number {
   return Math.floor((end - start) / 86_400_000) + 1;
 }
 
+import {
+  CreateSalaryStructureInput,
+  CreateSalaryRuleInput,
+} from './payroll.validators';
+
 export async function listSalaryStructures() {
   return await payrollRepo.findAllStructures();
 }
@@ -28,12 +33,12 @@ export async function getSalaryStructureById(id: string) {
   return { ...structure, rules };
 }
 
-export async function createSalaryStructure(data: Record<string, unknown>) {
+export async function createSalaryStructure(data: CreateSalaryStructureInput) {
   return await payrollRepo.insertStructure(data);
 }
 
-export async function createSalaryRule(data: Record<string, unknown>) {
-  await getSalaryStructureById(data.structureId as string);
+export async function createSalaryRule(data: CreateSalaryRuleInput) {
+  await getSalaryStructureById(data.structureId);
   return await payrollRepo.insertRule(data);
 }
 
@@ -244,8 +249,8 @@ export async function validatePayrun(id: string) {
     throw new ValidationError(`Cannot validate payrun with status '${payrun.status}'`);
   }
 
-  const blockingWarnings = ((payrun.warnings as any[]) || []).filter(
-    (w) => w.severity === 'blocking',
+  const blockingWarnings = ((payrun.warnings as payrollRepo.PayrunWarning[]) || []).filter(
+    (w) => w.severity === 'error' || (w.severity as string) === 'blocking',
   );
   if (blockingWarnings.length > 0) {
     throw new ValidationError(
