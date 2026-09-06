@@ -12,6 +12,7 @@ import {
 } from '../../db/schema';
 import { eq, desc, count, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
+import { generateEmployeeCode } from '../../shared/employee-code';
 
 const managers = alias(employees, 'managers');
 const managerUsers = alias(users, 'manager_users');
@@ -20,6 +21,7 @@ export async function findAllEmployees() {
   return await db
     .select({
       id: employees.id,
+      employee_code: employees.employeeCode,
       user_id: employees.userId,
       first_name: users.firstName,
       last_name: users.lastName,
@@ -61,6 +63,7 @@ export async function findEmployeeById(id: string) {
   const rows = await db
     .select({
       id: employees.id,
+      employee_code: employees.employeeCode,
       user_id: employees.userId,
       first_name: users.firstName,
       last_name: users.lastName,
@@ -106,6 +109,7 @@ export async function findEmployeeByEmail(email: string) {
   const rows = await db
     .select({
       id: employees.id,
+      employee_code: employees.employeeCode,
       user_id: employees.userId,
       first_name: users.firstName,
       last_name: users.lastName,
@@ -125,10 +129,12 @@ export async function findEmployeeByUserId(userId: string) {
 }
 
 export async function insertEmployee(data: Record<string, any>) {
+  const employeeCode = await generateEmployeeCode();
   const [created] = await db
     .insert(employees)
     .values({
       userId: data.userId,
+      employeeCode,
       phone: data.phone,
       departmentId: data.departmentId,
       jobPositionId: data.jobPositionId,

@@ -34,5 +34,10 @@ router.post(
   requirePermission('attendance.write'),
   attendanceController.saveManualAttendance,
 );
+router.delete(
+  '/:id',
+  requirePermission('attendance.write'),
+  attendanceController.deleteAttendance,
+);
 
 export default router;

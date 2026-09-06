@@ -68,12 +68,19 @@ export async function findAttendanceByEmployeeAndDate(employeeId: string, dateSt
 }
 
 export async function upsertAttendance(data: Record<string, any>) {
-  const existing = await findAttendanceByEmployeeAndDate(data.employeeId, data.date);
+  let existing = null;
+  if (data.id) {
+    existing = await findAttendanceById(data.id);
+  }
+  if (!existing) {
+    existing = await findAttendanceByEmployeeAndDate(data.employeeId, data.date);
+  }
 
   if (existing) {
     const [updated] = await db
       .update(attendance)
       .set({
+        date: data.date || existing.date,
         checkIn: data.checkIn ? new Date(data.checkIn) : existing.checkIn,
         checkOut: data.checkOut ? new Date(data.checkOut) : existing.checkOut,
         workedHours:
@@ -103,6 +110,14 @@ export async function upsertAttendance(data: Record<string, any>) {
     })
     .returning();
   return created;
+}
+
+export async function deleteAttendance(id: string) {
+  const [deleted] = await db
+    .delete(attendance)
+    .where(eq(attendance.id, id))
+    .returning();
+  return deleted || null;
 }
 
 export async function countWorkedDaysForPeriod(

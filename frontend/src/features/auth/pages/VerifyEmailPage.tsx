@@ -14,7 +14,7 @@ export const VerifyEmailPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState(() =>
     token ? '' : 'No verification token found in URL.',
   );
-
+  
   useEffect(() => {
     if (!token) return;
 

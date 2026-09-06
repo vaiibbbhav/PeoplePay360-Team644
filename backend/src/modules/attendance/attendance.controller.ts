@@ -43,3 +43,10 @@ export const saveManualAttendance = asyncHandler(
     res.status(201).json(record);
   },
 );
+
+export const deleteAttendance = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    await attendanceService.deleteAttendance(req.params.id);
+    res.status(204).send();
+  },
+);

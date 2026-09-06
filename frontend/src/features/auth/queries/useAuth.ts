@@ -13,6 +13,7 @@ export type User = {
   isActive?: boolean;
   isEmailVerified?: boolean;
   employeeId?: string | null;
+  employeeCode?: string | null;
   employee?: {
     id: string;
     employmentStatus?: string;

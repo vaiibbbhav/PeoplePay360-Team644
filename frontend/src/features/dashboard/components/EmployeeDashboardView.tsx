@@ -10,6 +10,7 @@ type EmployeeDashboardViewProps = {
 
 export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ user }) => {
   const employeeId = user.employee?.id || user.employeeId || user.id || '';
+  const employeeCode = user.employeeCode || null;
   const { data: fpStatus } = useFingerprintStatus(employeeId);
   const hasFingerprint = fpStatus?.enrolled;
 
@@ -83,6 +84,13 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
         <p className="text-ink-soft text-xs sm:text-sm mt-1">
           Employee Self-Service Portal · Logged in as <b className="text-ink">{user.email}</b>
         </p>
+        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+          {employeeCode && (
+            <span className="inline-flex items-center gap-1.5 text-xs text-ink-soft">
+              Employee ID: <code className="font-mono text-sm font-semibold bg-accent/10 text-accent px-2 py-0.5 rounded-md border border-accent/20 select-all">{employeeCode}</code>
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Biometric Registration Alert Banner */}
@@ -125,7 +133,12 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
         <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-xs text-ink-soft font-medium">Session Role</span>
           <div className="text-base font-semibold text-ink mt-1">{user.role}</div>
-          <span className="text-[11px] text-accent font-medium mt-1 block">
+          {employeeCode && (
+            <span className="text-[11px] text-accent font-semibold font-mono mt-1 block">
+              {employeeCode}
+            </span>
+          )}
+          <span className="text-[11px] text-accent font-medium mt-0.5 block">
             Active Workspace
           </span>
         </div>

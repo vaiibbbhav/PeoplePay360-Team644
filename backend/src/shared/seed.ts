@@ -13,6 +13,7 @@ export const seedDatabase = async (): Promise<void> => {
     await client.query(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
       ALTER TABLE employees ADD COLUMN IF NOT EXISTS location VARCHAR(150) DEFAULT 'Main Headquarters';
+      ALTER TABLE employees ADD COLUMN IF NOT EXISTS employee_code VARCHAR(20);
 
       CREATE TABLE IF NOT EXISTS company_policies (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -42,6 +43,37 @@ export const seedDatabase = async (): Promise<void> => {
       CREATE UNIQUE INDEX IF NOT EXISTS policy_user_version_idx
       ON policy_acceptances (policy_id, user_id, policy_version);
     `);
+
+    // Add unique constraint on employee_code if not already present
+    await client.query(`
+      DO $$ BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_constraint WHERE conname = 'employees_employee_code_unique'
+        ) THEN
+          ALTER TABLE employees ADD CONSTRAINT employees_employee_code_unique UNIQUE (employee_code);
+        END IF;
+      END $$;
+    `);
+
+    // Backfill employee_code for any existing employees that don't have one
+    const uncodedRows = await client.query(
+      `SELECT id FROM employees WHERE employee_code IS NULL ORDER BY created_at ASC`
+    );
+    if (uncodedRows.rows.length > 0) {
+      const maxCodeResult = await client.query(
+        `SELECT employee_code FROM employees WHERE employee_code IS NOT NULL ORDER BY employee_code DESC LIMIT 1`
+      );
+      let nextNum = 1;
+      if (maxCodeResult.rows.length > 0 && maxCodeResult.rows[0].employee_code) {
+        nextNum = parseInt(maxCodeResult.rows[0].employee_code.replace(/^EMP-/, ''), 10) + 1;
+      }
+      for (const row of uncodedRows.rows) {
+        const code = `EMP-${String(nextNum).padStart(3, '0')}`;
+        await client.query(`UPDATE employees SET employee_code = $1 WHERE id = $2`, [code, row.id]);
+        nextNum++;
+      }
+      console.info(`✅ Backfilled employee_code for ${uncodedRows.rows.length} employees`);
+    }
 
     // 2. Validate admin password criteria
     const adminEmail = 'admin@peoplepay.com';

@@ -15,6 +15,7 @@ export const EmployeeDashboardPage: React.FC = () => {
     email: 'employee@peoplepay360.com',
     role: 'Employee',
     employeeId: 'emp-001',
+    employeeCode: null,
     employee: {
       id: 'emp-001',
       firstName: 'Employee',

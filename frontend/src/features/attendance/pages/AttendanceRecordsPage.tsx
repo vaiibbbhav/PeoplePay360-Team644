@@ -13,7 +13,6 @@ import {
 import { AttendanceRecordsTable } from '../components/AttendanceRecordsTable';
 import { ManualAttendanceDrawer } from '../components/ManualAttendanceDrawer';
 import { EmployeeAttendancePage } from '@/features/employee/pages/EmployeeAttendancePage';
-import { Users } from 'lucide-react';
 
 export const AttendanceRecordsPage: React.FC = () => {
   const { data: user } = useCurrentUser();
@@ -99,7 +98,7 @@ export const AttendanceRecordsPage: React.FC = () => {
     <AppLayout title="Attendance Records">
       <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 font-sans">
         {/* Page Top Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-5">
+        <div className="border-b border-line pb-5">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
@@ -114,14 +113,6 @@ export const AttendanceRecordsPage: React.FC = () => {
             <p className="text-xs text-ink-soft mt-1">
               Company-wide biometric punch logs, daily hours, and HR exception audit trail.
             </p>
-          </div>
-
-          {/* Company Ledger Status */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium bg-bg-raised border border-line text-ink">
-              <Users className="w-3.5 h-3.5 text-accent" />
-              <span>Company Ledger</span>
-            </div>
           </div>
         </div>
 

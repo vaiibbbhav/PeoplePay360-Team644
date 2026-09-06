@@ -67,6 +67,7 @@ export const users = pgTable('users', {
 // 4. Employees (HR Operational Extension)
 export const employees = pgTable('employees', {
   id: uuid('id').defaultRandom().primaryKey(),
+  employeeCode: varchar('employee_code', { length: 20 }).unique(),
   userId: uuid('user_id')
     .notNull()
     .unique()

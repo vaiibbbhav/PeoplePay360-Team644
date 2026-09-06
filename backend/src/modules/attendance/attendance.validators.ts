@@ -12,6 +12,7 @@ export const checkOutSchema = z.object({
 });
 
 export const attendanceRecordSchema = z.object({
+  id: z.string().uuid('Invalid record ID').optional().nullable(),
   employeeId: z.string().uuid('Invalid employee ID'),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format (YYYY-MM-DD)'),
   checkIn: z.string().datetime().optional().nullable(),

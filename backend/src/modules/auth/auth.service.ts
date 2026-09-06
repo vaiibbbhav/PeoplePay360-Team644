@@ -25,6 +25,7 @@ export type UserPayload = {
   isActive: boolean;
   isEmailVerified: boolean;
   employeeId?: string | null;
+  employeeCode?: string | null;
   employee?: {
     id: string;
     employmentStatus: string;
@@ -83,6 +84,7 @@ export const login = async (input: LoginInput): Promise<AuthResponse> => {
       }
     : null;
   const employeeId = employee?.id || null;
+  const employeeCode = employee?.employeeCode || null;
 
   const token = generateToken({
     id: user.id,
@@ -101,6 +103,7 @@ export const login = async (input: LoginInput): Promise<AuthResponse> => {
       isActive: user.isActive,
       isEmailVerified: user.isEmailVerified,
       employeeId,
+      employeeCode,
       employee: employeeData,
     },
     token,
@@ -121,6 +124,7 @@ export const getCurrentUser = async (userId: string): Promise<UserPayload> => {
       }
     : null;
   const employeeId = employee?.id || null;
+  const employeeCode = employee?.employeeCode || null;
 
   return {
     id: user.id,
@@ -131,6 +135,7 @@ export const getCurrentUser = async (userId: string): Promise<UserPayload> => {
     isActive: user.isActive,
     isEmailVerified: user.isEmailVerified,
     employeeId,
+    employeeCode,
     employee: employeeData,
   };
 };
@@ -163,6 +168,7 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
         }
       : null;
     const employeeId = employee?.id || null;
+    const employeeCode = employee?.employeeCode || null;
 
     const token = generateToken({
       id: user.id,
@@ -181,6 +187,7 @@ export const refreshToken = async (currentToken: string): Promise<AuthResponse> 
         isActive: user.isActive,
         isEmailVerified: user.isEmailVerified,
         employeeId,
+        employeeCode,
         employee: employeeData,
       },
       token,
