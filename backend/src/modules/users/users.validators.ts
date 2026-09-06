@@ -21,12 +21,14 @@ export const updateUserSchema = z.object({
 });
 
 export const userQuerySchema = z.object({
-  search: z.string().optional(),
+  search: z.string().trim().optional(),
   role: z.string().optional(),
   isActive: z
     .string()
     .transform((val) => val === 'true')
     .optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(15),
 });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;

@@ -1,4 +1,4 @@
-import { eq, ilike, or, and, desc } from 'drizzle-orm';
+import { eq, ilike, or, and, count, desc } from 'drizzle-orm';
 import { db } from '../../shared/db';
 import * as schema from '../../db/schema';
 import { UserRole } from '../../shared/auth-middleware';
@@ -23,7 +23,9 @@ export const listUsers = async (filters: {
   search?: string;
   role?: string;
   isActive?: boolean;
-}): Promise<UserWithEmployee[]> => {
+  page: number;
+  pageSize: number;
+}): Promise<{ users: UserWithEmployee[]; total: number }> => {
   const conditions = [];
 
   if (filters.role) {
@@ -45,32 +47,43 @@ export const listUsers = async (filters: {
     );
   }
 
-  const rows = await db
-    .select({
-      id: schema.users.id,
-      firstName: schema.users.firstName,
-      lastName: schema.users.lastName,
-      email: schema.users.email,
-      role: schema.users.role,
-      isActive: schema.users.isActive,
-      isEmailVerified: schema.users.isEmailVerified,
-      createdAt: schema.users.createdAt,
-      updatedAt: schema.users.updatedAt,
-      employee: {
-        id: schema.employees.id,
-        employmentStatus: schema.employees.employmentStatus,
-      },
-    })
-    .from(schema.users)
-    .leftJoin(schema.employees, eq(schema.employees.userId, schema.users.id))
-    .where(conditions.length > 0 ? and(...conditions) : undefined)
-    .orderBy(desc(schema.users.createdAt));
+  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const offset = (filters.page - 1) * filters.pageSize;
 
-  return rows.map((r) => ({
-    ...r,
-    role: r.role as UserRole,
-    employee: r.employee?.id ? r.employee : null,
-  }));
+  const [rows, [{ total }]] = await Promise.all([
+    db
+      .select({
+        id: schema.users.id,
+        firstName: schema.users.firstName,
+        lastName: schema.users.lastName,
+        email: schema.users.email,
+        role: schema.users.role,
+        isActive: schema.users.isActive,
+        isEmailVerified: schema.users.isEmailVerified,
+        createdAt: schema.users.createdAt,
+        updatedAt: schema.users.updatedAt,
+        employee: {
+          id: schema.employees.id,
+          employmentStatus: schema.employees.employmentStatus,
+        },
+      })
+      .from(schema.users)
+      .leftJoin(schema.employees, eq(schema.employees.userId, schema.users.id))
+      .where(whereClause)
+      .orderBy(desc(schema.users.createdAt))
+      .limit(filters.pageSize)
+      .offset(offset),
+    db.select({ total: count() }).from(schema.users).where(whereClause),
+  ]);
+
+  return {
+    users: rows.map((r) => ({
+      ...r,
+      role: r.role as UserRole,
+      employee: r.employee?.id ? r.employee : null,
+    })),
+    total,
+  };
 };
 
 export const findUserById = async (id: string): Promise<UserWithEmployee | null> => {
