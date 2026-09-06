@@ -1,12 +1,18 @@
 import React from 'react';
 import type { EmployeeHubDetails } from '../queries/useEmployees';
 import { StatGrid } from '@/components/ui/StatCard';
+import { WeeklyTimetableGrid } from '@/features/schedules/components/WeeklyTimetableGrid';
+import { useScheduleDetail } from '@/features/schedules/queries/useSchedules';
 
 type OverviewTabProps = {
   employee: EmployeeHubDetails;
 };
 
 export const OverviewTab: React.FC<OverviewTabProps> = ({ employee }) => {
+  const { data: schedule, isLoading: isScheduleLoading } = useScheduleDetail(
+    employee.working_schedule_id,
+  );
+
   const formatDate = (val: string | null | undefined) => {
     if (!val) return '—';
     try {
@@ -88,6 +94,40 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({ employee }) => {
           </div>
         </div>
       </div>
+
+      {employee.working_schedule_id && (
+        <div className="bg-bg border border-line rounded-2xl p-4 sm:p-6">
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <h3 className="font-serif text-lg font-semibold text-ink">
+                {schedule?.name || employee.working_schedule_name || 'Working Schedule'}
+              </h3>
+              <p className="text-xs text-ink-soft mt-1">
+                {schedule
+                  ? `${schedule.lines.length} working days per week · ${schedule.employeeCount} employee${schedule.employeeCount === 1 ? '' : 's'} assigned`
+                  : 'Loading schedule details…'}
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <span className="text-2xl font-semibold tracking-tight text-ink">
+                {schedule?.weeklyHours ?? employee.weekly_hours ?? '—'}
+              </span>
+              <span className="text-xs text-ink-soft block -mt-1">hrs / week</span>
+            </div>
+          </div>
+
+          {schedule ? (
+            <>
+              <WeeklyTimetableGrid lines={schedule.lines} />
+              <p className="text-[11px] text-ink-soft mt-4">
+                Created {formatDate(schedule.createdAt)}
+              </p>
+            </>
+          ) : isScheduleLoading ? (
+            <div className="h-[106px] border border-line rounded-xl bg-bg-raised/40 animate-pulse" />
+          ) : null}
+        </div>
+      )}
 
       {/* Operational Highlights Cards - Below Profile Summary */}
       <StatGrid
