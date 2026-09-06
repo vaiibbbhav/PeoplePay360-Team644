@@ -165,7 +165,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
             <span>Onboard Employee</span>
           </Link>
           <Link
-            to="/time-off"
+            to="/time-off?tab=requests&status=pending"
             className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium border border-line bg-transparent hover:bg-bg-raised text-ink transition-colors whitespace-nowrap"
           >
             <Calendar className="w-4 h-4" />
@@ -229,7 +229,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
               </p>
             </div>
             <Link
-              to="/time-off"
+              to="/time-off?tab=requests&status=pending"
               className="text-xs text-accent font-medium border-t border-line pt-3 block hover:underline"
             >
               Review leave requests →

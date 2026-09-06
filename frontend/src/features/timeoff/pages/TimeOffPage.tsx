@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import {
@@ -29,11 +30,13 @@ import {
   Users,
   ShieldCheck,
   Settings,
+  AlertCircle,
 } from 'lucide-react';
 
 export const TimeOffPage: React.FC = () => {
   const { data: user } = useCurrentUser();
   const { data: meta } = useTimeOffMeta();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const role = user?.role || 'Employee';
   const isHrOrAdmin = [
@@ -44,17 +47,50 @@ export const TimeOffPage: React.FC = () => {
   ].includes(role);
   const isManager = meta?.isManager ?? false;
 
-  // Active Tab
-  type TabKey = 'my_leave' | 'team_approvals' | 'company_requests' | 'allocations' | 'policies';
-  const [activeTab, setActiveTab] = useState<TabKey>('my_leave');
+  // Active Tab: Default to 'company_requests' for HR/Admin, 'my_leave' for standard employees
+  type TabKey = 'company_requests' | 'team_approvals' | 'my_leave' | 'allocations' | 'policies';
+  
+  const getInitialTab = (): TabKey => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'requests' || tabParam === 'company_requests') return 'company_requests';
+    if (tabParam === 'team' || tabParam === 'team_approvals') return 'team_approvals';
+    if (tabParam === 'allocations') return 'allocations';
+    if (tabParam === 'policies') return 'policies';
+    if (tabParam === 'my_leave') return 'my_leave';
+    return isHrOrAdmin ? 'company_requests' : 'my_leave';
+  };
+
+  const [activeTab, setActiveTab] = useState<TabKey>(getInitialTab);
+
+  // Sync tab with URL search params if changed externally
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam) {
+      if (tabParam === 'requests' || tabParam === 'company_requests') setActiveTab('company_requests');
+      else if (tabParam === 'team' || tabParam === 'team_approvals') setActiveTab('team_approvals');
+      else if (tabParam === 'allocations') setActiveTab('allocations');
+      else if (tabParam === 'policies') setActiveTab('policies');
+      else if (tabParam === 'my_leave') setActiveTab('my_leave');
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (tab: TabKey) => {
+    setActiveTab(tab);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('tab', tab === 'company_requests' ? 'requests' : tab);
+      return next;
+    });
+  };
 
   // Modal State
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [prefilledTypeId, setPrefilledTypeId] = useState<string | undefined>(undefined);
 
   // Filter state for company requests
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const initialStatus = searchParams.get('status') || 'all';
+  const [statusFilter, setStatusFilter] = useState<string>(initialStatus);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('employeeId') || '');
 
   const employeeId = user?.employeeId || undefined;
 
@@ -74,7 +110,23 @@ export const TimeOffPage: React.FC = () => {
     isHrOrAdmin ? undefined : { employeeId },
   );
 
-  const pendingTeamCount = teamRequests.filter((r) => r.status === 'pending').length;
+  const pendingCompanyCount = useMemo(
+    () => allRequests.filter((r) => r.status?.toLowerCase() === 'pending').length,
+    [allRequests],
+  );
+  const approvedCompanyCount = useMemo(
+    () => allRequests.filter((r) => r.status?.toLowerCase() === 'approved').length,
+    [allRequests],
+  );
+  const refusedCompanyCount = useMemo(
+    () => allRequests.filter((r) => r.status?.toLowerCase() === 'refused').length,
+    [allRequests],
+  );
+
+  const pendingTeamCount = useMemo(
+    () => teamRequests.filter((r) => r.status?.toLowerCase() === 'pending').length,
+    [teamRequests],
+  );
 
   const handleOpenApply = (typeId?: string) => {
     setPrefilledTypeId(typeId);
@@ -84,7 +136,7 @@ export const TimeOffPage: React.FC = () => {
   // Filtered Company Requests
   const filteredCompanyRequests = useMemo(() => {
     return allRequests.filter((r) => {
-      if (statusFilter !== 'all' && r.status.toLowerCase() !== statusFilter.toLowerCase()) {
+      if (statusFilter !== 'all' && r.status?.toLowerCase() !== statusFilter.toLowerCase()) {
         return false;
       }
       if (searchQuery.trim()) {
@@ -92,7 +144,8 @@ export const TimeOffPage: React.FC = () => {
         const name = (r.employee_name || '').toLowerCase();
         const dept = (r.department_name || '').toLowerCase();
         const type = (r.type_name || '').toLowerCase();
-        if (!name.includes(q) && !dept.includes(q) && !type.includes(q)) {
+        const empId = (r.employee_id || '').toLowerCase();
+        if (!name.includes(q) && !dept.includes(q) && !type.includes(q) && !empId.includes(q)) {
           return false;
         }
       }
@@ -108,15 +161,16 @@ export const TimeOffPage: React.FC = () => {
           <div>
             <div className="mb-1">
               <span className="text-xs font-mono text-accent font-medium">
-                Time & Attendance
+                Time &amp; Attendance
               </span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
-              Time Off Requests
+              {isHrOrAdmin ? 'Time Off & Leave Management' : 'My Time Off & Leaves'}
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
-              Track personal leave quotas, review team requests, and govern organizational absence
-              allocations.
+              {isHrOrAdmin
+                ? 'Review employee absence requests, govern leave allocations, and manage corporate time-off policies.'
+                : 'Track personal leave quotas, review team requests, and submit absence requests.'}
             </p>
           </div>
 
@@ -124,7 +178,7 @@ export const TimeOffPage: React.FC = () => {
             <button
               type="button"
               onClick={() => handleOpenApply()}
-              className="inline-flex items-center gap-2 px-4 py-2 sm:py-2.5 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-all shadow-xs cursor-pointer self-start sm:self-auto"
+              className="inline-flex items-center gap-2 px-4 py-2 sm:py-2.5 rounded-xl bg-accent text-accent-ink text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer self-start sm:self-auto"
             >
               <Plus className="w-4 h-4" />
               <span>Apply for Leave</span>
@@ -134,86 +188,257 @@ export const TimeOffPage: React.FC = () => {
 
         {/* Editorial Sub-Navigation Tabs */}
         <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-bg-raised border border-line overflow-x-auto no-scrollbar">
-          {/* Tab 1: My Leave & Balances */}
-          <button
-            type="button"
-            onClick={() => setActiveTab('my_leave')}
-            className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${activeTab === 'my_leave'
-                ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
-                : 'text-ink-soft hover:text-ink'
-              }`}
-          >
-            <Clock className="w-3.5 h-3.5 text-accent" />
-            <span>My Leave & Balances</span>
-          </button>
-
-          {/* Tab 2: Team Approvals (if Manager or HR) */}
-          {(isManager || isHrOrAdmin) && (
+          {/* Tab 1 (for HR): Company Requests & Approvals */}
+          {isHrOrAdmin && (
             <button
               type="button"
-              onClick={() => setActiveTab('team_approvals')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${activeTab === 'team_approvals'
-                  ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
+              onClick={() => handleTabChange('company_requests')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === 'company_requests'
+                  ? 'bg-bg text-ink border border-line font-semibold'
                   : 'text-ink-soft hover:text-ink'
-                }`}
+              }`}
             >
-              <Users className="w-3.5 h-3.5 text-accent" />
-              <span>Team Approvals</span>
-              {pendingTeamCount > 0 && (
-                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white">
-                  {pendingTeamCount}
+              <Calendar className="w-3.5 h-3.5 text-accent" />
+              <span>Leave Requests &amp; Approvals</span>
+              {pendingCompanyCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-accent text-accent-ink">
+                  {pendingCompanyCount}
                 </span>
               )}
             </button>
           )}
 
-          {/* Tab 3: Company Requests (HR / Admin) */}
+          {/* Tab 2 (for HR): Allocations Ledger */}
           {isHrOrAdmin && (
             <button
               type="button"
-              onClick={() => setActiveTab('company_requests')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${activeTab === 'company_requests'
-                  ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
+              onClick={() => handleTabChange('allocations')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === 'allocations'
+                  ? 'bg-bg text-ink border border-line font-semibold'
                   : 'text-ink-soft hover:text-ink'
-                }`}
-            >
-              <Calendar className="w-3.5 h-3.5 text-accent" />
-              <span>Company Requests</span>
-            </button>
-          )}
-
-          {/* Tab 4: Allocations Ledger (HR / Admin) */}
-          {isHrOrAdmin && (
-            <button
-              type="button"
-              onClick={() => setActiveTab('allocations')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${activeTab === 'allocations'
-                  ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
-                  : 'text-ink-soft hover:text-ink'
-                }`}
+              }`}
             >
               <ShieldCheck className="w-3.5 h-3.5 text-accent" />
               <span>Allocations Ledger</span>
             </button>
           )}
 
-          {/* Tab 5: Leave Policies (HR / Admin) */}
+          {/* Tab 3 (for HR): Leave Policies */}
           {isHrOrAdmin && (
             <button
               type="button"
-              onClick={() => setActiveTab('policies')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${activeTab === 'policies'
-                  ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
+              onClick={() => handleTabChange('policies')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === 'policies'
+                  ? 'bg-bg text-ink border border-line font-semibold'
                   : 'text-ink-soft hover:text-ink'
-                }`}
+              }`}
             >
               <Settings className="w-3.5 h-3.5 text-accent" />
               <span>Leave Policies</span>
             </button>
           )}
+
+          {/* Tab 4: Direct Team Approvals (if Manager) */}
+          {(isManager || isHrOrAdmin) && (
+            <button
+              type="button"
+              onClick={() => handleTabChange('team_approvals')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === 'team_approvals'
+                  ? 'bg-bg text-ink border border-line font-semibold'
+                  : 'text-ink-soft hover:text-ink'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5 text-accent" />
+              <span>Direct Team Approvals</span>
+              {pendingTeamCount > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-600 text-white">
+                  {pendingTeamCount}
+                </span>
+              )}
+            </button>
+          )}
+
+          {/* Tab 5: My Leave & Balances */}
+          <button
+            type="button"
+            onClick={() => handleTabChange('my_leave')}
+            className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'my_leave'
+                ? 'bg-bg text-ink border border-line font-semibold'
+                : 'text-ink-soft hover:text-ink'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5 text-accent" />
+            <span>My Personal Leave</span>
+          </button>
         </div>
 
-        {/* Tab 1 Content: My Leave & Balances */}
+        {/* ─── Tab Content: Company Requests & Approvals (HR Core Hub) ─── */}
+        {activeTab === 'company_requests' && (
+          <div className="space-y-6 sm:space-y-8">
+            {/* Operational Metrics Cards */}
+            <TimeOffSummaryCards requests={allRequests} isLoading={isAllRequestsLoading} />
+
+            {/* Prominent Actionable Approval Queue Alert */}
+            {pendingCompanyCount > 0 && (
+              <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                    <AlertCircle className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-ink">
+                      {pendingCompanyCount} Leave Request{pendingCompanyCount === 1 ? '' : 's'} Awaiting Your Decision
+                    </h4>
+                    <p className="text-xs text-ink-soft mt-0.5">
+                      Approving requests immediately updates allocation balances and links to payroll calculations.
+                    </p>
+                  </div>
+                </div>
+                {statusFilter !== 'pending' && (
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter('pending')}
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white transition-colors cursor-pointer self-start sm:self-auto shrink-0"
+                  >
+                    View Pending Queue ({pendingCompanyCount})
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Filter Toolbar with Quick Pills */}
+            <div className="p-3.5 sm:p-4 rounded-xl border border-line bg-bg space-y-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+                <SearchInput
+                  placeholder="Filter by employee name, department, or leave type..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+
+                <div className="w-full sm:w-auto">
+                  <Select
+                    value={statusFilter}
+                    onValueChange={(val) => setStatusFilter(val)}
+                  >
+                    <SelectTrigger className="w-full sm:w-44">
+                      <SelectValue placeholder="All Requests" />
+                    </SelectTrigger>
+                    <SelectContent align="end">
+                      <SelectItem value="all">All Requests ({allRequests.length})</SelectItem>
+                      <SelectItem value="pending">Pending Review ({pendingCompanyCount})</SelectItem>
+                      <SelectItem value="approved">Approved ({approvedCompanyCount})</SelectItem>
+                      <SelectItem value="refused">Refused ({refusedCompanyCount})</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Quick Status Pill Bar */}
+              <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-line/60 text-xs">
+                <span className="text-[11px] font-medium text-ink-soft uppercase tracking-wider mr-1">Status:</span>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('all')}
+                  className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
+                    statusFilter === 'all'
+                      ? 'border-accent bg-accent-soft text-accent font-semibold'
+                      : 'border-line text-ink-soft hover:text-ink'
+                  }`}
+                >
+                  All ({allRequests.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('pending')}
+                  className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
+                    statusFilter === 'pending'
+                      ? 'border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-semibold'
+                      : 'border-line text-ink-soft hover:text-ink'
+                  }`}
+                >
+                  Pending Review ({pendingCompanyCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('approved')}
+                  className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
+                    statusFilter === 'approved'
+                      ? 'border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-semibold'
+                      : 'border-line text-ink-soft hover:text-ink'
+                  }`}
+                >
+                  Approved ({approvedCompanyCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('refused')}
+                  className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
+                    statusFilter === 'refused'
+                      ? 'border-rose-500 bg-rose-500/10 text-rose-700 dark:text-rose-300 font-semibold'
+                      : 'border-line text-ink-soft hover:text-ink'
+                  }`}
+                >
+                  Refused ({refusedCompanyCount})
+                </button>
+
+                {(statusFilter !== 'all' || searchQuery) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStatusFilter('all');
+                      setSearchQuery('');
+                    }}
+                    className="ml-auto text-xs text-accent hover:underline font-medium cursor-pointer"
+                  >
+                    Clear Filters
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Leave Requests Master Table */}
+            <LeaveRequestsTable
+              requests={filteredCompanyRequests}
+              isLoading={isAllRequestsLoading}
+              canManage={isHrOrAdmin}
+            />
+          </div>
+        )}
+
+        {/* ─── Tab Content: Direct Team Approvals ─── */}
+        {activeTab === 'team_approvals' && (
+          <div className="space-y-6 sm:space-y-8">
+            <TeamApprovalsSection requests={teamRequests} isLoading={isTeamRequestsLoading} />
+
+            <div className="space-y-3 pt-4 border-t border-line">
+              <h4 className="text-sm font-semibold text-ink uppercase tracking-wider">
+                Historical Team Requests
+              </h4>
+              <LeaveRequestsTable
+                requests={teamRequests.filter((r) => r.status?.toLowerCase() !== 'pending')}
+                isLoading={isTeamRequestsLoading}
+                canManage={false}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* ─── Tab Content: Allocations Ledger ─── */}
+        {activeTab === 'allocations' && (
+          <AllocationsTable canManage={isHrOrAdmin} />
+        )}
+
+        {/* ─── Tab Content: Leave Policies ─── */}
+        {activeTab === 'policies' && (
+          <LeaveTypesTable canManage={isHrOrAdmin} />
+        )}
+
+        {/* ─── Tab Content: My Personal Leave & Balances ─── */}
         {activeTab === 'my_leave' && (
           <div className="space-y-6 sm:space-y-8">
             <LeaveBalanceCards
@@ -224,7 +449,7 @@ export const TimeOffPage: React.FC = () => {
 
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
-                My Leave History & Status
+                My Leave History &amp; Status
               </h3>
               <LeaveRequestsTable
                 requests={myRequests}
@@ -235,82 +460,16 @@ export const TimeOffPage: React.FC = () => {
           </div>
         )}
 
-        {/* Tab 2 Content: Team Approvals */}
-        {activeTab === 'team_approvals' && (
-          <div className="space-y-6 sm:space-y-8">
-            <TeamApprovalsSection requests={teamRequests} isLoading={isTeamRequestsLoading} />
-
-            <div className="space-y-3 pt-4 border-t border-line">
-              <h4 className="text-sm font-semibold text-ink uppercase tracking-wider">
-                Historical Team Requests
-              </h4>
-              <LeaveRequestsTable
-                requests={teamRequests.filter((r) => r.status !== 'pending')}
-                isLoading={isTeamRequestsLoading}
-                canManage={false}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Tab 3 Content: Company Requests */}
-        {activeTab === 'company_requests' && (
-          <div className="space-y-6 sm:space-y-8">
-            <TimeOffSummaryCards requests={allRequests} isLoading={isAllRequestsLoading} />
-
-            {/* Filter Toolbar */}
-            <div className="p-3.5 sm:p-4 rounded-2xl border border-line bg-bg flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
-              <SearchInput
-                placeholder="Filter by employee name, department, or leave type..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-
-              <div className="w-full sm:w-auto">
-                <Select
-                  value={statusFilter}
-                  onValueChange={(val) => setStatusFilter(val)}
-                >
-                  <SelectTrigger className="w-full sm:w-44">
-                    <SelectValue placeholder="All Requests" />
-                  </SelectTrigger>
-                  <SelectContent align="end">
-                    <SelectItem value="all">All Requests</SelectItem>
-                    <SelectItem value="pending">Pending Review</SelectItem>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="refused">Refused</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <LeaveRequestsTable
-              requests={filteredCompanyRequests}
-              isLoading={isAllRequestsLoading}
-              canManage={isHrOrAdmin}
-            />
-          </div>
-        )}
-
-        {/* Tab 4 Content: Allocations Ledger */}
-        {activeTab === 'allocations' && (
-          <AllocationsTable canManage={isHrOrAdmin} />
-        )}
-
-        {/* Tab 5 Content: Leave Policies */}
-        {activeTab === 'policies' && (
-          <LeaveTypesTable canManage={isHrOrAdmin} />
-        )}
-
         {/* Apply Leave Modal */}
         <ApplyLeaveModal
           isOpen={isApplyModalOpen}
-          onClose={() => setIsApplyModalOpen(false)}
+          onClose={() => {
+            setIsApplyModalOpen(false);
+            setPrefilledTypeId(undefined);
+          }}
           initialTypeId={prefilledTypeId}
         />
       </div>
     </AppLayout>
   );
 };
-
-export default TimeOffPage;
