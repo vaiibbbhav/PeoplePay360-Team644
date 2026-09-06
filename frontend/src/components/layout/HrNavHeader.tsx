@@ -35,7 +35,7 @@ export const HrNavHeader: React.FC<HrNavHeaderProps> = ({
       {/* Top row with Brand and actions */}
       <div className="px-6 sm:px-8 py-3.5 flex justify-between items-center">
         <div className="flex items-center gap-6">
-          <Link to="/dashboard" className="font-serif text-xl font-bold text-ink no-underline tracking-tight">
+          <Link to="/dashboard" className="font-sans text-xl font-bold text-ink no-underline tracking-tight">
             PeoplePay<span className="text-accent">360</span>
           </Link>
           <div className="h-4 w-px bg-line hidden sm:block" />

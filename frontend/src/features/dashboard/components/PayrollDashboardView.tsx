@@ -51,11 +51,11 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
   const isPayrollManager = user.role === 'HR Payroll Manager';
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 font-sans">
+    <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
       {/* Welcome Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
             Payroll Operations & Finance Console
           </h1>
           <p className="text-ink-soft text-xs sm:text-sm mt-1">
@@ -118,6 +118,8 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
               subtext: `${kpis.approvedTimeOffDays} approved leave days`,
             },
           ]}
+          isLoading={isLoading}
+          skeletonCount={4}
         />
       </div>
 
@@ -126,49 +128,60 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
         {/* Biometric Attendance Distribution */}
         <div className="bg-bg border border-line rounded-2xl p-6">
           <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
-            <h3 className="font-serif text-base font-semibold text-ink">
+            <h3 className="font-sans text-base font-semibold text-ink">
               Biometric Punch Status
             </h3>
             <span className="text-xs text-accent font-medium">Payroll Context Inputs</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
-            <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
-              <span className="text-[11px] text-ink-soft block">Present</span>
-              <span className="text-xl font-serif font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
-                {attendance.present}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
-              <span className="text-[11px] text-ink-soft block">Late</span>
-              <span className="text-xl font-serif font-bold text-amber-600 dark:text-amber-400 mt-1 block">
-                {attendance.late}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
-              <span className="text-[11px] text-ink-soft block">Absent</span>
-              <span className="text-xl font-serif font-bold text-red-600 dark:text-red-400 mt-1 block">
-                {attendance.absent}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
-              <span className="text-[11px] text-ink-soft block">Overtime</span>
-              <span className="text-xl font-serif font-bold text-accent mt-1 block">
-                {attendance.overtime}
-              </span>
-            </div>
-            <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
-              <span className="text-[11px] text-ink-soft block">Edits</span>
-              <span className="text-xl font-serif font-bold text-ink mt-1 block">
-                {attendance.manualEdits}
-              </span>
-            </div>
+            {isLoading ? (
+              [0, 1, 2, 3, 4].map((i) => (
+                <div key={i} className="p-3 rounded-xl border border-line bg-bg-raised/40 space-y-2 flex flex-col items-center justify-center">
+                  <div className="h-2.5 w-14 bg-ink/10 rounded animate-pulse" />
+                  <div className="h-6 w-10 bg-ink/10 rounded animate-pulse" />
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
+                  <span className="text-[11px] text-ink-soft block">Present</span>
+                  <span className="text-xl font-sans font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
+                    {attendance.present}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
+                  <span className="text-[11px] text-ink-soft block">Late</span>
+                  <span className="text-xl font-sans font-bold text-amber-600 dark:text-amber-400 mt-1 block">
+                    {attendance.late}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
+                  <span className="text-[11px] text-ink-soft block">Absent</span>
+                  <span className="text-xl font-sans font-bold text-red-600 dark:text-red-400 mt-1 block">
+                    {attendance.absent}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
+                  <span className="text-[11px] text-ink-soft block">Overtime</span>
+                  <span className="text-xl font-sans font-bold text-accent mt-1 block">
+                    {attendance.overtime}
+                  </span>
+                </div>
+                <div className="p-3 rounded-xl border border-line bg-bg-raised/40">
+                  <span className="text-[11px] text-ink-soft block">Edits</span>
+                  <span className="text-xl font-sans font-bold text-ink mt-1 block">
+                    {attendance.manualEdits}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
         {/* Department Headcount & Salary Allocation */}
         <div className="bg-bg border border-line rounded-2xl p-6">
           <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
-            <h3 className="font-serif text-base font-semibold text-ink">
+            <h3 className="font-sans text-base font-semibold text-ink">
               Department Cost Allocation
             </h3>
             <span className="text-xs text-ink-soft">{departmentBreakdown.length} Depts</span>
@@ -196,7 +209,7 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
       <div className="bg-bg border border-line rounded-2xl p-6">
         <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
           <div>
-            <h3 className="font-serif text-base font-semibold text-ink">
+            <h3 className="font-sans text-base font-semibold text-ink">
               Monthly Net Salary Trends
             </h3>
             <p className="text-xs text-ink-soft mt-0.5">
@@ -215,7 +228,7 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
                 <span className="font-semibold text-ink">{trend.month}</span>
                 <span className="text-[11px] text-ink-soft">Net Disbursed</span>
               </div>
-              <div className="text-xl font-serif font-bold text-accent">
+              <div className="text-xl font-sans font-bold text-accent">
                 {formatCurrency(trend.netSalary)}
               </div>
               <div className="text-[11px] text-ink-soft pt-1 border-t border-line/60 flex justify-between">
@@ -235,7 +248,7 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <div>
-                <h3 className="font-serif text-base font-semibold text-ink">
+                <h3 className="font-sans text-base font-semibold text-ink">
                   Contracts Baseline
                 </h3>
                 <p className="text-xs text-ink-soft mt-0.5">
@@ -252,19 +265,19 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
             <div className="grid grid-cols-3 gap-3 mb-4">
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
                 <span className="text-[11px] text-ink-soft block">Active Wages</span>
-                <span className="text-lg font-serif font-bold text-accent mt-0.5 block">
+                <span className="text-lg font-sans font-bold text-accent mt-0.5 block">
                   {dashboard?.contracts?.active ?? 0}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
                 <span className="text-[11px] text-ink-soft block">Draft Wages</span>
-                <span className="text-lg font-serif font-bold text-ink mt-0.5 block">
+                <span className="text-lg font-sans font-bold text-ink mt-0.5 block">
                   {dashboard?.contracts?.draft ?? 0}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
                 <span className="text-[11px] text-ink-soft block">Expired</span>
-                <span className="text-lg font-serif font-bold text-amber-600 dark:text-amber-400 mt-0.5 block">
+                <span className="text-lg font-sans font-bold text-amber-600 dark:text-amber-400 mt-0.5 block">
                   {dashboard?.contracts?.expired ?? 0}
                 </span>
               </div>
@@ -305,7 +318,7 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <div>
-                <h3 className="font-serif text-base font-semibold text-ink">
+                <h3 className="font-sans text-base font-semibold text-ink">
                   Working Schedules & Shifts
                 </h3>
                 <p className="text-xs text-ink-soft mt-0.5">
@@ -322,13 +335,13 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
                 <span className="text-[11px] text-ink-soft block">Active Schedules</span>
-                <span className="text-lg font-serif font-bold text-accent mt-0.5 block">
+                <span className="text-lg font-sans font-bold text-accent mt-0.5 block">
                   {dashboard?.schedules?.active ?? 0}
                 </span>
               </div>
               <div className="p-3 rounded-xl border border-line bg-bg-raised/40 text-center">
                 <span className="text-[11px] text-ink-soft block">Avg Weekly Standard</span>
-                <span className="text-lg font-serif font-bold text-ink mt-0.5 block">
+                <span className="text-lg font-sans font-bold text-ink mt-0.5 block">
                   {dashboard?.schedules?.avgWeeklyHours ?? 40} hrs
                 </span>
               </div>

@@ -8,7 +8,7 @@ import {
   type AttendanceRecord,
 } from '../queries/useAttendance';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
-import { useFingerprintStatus } from '@/features/attendance/queries/useFingerprint';
+import { useFingerprintStatus } from '../queries/useFingerprint';
 import { AttendanceStatsHeader } from '../components/AttendanceStatsHeader';
 import { AttendanceCalendarGrid } from '../components/AttendanceCalendarGrid';
 import { AttendanceDetailCard } from '../components/AttendanceDetailCard';
@@ -59,7 +59,7 @@ export const EmployeeAttendancePage: React.FC = () => {
   const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
 
   // Queries & Mutations
-  const { data: records = [] } = useAttendanceList({
+  const { data: records = [], isLoading } = useAttendanceList({
     employeeId,
     startDate,
     endDate,
@@ -119,11 +119,11 @@ export const EmployeeAttendancePage: React.FC = () => {
 
   return (
     <AppLayout title="Time Management">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 font-sans">
+      <div className="space-y-6 sm:space-y-8 font-sans max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8">
         {/* Page Title */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+            <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-ink">
               Time & Attendance
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1">
@@ -144,11 +144,10 @@ export const EmployeeAttendancePage: React.FC = () => {
 
             <button
               onClick={() => setIsFingerprintModalOpen(true)}
-              className={`px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs ${
-                !isEnrolled
-                  ? 'border-accent bg-accent/10 text-accent font-semibold'
-                  : 'border-line bg-bg hover:bg-bg-raised text-ink'
-              }`}
+              className={`px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs ${!isEnrolled
+                ? 'border-accent bg-accent/10 text-accent font-semibold'
+                : 'border-line bg-bg hover:bg-bg-raised text-ink'
+                }`}
             >
               <svg
                 className="w-4 h-4 text-accent"
@@ -172,7 +171,6 @@ export const EmployeeAttendancePage: React.FC = () => {
         {!isEnrolled && (
           <div className="p-4 rounded-xl border border-accent/40 bg-accent/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in">
             <div className="flex items-center gap-3">
-              <span className="w-2.5 h-2.5 rounded-full bg-accent animate-ping" />
               <div>
                 <span className="text-xs font-semibold text-ink block">
                   Fingerprint Not Registered
@@ -195,10 +193,11 @@ export const EmployeeAttendancePage: React.FC = () => {
         {/* Top States Header & Summary */}
         <AttendanceStatsHeader
           records={records}
-          fingerprint={isEnrolled ? { id: 'fp-active', employee_id: employeeId, encryted_template: 'AES-256-GCM' } : null}
+          fingerprint={isEnrolled ? { id: 'fp-active', employee_id: employeeId, encrypted_template: 'AES-256-GCM' } : null}
           onOpenFingerprintModal={() => setIsFingerprintModalOpen(true)}
           monthName={monthName}
           year={year}
+          isLoading={isLoading}
         />
 
         {/* Calendar-like View */}

@@ -58,6 +58,10 @@ html {
   scroll-behavior: smooth;
 }
 
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -75,6 +79,23 @@ body {
   transition:
     background 0.25s ease,
     color 0.25s ease;
+}
+
+/* A consistent, high-contrast keyboard focus indicator across native and custom controls. */
+:where(a, button, input, select, textarea, [role='button'], [role='option']):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 
 @media print {

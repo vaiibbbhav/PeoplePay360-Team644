@@ -3,7 +3,9 @@ import { queryClient } from './queryClient';
 
 export const API_URL = import.meta.env.VITE_API_URL;
 
-const PUBLIC_PAGES = ['/', '/login', '/forgot-password', '/reset-password'];
+const PUBLIC_PAGES = ['/', '/login', '/forgot-password', '/reset-password', '/verify-email'];
+
+let isRedirecting = false;
 
 export const isAuthPage = (): boolean =>
   PUBLIC_PAGES.some(
@@ -26,6 +28,15 @@ export const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
   timeout: 60000,
+});
+
+/**
+ * Biometric client for fingerprint terminal operations.
+ */
+export const fingerprintApi = axios.create({
+  baseURL: import.meta.env.VITE_FINGERPRINT_API_URL || '/api/fingerprint',
+  withCredentials: true,
+  timeout: 30000,
 });
 
 // Single-flight refresh promise lock
@@ -86,7 +97,8 @@ api.interceptors.response.use(
         await getRefreshPromise();
         return api(originalRequest);
       } catch (refreshErr) {
-        if (!isAuthPage()) {
+        if (!isAuthPage() && !isRedirecting) {
+          isRedirecting = true;
           queryClient.clear();
           window.location.href = '/login';
         }
@@ -99,3 +111,4 @@ api.interceptors.response.use(
 );
 
 publicApi.interceptors.response.use(handleResponseSuccess, handleRateLimitAndErrors);
+fingerprintApi.interceptors.response.use(handleResponseSuccess, handleRateLimitAndErrors);

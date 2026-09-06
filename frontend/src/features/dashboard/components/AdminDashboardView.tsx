@@ -1,238 +1,550 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useDashboardOverview } from '@/features/dashboard/queries/useDashboard';
-import { StatGrid } from '@/components/ui/StatCard';
+import { X, Clock } from 'lucide-react';
+import { useAdminOverview } from '@/features/dashboard/queries/useDashboard';
+import { UserAddModal } from '@/features/users/components/UserAddModal';
+import { useCreateUser, useEmployeeOptions } from '@/features/users/queries/useUsers';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import type { User } from '@/features/auth/queries/useAuth';
 
 type AdminDashboardViewProps = {
   user: User;
 };
 
+// ── Helpers ─────────────────────────────────────────────────────────────────
+const formatTimeAgo = (dateStr: string | Date | null | undefined): string => {
+  if (!dateStr) return 'recently';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return 'recently';
+
+  const diffMs = Date.now() - d.getTime();
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  if (diffMins < 1) return 'just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 30) return `${diffDays}d ago`;
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) => {
-  const { data: dashboard, isLoading } = useDashboardOverview();
+  const { data: overview, isLoading, refetch } = useAdminOverview();
+  const { data: employees = [] } = useEmployeeOptions();
+  const createMutation = useCreateUser();
 
-  const kpis = dashboard?.kpis || {
-    totalNetPaid: 320000,
-    payslipsGenerated: 4,
-    averageSalary: 80000,
-    approvedTimeOffDays: 2,
-    pendingTimeOffRequests: 0,
-    attendanceHealthScore: '96%',
+  // Quick Action Modal states
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+
+  const auditModalRef = useClickOutside<HTMLDivElement>(() => {
+    setIsAuditModalOpen(false);
+  }, isAuditModalOpen);
+
+  const attention = overview?.attention || {
+    incompleteProfiles: { count: 0, items: [] },
+    deactivatedAccounts: { count30Days: 0, totalCount: 0, items: [] },
+    unassignedRolesCount: 0,
   };
 
-  const attendance = dashboard?.attendance || {
-    present: 4,
-    late: 0,
-    absent: 0,
-    overtime: 1,
-    manualEdits: 0,
+  const access = overview?.access || {
+    totalActiveUsers: 0,
+    totalUsers: 0,
+    roleBreakdown: {
+      Admin: 0,
+      'HR Manager': 0,
+      'HR Payroll Manager': 0,
+      'HR Payroll User': 0,
+      Employee: 0,
+    },
+    createdThisWeek: { count: 0, sample: [] },
   };
 
-  const departmentBreakdown = dashboard?.charts?.departmentBreakdown || [
-    { department: 'Management', headcount: 1, totalCost: 120000 },
-    { department: 'Technology', headcount: 2, totalCost: 165000 },
-    { department: 'HR & Operations', headcount: 1, totalCost: 85000 },
+  const anomalies = overview?.anomalies || {
+    employeesWithoutContract: { count: 0, items: [] },
+    draftPayruns: { count: 0, items: [] },
+  };
+
+  const recentActivity = overview?.recentActivity || [];
+
+  const handleCreateUser = async (data: any) => {
+    await createMutation.mutateAsync(data);
+    setIsAddUserOpen(false);
+    refetch();
+  };
+
+  // Role breakdown data
+  const rolesList = [
+    {
+      role: 'Admin',
+      count: access.roleBreakdown['Admin'] || 0,
+      bgClass: 'bg-accent',
+      swatchClass: 'bg-accent',
+    },
+    {
+      role: 'HR Manager',
+      count: access.roleBreakdown['HR Manager'] || 0,
+      bgClass: 'bg-[#4a2b72] dark:bg-[#9d7bc4]',
+      swatchClass: 'bg-[#4a2b72] dark:bg-[#9d7bc4]',
+    },
+    {
+      role: 'HR Payroll Manager',
+      count: access.roleBreakdown['HR Payroll Manager'] || 0,
+      bgClass: 'bg-[#3b235b] dark:bg-[#8563ad]',
+      swatchClass: 'bg-[#3b235b] dark:bg-[#8563ad]',
+    },
+    {
+      role: 'HR Payroll User',
+      count: access.roleBreakdown['HR Payroll User'] || 0,
+      bgClass: 'bg-[#2a1941] dark:bg-[#6c4e94]',
+      swatchClass: 'bg-[#2a1941] dark:bg-[#6c4e94]',
+    },
+    {
+      role: 'Employee',
+      count: access.roleBreakdown['Employee'] || 0,
+      bgClass: 'bg-line dark:bg-neutral-700',
+      swatchClass: 'bg-ink-faint',
+    },
   ];
 
-  const totalHeadcount = departmentBreakdown.reduce((acc, curr) => acc + (curr.headcount || 0), 0);
+  const totalRoleCount = rolesList.reduce((sum, r) => sum + r.count, 0) || 1;
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-3">
+        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs text-ink-soft">Loading system administration console...</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 font-sans">
-      {/* Welcome Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 font-sans">
+      {/* ── Page Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-ink">
-            System Administration Console
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+            Access &amp; Governance Overview
           </h1>
-          <p className="text-ink-soft text-xs sm:text-sm mt-1">
-            Global system administration, access management, and platform oversight · Logged in as{' '}
-            <b className="text-ink">{user.email}</b> ({user.role})
+          <p className="text-xs sm:text-sm text-ink-soft mt-1">
+            Logged in as <b className="text-ink font-medium">{user.email}</b> · {user.role}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+
+        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setIsAddUserOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap"
+          >
+            + Create User
+          </button>
           <Link
             to="/users"
-            className="py-2.5 px-4 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity no-underline inline-flex items-center gap-1.5 shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium border border-line bg-transparent hover:bg-bg-raised text-ink transition-colors whitespace-nowrap"
           >
-            🛡️ User Management
+            Manage Users
           </Link>
-          <Link
-            to="/employees"
-            className="py-2.5 px-4 rounded-xl text-xs font-medium border border-line bg-bg-raised hover:border-ink-soft text-ink transition-colors no-underline inline-flex items-center gap-1.5"
+          <button
+            type="button"
+            onClick={() => setIsAuditModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium border border-line bg-transparent hover:bg-bg-raised text-ink transition-colors cursor-pointer whitespace-nowrap"
           >
-            👥 All Employees
-          </Link>
+            View Audit Log
+          </button>
         </div>
       </div>
 
-      {/* Admin KPI StatGrid */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-ink uppercase tracking-wider">
-            Platform Health & Operations Overview
-          </h2>
-          {isLoading && (
-            <span className="text-xs text-ink-soft flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              Syncing live system telemetry...
-            </span>
+      {/* ── Divider ── */}
+      <div className="border-t border-line my-5 sm:my-6" />
+
+      {/* ── Section 1: Needs your attention ── */}
+      <div className="mb-8">
+        <div className="flex justify-between items-baseline mb-4">
+          <h2 className="text-base sm:text-lg font-semibold text-ink">Needs your attention</h2>
+          <span className="text-xs text-ink-faint hidden sm:inline">
+            Single-module and cross-module items, together
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line rounded-xl overflow-hidden">
+          {/* Card 1: Incomplete profiles */}
+          <div className="bg-bg p-5 sm:p-6 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-xs font-medium text-ink-soft">Incomplete profiles</span>
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    attention.incompleteProfiles.count > 0 ? 'bg-over-red' : 'bg-emerald-600'
+                  }`}
+                />
+              </div>
+              <div className="text-3xl font-semibold font-serif leading-none mb-2 text-ink">
+                {attention.incompleteProfiles.count}
+              </div>
+              <p className="text-xs text-ink-soft m-0 mb-3 leading-relaxed">
+                Accounts created, but department, manager, or schedule was never filled in.
+              </p>
+              {attention.incompleteProfiles.items.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {attention.incompleteProfiles.items.slice(0, 2).map((item) => (
+                    <span
+                      key={item.id}
+                      className="text-[11px] px-2.5 py-0.5 rounded-full border border-line text-ink-soft"
+                    >
+                      {item.firstName} {item.lastName}
+                    </span>
+                  ))}
+                  {attention.incompleteProfiles.count > 2 && (
+                    <span className="text-[11px] px-2 py-0.5 rounded-full border border-line text-ink-soft">
+                      +{attention.incompleteProfiles.count - 2}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+            <Link
+              to="/employees"
+              className="text-xs text-accent font-medium border-t border-line pt-3 block hover:underline"
+            >
+              Complete in directory →
+            </Link>
+          </div>
+
+          {/* Card 2: Employees without a contract */}
+          <div className="bg-bg p-5 sm:p-6 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-xs font-medium text-ink-soft">
+                  Employees without a contract
+                </span>
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    anomalies.employeesWithoutContract.count > 0 ? 'bg-over-red' : 'bg-emerald-600'
+                  }`}
+                />
+              </div>
+              <div className="text-3xl font-semibold font-serif leading-none mb-2 text-ink">
+                {anomalies.employeesWithoutContract.count}
+              </div>
+              <p className="text-xs text-ink-soft m-0 mb-3 leading-relaxed">
+                Active employees with no contract on file — payroll can't run for them yet.
+              </p>
+              {anomalies.employeesWithoutContract.items.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {anomalies.employeesWithoutContract.items.slice(0, 2).map((item) => (
+                    <span
+                      key={item.id}
+                      className="text-[11px] px-2.5 py-0.5 rounded-full border border-line text-ink-soft"
+                    >
+                      {item.firstName} {item.lastName}
+                    </span>
+                  ))}
+                  {anomalies.employeesWithoutContract.count > 2 && (
+                    <span className="text-[11px] px-2 py-0.5 rounded-full border border-line text-ink-soft">
+                      +{anomalies.employeesWithoutContract.count - 2}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+            <Link
+              to="/contracts"
+              className="text-xs text-accent font-medium border-t border-line pt-3 block hover:underline"
+            >
+              Assign contracts →
+            </Link>
+          </div>
+
+          {/* Card 3: Deactivated, last 30 days */}
+          <div className="bg-bg p-5 sm:p-6 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-xs font-medium text-ink-soft">
+                  Deactivated, last 30 days
+                </span>
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    attention.deactivatedAccounts.count30Days > 0 ? 'bg-over-red' : 'bg-ink-faint'
+                  }`}
+                />
+              </div>
+              <div className="text-3xl font-semibold font-serif leading-none mb-2 text-ink">
+                {attention.deactivatedAccounts.count30Days}
+              </div>
+              <p className="text-xs text-ink-soft m-0 mb-3 leading-relaxed">
+                {attention.deactivatedAccounts.count30Days === 0
+                  ? 'No accounts disabled recently — nothing to double-check here.'
+                  : `${attention.deactivatedAccounts.count30Days} account(s) deactivated recently. Review disabled logins.`}
+              </p>
+            </div>
+            <Link
+              to="/users"
+              className="text-xs text-accent font-medium border-t border-line pt-3 block hover:underline"
+            >
+              Review deactivated accounts →
+            </Link>
+          </div>
+
+          {/* Card 4: Role assignment integrity */}
+          <div className="bg-bg p-5 sm:p-6 flex flex-col justify-between">
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-xs font-medium text-ink-soft">
+                  Role assignment integrity
+                </span>
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    attention.unassignedRolesCount === 0 ? 'bg-emerald-600' : 'bg-over-red'
+                  }`}
+                />
+              </div>
+              <div className="text-3xl font-semibold font-serif leading-none mb-2 text-ink">
+                {attention.unassignedRolesCount === 0 ? 'Clean' : attention.unassignedRolesCount}
+              </div>
+              <p className="text-xs text-ink-soft m-0 mb-3 leading-relaxed">
+                {attention.unassignedRolesCount === 0
+                  ? 'Every account maps to one valid role. Nothing outside the permission matrix.'
+                  : 'Orphaned or unassigned roles detected in the directory. Check permissions.'}
+              </p>
+            </div>
+            <Link
+              to="/users"
+              className="text-xs text-accent font-medium border-t border-line pt-3 block hover:underline"
+            >
+              View role matrix →
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Section 2: Access snapshot ── */}
+      <div className="mb-8">
+        <div className="flex justify-between items-baseline mb-4">
+          <h2 className="text-base sm:text-lg font-semibold text-ink">Access snapshot</h2>
+          <Link to="/users" className="text-xs text-accent font-medium hover:underline">
+            Manage user directory →
+          </Link>
+        </div>
+
+        <div className="border border-line rounded-xl p-5 sm:p-6 bg-bg">
+          {/* Proportional Role Bar */}
+          <div className="flex h-2 rounded-md overflow-hidden mb-5 bg-line">
+            {rolesList.map(({ role, count, bgClass }) => {
+              if (count === 0) return null;
+              const weight = Math.max(1, Math.round((count / totalRoleCount) * 10));
+              const flexClass =
+                weight >= 5
+                  ? 'flex-[5]'
+                  : weight === 4
+                    ? 'flex-[4]'
+                    : weight === 3
+                      ? 'flex-[3]'
+                      : weight === 2
+                        ? 'flex-[2]'
+                        : 'flex-1';
+              return (
+                <span
+                  key={role}
+                  className={`h-full ${bgClass} ${flexClass} border-r border-bg last:border-0`}
+                />
+              );
+            })}
+          </div>
+
+          {/* Role Items Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {rolesList.map(({ role, count, swatchClass }) => {
+              const pct = totalRoleCount > 0 ? Math.round((count / totalRoleCount) * 100) : 0;
+              return (
+                <div key={role} className="border-t border-line pt-3">
+                  <div className="flex items-center gap-1.5 text-xs text-ink-soft mb-1.5">
+                    <span className={`w-2 h-2 rounded-xs ${swatchClass}`} />
+                    {role}
+                  </div>
+                  <div className="font-serif text-2xl font-semibold text-ink leading-tight">
+                    {count}
+                  </div>
+                  <div className="text-[11px] text-ink-faint mt-0.5">{pct}% of accounts</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Section 3: Provisioned this week ── */}
+      <div className="mb-8">
+        <div className="flex justify-between items-baseline mb-4">
+          <h2 className="text-base sm:text-lg font-semibold text-ink">Provisioned this week</h2>
+          <Link to="/users" className="text-xs text-accent font-medium hover:underline">
+            Full provisioning log →
+          </Link>
+        </div>
+
+        <div className="border border-line rounded-xl bg-bg overflow-hidden divide-y divide-line">
+          {access.createdThisWeek.sample.length === 0 ? (
+            <div className="p-6 text-center text-xs text-ink-faint">
+              No new accounts provisioned this week.
+            </div>
+          ) : (
+            access.createdThisWeek.sample.map((acc) => {
+              const initials =
+                `${acc.firstName?.[0] || ''}${acc.lastName?.[0] || ''}`.toUpperCase() || 'U';
+              return (
+                <div
+                  key={acc.id}
+                  className="flex items-center gap-3.5 px-5 py-3 hover:bg-bg-raised/40 transition-colors text-xs sm:text-sm"
+                >
+                  <div className="w-8 h-8 rounded-full flex-shrink-0 bg-accent-soft text-accent flex items-center justify-center text-xs font-semibold">
+                    {initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-ink truncate">
+                      {acc.firstName} {acc.lastName}
+                    </div>
+                    <div className="text-xs text-ink-faint truncate">{acc.email}</div>
+                  </div>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full border border-line text-ink-soft flex-shrink-0">
+                    {acc.role}
+                  </span>
+                  <span className="text-xs text-ink-faint w-16 text-right flex-shrink-0">
+                    {formatTimeAgo(acc.createdAt)}
+                  </span>
+                </div>
+              );
+            })
           )}
         </div>
-        <StatGrid
-          columns={4}
-          items={[
-            {
-              label: 'Total Workforce Headcount',
-              value: String(totalHeadcount || 4),
-              subtext: `${departmentBreakdown.length} active departments`,
-            },
-            {
-              label: 'System Attendance Coverage',
-              value: kpis.attendanceHealthScore,
-              subtext: `${attendance.present} present, ${attendance.late} late`,
-            },
-            {
-              label: 'Pending Leave Approvals',
-              value: String(kpis.pendingTimeOffRequests),
-              subtext: `${kpis.approvedTimeOffDays} approved this month`,
-            },
-            {
-              label: 'Database Status',
-              value: 'Online',
-              subtext: 'Neon Serverless PostgreSQL',
-            },
-          ]}
-        />
       </div>
 
-      {/* Role Scopes & Security Card */}
-      <div className="bg-bg border border-line rounded-2xl p-6">
-        <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
-          <div>
-            <h3 className="font-serif text-base font-semibold text-ink">
-              System Roles & Access Control
-            </h3>
-            <p className="text-xs text-ink-soft mt-0.5">
-              Active security roles configured in PeoplePay360 RBAC
-            </p>
-          </div>
-          <Link
-            to="/users"
-            className="text-xs text-accent font-medium hover:underline no-underline"
-          >
-            Manage User Accounts →
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-1">
-            <span className="text-xs font-semibold text-accent block">Admin</span>
-            <p className="text-xs text-ink-soft leading-relaxed">
-              Full wildcard access across all modules, configuration, and user permissions.
-            </p>
-          </div>
-          <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-1">
-            <span className="text-xs font-semibold text-ink block">HR Manager</span>
-            <p className="text-xs text-ink-soft leading-relaxed">
-              Full CRUD on employees, contracts, schedules, attendance, and leaves. No payroll access.
-            </p>
-          </div>
-          <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-1">
-            <span className="text-xs font-semibold text-ink block">HR Payroll Manager</span>
-            <p className="text-xs text-ink-soft leading-relaxed">
-              Full HR control plus full Payruns, Payslips, Salary Structures, and Rules.
-            </p>
-          </div>
-          <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-1">
-            <span className="text-xs font-semibold text-ink-soft block">Employee</span>
-            <p className="text-xs text-ink-soft leading-relaxed">
-              Self-service workspace: profile, biometrics, leave requests, and personal payslips.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Administrative Operations Launchpad */}
+      {/* ── Section 4: Recent admin activity ── */}
       <div>
-        <h2 className="text-sm font-semibold text-ink uppercase tracking-wider mb-4">
-          Administrative Launchpad
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <Link
-            to="/users"
-            className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
+        <div className="flex justify-between items-baseline mb-4">
+          <h2 className="text-base sm:text-lg font-semibold text-ink">Recent admin activity</h2>
+          <button
+            type="button"
+            onClick={() => setIsAuditModalOpen(true)}
+            className="text-xs text-accent font-medium hover:underline cursor-pointer bg-transparent border-0 p-0"
           >
-            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
-              🛡️
-            </div>
-            <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
-              User Accounts
-            </h4>
-            <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Manage credentials, roles, and status.
-            </p>
-          </Link>
+            View full audit history →
+          </button>
+        </div>
 
-          <Link
-            to="/employees"
-            className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
-          >
-            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
-              👥
+        <div className="border border-line rounded-xl bg-bg overflow-hidden divide-y divide-line">
+          {recentActivity.length === 0 ? (
+            <div className="p-6 text-center text-xs text-ink-faint">
+              No admin activity recorded yet.
             </div>
-            <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
-              Employees Master
-            </h4>
-            <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Global directory & department assignments.
-            </p>
-          </Link>
-
-          <Link
-            to="/contracts"
-            className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
-          >
-            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
-              📄
-            </div>
-            <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
-              Contracts
-            </h4>
-            <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Wages, active terms, and structure links.
-            </p>
-          </Link>
-
-          <Link
-            to="/schedules"
-            className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
-          >
-            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
-              📅
-            </div>
-            <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
-              Work Schedules
-            </h4>
-            <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Weekly shifts, working days & hours.
-            </p>
-          </Link>
-
-          <Link
-            to="/payruns"
-            className="p-5 rounded-2xl border border-line bg-bg hover:border-accent/40 transition-colors no-underline group block"
-          >
-            <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent flex items-center justify-center mb-3">
-              ⚡
-            </div>
-            <h4 className="text-sm font-semibold text-ink group-hover:text-accent transition-colors">
-              Payroll Engine
-            </h4>
-            <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-              Payrun batches & payslip generation.
-            </p>
-          </Link>
+          ) : (
+            recentActivity.slice(0, 6).map((act) => (
+              <div
+                key={act.id}
+                className="flex items-start gap-3.5 px-5 py-3.5 hover:bg-bg-raised/40 transition-colors"
+              >
+                <div className="w-7 h-7 rounded-full flex-shrink-0 bg-accent-soft text-accent flex items-center justify-center text-xs font-bold mt-0.5">
+                  ＋
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs sm:text-sm text-ink leading-snug">
+                    {act.description}
+                  </div>
+                  <div className="text-xs text-ink-faint mt-1 flex items-center gap-1.5 flex-wrap">
+                    <span>By {act.actorName || 'Admin'}</span>
+                    <span>·</span>
+                    <code className="text-[10px] font-mono bg-bg-raised px-1.5 py-0.5 rounded border border-line/50">
+                      {act.action}
+                    </code>
+                  </div>
+                </div>
+                <span className="text-xs text-ink-faint flex-shrink-0 pt-0.5">
+                  {formatTimeAgo(act.createdAt)}
+                </span>
+              </div>
+            ))
+          )}
         </div>
       </div>
+
+      {/* ── Add User Modal ── */}
+      <UserAddModal
+        isOpen={isAddUserOpen}
+        onClose={() => setIsAddUserOpen(false)}
+        onSave={handleCreateUser}
+        isPending={createMutation.isPending}
+        employees={employees}
+      />
+
+      {/* ── Full Audit Trail Modal ── */}
+      {isAuditModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setIsAuditModalOpen(false)}
+          />
+          <div
+            ref={auditModalRef}
+            className="relative z-10 w-full max-w-3xl bg-bg border border-line rounded-xl shadow-lg max-h-[90vh] sm:max-h-[85vh] flex flex-col overflow-hidden"
+          >
+            <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-line flex items-center justify-between">
+              <div>
+                <h3 className="font-serif text-base sm:text-lg font-bold text-ink">System Audit Trail</h3>
+                <p className="text-xs text-ink-soft mt-0.5">
+                  Chronological record of account modifications, provision events, and permissions
+                  changes.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAuditModalOpen(false)}
+                className="p-1 rounded-lg hover:bg-bg-raised text-ink-soft hover:text-ink cursor-pointer transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-6 overflow-y-auto space-y-3 divide-y divide-line/60">
+              {recentActivity.length === 0 ? (
+                <div className="py-8 text-center text-xs text-ink-soft">No audit logs found.</div>
+              ) : (
+                recentActivity.map((act) => (
+                  <div
+                    key={act.id}
+                    className="pt-3 first:pt-0 flex items-start justify-between gap-4"
+                  >
+                    <div className="space-y-1 min-w-0">
+                      <div className="text-xs font-semibold text-ink">{act.description}</div>
+                      <div className="flex items-center gap-2 text-[11px] text-ink-soft">
+                        <span>Actor: {act.actorName || 'Admin'}</span>
+                        <span>·</span>
+                        <span>Target: {act.entityType}</span>
+                        <span>·</span>
+                        <span className="font-mono text-[10px] uppercase bg-bg-raised px-1.5 py-0.5 rounded border border-line">
+                          {act.action}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0 text-[11px] text-ink-soft font-mono flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-ink-faint" />
+                      {act.createdAt ? new Date(act.createdAt).toLocaleString() : 'N/A'}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="px-4 sm:px-6 py-3 border-t border-line bg-bg-raised/40 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsAuditModalOpen(false)}
+                className="px-4 py-2 text-xs font-semibold rounded-lg bg-bg border border-line text-ink hover:bg-bg-raised cursor-pointer transition-colors"
+              >
+                Close Audit Trail
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

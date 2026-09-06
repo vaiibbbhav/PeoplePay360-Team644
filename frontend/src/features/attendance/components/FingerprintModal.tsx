@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useFingerprintStatus, useEnrollFingerprint } from '@/features/attendance/queries/useFingerprint';
 import { ReaderStatusCard } from '@/features/attendance/components/ReaderStatusCard';
 import { FingerprintScannerPad } from '@/features/attendance/components/FingerprintScannerPad';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 type FingerprintModalProps = {
   isOpen: boolean;
@@ -16,6 +17,10 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ isOpen, onCl
   const [selectedReader, setSelectedReader] = useState<string>('');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState<boolean>(false);
+
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    onClose();
+  }, isOpen);
 
   if (!isOpen) return null;
 
@@ -45,7 +50,10 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({ isOpen, onCl
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs font-sans">
-      <div className="w-full max-w-lg bg-bg border border-line rounded-2xl p-6 sm:p-7 shadow-xs space-y-5">
+      <div
+        ref={modalRef}
+        className="w-full max-w-lg bg-bg border border-line rounded-2xl p-6 sm:p-7 shadow-xs space-y-5"
+      >
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-line">
           <div className="flex items-center gap-2.5">

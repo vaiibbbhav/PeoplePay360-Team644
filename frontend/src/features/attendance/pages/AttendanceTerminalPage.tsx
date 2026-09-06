@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePunchFingerprint, type PunchResult } from '../queries/useFingerprint';
-import { useAttendanceList } from '@/features/employee/queries/useAttendance';
+import { useAttendanceList } from '../queries/useAttendance';
 import { getTodayIST, formatTimeIST } from '@/lib/formatters';
 import { ReaderStatusCard } from '../components/ReaderStatusCard';
 import { FingerprintScannerPad } from '../components/FingerprintScannerPad';
@@ -69,11 +69,11 @@ export const AttendanceTerminalPage: React.FC = () => {
 
       if (result.matched && result.success) {
         const timeStr = result.time || formatTimeIST(new Date().toISOString());
-        const text = result.announcement || (
-          result.action === 'PUNCH_IN'
+        const text =
+          result.announcement ||
+          (result.action === 'PUNCH_IN'
             ? `Welcome ${result.employeeName}! Punched in at ${timeStr}`
-            : `Goodbye ${result.employeeName}! Punched out at ${timeStr}`
-        );
+            : `Goodbye ${result.employeeName}! Punched out at ${timeStr}`);
         speak(text);
       } else {
         speak('No user exists');
@@ -94,10 +94,10 @@ export const AttendanceTerminalPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-bg text-ink font-sans flex flex-col selection:bg-accent/20">
       {/* Top Bar Navigation */}
-      <header className="h-16 border-b border-line px-6 sm:px-10 flex items-center justify-between bg-bg-raised/30 backdrop-blur-md sticky top-0 z-20">
+      <header className="h-16 border-b border-line px-4 sm:px-10 flex items-center justify-between bg-bg-raised/30 backdrop-blur-md sticky top-0 z-20">
         <div className="flex items-center gap-3">
           <Link to="/" className="flex items-center gap-2 no-underline">
-            <span className="font-serif text-lg font-bold tracking-tight text-ink">
+            <span className="font-sans text-lg font-bold tracking-tight text-ink">
               PeoplePay<span className="text-accent">360</span>
             </span>
           </Link>
@@ -109,7 +109,7 @@ export const AttendanceTerminalPage: React.FC = () => {
 
         <div className="flex items-center gap-3 text-xs">
           <Link
-            to="/employee/dashboard"
+            to="/dashboard"
             className="px-3 py-1.5 rounded-lg border border-line bg-bg hover:bg-bg-raised text-ink transition-colors no-underline font-medium"
           >
             Employee Portal
@@ -131,11 +131,12 @@ export const AttendanceTerminalPage: React.FC = () => {
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
             Live Biometric Punch Station
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+          <h1 className="font-sans text-3xl sm:text-4xl font-bold tracking-tight text-ink">
             Attendance Terminal
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft">
-            Place your finger on the sensor. If your template exists, you will be punched in or out with audible and visual confirmation of your name and time.
+            Place your finger on the sensor. If your template exists, you will be punched in or out
+            with audible and visual confirmation of your name and time.
           </p>
         </div>
 
@@ -144,10 +145,7 @@ export const AttendanceTerminalPage: React.FC = () => {
           {/* Left Column: Biometric Reader Pad & Announcement Banner */}
           <div className="lg:col-span-7 space-y-6">
             {/* Hardware Status Card */}
-            <ReaderStatusCard
-              selectedReader={selectedReader}
-              onSelectReader={setSelectedReader}
-            />
+            <ReaderStatusCard selectedReader={selectedReader} onSelectReader={setSelectedReader} />
 
             {/* Biometric Scanning Pad */}
             <FingerprintScannerPad
@@ -167,9 +165,7 @@ export const AttendanceTerminalPage: React.FC = () => {
                       Live Captured Biometric Scan
                     </h4>
                   </div>
-                  <span className="text-[10px] font-mono text-ink-soft">
-                    500 DPI • Grayscale
-                  </span>
+                  <span className="text-[10px] font-mono text-ink-soft">500 DPI • Grayscale</span>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center gap-5 pt-1">
@@ -199,16 +195,24 @@ export const AttendanceTerminalPage: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <span className="text-ink-soft">Capture State:</span>
                       <span className="font-semibold text-ink">
-                        {punchMutation.isPending ? 'Verifying with NeonDB...' : punchResult?.matched ? 'Verified' : 'Capture Complete'}
+                        {punchMutation.isPending
+                          ? 'Verifying with NeonDB...'
+                          : punchResult?.matched
+                            ? 'Verified'
+                            : 'Capture Complete'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-ink-soft">Template Engine:</span>
-                      <span className="font-mono text-[11px] text-accent font-semibold">SourceAFIS 500 DPI</span>
+                      <span className="font-mono text-[11px] text-accent font-semibold">
+                        SourceAFIS 500 DPI
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-ink-soft">Biometric Security:</span>
-                      <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400">AES-256-GCM</span>
+                      <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
+                        AES-256-GCM
+                      </span>
                     </div>
                     {punchResult && (
                       <div className="pt-2 border-t border-line flex items-center justify-between">
@@ -241,7 +245,7 @@ export const AttendanceTerminalPage: React.FC = () => {
                           ✓
                         </div>
                         <div>
-                          <h2 className="text-xl sm:text-2xl font-serif font-bold text-ink tracking-tight">
+                          <h2 className="text-xl sm:text-2xl font-sans font-bold text-ink tracking-tight">
                             {punchResult.action === 'PUNCH_IN'
                               ? `Welcome, ${punchResult.employeeName}!`
                               : `Goodbye, ${punchResult.employeeName}!`}
@@ -262,25 +266,39 @@ export const AttendanceTerminalPage: React.FC = () => {
                     {/* Metadata Grid */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-emerald-500/20 text-xs">
                       <div>
-                        <span className="text-[10px] text-ink-soft uppercase tracking-wider block">Employee</span>
+                        <span className="text-[10px] text-ink-soft uppercase tracking-wider block">
+                          Employee
+                        </span>
                         <span className="font-semibold text-ink">{punchResult.employeeName}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-ink-soft uppercase tracking-wider block">Status</span>
+                        <span className="text-[10px] text-ink-soft uppercase tracking-wider block">
+                          Status
+                        </span>
                         <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                           {punchResult.status || 'Present'}
                         </span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-ink-soft uppercase tracking-wider block">Time</span>
+                        <span className="text-[10px] text-ink-soft uppercase tracking-wider block">
+                          Time
+                        </span>
                         <span className="font-semibold font-mono text-ink">
-                          {punchResult.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {punchResult.time ||
+                            new Date().toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
                         </span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-ink-soft uppercase tracking-wider block">Worked Hours</span>
+                        <span className="text-[10px] text-ink-soft uppercase tracking-wider block">
+                          Worked Hours
+                        </span>
                         <span className="font-bold text-ink">
-                          {punchResult.workedHours !== undefined ? `${punchResult.workedHours} hrs` : '0.00 hrs'}
+                          {punchResult.workedHours !== undefined
+                            ? `${punchResult.workedHours} hrs`
+                            : '0.00 hrs'}
                         </span>
                       </div>
                     </div>
@@ -291,11 +309,12 @@ export const AttendanceTerminalPage: React.FC = () => {
                       ✕
                     </div>
                     <div className="space-y-1">
-                      <h2 className="text-xl sm:text-2xl font-serif font-bold text-rose-600 dark:text-rose-400 tracking-tight">
+                      <h2 className="text-xl sm:text-2xl font-sans font-bold text-rose-600 dark:text-rose-400 tracking-tight">
                         No user exists
                       </h2>
                       <p className="text-xs text-ink-soft">
-                        The scanned fingerprint did not match any enrolled employee template in the database. Please register your fingerprint in the Employee Portal.
+                        The scanned fingerprint did not match any enrolled employee template in the
+                        database. Please register your fingerprint in the Employee Portal.
                       </p>
                     </div>
                   </div>
@@ -306,7 +325,7 @@ export const AttendanceTerminalPage: React.FC = () => {
 
           {/* Right Column: Today's Live Attendance Feed */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="rounded-2xl border border-line bg-bg p-5 sm:p-6 space-y-4">
+            <div className="rounded-2xl border border-line bg-bg p-4 sm:p-6 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-line">
                 <div>
                   <h3 className="text-sm font-semibold text-ink">Today's Attendance Feed</h3>
@@ -323,8 +342,18 @@ export const AttendanceTerminalPage: React.FC = () => {
 
               {todayRecords.length === 0 ? (
                 <div className="py-8 text-center text-xs text-ink-soft">
-                  <svg className="w-8 h-8 mx-auto text-ink-soft/40 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-8 h-8 mx-auto text-ink-soft/40 mb-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                   No attendance records logged for today yet.
                 </div>
@@ -333,23 +362,39 @@ export const AttendanceTerminalPage: React.FC = () => {
                   {todayRecords.map((rec: any) => (
                     <div key={rec.id} className="py-3 flex items-center justify-between text-xs">
                       <div>
-                        <div className="font-medium text-ink">
-                          {rec.employeeName || 'Employee'}
-                        </div>
+                        <div className="font-medium text-ink">{rec.employeeName || 'Employee'}</div>
                         <div className="text-[11px] text-ink-soft flex items-center gap-2 mt-0.5">
-                          <span>In: {rec.checkIn ? new Date(rec.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}</span>
+                          <span>
+                            In:{' '}
+                            {rec.checkIn
+                              ? new Date(rec.checkIn).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })
+                              : '—'}
+                          </span>
                           <span>•</span>
-                          <span>Out: {rec.checkOut ? new Date(rec.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Pending'}</span>
+                          <span>
+                            Out:{' '}
+                            {rec.checkOut
+                              ? new Date(rec.checkOut).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })
+                              : 'Pending'}
+                          </span>
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                          rec.status === 'Present'
-                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                            : rec.status === 'Late'
-                            ? 'bg-amber-500/10 text-amber-600'
-                            : 'bg-bg-raised text-ink-soft'
-                        }`}>
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                            rec.status === 'Present'
+                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                              : rec.status === 'Late'
+                                ? 'bg-amber-500/10 text-amber-600'
+                                : 'bg-bg-raised text-ink-soft'
+                          }`}
+                        >
                           {rec.status || 'Present'}
                         </span>
                         {rec.workedHours !== undefined && (

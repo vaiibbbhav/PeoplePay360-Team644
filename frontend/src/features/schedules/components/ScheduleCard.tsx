@@ -16,7 +16,7 @@ export const ScheduleCard: React.FC<ScheduleCardProps> = ({
   const workingDayCount = schedule.lines.length;
 
   return (
-    <div className="border border-line rounded-2xl p-6 bg-bg hover:shadow transition-colors flex flex-col justify-between gap-5">
+    <div className="border border-line rounded-2xl p-4 sm:p-6 bg-bg hover:border-accent/40 transition-colors flex flex-col justify-between gap-5">
       <div>
         {/* Header row */}
         <div className="flex items-start justify-between gap-3 mb-3">
@@ -25,15 +25,7 @@ export const ScheduleCard: React.FC<ScheduleCardProps> = ({
               <h3 className="text-lg font-bold tracking-tight text-ink m-0">
                 {schedule.name}
               </h3>
-              {schedule.isActive ? (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                  Active
-                </span>
-              ) : (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-bg-raised text-ink-soft border border-line">
-                  Inactive
-                </span>
-              )}
+
             </div>
             <p className="text-xs text-ink-soft mt-1 mb-0">
               {workingDayCount} working days per week · {schedule.employeeCount || 0} employees assigned

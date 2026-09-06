@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEmployeeContracts } from '../queries/useEmployeePayslips';
 import { formatCurrency } from '@/lib/formatters';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 export type PayPackageTabProps = {
   employeeId?: string;
@@ -48,69 +49,76 @@ export const PayPackageTab: React.FC<PayPackageTabProps> = ({ employeeId, showVa
   const medical = 1250;
   const pf = basic * 0.12;
 
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    setSelectedContractForBreakdown(null);
+  }, Boolean(selectedContractForBreakdown));
+
   return (
     <div className="space-y-6 pt-2">
-      <div className="flex justify-between items-center">
-        <h2 className="font-serif text-lg sm:text-xl font-semibold text-ink">Pay Package</h2>
-        <span className="text-xs text-ink-soft font-mono">FY 2026-27</span>
+      <div className="flex justify-between items-center pb-2 border-b border-line">
+        <div>
+          <h2 className="font-sans text-lg sm:text-xl font-semibold text-ink">Pay Package & CTC Breakdown</h2>
+          <p className="text-xs text-ink-soft mt-0.5">
+            Historical and active compensation contracts with salary rule decomposition.
+          </p>
+        </div>
+        <span className="text-xs text-ink-soft font-mono shrink-0">FY 2026-27</span>
       </div>
 
       {contracts.length === 0 ? (
-        <div className="border border-line rounded-xl p-8 bg-bg-raised text-center">
-          <p className="text-sm text-ink-soft">No employment contract found for this employee.</p>
+        <div className="border border-dashed border-line rounded-xl p-8 text-center bg-bg-raised/20">
+          <p className="text-sm font-medium text-ink">No contracts found</p>
+          <p className="text-xs text-ink-soft mt-1">
+            There are no active or historical contracts recorded for this profile.
+          </p>
         </div>
       ) : (
-        <div className="border border-line rounded-lg overflow-x-auto bg-bg">
-          <table className="w-full text-left text-xs sm:text-sm border-collapse">
-            <thead>
-              <tr className="border-b border-line bg-bg-raised text-ink-soft text-xs font-semibold">
-                <th className="py-3 px-4">Effective Date</th>
-                <th className="py-3 px-4 text-right">Monthly CTC</th>
-                <th className="py-3 px-4 text-right">Total CTC (Annual)</th>
-                <th className="py-3 px-4 text-center">CTC Proration</th>
+        <div className="border border-line rounded-xl overflow-hidden">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-bg-raised text-ink-soft border-b border-line">
+              <tr>
+                <th className="py-2.5 px-4 font-semibold">Contract</th>
+                <th className="py-2.5 px-4 font-semibold">Status</th>
+                <th className="py-2.5 px-4 font-semibold">Salary Structure</th>
+                <th className="py-2.5 px-4 font-semibold">Effective Period</th>
+                <th className="py-2.5 px-4 font-semibold text-right">Wage (Gross/Mo)</th>
+                <th className="py-2.5 px-4 font-semibold text-center">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
-              {contracts.map((c) => {
-                const mWage = parseFloat(c.wage) || 0;
-                const aWage = mWage * 12;
+              {contracts.map((c: any) => {
                 const isActive = c.status === 'active';
-
                 return (
-                  <tr key={c.id} className="hover:bg-bg-raised/60 transition-colors">
-                    <td className="py-4 px-4 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-ink">
-                          {new Date(c.start_date).toLocaleDateString('en-GB', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                          })}
-                        </span>
-                        <span
-                          className={`text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider ${
-                            isActive
-                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                              : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
-                          }`}
-                        >
-                          {c.status}
-                        </span>
-                      </div>
+                  <tr key={c.id} className="hover:bg-bg-raised/40 transition-colors">
+                    <td className="py-3 px-4 font-medium text-ink">{c.name}</td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium border ${
+                          isActive
+                            ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                            : 'bg-bg-raised text-ink-soft border-line'
+                        }`}
+                      >
+                        {c.status}
+                      </span>
                     </td>
-                    <td className="py-4 px-4 text-right font-mono font-medium text-ink whitespace-nowrap">
-                      {formatCurrency(mWage, showValues)}
+                    <td className="py-3 px-4 text-ink-soft">
+                      {c.salary_structure_name || 'Default Monthly'}
                     </td>
-                    <td className="py-4 px-4 text-right font-mono font-bold text-ink whitespace-nowrap">
-                      {formatCurrency(aWage, showValues)}
+                    <td className="py-3 px-4 text-ink-soft">
+                      {c.start_date ? new Date(c.start_date).toLocaleDateString() : 'N/A'} -{' '}
+                      {c.end_date ? new Date(c.end_date).toLocaleDateString() : 'Present'}
                     </td>
-                    <td className="py-4 px-4 text-center whitespace-nowrap">
+                    <td className="py-3 px-4 text-right font-mono font-medium text-ink">
+                      {formatCurrency(c.wage, showValues)}
+                    </td>
+                    <td className="py-3 px-4 text-center">
                       <button
                         type="button"
                         onClick={() => setSelectedContractForBreakdown(c)}
-                        className="text-xs text-accent font-semibold hover:underline cursor-pointer"
+                        className="px-2.5 py-1 rounded bg-bg border border-line hover:border-accent text-accent transition-colors font-medium cursor-pointer"
                       >
-                        View Breakdown
+                        View CTC
                       </button>
                     </td>
                   </tr>
@@ -124,10 +132,13 @@ export const PayPackageTab: React.FC<PayPackageTabProps> = ({ employeeId, showVa
       {/* CTC Breakdown Modal / Drawer */}
       {selectedContractForBreakdown && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <div className="bg-bg border border-line rounded-xl max-w-xl w-full p-6 shadow-xl animate-in fade-in zoom-in-95">
+          <div
+            ref={modalRef}
+            className="bg-bg border border-line rounded-xl max-w-xl w-full p-6 shadow-xl animate-in fade-in zoom-in-95"
+          >
             <div className="flex items-center justify-between border-b border-line pb-4 mb-4">
               <div>
-                <h3 className="font-serif text-lg font-bold text-ink">
+                <h3 className="font-sans text-lg font-bold text-ink">
                   CTC Compensation Structure Breakdown
                 </h3>
                 <p className="text-xs text-ink-soft mt-0.5">

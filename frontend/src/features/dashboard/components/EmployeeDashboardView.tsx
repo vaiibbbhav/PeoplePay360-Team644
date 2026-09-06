@@ -20,7 +20,7 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
       title: 'Attendance & Punches',
       desc: 'Check-in, check-out logs, daily attendance history, and punch terminal.',
       tag: 'Time & Attendance',
-      link: '/attendance',
+      link: '/attendance/my',
     },
     {
       id: 'time-off',
@@ -41,21 +41,21 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
       title: 'My Profile',
       desc: 'Personal details, emergency contacts, and employment history.',
       tag: 'Account',
-      link: '/profile',
+      link: '/employees',
     },
     {
       id: 'team',
       title: 'Org View & Directory',
       desc: 'Visual reporting hierarchy, leadership tree, and team rosters.',
       tag: 'Organization',
-      link: '/employee/org-view',
+      link: '/organization',
     },
     {
       id: 'documents',
       title: 'Policies & Documents',
       desc: 'Mandatory company policies, code of conduct, and compliance acknowledgments.',
       tag: 'Compliance',
-      link: '/employee/docs',
+      link: '/documents',
     },
     {
       id: 'contracts',
@@ -73,12 +73,11 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
     },
   ];
 
-
   return (
-    <div className="max-w-6xl mx-auto space-y-8 font-sans">
+    <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
       {/* Welcome Banner */}
       <div>
-        <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+        <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-ink">
           Welcome, {user.employee?.firstName || user.firstName || user.email.split('@')[0]}
         </h1>
         <p className="text-ink-soft text-xs sm:text-sm mt-1">
@@ -115,7 +114,8 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
                 </span>
               </div>
               <p className="text-xs text-ink-soft mt-0.5">
-                Your profile does not have an enrolled fingerprint. Register now to enable one-touch biometric check-in & check-out.
+                Your profile does not have an enrolled fingerprint. Register now to enable one-touch
+                biometric check-in & check-out.
               </p>
             </div>
           </div>

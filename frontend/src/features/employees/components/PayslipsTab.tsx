@@ -74,9 +74,9 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
 
       {/* Payslips Table */}
       <div className="bg-bg border border-line rounded-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-line flex items-center justify-between flex-wrap gap-3">
+        <div className="px-4 sm:px-6 py-4 border-b border-line flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h3 className="font-serif text-base font-semibold text-ink">Payroll Settlements</h3>
+            <h3 className="font-sans text-base font-semibold text-ink">Payroll Settlements</h3>
           </div>
           <div className="flex items-center gap-3">
             <Link
@@ -95,10 +95,10 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
 
         {payslips.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-12 h-12 mx-auto mb-3 rounded-xl border border-line bg-bg-raised flex items-center justify-center text-ink-soft text-lg font-serif">
+            <div className="w-12 h-12 mx-auto mb-3 rounded-xl border border-line bg-bg-raised flex items-center justify-center text-ink-soft text-lg font-sans">
               ₹
             </div>
-            <h4 className="font-serif text-base font-semibold text-ink mb-1">
+            <h4 className="font-sans text-base font-semibold text-ink mb-1">
               No Payslips Generated Yet
             </h4>
             <p className="text-xs text-ink-soft max-w-sm mx-auto">
@@ -108,7 +108,7 @@ export const PayslipsTab: React.FC<PayslipsTabProps> = ({ employeeId }) => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
+            <table className="w-full text-left border-collapse text-xs min-w-[620px]">
               <thead>
                 <tr className="border-b border-line bg-bg-raised/40 text-ink-soft font-medium">
                   <th className="py-3 px-6">Pay Period</th>

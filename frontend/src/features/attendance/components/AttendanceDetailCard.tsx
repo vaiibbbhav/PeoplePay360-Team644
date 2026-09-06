@@ -63,11 +63,11 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
   };
 
   return (
-    <div className="p-6 sm:p-7 bg-bg font-sans transition-all">
+    <div className="border border-line rounded-2xl p-4 sm:p-7 bg-bg-raised/40 font-sans shadow-xs transition-all">
       {/* Header bar */}
       <div className="flex items-center justify-between pb-4 border-b border-line mb-5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-accent/15 text-accent flex items-center justify-center font-serif font-bold text-base">
+          <div className="w-10 h-10 rounded-xl bg-accent/15 text-accent flex items-center justify-center font-sans font-bold text-base">
             {selectedDateStr.split('-')[2] || '—'}
           </div>
           <div>

@@ -62,7 +62,7 @@ export const PayslipsTable: React.FC<PayslipsTableProps> = ({
     <div className="space-y-4">
       {/* Table Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-        <h2 className="font-serif text-lg sm:text-xl font-semibold text-ink">
+        <h2 className="font-sans text-lg sm:text-xl font-semibold text-ink">
           Pay Slips for FY 2026-27
         </h2>
 
@@ -104,7 +104,7 @@ export const PayslipsTable: React.FC<PayslipsTableProps> = ({
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h3 className="font-serif text-base font-semibold text-ink mb-1">
+          <h3 className="font-sans text-base font-semibold text-ink mb-1">
             No Payslips Available
           </h3>
           <p className="text-xs text-ink-soft max-w-md mx-auto">
@@ -114,7 +114,7 @@ export const PayslipsTable: React.FC<PayslipsTableProps> = ({
         </div>
       ) : (
         <div className="border border-line rounded-lg overflow-x-auto bg-bg">
-          <table className="w-full text-left text-xs sm:text-sm border-collapse">
+          <table className="w-full text-left text-xs sm:text-sm border-collapse min-w-[750px]">
             <thead>
               <tr className="border-b border-line bg-bg-raised text-ink-soft text-xs font-semibold">
                 <th className="py-3 px-4 w-10">

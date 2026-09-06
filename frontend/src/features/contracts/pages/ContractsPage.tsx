@@ -9,6 +9,14 @@ import {
 } from '../queries/useContracts';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { StatGrid } from '@/components/ui/StatCard';
+import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 import { ContractTable } from '../components/ContractTable';
 import { ContractDetailModal } from '../components/ContractDetailModal';
 import { ContractFormDrawer } from '../components/ContractFormDrawer';
@@ -90,7 +98,7 @@ export const ContractsPage: React.FC = () => {
         ) : undefined
       }
     >
-      <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8 space-y-8">
+      <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Stat Cards */}
         <StatGrid
           columns={4}
@@ -116,45 +124,34 @@ export const ContractsPage: React.FC = () => {
               subtext: 'Requires extension or renewal',
             },
           ]}
+          isLoading={isLoading}
+          skeletonCount={4}
         />
 
         {/* Filter & Search Toolbar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-line bg-bg">
-          <div className="flex-1 w-full sm:w-auto relative">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by employee, title, position, or department..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl border border-line bg-bg-raised text-ink text-xs placeholder:text-ink-soft/60 focus:outline-none focus:border-accent"
-            />
-            <svg
-              className="w-4 h-4 text-ink-soft absolute left-3 top-2.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-3.5 sm:p-4 rounded-2xl border border-line bg-bg">
+          <SearchInput
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by employee, title, position, or department..."
+          />
 
           <div className="w-full sm:w-auto">
-            <select
+            <Select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as ContractStatus | 'all')}
-              className="w-full sm:w-auto px-3.5 py-2 text-xs rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer"
+              onValueChange={(val) => setStatusFilter(val as ContractStatus | 'all')}
             >
-              <option value="all">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="draft">Draft</option>
-              <option value="expired">Expired</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
+              <SelectTrigger className="w-full sm:w-44">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="expired">Expired</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -170,7 +167,7 @@ export const ContractsPage: React.FC = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div className="border border-line rounded-2xl p-16 text-center bg-bg">
-            <h3 className="font-serif text-lg font-bold text-ink mb-1">No contracts found</h3>
+            <h3 className="font-sans text-lg font-bold text-ink mb-1">No contracts found</h3>
             <p className="text-xs text-ink-soft mb-4">
               {search || statusFilter !== 'all'
                 ? 'Try adjusting your search criteria'

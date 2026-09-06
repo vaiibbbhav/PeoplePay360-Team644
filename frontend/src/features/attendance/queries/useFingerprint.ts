@@ -32,7 +32,7 @@ export type TodayAttendanceStatus = {
   status?: string;
 };
 
-const FINGERPRINT_API_BASE = '/api/fingerprint';
+import { fingerprintApi } from '@/api/apiClient';
 
 /**
  * Check if an employee has a registered fingerprint in NeonDB
@@ -40,10 +40,8 @@ const FINGERPRINT_API_BASE = '/api/fingerprint';
 export async function fetchFingerprintStatus(employeeId: string): Promise<FingerprintStatusResponse> {
   if (!employeeId) return { employeeId: '', enrolled: false };
   try {
-    const res = await fetch(`${FINGERPRINT_API_BASE}/status/${encodeURIComponent(employeeId)}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    return json.data || { employeeId, enrolled: false };
+    const res = await fingerprintApi.get(`/status/${encodeURIComponent(employeeId)}`);
+    return res.data?.data || { employeeId, enrolled: false };
   } catch (err) {
     console.warn('Could not fetch fingerprint status:', err);
     return { employeeId, enrolled: false };
@@ -54,14 +52,10 @@ export async function fetchFingerprintStatus(employeeId: string): Promise<Finger
  * Enroll a new fingerprint template (AES-256-GCM encrypted in Spring Boot)
  */
 export async function enrollFingerprint(employeeId: string, imageBase64: string) {
-  const res = await fetch(`${FINGERPRINT_API_BASE}/enroll`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: employeeId, image: imageBase64 }),
-  });
-  const data = await res.json();
-  if (!res.ok || !data.success) {
-    throw new Error(data.message || 'Failed to enroll fingerprint template');
+  const res = await fingerprintApi.post('/enroll', { id: employeeId, image: imageBase64 });
+  const data = res.data;
+  if (!data?.success) {
+    throw new Error(data?.message || 'Failed to enroll fingerprint template');
   }
   return data;
 }
@@ -70,40 +64,35 @@ export async function enrollFingerprint(employeeId: string, imageBase64: string)
  * Biometric match and Punch In / Punch Out
  */
 export async function punchWithFingerprint(imageBase64: string): Promise<PunchResult> {
-  const res = await fetch(`${FINGERPRINT_API_BASE}/punch`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image: imageBase64 }),
-  });
-  const data = await res.json().catch(() => ({}));
-  // If no match found or HTTP error
-  if (!res.ok) {
+  try {
+    const res = await fingerprintApi.post('/punch', { image: imageBase64 });
+    const payload = (res.data?.data || res.data) as Record<string, any>;
+    const matched = Boolean(payload?.matched);
+    const rawScore = payload?.score;
+    const numScore =
+      typeof rawScore === 'number' && !isNaN(rawScore)
+        ? rawScore
+        : matched
+        ? 88.0
+        : 0.0;
+
+    return {
+      ...payload,
+      success: Boolean(payload?.success || matched),
+      matched,
+      score: numScore,
+      message: payload?.message || (matched ? 'Successfully Punched' : 'No user exists'),
+    } as PunchResult;
+  } catch (err: any) {
+    const data = err?.response?.data;
     const rawScore = data?.data?.score ?? data?.score;
     return {
       success: false,
       matched: false,
       score: typeof rawScore === 'number' ? rawScore : 0,
-      message: data.message || 'No user exists',
+      message: data?.message || 'No user exists',
     };
   }
-
-  const payload = (data.data || data) as Record<string, any>;
-  const matched = Boolean(payload.matched);
-  const rawScore = payload.score;
-  const numScore =
-    typeof rawScore === 'number' && !isNaN(rawScore)
-      ? rawScore
-      : matched
-      ? 88.0
-      : 0.0;
-
-  return {
-    ...payload,
-    success: Boolean(payload.success || matched),
-    matched,
-    score: numScore,
-    message: payload.message || (matched ? 'Successfully Punched' : 'No user exists'),
-  } as PunchResult;
 }
 
 /**
@@ -112,10 +101,8 @@ export async function punchWithFingerprint(imageBase64: string): Promise<PunchRe
 export async function fetchTodayAttendance(employeeId: string): Promise<TodayAttendanceStatus> {
   if (!employeeId) return { punchedIn: false };
   try {
-    const res = await fetch(`${FINGERPRINT_API_BASE}/attendance-status/${encodeURIComponent(employeeId)}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const json = await res.json();
-    return json.data || { punchedIn: false };
+    const res = await fingerprintApi.get(`/attendance-status/${encodeURIComponent(employeeId)}`);
+    return res.data?.data || { punchedIn: false };
   } catch {
     return { punchedIn: false };
   }

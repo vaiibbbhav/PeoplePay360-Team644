@@ -9,8 +9,17 @@ import {
 } from '../queries/useSchedules';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { StatGrid } from '@/components/ui/StatCard';
+import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 import { ScheduleCard } from '../components/ScheduleCard';
 import { ScheduleFormDrawer } from '../components/ScheduleFormDrawer';
+import { useClickOutside } from '@/hooks/useClickOutside';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 
 export const SchedulesPage: React.FC = () => {
@@ -27,6 +36,11 @@ export const SchedulesPage: React.FC = () => {
   const [editingSchedule, setEditingSchedule] = useState<ScheduleItem | null>(null);
   const [deletingSchedule, setDeletingSchedule] = useState<ScheduleItem | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  const deleteModalRef = useClickOutside<HTMLDivElement>(
+    () => setDeletingSchedule(null),
+    Boolean(deletingSchedule),
+  );
 
   // Filtered schedules
   const filtered = schedules.filter((s) => {
@@ -94,7 +108,7 @@ export const SchedulesPage: React.FC = () => {
         ) : undefined
       }
     >
-      <main className="max-w-6xl mx-auto w-full flex-1 md:px-6 py-8 space-y-8">
+      <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* KPI Cards */}
         <StatGrid
           columns={4}
@@ -120,43 +134,32 @@ export const SchedulesPage: React.FC = () => {
               subtext: 'Covered under schedules',
             },
           ]}
+          isLoading={isLoading}
+          skeletonCount={4}
         />
 
         {/* Search & Filter Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-line bg-bg">
-          <div className="flex-1 w-full sm:w-auto relative">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search schedules by name..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl border border-line bg-bg-raised text-ink text-xs placeholder:text-ink-soft/60 focus:outline-none focus:border-accent"
-            />
-            <svg
-              className="w-4 h-4 text-ink-soft absolute left-3 top-2.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-3.5 sm:p-4 rounded-2xl border border-line bg-bg">
+          <SearchInput
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search schedules by name..."
+          />
 
           <div className="w-full sm:w-auto">
-            <select
+            <Select
               value={filterActive}
-              onChange={(e) => setFilterActive(e.target.value as 'all' | 'active' | 'inactive')}
-              className="w-full sm:w-auto px-3.5 py-2 text-xs rounded-xl border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer"
+              onValueChange={(val) => setFilterActive(val as 'all' | 'active' | 'inactive')}
             >
-              <option value="all">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
+              <SelectTrigger className="w-full sm:w-40">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -185,7 +188,7 @@ export const SchedulesPage: React.FC = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div className="border border-line rounded-2xl p-16 text-center bg-bg">
-            <h3 className="font-serif text-lg font-bold text-ink mb-1">No schedules found</h3>
+            <h3 className="font-sans text-lg font-bold text-ink mb-1">No schedules found</h3>
             <p className="text-xs text-ink-soft mb-4">
               {search || filterActive !== 'all'
                 ? 'Try adjusting your search or filters'
@@ -225,7 +228,10 @@ export const SchedulesPage: React.FC = () => {
       {/* Delete Confirmation Modal */}
       {deletingSchedule && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-bg border border-line rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+          <div
+            ref={deleteModalRef}
+            className="bg-bg border border-line rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl"
+          >
             <h3 className="font-serif text-lg font-bold text-ink m-0">
               Delete Working Schedule?
             </h3>

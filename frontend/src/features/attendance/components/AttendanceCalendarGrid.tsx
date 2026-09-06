@@ -45,11 +45,11 @@ export const AttendanceCalendarGrid: React.FC<AttendanceCalendarGridProps> = ({
   };
 
   return (
-    <div className="border border-line rounded-2xl p-5 sm:p-6 bg-bg font-sans shadow-xs">
+    <div className="border border-line rounded-2xl p-3 sm:p-6 bg-bg font-sans shadow-xs">
       {/* Calendar Header Navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-line">
         <div className="flex items-center gap-3">
-          <h3 className="font-serif text-lg sm:text-xl font-bold text-ink m-0 tracking-tight">
+          <h3 className="font-serif text-base sm:text-xl font-bold text-ink m-0 tracking-tight">
             {monthLabel}
           </h3>
           <button
@@ -127,7 +127,7 @@ export const AttendanceCalendarGrid: React.FC<AttendanceCalendarGridProps> = ({
             <div
               key={dateStr}
               onClick={() => onSelectDate(dateStr)}
-              className={`min-h-20 sm:min-h-24 p-2 sm:p-2.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between select-none ${
+              className={`min-h-16 sm:min-h-24 p-1 sm:p-2.5 rounded-lg sm:rounded-xl border transition-all cursor-pointer flex flex-col justify-between select-none ${
                 isSelected
                   ? 'border-accent bg-accent/5 ring-2 ring-accent/30'
                   : 'border-line hover:border-accent/40 bg-bg-raised/30 hover:bg-bg-raised/60'

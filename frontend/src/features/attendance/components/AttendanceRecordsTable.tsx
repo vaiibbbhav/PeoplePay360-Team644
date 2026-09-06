@@ -8,7 +8,7 @@ import {
   Calendar,
   ArrowRight,
 } from 'lucide-react';
-import type { AttendanceRecord } from '@/features/employee/queries/useAttendance';
+import type { AttendanceRecord } from '../queries/useAttendance';
 
 import { formatTimeIST, formatDateIST } from '@/lib/formatters';
 
@@ -110,7 +110,7 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
         <div className="w-12 h-12 rounded-2xl bg-bg-raised border border-line flex items-center justify-center mx-auto mb-4 text-ink-soft">
           <Calendar className="w-6 h-6" />
         </div>
-        <h3 className="font-serif text-lg font-medium text-ink mb-1">No Attendance Records Found</h3>
+        <h3 className="font-sans text-lg font-medium text-ink mb-1">No Attendance Records Found</h3>
         <p className="text-xs font-sans text-ink-soft max-w-sm mx-auto">
           No logs match your active filters or date selection. Adjust filters or record a manual
           punch using the toolbar above.

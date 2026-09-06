@@ -194,7 +194,7 @@ export const OrgViewPage: React.FC = () => {
                             </span>
                           )}
                         </div>
-                        <h4 className="text-sm font-serif font-medium text-ink truncate">
+                        <h4 className="text-sm font-sans font-medium text-ink truncate">
                           {emp.first_name} {emp.last_name}
                         </h4>
                         <p className="text-xs text-ink-soft truncate mt-0.5">

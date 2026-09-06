@@ -16,8 +16,8 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
   onViewChange,
 }) => {
   return (
-    <div className="bg-bg-raised border border-line rounded-2xl p-6 mb-8 transition-all">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+    <div className="bg-bg-raised border border-line rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 transition-all">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
         <div>
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide uppercase bg-accent/10 text-accent border border-accent/20">
@@ -28,20 +28,20 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
             </span>
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-serif text-ink font-normal mt-2 tracking-tight">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-serif text-ink font-normal mt-2 tracking-tight">
             Organization View & Hierarchy
           </h1>
-          <p className="text-sm text-ink-soft mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-ink-soft mt-1 max-w-2xl leading-relaxed">
             Explore reporting lines, department leadership, team structures, and company roster.
           </p>
         </div>
 
         {/* View Switcher Controls */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center p-1 bg-bg-sunken rounded-xl border border-line-subtle text-xs">
+          <div className="flex items-center p-1 bg-bg-sunken rounded-xl border border-line-subtle text-[11px] sm:text-xs">
             <button
               onClick={() => onViewChange('tree')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
                 activeView === 'tree'
                   ? 'bg-bg-raised text-ink shadow-xs'
                   : 'text-ink-soft hover:text-ink'
@@ -103,7 +103,7 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
           <span className="text-[11px] font-mono text-ink-faint uppercase tracking-wider block">
             Total Headcount
           </span>
-          <span className="text-xl font-serif font-bold text-ink mt-0.5 block">
+          <span className="text-xl font-sans font-bold text-ink mt-0.5 block">
             {totalEmployees}
           </span>
         </div>
@@ -111,7 +111,7 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
           <span className="text-[11px] font-mono text-ink-faint uppercase tracking-wider block">
             Departments
           </span>
-          <span className="text-xl font-serif font-bold text-ink mt-0.5 block">
+          <span className="text-xl font-sans font-bold text-ink mt-0.5 block">
             {totalDepartments}
           </span>
         </div>
@@ -119,7 +119,7 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
           <span className="text-[11px] font-mono text-ink-faint uppercase tracking-wider block">
             People Managers
           </span>
-          <span className="text-xl font-serif font-bold text-ink mt-0.5 block">
+          <span className="text-xl font-sans font-bold text-ink mt-0.5 block">
             {totalManagers}
           </span>
         </div>

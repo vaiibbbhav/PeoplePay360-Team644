@@ -51,7 +51,7 @@ export const LoginForm: React.FC = () => {
       if (res?.user?.role) {
         navigate(getDefaultPathForRole(res.user.role));
       } else {
-        navigate('/employee/dashboard');
+        navigate('/dashboard');
       }
     } catch (err: any) {
       const errorCode = err.response?.data?.code;
@@ -115,9 +115,9 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-7 sm:p-9 border border-line rounded-2xl bg-bg-raised shadow-xs">
+    <div className="w-full max-w-md mx-auto p-5 sm:p-8 border border-line rounded-2xl bg-bg-raised shadow-xs">
       <div className="mb-6 text-center">
-        <h2 className="font-serif text-2xl font-bold mb-1.5 text-ink">Welcome back</h2>
+        <h2 className="font-sans text-2xl font-bold mb-1.5 text-ink">Welcome back</h2>
         <p className="text-ink-soft text-xs sm:text-sm m-0">
           Enter your credentials to access PeoplePay360
         </p>
@@ -210,7 +210,10 @@ export const LoginForm: React.FC = () => {
             </div>
           </div>
         ) : errorMessage ? (
-          <div className="px-3.5 py-3 rounded-lg border border-red-500/30 text-red-600 dark:text-red-400 text-xs bg-red-500/10">
+          <div
+            role="alert"
+            className="px-3.5 py-3 rounded-lg border border-red-500/30 text-red-600 dark:text-red-400 text-xs bg-red-500/10"
+          >
             {errorMessage}
           </div>
         ) : null}

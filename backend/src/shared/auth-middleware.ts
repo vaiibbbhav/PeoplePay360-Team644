@@ -118,3 +118,33 @@ export const requireEmployeeRead = (req: Request, res: Response, next: NextFunct
   }
   return requirePermission('employee.read')(req, res, next);
 };
+
+export const assertOwnerOrPermission = (
+  req: Request,
+  ownerEmployeeId: string,
+  permission: string,
+  errorMessage = 'You are not authorized to access this record',
+): void => {
+  if (!req.user) throw new UnauthorizedError();
+  if (hasPermission(req.user.role, permission)) return;
+  if (req.user.role === 'Employee' && req.user.employeeId === ownerEmployeeId) return;
+  throw new ForbiddenError(errorMessage);
+};
+
+export const assertManagerOrPermission = (
+  req: Request,
+  managerEmployeeId: string | null | undefined,
+  permission: string,
+  errorMessage = 'Only HR administrators or the direct reporting manager can perform this action',
+): void => {
+  if (!req.user) throw new UnauthorizedError();
+  if (hasPermission(req.user.role, permission)) return;
+  if (
+    req.user.role === 'Employee' &&
+    req.user.employeeId &&
+    managerEmployeeId === req.user.employeeId
+  ) {
+    return;
+  }
+  throw new ForbiddenError(errorMessage);
+};

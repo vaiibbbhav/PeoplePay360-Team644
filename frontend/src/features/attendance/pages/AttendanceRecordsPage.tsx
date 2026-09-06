@@ -4,7 +4,7 @@ import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import {
   useAttendanceList,
   type AttendanceRecord,
-} from '@/features/employee/queries/useAttendance';
+} from '../queries/useAttendance';
 import { AttendanceSummaryCards } from '../components/AttendanceSummaryCards';
 import {
   AttendanceFilterToolbar,
@@ -12,7 +12,7 @@ import {
 } from '../components/AttendanceFilterToolbar';
 import { AttendanceRecordsTable } from '../components/AttendanceRecordsTable';
 import { ManualAttendanceDrawer } from '../components/ManualAttendanceDrawer';
-import { EmployeeAttendancePage } from '@/features/employee/pages/EmployeeAttendancePage';
+import { EmployeeAttendancePage } from './EmployeeAttendancePage';
 
 export const AttendanceRecordsPage: React.FC = () => {
   const { data: user } = useCurrentUser();
@@ -107,7 +107,7 @@ export const AttendanceRecordsPage: React.FC = () => {
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
               <span className="text-[11px] text-ink-soft">Live Operations Ledger</span>
             </div>
-            <h1 className="text-2xl lg:text-3xl font-serif font-medium text-ink">
+            <h1 className="text-2xl lg:text-3xl font-sans font-medium text-ink">
               Attendance Records
             </h1>
             <p className="text-xs text-ink-soft mt-1">
@@ -119,7 +119,7 @@ export const AttendanceRecordsPage: React.FC = () => {
         {/* Company Ledger View */}
         <div className="space-y-6">
           {/* Real-time Summary Cards */}
-          <AttendanceSummaryCards records={filteredRecords} />
+          <AttendanceSummaryCards records={filteredRecords} isLoading={isLoading} />
 
           {/* Filtering & Actions Toolbar */}
           <AttendanceFilterToolbar

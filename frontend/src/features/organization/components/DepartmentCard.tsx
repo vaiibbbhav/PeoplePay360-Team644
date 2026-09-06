@@ -30,7 +30,7 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
             <span className="text-[10px] font-mono uppercase tracking-wider text-ink-faint">
               Department Cluster
             </span>
-            <h3 className="text-lg font-serif font-medium text-ink tracking-tight">
+            <h3 className="text-lg font-sans font-medium text-ink tracking-tight">
               {departmentName}
             </h3>
           </div>

@@ -19,7 +19,7 @@ export const PersonalDetailsTab: React.FC<PersonalDetailsTabProps> = ({ employee
   return (
     <div className="space-y-6">
       {/* Identity & Basic Information */}
-      <div className="bg-bg border border-line rounded-2xl p-6 sm:p-8">
+      <div className="bg-bg border border-line rounded-2xl p-4 sm:p-8">
         <h3 className="font-serif text-lg font-semibold text-ink mb-6 pb-3 border-b border-line">
           Identity & Contact
         </h3>
@@ -37,7 +37,7 @@ export const PersonalDetailsTab: React.FC<PersonalDetailsTabProps> = ({ employee
 
           <div>
             <span className="text-xs text-ink-soft block mb-1">Work Email</span>
-            <span className="text-sm font-medium text-ink">{employee.email}</span>
+            <span className="text-sm font-medium text-ink break-all">{employee.email}</span>
           </div>
 
           <div>
@@ -71,9 +71,9 @@ export const PersonalDetailsTab: React.FC<PersonalDetailsTabProps> = ({ employee
       </div>
 
       {/* Banking & Settlement Information */}
-      <div className="bg-bg border border-line rounded-2xl p-6 sm:p-8">
+      <div className="bg-bg border border-line rounded-2xl p-4 sm:p-8">
         <div className="flex items-center justify-between pb-3 border-b border-line mb-6">
-          <h3 className="font-serif text-lg font-semibold text-ink">
+          <h3 className="font-sans text-lg font-semibold text-ink">
             Banking & Payroll Payout Details
           </h3>
           <span className="text-xs text-ink-soft">Direct Deposit Destination</span>

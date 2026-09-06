@@ -70,7 +70,7 @@ export const ContractTable: React.FC<ContractTableProps> = ({
   return (
     <div className="border border-line rounded-2xl overflow-hidden bg-bg">
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
+        <table className="w-full text-left text-xs min-w-[700px]">
           <thead>
             <tr className="border-b border-line bg-bg-raised text-ink-soft uppercase tracking-wider text-[11px]">
               <th className="py-3 px-4 font-semibold">Employee</th>
@@ -98,7 +98,7 @@ export const ContractTable: React.FC<ContractTableProps> = ({
                         className="w-8 h-8 rounded-full object-cover border border-line"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-accent-soft border border-accent/20 text-accent font-serif font-bold text-xs flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-accent-soft border border-accent/20 text-accent font-sans font-bold text-xs flex items-center justify-center">
                         {(contract.employee_name || 'E').slice(0, 2).toUpperCase()}
                       </div>
                     )}

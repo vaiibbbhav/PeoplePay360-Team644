@@ -15,4 +15,14 @@ router.get(
   }),
 );
 
+router.get(
+  '/admin-overview',
+  requirePermission('reporting.read'),
+  asyncHandler(async (_req, res) => {
+    const adminOverview = await reportingService.getAdminOverview();
+    res.json(adminOverview);
+  }),
+);
+
 export default router;
+

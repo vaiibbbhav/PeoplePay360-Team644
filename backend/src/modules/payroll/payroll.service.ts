@@ -3,8 +3,17 @@ import * as contractsService from '../contracts/contracts.service';
 import * as attendanceService from '../attendance/attendance.service';
 import * as hrService from '../hr/hr.service';
 import { computePayslipLines } from './rule-engine';
-import { NotFoundError, ValidationError } from '../../shared/errors';
+import { ConflictError, NotFoundError, ValidationError } from '../../shared/errors';
 import { roundToTwoDecimals } from '../../shared/formatters';
+
+function countPeriodDays(periodStart: string, periodEnd: string): number {
+  const start = Date.parse(`${periodStart}T00:00:00Z`);
+  const end = Date.parse(`${periodEnd}T00:00:00Z`);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) {
+    throw new ValidationError('Payroll period end must be on or after period start');
+  }
+  return Math.floor((end - start) / 86_400_000) + 1;
+}
 
 export async function listSalaryStructures() {
   return await payrollRepo.findAllStructures();
@@ -43,27 +52,35 @@ export async function getPayrunById(id: string) {
 
 export async function getEligibleEmployeesForPeriod(periodStart: string, periodEnd: string) {
   const allEmployees = await hrService.listEmployees();
-  const eligible = [];
+  if (allEmployees.length === 0) return [];
 
-  for (const emp of allEmployees) {
-    const contract = await contractsService.getActiveContractForPeriod(
-      emp.id,
-      periodStart,
-      periodEnd,
-    );
+  const employeeIds = allEmployees.map((e) => e.id);
+  const activeContracts = await contractsService.getActiveContractsForEmployees(
+    employeeIds,
+    periodStart,
+    periodEnd,
+  );
+
+  const contractMap = new Map<string, (typeof activeContracts)[0]>();
+  for (const c of activeContracts) {
+    if (!contractMap.has(c.employee_id)) {
+      contractMap.set(c.employee_id, c);
+    }
+  }
+
+  return allEmployees.map((emp) => {
+    const contract = contractMap.get(emp.id) || null;
     const hasActiveContract = Boolean(contract);
     const hasBankDetails = Boolean(emp.bank_account_number && emp.bank_name);
 
-    eligible.push({
+    return {
       employee: emp,
       hasActiveContract,
       activeContract: contract,
       hasBankDetails,
       eligible: hasActiveContract,
-    });
-  }
-
-  return eligible;
+    };
+  });
 }
 
 export async function createPayrunWizard(data: {
@@ -74,6 +91,7 @@ export async function createPayrunWizard(data: {
   employeeIds: string[];
   notes?: string | null;
 }) {
+  const totalPeriodDays = countPeriodDays(data.periodStart, data.periodEnd);
   const structure = await getSalaryStructureById(data.salaryStructureId);
   const rules = structure.rules || [];
 
@@ -103,10 +121,9 @@ export async function createPayrunWizard(data: {
     const empWarnings: Array<{ message: string; severity: 'warning' | 'blocking' }> = [];
 
     if (!contract) {
-      empWarnings.push({
-        message: `Employee ${employee.first_name} ${employee.last_name} has no active contract for this period`,
-        severity: 'blocking',
-      });
+      throw new ValidationError(
+        `Employee ${employee.first_name} ${employee.last_name} has no active contract for this period`,
+      );
     }
 
     if (!employee.bank_account_number) {
@@ -134,13 +151,11 @@ export async function createPayrunWizard(data: {
       data.periodStart,
       data.periodEnd,
     );
-    const effectiveWorkedDays = workedDays > 0 ? workedDays : 22;
-
     const context = {
       results: {},
       contractWage: wage,
-      workedDays: effectiveWorkedDays,
-      totalPeriodDays: 22,
+      workedDays,
+      totalPeriodDays,
     };
 
     const lines = computePayslipLines(rules, context);
@@ -178,11 +193,11 @@ export async function createPayrunWizard(data: {
     employeePayslips.push({
       payslip: {
         employeeId,
-        contractId: contract?.id || '00000000-0000-0000-0000-000000000000',
+        contractId: contract.id,
         structureId: data.salaryStructureId,
         periodStart: data.periodStart,
         periodEnd: data.periodEnd,
-        workedDays: effectiveWorkedDays,
+        workedDays,
         basicSalary: basic,
         grossSalary: gross,
         totalDeductions: deductions,
@@ -193,24 +208,32 @@ export async function createPayrunWizard(data: {
     });
   }
 
-  const payrun = await payrollRepo.executeCreatePayrunTx(
-    {
-      name: data.name,
-      salaryStructureId: data.salaryStructureId,
-      periodStart: data.periodStart,
-      periodEnd: data.periodEnd,
-      notes: data.notes,
-    },
-    employeePayslips,
-    {
-      basic: roundToTwoDecimals(totalBasic),
-      gross: roundToTwoDecimals(totalGross),
-      deductions: roundToTwoDecimals(totalDeductions),
-      net: roundToTwoDecimals(totalNet),
-      count: data.employeeIds.length,
-      warnings: payrunWarnings,
-    },
-  );
+  let payrun;
+  try {
+    payrun = await payrollRepo.executeCreatePayrunTx(
+      {
+        name: data.name,
+        salaryStructureId: data.salaryStructureId,
+        periodStart: data.periodStart,
+        periodEnd: data.periodEnd,
+        notes: data.notes,
+      },
+      employeePayslips,
+      {
+        basic: roundToTwoDecimals(totalBasic),
+        gross: roundToTwoDecimals(totalGross),
+        deductions: roundToTwoDecimals(totalDeductions),
+        net: roundToTwoDecimals(totalNet),
+        count: data.employeeIds.length,
+        warnings: payrunWarnings,
+      },
+    );
+  } catch (error) {
+    if ((error as { code?: string }).code === '23505') {
+      throw new ConflictError('A payslip already exists for an employee in this payroll period');
+    }
+    throw error;
+  }
 
   return await getPayrunById(payrun.id);
 }

@@ -164,7 +164,7 @@ export async function updatePolicy(
 }
 
 export async function deletePolicy(id: string): Promise<boolean> {
-  const result = await db.delete(companyPolicies).where(eq(companyPolicies.id, id));
+  await db.delete(companyPolicies).where(eq(companyPolicies.id, id));
   return true;
 }
 

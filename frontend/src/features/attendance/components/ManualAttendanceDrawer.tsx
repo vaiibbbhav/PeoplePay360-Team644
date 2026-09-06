@@ -6,7 +6,7 @@ import {
   useDeleteAttendance,
   type AttendanceRecord,
   type SaveManualAttendancePayload,
-} from '@/features/employee/queries/useAttendance';
+} from '../queries/useAttendance';
 import { getTodayIST, formatDateIST } from '@/lib/formatters';
 
 type ManualAttendanceDrawerProps = {
@@ -174,7 +174,7 @@ export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
               <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
                 HR Exception Override
               </span>
-              <h2 className="text-xl font-serif font-medium text-ink mt-0.5">
+              <h2 className="text-xl font-sans font-medium text-ink mt-0.5">
                 {initialRecord ? 'Adjust Attendance Log' : 'Record Manual Attendance'}
               </h2>
             </div>

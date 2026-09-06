@@ -42,7 +42,7 @@ export const CompensationPage: React.FC = () => {
   return (
     <AppLayout title="Compensation Hub">
       {/* Main Compensation Content Area */}
-      <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6">
+      <div className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6">
         {/* Header with Title and Controls */}
         <CompensationHeader
           financialYear={financialYear}
@@ -75,13 +75,19 @@ export const CompensationPage: React.FC = () => {
 
           {activeTab === 'tax-sheet' && <TaxSheetTab showValues={showValues} />}
 
-          {activeTab === 'it-declaration' && <ITDeclarationTab />}
+          {activeTab === 'it-declaration' && (
+            <ITDeclarationTab
+              financialYear={financialYear}
+              showValues={showValues}
+              employeeId={targetEmployeeId}
+            />
+          )}
 
           {(activeTab === 'extra-payments' ||
             activeTab === 'loans' ||
             activeTab === 'payroll-docs') && (
             <div className="py-14 border border-line rounded-xl bg-bg-raised text-center p-8">
-              <h3 className="font-serif text-base font-semibold text-ink mb-1">
+              <h3 className="font-sans text-base font-semibold text-ink mb-1">
                 No Records for FY {financialYear}
               </h3>
               <p className="text-xs text-ink-soft max-w-sm mx-auto">
@@ -91,7 +97,7 @@ export const CompensationPage: React.FC = () => {
             </div>
           )}
         </div>
-      </main>
+      </div>
 
       {/* Monthly Salary Slip Modal (Exact match to reference Image 2) */}
       {selectedPayslipId && activePayslipDetail && (

@@ -1,4 +1,6 @@
 import React from 'react';
+import { useClickOutside } from '@/hooks/useClickOutside';
+import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
 
 type Props = {
   isOpen: boolean;
@@ -15,6 +17,15 @@ export const DeleteConfirmDialog: React.FC<Props> = ({
   onConfirm,
   onCancel,
 }) => {
+  const dialogRef = useDialogAccessibility({ isOpen, onClose: onCancel });
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!isDeleting) onCancel();
+  }, isOpen);
+
+  const setCombinedRef = (node: HTMLDivElement | null) => {
+    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
   if (!isOpen) return null;
 
   return (
@@ -26,7 +37,15 @@ export const DeleteConfirmDialog: React.FC<Props> = ({
       />
 
       {/* Dialog */}
-      <div className="relative z-10 w-full max-w-sm bg-bg border border-line rounded-xl shadow-sm overflow-hidden">
+      <div
+        ref={setCombinedRef}
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="delete-user-title"
+        aria-describedby="delete-user-description"
+        tabIndex={-1}
+        className="relative z-10 w-full max-w-sm bg-bg border border-line rounded-xl shadow-sm overflow-hidden"
+      >
         {/* Header */}
         <div className="px-6 pt-5 pb-4">
           <div className="w-10 h-10 rounded-full bg-over-red/10 flex items-center justify-center mb-3">
@@ -44,8 +63,10 @@ export const DeleteConfirmDialog: React.FC<Props> = ({
               />
             </svg>
           </div>
-          <h2 className="font-serif text-base font-semibold text-ink">Are you sure?</h2>
-          <p className="text-xs text-ink-soft mt-1 leading-relaxed">
+          <h2 id="delete-user-title" className="font-sans text-base font-semibold text-ink">
+            Are you sure?
+          </h2>
+          <p id="delete-user-description" className="text-xs text-ink-soft mt-1 leading-relaxed">
             This action cannot be undone. This will permanently delete the user from the system.
           </p>
           {error && (

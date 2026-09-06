@@ -1,5 +1,5 @@
 import { db } from '../../shared/db';
-import { attendance, employees, users } from '../../db/schema';
+import { attendance, employees, users, workingScheduleLines } from '../../db/schema';
 import { eq, and, gte, lte, desc, inArray, count, sql } from 'drizzle-orm';
 
 export async function findAllAttendance(employeeId?: string, startDate?: string, endDate?: string) {
@@ -37,19 +37,7 @@ export async function findAllAttendance(employeeId?: string, startDate?: string,
 
 export async function findAttendanceById(id: string) {
   const rows = await db
-    .select({
-      id: attendance.id,
-      employee_id: attendance.employeeId,
-      date: attendance.date,
-      check_in: attendance.checkIn,
-      check_out: attendance.checkOut,
-      worked_hours: attendance.workedHours,
-      status: attendance.status,
-      exception_note: attendance.exceptionNote,
-      is_manual_edit: attendance.isManualEdit,
-      created_at: attendance.createdAt,
-      updated_at: attendance.updatedAt,
-    })
+    .select()
     .from(attendance)
     .where(eq(attendance.id, id))
     .limit(1);
@@ -64,6 +52,39 @@ export async function findAttendanceByEmployeeAndDate(employeeId: string, dateSt
     .where(and(eq(attendance.employeeId, employeeId), eq(attendance.date, dateStr)))
     .limit(1);
 
+  return rows[0] || null;
+}
+
+export async function findOpenAttendance(employeeId: string) {
+  const rows = await db
+    .select()
+    .from(attendance)
+    .where(
+      and(
+        eq(attendance.employeeId, employeeId),
+        sql`${attendance.checkIn} IS NOT NULL`,
+        sql`${attendance.checkOut} IS NULL`,
+      ),
+    )
+    .orderBy(desc(attendance.date))
+    .limit(1);
+  return rows[0] || null;
+}
+
+export async function findScheduleLineForDate(employeeId: string, dayOfWeek: string) {
+  const rows = await db
+    .select({
+      startTime: workingScheduleLines.startTime,
+      endTime: workingScheduleLines.endTime,
+      breakMinutes: workingScheduleLines.breakMinutes,
+    })
+    .from(employees)
+    .innerJoin(
+      workingScheduleLines,
+      eq(employees.workingScheduleId, workingScheduleLines.scheduleId),
+    )
+    .where(and(eq(employees.id, employeeId), eq(workingScheduleLines.dayOfWeek, dayOfWeek)))
+    .limit(1);
   return rows[0] || null;
 }
 

@@ -18,6 +18,8 @@ import { PolicyViewerModal } from '../components/PolicyViewerModal';
 import { AcceptAllModal } from '../components/AcceptAllModal';
 import { PolicyFormDrawer } from '../components/PolicyFormDrawer';
 import { CompanyComplianceTable } from '../components/CompanyComplianceTable';
+import { useClickOutside } from '@/hooks/useClickOutside';
+import { InlineAlert } from '@/components/ui/InlineAlert';
 
 export const DocumentsPage: React.FC = () => {
   const { data: currentUser } = useCurrentUser();
@@ -43,6 +45,12 @@ export const DocumentsPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<Policy | null>(null);
   const [deletingPolicy, setDeletingPolicy] = useState<{ id: string; title: string } | null>(null);
+  const [acceptError, setAcceptError] = useState<string | null>(null);
+
+  const deleteModalRef = useClickOutside<HTMLDivElement>(
+    () => setDeletingPolicy(null),
+    Boolean(deletingPolicy),
+  );
 
   const policies = data?.policies;
 
@@ -76,12 +84,15 @@ export const DocumentsPage: React.FC = () => {
 
   const handleAcceptSingle = async (policy: Policy) => {
     try {
+      setAcceptError(null);
       await acceptMutation.mutateAsync({ id: policy.id, version: policy.version });
       if (viewingPolicy?.id === policy.id) {
         setViewingPolicy(null);
       }
     } catch {
-      alert(`Failed to submit acknowledgment for ${policy.title}. Please check server connection.`);
+      setAcceptError(
+        `Failed to submit acknowledgment for ${policy.title}. Please check server connection.`,
+      );
     }
   };
 
@@ -119,12 +130,14 @@ export const DocumentsPage: React.FC = () => {
 
   return (
     <AppLayout title="Policies & Documents">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 font-sans space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-8 font-sans space-y-6">
         {/* Page Header with Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
           <div>
-            <h1 className="text-2xl font-serif font-bold text-ink">Policies & Documents</h1>
-            <p className="text-xs text-ink-soft mt-0.5">Compliance, Regulations & Employee Acknowledgment</p>
+            <h1 className="text-2xl font-sans font-bold text-ink">Policies & Documents</h1>
+            <p className="text-xs text-ink-soft mt-0.5">
+              Compliance, Regulations & Employee Acknowledgment
+            </p>
           </div>
           {isHrAdmin && (
             <button
@@ -137,6 +150,8 @@ export const DocumentsPage: React.FC = () => {
           )}
         </div>
 
+        {acceptError && <InlineAlert>{acceptError}</InlineAlert>}
+
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-3" />
@@ -146,11 +161,11 @@ export const DocumentsPage: React.FC = () => {
 
         {/* If Admin/HR Manager, show sub-tabs between catalog and company audit */}
         {isHrAdmin && (
-          <div className="flex items-center gap-2 border-b border-line pb-3">
+          <div className="flex items-center gap-2 border-b border-line pb-3 overflow-x-auto no-scrollbar whitespace-nowrap">
             <button
               type="button"
               onClick={() => setActiveTab('catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer border ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer border shrink-0 ${
                 activeTab === 'catalog'
                   ? 'border-accent bg-accent-soft text-accent font-semibold'
                   : 'border-line bg-bg text-ink-soft hover:text-ink'
@@ -161,7 +176,7 @@ export const DocumentsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('audit')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer border ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer border shrink-0 ${
                 activeTab === 'audit'
                   ? 'border-accent bg-accent-soft text-accent font-semibold'
                   : 'border-line bg-bg text-ink-soft hover:text-ink'
@@ -243,7 +258,12 @@ export const DocumentsPage: React.FC = () => {
                 ) : (
                   <div className="p-12 text-center bg-bg-raised border border-line rounded-2xl">
                     <div className="w-12 h-12 rounded-full bg-bg border border-line flex items-center justify-center mx-auto mb-3 text-ink-soft">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -252,7 +272,7 @@ export const DocumentsPage: React.FC = () => {
                         />
                       </svg>
                     </div>
-                    <h4 className="text-sm font-serif font-medium text-ink">No policies found</h4>
+                    <h4 className="text-sm font-sans font-medium text-ink">No policies found</h4>
                     <p className="text-xs text-ink-soft mt-1">
                       Try adjusting your search query or switching filters.
                     </p>
@@ -293,7 +313,10 @@ export const DocumentsPage: React.FC = () => {
       {/* Delete Confirmation Modal */}
       {deletingPolicy && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-bg border border-line rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+          <div
+            ref={deleteModalRef}
+            className="bg-bg border border-line rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl"
+          >
             <h3 className="font-serif text-lg font-bold text-ink m-0">Delete Policy Document?</h3>
             <p className="text-xs text-ink-soft leading-relaxed m-0">
               Are you sure you want to delete <b className="text-ink">{deletingPolicy.title}</b>?

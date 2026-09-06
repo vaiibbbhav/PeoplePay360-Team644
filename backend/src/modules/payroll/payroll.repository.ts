@@ -133,6 +133,13 @@ export async function updatePayrunStatus(id: string, status: string) {
     .set({ status, updatedAt: new Date() })
     .where(eq(payruns.id, id))
     .returning();
+
+  // Cascade status to child payslips in this payrun
+  await db
+    .update(payslips)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(payslips.payrunId, id));
+
   return updated || null;
 }
 
@@ -170,6 +177,7 @@ export async function findPayslips(filter?: { employeeId?: string; payrunId?: st
       id: payslips.id,
       payrun_id: payslips.payrunId,
       payrun_name: payruns.name,
+      payrun_status: payruns.status,
       employee_id: payslips.employeeId,
       employee_name: sql<string>`CONCAT(${users.firstName}, ' ', ${users.lastName})`,
       employee_email: users.email,
@@ -310,38 +318,56 @@ export async function executeCreatePayrunTx(
       })
       .returning();
 
-    for (const item of employeePayslips) {
-      const [saved] = await tx
+    if (employeePayslips.length > 0) {
+      const insertedPayslips = await tx
         .insert(payslips)
-        .values({
-          payrunId: payrun.id,
-          employeeId: item.payslip.employeeId,
-          contractId: item.payslip.contractId,
-          structureId: item.payslip.structureId,
-          periodStart: item.payslip.periodStart,
-          periodEnd: item.payslip.periodEnd,
-          workedDays: String(item.payslip.workedDays),
-          basicSalary: String(item.payslip.basicSalary),
-          grossSalary: String(item.payslip.grossSalary),
-          totalDeductions: String(item.payslip.totalDeductions),
-          netSalary: String(item.payslip.netSalary),
-          status: 'draft',
-          warnings: item.payslip.warnings,
-        })
+        .values(
+          employeePayslips.map((item) => ({
+            payrunId: payrun.id,
+            employeeId: item.payslip.employeeId,
+            contractId: item.payslip.contractId,
+            structureId: item.payslip.structureId,
+            periodStart: item.payslip.periodStart,
+            periodEnd: item.payslip.periodEnd,
+            workedDays: String(item.payslip.workedDays),
+            basicSalary: String(item.payslip.basicSalary),
+            grossSalary: String(item.payslip.grossSalary),
+            totalDeductions: String(item.payslip.totalDeductions),
+            netSalary: String(item.payslip.netSalary),
+            status: 'computed',
+            warnings: item.payslip.warnings,
+          })),
+        )
         .returning();
 
-      if (item.lines.length > 0) {
-        await tx.insert(payslipLines).values(
-          item.lines.map((l) => ({
-            payslipId: saved.id,
+      const allLinesToInsert: Array<{
+        payslipId: string;
+        ruleId: string | null;
+        code: string;
+        name: string;
+        category: string;
+        sequence: number;
+        amount: string;
+      }> = [];
+
+      for (let i = 0; i < insertedPayslips.length; i++) {
+        const savedPayslip = insertedPayslips[i];
+        const lines = employeePayslips[i]?.lines || [];
+        for (const l of lines) {
+          allLinesToInsert.push({
+            payslipId: savedPayslip.id,
             ruleId: l.ruleId || null,
             code: l.code,
             name: l.name,
             category: l.category,
             sequence: l.sequence,
             amount: String(l.amount),
-          })),
-        );
+          });
+        }
+      }
+
+      if (allLinesToInsert.length > 0) {
+        await tx.insert(payslipLines).values(allLinesToInsert);
       }
     }
 

@@ -52,19 +52,19 @@ export const VerifyEmailPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-bg text-ink font-sans">
       {/* Header */}
-      <header className="border-b border-line px-8 py-4 flex justify-between items-center bg-bg">
-        <Link to="/" className="font-serif text-xl font-bold tracking-tight text-ink no-underline">
+      <header className="border-b border-line px-4 sm:px-8 py-3.5 sm:py-4 flex justify-between items-center bg-bg">
+        <Link to="/" className="font-serif text-lg sm:text-xl font-bold tracking-tight text-ink no-underline">
           PeoplePay<span className="text-accent">360</span>
         </Link>
       </header>
 
       {/* Main Card */}
-      <main className="flex-1 flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md mx-auto p-8 border border-line rounded-2xl bg-bg-raised text-center shadow-xs">
+      <main className="flex-1 flex items-center justify-center p-3.5 sm:p-8">
+        <div className="w-full max-w-md mx-auto p-5 sm:p-8 border border-line rounded-2xl bg-bg-raised text-center shadow-xs">
           {status === 'loading' && (
             <div className="py-8 flex flex-col items-center gap-4">
               <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-              <h2 className="font-serif text-xl font-semibold text-ink">Verifying Email...</h2>
+              <h2 className="font-sans text-xl font-semibold text-ink">Verifying Email...</h2>
               <p className="text-xs text-ink-soft max-w-xs leading-relaxed">
                 Please wait while we confirm your verification link with the server.
               </p>
@@ -77,7 +77,7 @@ export const VerifyEmailPage: React.FC = () => {
                 ✓
               </div>
               <div>
-                <h2 className="font-serif text-2xl font-bold text-ink">Email Verified!</h2>
+                <h2 className="font-sans text-2xl font-bold text-ink">Email Verified!</h2>
                 <p className="text-xs text-ink-soft mt-1.5 leading-relaxed">
                   Your email address <span className="font-medium text-ink font-mono">{email}</span>{' '}
                   has been confirmed. Your account is now active and ready.
@@ -104,7 +104,7 @@ export const VerifyEmailPage: React.FC = () => {
                 !
               </div>
               <div>
-                <h2 className="font-serif text-2xl font-bold text-ink">Verification Failed</h2>
+                <h2 className="font-sans text-2xl font-bold text-ink">Verification Failed</h2>
                 <p className="text-xs text-ink-soft mt-1.5 leading-relaxed">{errorMessage}</p>
               </div>
 
@@ -123,7 +123,7 @@ export const VerifyEmailPage: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-line py-5 px-8 text-center text-xs text-ink-soft">
+      <footer className="border-t border-line py-4 px-4 text-center text-xs text-ink-soft">
         PeoplePay360 — Integrated HR &amp; Payroll Operations Platform
       </footer>
     </div>

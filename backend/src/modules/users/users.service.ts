@@ -10,6 +10,7 @@ import {
 } from './users.validators';
 import { UserRole } from '../../shared/auth-middleware';
 import { sendWelcomeCredentialsEmail } from '../../shared/mailer';
+import { getJwtSecret } from '../auth/auth.service';
 
 export const listUsers = async (query: UserQueryInput) => {
   return usersRepository.listUsers({
@@ -27,7 +28,7 @@ export const getUserById = async (id: string) => {
   return user;
 };
 
-export const createUser = async (input: CreateUserInput) => {
+export const createUser = async (input: CreateUserInput, actor?: any) => {
   const normalizedEmail = input.email.toLowerCase().trim();
   const existing = await usersRepository.findUserByEmail(normalizedEmail);
   if (existing) {
@@ -55,11 +56,26 @@ export const createUser = async (input: CreateUserInput) => {
     isActive: input.isActive ?? true,
   });
 
+  // Audit logging
+  try {
+    await usersRepository.createAuditLog({
+      actorId: actor?.id,
+      actorName: 'Admin',
+      action: 'USER_CREATED',
+      entityType: 'user',
+      entityId: user.id,
+      description: `Admin created user ${user.firstName} ${user.lastName} — ${user.role}`,
+      metadata: { email: user.email, role: user.role },
+    });
+  } catch (_e) {
+    // Non-blocking audit log
+  }
+
   // Dispatch welcome email with credentials & verification link asynchronously/gracefully
   try {
     const employeeName = `${user.firstName} ${user.lastName}`.trim();
 
-    const JWT_SECRET = process.env.JWT_SECRET || 'peoplepay360-hackathon-super-secret-jwt-key';
+    const JWT_SECRET = getJwtSecret();
     const verificationToken = jwt.sign(
       { userId: user.id, email: user.email, purpose: 'email-verification' },
       JWT_SECRET,
@@ -68,7 +84,7 @@ export const createUser = async (input: CreateUserInput) => {
 
     sendWelcomeCredentialsEmail({
       toEmail: normalizedEmail,
-      temporaryPassword: input.password,
+      temporaryPassword: 'Set securely via verification link',
       role: input.role,
       employeeName,
       verificationToken,
@@ -85,7 +101,7 @@ export const createUser = async (input: CreateUserInput) => {
   return user;
 };
 
-export const updateUser = async (id: string, input: UpdateUserInput) => {
+export const updateUser = async (id: string, input: UpdateUserInput, actor?: any) => {
   const user = await usersRepository.findUserById(id);
   if (!user) {
     throw new NotFoundError('User account not found');
@@ -127,14 +143,42 @@ export const updateUser = async (id: string, input: UpdateUserInput) => {
     updateData.passwordHash = await bcrypt.hash(input.password, salt);
   }
 
-  return usersRepository.updateUser(id, updateData);
+  const updated = await usersRepository.updateUser(id, updateData);
+
+  // Audit logging
+  try {
+    let action = 'USER_UPDATED';
+    let description = `Admin updated details for user ${user.firstName} ${user.lastName}`;
+    if (input.role !== undefined && input.role !== user.role) {
+      action = 'ROLE_CHANGED';
+      description = `Role changed: ${user.firstName} ${user.lastName}, ${user.role} → ${input.role}`;
+    } else if (input.isActive !== undefined && input.isActive !== user.isActive) {
+      action = input.isActive ? 'USER_ACTIVATED' : 'USER_DEACTIVATED';
+      description = `Admin ${input.isActive ? 'activated' : 'deactivated'} user ${user.firstName} ${user.lastName}`;
+    }
+
+    await usersRepository.createAuditLog({
+      actorId: actor?.id,
+      actorName: 'Admin',
+      action,
+      entityType: 'user',
+      entityId: id,
+      description,
+      metadata: { previous: { role: user.role, isActive: user.isActive }, updated: input },
+    });
+  } catch (_e) {
+    // Non-blocking
+  }
+
+  return updated;
 };
 
 export const getEmployeeOptions = async () => {
   return usersRepository.listEmployeesForSelection();
 };
 
-export const deleteUser = async (id: string, currentUserId?: string) => {
+export const deleteUser = async (id: string, actor?: any) => {
+  const currentUserId = actor?.id;
   if (currentUserId && id === currentUserId) {
     throw new ValidationError('You cannot delete your own user account');
   }
@@ -142,5 +186,24 @@ export const deleteUser = async (id: string, currentUserId?: string) => {
   if (!user) {
     throw new NotFoundError('User account not found');
   }
-  return usersRepository.deleteUser(id);
+
+  const result = await usersRepository.deleteUser(id);
+
+  // Audit logging
+  try {
+    await usersRepository.createAuditLog({
+      actorId: actor?.id,
+      actorName: 'Admin',
+      action: 'USER_DELETED',
+      entityType: 'user',
+      entityId: id,
+      description: `Admin deactivated user ${user.firstName} ${user.lastName}`,
+      metadata: { email: user.email, role: user.role },
+    });
+  } catch (_e) {
+    // Non-blocking
+  }
+
+  return result;
 };
+

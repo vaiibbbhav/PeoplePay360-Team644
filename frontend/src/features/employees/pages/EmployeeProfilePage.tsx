@@ -15,6 +15,7 @@ import { ContractsTab } from '../components/ContractsTab';
 import { PayslipsTab } from '../components/PayslipsTab';
 import { EmployeeFormModal } from '../components/EmployeeFormModal';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { InlineAlert } from '@/components/ui/InlineAlert';
 
 import { AppLayout } from '@/components/layout/AppLayout';
 
@@ -34,15 +35,17 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
   >('overview');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to remove this employee record from the system?')) {
       setIsDeleting(true);
+      setDeleteError(null);
       try {
         await deleteEmployeeMutation.mutateAsync(employeeId);
         navigate('/employees');
       } catch (err: any) {
-        alert(err.response?.data?.error || err.message || 'Failed to delete employee');
+        setDeleteError(err.response?.data?.error || err.message || 'Failed to delete employee');
         setIsDeleting(false);
       }
     }
@@ -70,15 +73,16 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
       }
     >
       {/* Main Container */}
-      <main className="max-w-6xl mx-auto w-full flex-1 px-6 sm:px-8 py-8">
+      <div className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8">
+        {deleteError && <InlineAlert>{deleteError}</InlineAlert>}
         {/* Template Hero Banner */}
         <EmployeeHeaderCard employee={employee} onEdit={() => setIsEditModalOpen(true)} />
 
         {/* Primary Sub-Navigation Tabs matching template */}
-        <div className="flex items-center gap-8 border-b border-line mb-6">
+        <div className="flex items-center gap-4 sm:gap-8 border-b border-line mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+            className={`pb-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
               activeTab === 'overview'
                 ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
@@ -89,7 +93,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
 
           <button
             onClick={() => setActiveTab('personal')}
-            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+            className={`pb-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
               activeTab === 'personal'
                 ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
@@ -100,7 +104,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
 
           <button
             onClick={() => setActiveTab('employment')}
-            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+            className={`pb-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
               activeTab === 'employment'
                 ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
@@ -111,7 +115,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
 
           <button
             onClick={() => setActiveTab('contracts')}
-            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+            className={`pb-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
               activeTab === 'contracts'
                 ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
@@ -122,7 +126,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
 
           <button
             onClick={() => setActiveTab('payslips')}
-            className={`pb-3 text-sm font-medium border-b-2 cursor-pointer transition-colors ${
+            className={`pb-3 text-xs sm:text-sm font-medium border-b-2 cursor-pointer transition-colors shrink-0 ${
               activeTab === 'payslips'
                 ? 'border-accent text-accent font-semibold'
                 : 'border-transparent text-ink-soft hover:text-ink'
@@ -138,7 +142,7 @@ const EmployeeProfileContent: React.FC<EmployeeProfileContentProps> = ({ employe
         {activeTab === 'employment' && <EmploymentDetailsTab employee={employee} />}
         {activeTab === 'contracts' && <ContractsTab employeeId={employee.id} />}
         {activeTab === 'payslips' && <PayslipsTab employeeId={employee.id} />}
-      </main>
+      </div>
 
       {/* Edit Employee Modal */}
       {isEditModalOpen && meta && (
@@ -178,7 +182,7 @@ const ProfileErrorFallback: React.FC<{ error: Error; reset: () => void }> = ({ e
         />
       </svg>
     </div>
-    <h2 className="font-serif text-2xl font-bold text-ink mb-2">Employee Record Not Found</h2>
+    <h2 className="font-sans text-2xl font-bold text-ink mb-2">Employee Record Not Found</h2>
     <p className="text-xs text-ink-soft max-w-sm mb-4">
       {error.message || 'The requested employee identifier could not be retrieved.'}
     </p>
@@ -209,12 +213,12 @@ export const EmployeeProfilePage: React.FC = () => {
     return (
       <div className="min-h-screen bg-bg text-ink flex flex-col items-center justify-center p-8 text-center font-sans">
         <div className="max-w-md p-6 rounded-2xl border border-line bg-bg-raised">
-          <h2 className="font-serif text-xl font-bold text-ink mb-2">No Profile Linked</h2>
+          <h2 className="font-sans text-xl font-bold text-ink mb-2">No Profile Linked</h2>
           <p className="text-xs text-ink-soft mb-4">
             Your user account is not linked to an employee profile record yet.
           </p>
           <Link
-            to="/employee/dashboard"
+            to="/dashboard"
             className="px-4 py-2 text-xs font-medium bg-accent text-accent-ink rounded-lg no-underline inline-block"
           >
             Return to Dashboard

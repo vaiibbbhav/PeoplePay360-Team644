@@ -78,7 +78,7 @@ export const PayslipViewPage: React.FC = () => {
   if (error || !payslip) {
     return (
       <div className="min-h-screen bg-bg text-ink flex flex-col items-center justify-center p-8 text-center">
-        <h2 className="font-serif text-xl font-bold text-ink mb-2">Salary Slip Not Found</h2>
+        <h2 className="font-sans text-xl font-bold text-ink mb-2">Salary Slip Not Found</h2>
         <p className="text-xs text-ink-soft max-w-sm mb-4">
           The requested payslip record identifier does not exist or has been removed.
         </p>
@@ -109,22 +109,22 @@ export const PayslipViewPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAFAF8] text-ink font-sans flex flex-col selection:bg-accent-soft selection:text-accent">
       {/* Top Document Controls Bar (Hidden during Print) */}
-      <header className="sticky top-0 z-40 bg-white border-b border-line px-6 py-3 flex items-center justify-between shadow-2xs print:hidden">
-        <div className="flex items-center gap-3">
-          <span className="font-serif text-base font-bold text-ink">
+      <header className="sticky top-0 z-40 bg-white border-b border-line px-4 sm:px-6 py-3 flex items-center justify-between shadow-2xs print:hidden">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <span className="font-serif text-base font-bold text-ink shrink-0">
             PeoplePay<span className="text-accent">360</span>
           </span>
           <span className="text-line">/</span>
-          <span className="text-xs font-medium text-ink-soft">
+          <span className="text-xs font-medium text-ink-soft truncate">
             Salary Slip — {monthName} {yearNum}
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <button
             type="button"
             onClick={handlePrint}
-            className="px-4 py-2 rounded-lg text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity flex items-center gap-2 cursor-pointer shadow-xs"
+            className="px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity flex items-center gap-1.5 sm:gap-2 cursor-pointer shadow-xs"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -134,7 +134,8 @@ export const PayslipViewPage: React.FC = () => {
                 d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
               />
             </svg>
-            <span>Print / Save PDF</span>
+            <span className="hidden sm:inline">Print / Save PDF</span>
+            <span className="sm:hidden">Print</span>
           </button>
 
           <button
@@ -148,12 +149,12 @@ export const PayslipViewPage: React.FC = () => {
       </header>
 
       {/* Main Document Viewer Container */}
-      <main className="flex-1 p-4 sm:p-8 flex justify-center print:p-0 print:m-0">
-        <div className="bg-white text-black border border-black max-w-3xl w-full p-0 shadow-sm print:shadow-none print:border-black print:m-0">
+      <main className="flex-1 p-2 sm:p-8 flex justify-center print:p-0 print:m-0 overflow-x-auto">
+        <div className="bg-white text-black border border-black max-w-3xl min-w-[580px] sm:min-w-0 w-full p-0 shadow-sm print:shadow-none print:border-black print:m-0">
           {/* Top Company Header */}
           <div className="grid grid-cols-12 border-b border-black">
             <div className="col-span-3 border-r border-black p-4 flex items-center justify-center">
-              <div className="w-16 h-16 border border-neutral-300 rounded flex items-center justify-center text-center text-[10px] text-neutral-500 font-serif font-bold p-1">
+              <div className="w-16 h-16 border border-neutral-300 rounded flex items-center justify-center text-center text-[10px] text-neutral-500 font-sans font-bold p-1">
                 PeoplePay 360
               </div>
             </div>

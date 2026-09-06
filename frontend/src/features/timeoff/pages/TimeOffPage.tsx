@@ -1,513 +1,318 @@
-import React, { useState } from 'react';
-import {
-  useTimeOffRequests,
-  useTimeOffAllocations,
-  useTimeOffTypes,
-  useApproveRequest,
-  useRefuseRequest,
-  useApproveAllocation,
-} from '../queries/useTimeOff';
+import React, { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { StatGrid } from '@/components/ui/StatCard';
-import { RequestTimeOffModal } from '../components/RequestTimeOffModal';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
+import {
+  useTimeOffMeta,
+  useLeaveBalances,
+  useTimeOffRequests,
+  useTeamLeaveRequests,
+} from '../queries/useTimeOff';
+import { TimeOffSummaryCards } from '../components/TimeOffSummaryCards';
+import { LeaveBalanceCards } from '../components/LeaveBalanceCards';
+import { ApplyLeaveModal } from '../components/ApplyLeaveModal';
+import { LeaveRequestsTable } from '../components/LeaveRequestsTable';
+import { TeamApprovalsSection } from '../components/TeamApprovalsSection';
+import { AllocationsTable } from '../components/AllocationsTable';
+import { LeaveTypesTable } from '../components/LeaveTypesTable';
+import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
+import {
+  Calendar,
+  Clock,
+  Plus,
+  Users,
+  ShieldCheck,
+  Settings,
+} from 'lucide-react';
 
 export const TimeOffPage: React.FC = () => {
   const { data: user } = useCurrentUser();
-  const isEmployeeRole = user?.role === 'Employee';
-  const canApprove = user?.role === 'Admin' || user?.role === 'HR Manager';
+  const { data: meta } = useTimeOffMeta();
 
-  const employeeFilterId = isEmployeeRole ? (user?.employee?.id || user?.employeeId || undefined) : undefined;
+  const role = user?.role || 'Employee';
+  const isHrOrAdmin = [
+    'Admin',
+    'HR Manager',
+    'HR Payroll Manager',
+    'HR Payroll User',
+  ].includes(role);
+  const isManager = meta?.isManager ?? false;
 
-  const { data: requests = [], isLoading: loadingRequests } = useTimeOffRequests(employeeFilterId);
-  const { data: allocations = [], isLoading: loadingAllocations } = useTimeOffAllocations(employeeFilterId);
-  const { data: types = [] } = useTimeOffTypes();
+  // Active Tab
+  type TabKey = 'my_leave' | 'team_approvals' | 'company_requests' | 'allocations' | 'policies';
+  const [activeTab, setActiveTab] = useState<TabKey>('my_leave');
 
-  const approveRequestMutation = useApproveRequest();
-  const refuseRequestMutation = useRefuseRequest();
-  const approveAllocMutation = useApproveAllocation();
+  // Modal State
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [prefilledTypeId, setPrefilledTypeId] = useState<string | undefined>(undefined);
 
-  const [activeTab, setActiveTab] = useState<'requests' | 'allocations' | 'types'>('requests');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'refused'>('all');
-  const [search, setSearch] = useState('');
-  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
-  const [refusingRequestId, setRefusingRequestId] = useState<string | null>(null);
-  const [refuseReason, setRefuseReason] = useState('');
-  const [actionError, setActionError] = useState<string | null>(null);
+  // Filter state for company requests
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter requests
-  const filteredRequests = requests.filter((r) => {
-    const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
-    const term = search.toLowerCase();
-    const matchesSearch =
-      !search ||
-      (r.employee_name && r.employee_name.toLowerCase().includes(term)) ||
-      (r.type_name && r.type_name.toLowerCase().includes(term)) ||
-      (r.reason && r.reason.toLowerCase().includes(term));
-    return matchesStatus && matchesSearch;
+  const employeeId = user?.employeeId || undefined;
+
+  // Queries
+  const { data: balances = [], isLoading: isBalancesLoading } = useLeaveBalances(employeeId);
+
+  // Own requests
+  const { data: myRequests = [], isLoading: isMyRequestsLoading } = useTimeOffRequests({
+    employeeId,
   });
 
-  // KPI Calculations
-  const totalApprovedDays = requests
-    .filter((r) => r.status === 'approved')
-    .reduce((acc, r) => acc + (parseFloat(r.duration) || 0), 0);
-  const pendingCount = requests.filter((r) => r.status === 'pending').length;
-  const totalRemainingBalance = allocations
-    .filter((a) => a.status === 'approved')
-    .reduce((acc, a) => acc + (parseFloat(a.remaining_amount) || 0), 0);
+  // Team requests (if manager)
+  const { data: teamRequests = [], isLoading: isTeamRequestsLoading } = useTeamLeaveRequests();
 
-  const handleApproveRequest = async (id: string) => {
-    setActionError(null);
-    try {
-      await approveRequestMutation.mutateAsync(id);
-    } catch (err: any) {
-      setActionError(err?.response?.data?.error || err.message || 'Approval failed');
-    }
+  // All company requests (if HR/Admin)
+  const { data: allRequests = [], isLoading: isAllRequestsLoading } = useTimeOffRequests(
+    isHrOrAdmin ? undefined : { employeeId },
+  );
+
+  const pendingTeamCount = teamRequests.filter((r) => r.status === 'pending').length;
+
+  const handleOpenApply = (typeId?: string) => {
+    setPrefilledTypeId(typeId);
+    setIsApplyModalOpen(true);
   };
 
-  const handleRefuseRequest = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!refusingRequestId) return;
-    setActionError(null);
-    try {
-      await refuseRequestMutation.mutateAsync({
-        id: refusingRequestId,
-        reason: refuseReason.trim() || undefined,
-      });
-      setRefusingRequestId(null);
-      setRefuseReason('');
-    } catch (err: any) {
-      setActionError(err?.response?.data?.error || err.message || 'Refusal failed');
-    }
-  };
-
-  const handleApproveAllocation = async (id: string) => {
-    setActionError(null);
-    try {
-      await approveAllocMutation.mutateAsync(id);
-    } catch (err: any) {
-      setActionError(err?.response?.data?.error || err.message || 'Allocation approval failed');
-    }
-  };
-
-  const renderStatusBadge = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            Approved
-          </span>
-        );
-      case 'pending':
-      case 'draft':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-            Pending
-          </span>
-        );
-      case 'refused':
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
-            Refused
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-bg-raised text-ink-soft border border-line">
-            {status}
-          </span>
-        );
-    }
-  };
+  // Filtered Company Requests
+  const filteredCompanyRequests = useMemo(() => {
+    return allRequests.filter((r) => {
+      if (statusFilter !== 'all' && r.status.toLowerCase() !== statusFilter.toLowerCase()) {
+        return false;
+      }
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const name = (r.employee_name || '').toLowerCase();
+        const dept = (r.department_name || '').toLowerCase();
+        const type = (r.type_name || '').toLowerCase();
+        if (!name.includes(q) && !dept.includes(q) && !type.includes(q)) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [allRequests, statusFilter, searchQuery]);
 
   return (
-    <AppLayout
-      title="Time Off & Leaves"
-      actions={
-        <button
-          type="button"
-          onClick={() => setIsRequestModalOpen(true)}
-          className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer inline-flex items-center gap-1.5"
-        >
-          <span>+</span> Request Time Off
-        </button>
-      }
-    >
-      <main className="max-w-6xl mx-auto w-full flex-1 md:px-6 py-8 space-y-8 font-sans">
-        {/* KPI Cards */}
-        <StatGrid
-          columns={4}
-          items={[
-            {
-              label: 'Approved Leave Days',
-              value: `${totalApprovedDays.toFixed(1)}d`,
-              subtext: 'Accumulated approved leaves',
-            },
-            {
-              label: 'Pending Requests',
-              value: String(pendingCount),
-              subtext: 'Awaiting HR sign-off',
-            },
-            {
-              label: 'Available Balance',
-              value: `${totalRemainingBalance.toFixed(1)}d`,
-              subtext: 'Allocated days remaining',
-            },
-            {
-              label: 'Configured Types',
-              value: String(types.length),
-              subtext: 'Active leave policies',
-            },
-          ]}
-        />
-
-        {actionError && (
-          <div className="p-4 text-xs bg-red-500/10 border border-red-500/20 text-over-red rounded-xl">
-            {actionError}
+    <AppLayout title="Time Off & Leaves">
+      <div className="space-y-6 max-w-7xl mx-auto font-sans">
+        {/* Sleek Editorial Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-line pb-6">
+          <div>
+            <span className="text-xs font-mono uppercase tracking-widest text-accent font-semibold">
+              Time & Absence Management
+            </span>
+            <h1 className="text-2xl lg:text-3xl font-sans font-medium text-ink tracking-tight mt-1">
+              Time Off & Leaves
+            </h1>
+            <p className="text-xs text-ink-soft mt-1 max-w-2xl">
+              Track personal leave quotas, review team requests, and govern organizational absence
+              allocations.
+            </p>
           </div>
-        )}
 
-        {/* Tab Navigation */}
-        <div className="flex items-center justify-between border-b border-line pb-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 shrink-0">
             <button
               type="button"
-              onClick={() => setActiveTab('requests')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                activeTab === 'requests'
-                  ? 'bg-ink text-bg font-semibold'
-                  : 'bg-bg text-ink-soft hover:text-ink hover:bg-bg-raised'
+              onClick={() => handleOpenApply()}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-all shadow-xs cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Apply for Leave</span>
+            </button>
+          </div>
+        </div>
+
+
+        {/* Editorial Sub-Navigation Tabs */}
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-bg-raised border border-line overflow-x-auto">
+          {/* Tab 1: My Leave & Balances */}
+          <button
+            type="button"
+            onClick={() => setActiveTab('my_leave')}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+              activeTab === 'my_leave'
+                ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
+                : 'text-ink-soft hover:text-ink'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5 text-accent" />
+            <span>My Leave & Balances</span>
+          </button>
+
+          {/* Tab 2: Team Approvals (if Manager or HR) */}
+          {(isManager || isHrOrAdmin) && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('team_approvals')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === 'team_approvals'
+                  ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
+                  : 'text-ink-soft hover:text-ink'
               }`}
             >
-              Leave Requests ({requests.length})
+              <Users className="w-3.5 h-3.5 text-accent" />
+              <span>Team Approvals</span>
+              {pendingTeamCount > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-white">
+                  {pendingTeamCount}
+                </span>
+              )}
             </button>
+          )}
+
+          {/* Tab 3: Company Requests (HR / Admin) */}
+          {isHrOrAdmin && (
+            <button
+              type="button"
+              onClick={() => setActiveTab('company_requests')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === 'company_requests'
+                  ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
+                  : 'text-ink-soft hover:text-ink'
+              }`}
+            >
+              <Calendar className="w-3.5 h-3.5 text-accent" />
+              <span>Company Requests</span>
+            </button>
+          )}
+
+          {/* Tab 4: Allocations Ledger (HR / Admin) */}
+          {isHrOrAdmin && (
             <button
               type="button"
               onClick={() => setActiveTab('allocations')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === 'allocations'
-                  ? 'bg-ink text-bg font-semibold'
-                  : 'bg-bg text-ink-soft hover:text-ink hover:bg-bg-raised'
+                  ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
+                  : 'text-ink-soft hover:text-ink'
               }`}
             >
-              Allocations ({allocations.length})
+              <ShieldCheck className="w-3.5 h-3.5 text-accent" />
+              <span>Allocations Ledger</span>
             </button>
+          )}
+
+          {/* Tab 5: Leave Policies (HR / Admin) */}
+          {isHrOrAdmin && (
             <button
               type="button"
-              onClick={() => setActiveTab('types')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                activeTab === 'types'
-                  ? 'bg-ink text-bg font-semibold'
-                  : 'bg-bg text-ink-soft hover:text-ink hover:bg-bg-raised'
+              onClick={() => setActiveTab('policies')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === 'policies'
+                  ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
+                  : 'text-ink-soft hover:text-ink'
               }`}
             >
-              Leave Policies ({types.length})
+              <Settings className="w-3.5 h-3.5 text-accent" />
+              <span>Leave Policies</span>
             </button>
-          </div>
-
-          {activeTab === 'requests' && (
-            <div className="flex items-center gap-3">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search requests..."
-                className="px-3 py-1.5 text-xs border border-line rounded-lg bg-bg text-ink focus:outline-hidden focus:border-accent w-48"
-              />
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as any)}
-                className="px-3 py-1.5 text-xs border border-line rounded-lg bg-bg text-ink focus:outline-hidden focus:border-accent cursor-pointer"
-              >
-                <option value="all">All Statuses</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="refused">Refused</option>
-              </select>
-            </div>
           )}
         </div>
 
-        {/* Tab 1: Requests Table */}
-        {activeTab === 'requests' && (
-          <div className="border border-line rounded-2xl overflow-hidden bg-bg">
-            {loadingRequests ? (
-              <div className="p-8 text-center text-xs text-ink-soft">Loading leave requests...</div>
-            ) : filteredRequests.length === 0 ? (
-              <div className="p-12 text-center text-ink-soft">
-                <p className="text-sm font-medium mb-2">No leave requests found</p>
-                <p className="text-xs mb-4">
-                  {search || statusFilter !== 'all'
-                    ? 'Try adjusting your filters'
-                    : 'Submit your first leave request to get started'}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setIsRequestModalOpen(true)}
-                  className="px-4 py-2 rounded-xl text-xs font-medium bg-accent text-accent-ink hover:opacity-90 cursor-pointer"
-                >
-                  + Request Time Off
-                </button>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="border-b border-line bg-bg-raised text-ink-soft uppercase tracking-wider text-[11px]">
-                      <th className="py-3 px-4 font-semibold">Employee</th>
-                      <th className="py-3 px-4 font-semibold">Leave Type</th>
-                      <th className="py-3 px-4 font-semibold">Period & Dates</th>
-                      <th className="py-3 px-4 font-semibold">Duration</th>
-                      <th className="py-3 px-4 font-semibold">Reason</th>
-                      <th className="py-3 px-4 font-semibold">Status</th>
-                      {canApprove && <th className="py-3 px-4 font-semibold text-right">Actions</th>}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-line">
-                    {filteredRequests.map((req) => (
-                      <tr key={req.id} className="hover:bg-bg-raised/40 transition-colors">
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-7 h-7 rounded-full bg-accent-soft border border-accent/20 text-accent font-bold text-[11px] flex items-center justify-center shrink-0">
-                              {(req.employee_name || 'E').slice(0, 2).toUpperCase()}
-                            </div>
-                            <div>
-                              <span className="font-semibold text-ink block">
-                                {req.employee_name || 'Employee'}
-                              </span>
-                              <span className="text-[10px] text-ink-soft block">
-                                {req.employee_email}
-                              </span>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-4 font-medium text-ink">
-                          {req.type_name}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span className="text-ink font-medium block">
-                            {req.start_date} to {req.end_date}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span className="font-semibold text-ink">
-                            {req.duration} {req.type_unit}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 max-w-xs truncate text-ink-soft">
-                          {req.reason || '—'}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          {renderStatusBadge(req.status)}
-                          {req.refused_reason && (
-                            <span className="block text-[10px] text-over-red mt-0.5">
-                              {req.refused_reason}
-                            </span>
-                          )}
-                        </td>
-                        {canApprove && (
-                          <td className="py-3.5 px-4 text-right">
-                            {req.status === 'pending' ? (
-                              <div className="flex items-center justify-end gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => handleApproveRequest(req.id)}
-                                  disabled={approveRequestMutation.isPending}
-                                  className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors cursor-pointer border border-emerald-500/20"
-                                >
-                                  Approve
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setRefusingRequestId(req.id)}
-                                  className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-red-500/10 text-red-600 hover:bg-red-500/20 transition-colors cursor-pointer border border-red-500/20"
-                                >
-                                  Refuse
-                                </button>
-                              </div>
-                            ) : (
-                              <span className="text-[11px] text-ink-soft italic">—</span>
-                            )}
-                          </td>
-                        )}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
+        {/* Tab 1 Content: My Leave & Balances */}
+        {activeTab === 'my_leave' && (
+          <div className="space-y-6">
+            <LeaveBalanceCards
+              balances={balances}
+              onApplyLeave={handleOpenApply}
+              isLoading={isBalancesLoading}
+            />
 
-        {/* Tab 2: Allocations Table */}
-        {activeTab === 'allocations' && (
-          <div className="border border-line rounded-2xl overflow-hidden bg-bg">
-            {loadingAllocations ? (
-              <div className="p-8 text-center text-xs text-ink-soft">Loading allocations...</div>
-            ) : allocations.length === 0 ? (
-              <div className="p-12 text-center text-ink-soft">
-                <p className="text-sm font-medium mb-1">No leave allocations found</p>
-                <p className="text-xs">Leave balances are allocated per annual cycle</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="border-b border-line bg-bg-raised text-ink-soft uppercase tracking-wider text-[11px]">
-                      <th className="py-3 px-4 font-semibold">Employee</th>
-                      <th className="py-3 px-4 font-semibold">Type</th>
-                      <th className="py-3 px-4 font-semibold">Allocated</th>
-                      <th className="py-3 px-4 font-semibold">Taken</th>
-                      <th className="py-3 px-4 font-semibold">Remaining</th>
-                      <th className="py-3 px-4 font-semibold">Validity</th>
-                      <th className="py-3 px-4 font-semibold">Status</th>
-                      {canApprove && <th className="py-3 px-4 font-semibold text-right">Actions</th>}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-line">
-                    {allocations.map((alloc) => (
-                      <tr key={alloc.id} className="hover:bg-bg-raised/40 transition-colors">
-                        <td className="py-3.5 px-4 font-semibold text-ink">
-                          {alloc.employee_name || 'Employee'}
-                        </td>
-                        <td className="py-3.5 px-4 font-medium text-ink">
-                          {alloc.type_name}
-                        </td>
-                        <td className="py-3.5 px-4 font-semibold text-ink">
-                          {alloc.allocated_amount} {alloc.type_unit}
-                        </td>
-                        <td className="py-3.5 px-4 text-ink-soft">
-                          {alloc.taken_amount} {alloc.type_unit}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span className="font-bold text-accent">
-                            {alloc.remaining_amount} {alloc.type_unit}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-ink-soft text-[11px]">
-                          {alloc.valid_from} to {alloc.valid_to}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          {renderStatusBadge(alloc.status)}
-                        </td>
-                        {canApprove && (
-                          <td className="py-3.5 px-4 text-right">
-                            {alloc.status === 'draft' && (
-                              <button
-                                type="button"
-                                onClick={() => handleApproveAllocation(alloc.id)}
-                                disabled={approveAllocMutation.isPending}
-                                className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors cursor-pointer border border-emerald-500/20"
-                              >
-                                Approve
-                              </button>
-                            )}
-                          </td>
-                        )}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Tab 3: Leave Policies / Types */}
-        {activeTab === 'types' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {types.map((type) => (
-              <div
-                key={type.id}
-                className="border border-line rounded-2xl p-6 bg-bg flex flex-col justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <h3 className="text-base font-bold tracking-tight text-ink m-0">
-                      {type.name}
-                    </h3>
-                    {type.isPaid ? (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                        Paid Leave
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-bg-raised text-ink-soft border border-line">
-                        Unpaid Leave
-                      </span>
-                    )}
-                  </div>
-                  <div className="space-y-1.5 text-xs text-ink-soft mt-3">
-                    <div className="flex justify-between">
-                      <span>Code:</span>
-                      <span className="font-mono font-semibold text-ink">{type.code}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Unit of tracking:</span>
-                      <span className="capitalize font-medium text-ink">{type.unit}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Requires allocation:</span>
-                      <span className="font-medium text-ink">
-                        {type.requiresAllocation ? 'Yes (Pre-allocated)' : 'No'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Approval workflow:</span>
-                      <span className="capitalize font-medium text-ink">
-                        {type.approvalType.replace('_', ' ')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </main>
-
-      {/* Request Modal */}
-      <RequestTimeOffModal
-        isOpen={isRequestModalOpen}
-        onClose={() => setIsRequestModalOpen(false)}
-      />
-
-      {/* Refuse Dialog */}
-      {refusingRequestId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
-          <div className="bg-bg border border-line rounded-2xl w-full max-w-sm p-6 space-y-4 font-sans shadow-xl">
-            <h3 className="text-base font-bold text-ink m-0">Refuse Leave Request</h3>
-            <p className="text-xs text-ink-soft m-0">
-              Provide a reason for turning down this leave application.
-            </p>
-            <form onSubmit={handleRefuseRequest} className="space-y-4">
-              <textarea
-                rows={3}
-                value={refuseReason}
-                onChange={(e) => setRefuseReason(e.target.value)}
-                placeholder="e.g. Coverage shortfall during project sprint..."
-                required
-                className="w-full px-3 py-2 text-xs border border-line rounded-xl bg-bg text-ink focus:outline-hidden focus:border-accent"
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
+                My Leave History & Status
+              </h3>
+              <LeaveRequestsTable
+                requests={myRequests}
+                isLoading={isMyRequestsLoading}
+                canManage={false}
               />
-              <div className="flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setRefusingRequestId(null)}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium border border-line bg-transparent text-ink hover:bg-bg-raised transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={refuseRequestMutation.isPending}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-600 text-white hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer"
-                >
-                  {refuseRequestMutation.isPending ? 'Refusing...' : 'Confirm Refusal'}
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Tab 2 Content: Team Approvals */}
+        {activeTab === 'team_approvals' && (
+          <div className="space-y-6">
+            <TeamApprovalsSection requests={teamRequests} isLoading={isTeamRequestsLoading} />
+
+            <div className="space-y-3 pt-4 border-t border-line">
+              <h4 className="text-sm font-semibold text-ink uppercase tracking-wider">
+                Historical Team Requests
+              </h4>
+              <LeaveRequestsTable
+                requests={teamRequests.filter((r) => r.status !== 'pending')}
+                isLoading={isTeamRequestsLoading}
+                canManage={false}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Tab 3 Content: Company Requests */}
+        {activeTab === 'company_requests' && (
+          <div className="space-y-6">
+            <TimeOffSummaryCards requests={allRequests} isLoading={isAllRequestsLoading} />
+
+            {/* Filter Toolbar */}
+            <div className="p-4 rounded-2xl border border-line bg-bg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+              <SearchInput
+                placeholder="Filter by employee name, department, or leave type..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+
+              <div className="w-full md:w-auto">
+                <Select
+                  value={statusFilter}
+                  onValueChange={(val) => setStatusFilter(val)}
+                >
+                  <SelectTrigger className="w-full md:w-44">
+                    <SelectValue placeholder="All Requests" />
+                  </SelectTrigger>
+                  <SelectContent align="end">
+                    <SelectItem value="all">All Requests</SelectItem>
+                    <SelectItem value="pending">Pending Review</SelectItem>
+                    <SelectItem value="approved">Approved</SelectItem>
+                    <SelectItem value="refused">Refused</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <LeaveRequestsTable
+              requests={filteredCompanyRequests}
+              isLoading={isAllRequestsLoading}
+              canManage={isHrOrAdmin}
+            />
+          </div>
+        )}
+
+        {/* Tab 4 Content: Allocations Ledger */}
+        {activeTab === 'allocations' && (
+          <AllocationsTable canManage={isHrOrAdmin} />
+        )}
+
+        {/* Tab 5 Content: Leave Policies */}
+        {activeTab === 'policies' && (
+          <LeaveTypesTable canManage={isHrOrAdmin} />
+        )}
+
+        {/* Apply Leave Modal */}
+        <ApplyLeaveModal
+          isOpen={isApplyModalOpen}
+          onClose={() => setIsApplyModalOpen(false)}
+          initialTypeId={prefilledTypeId}
+        />
+      </div>
     </AppLayout>
   );
 };

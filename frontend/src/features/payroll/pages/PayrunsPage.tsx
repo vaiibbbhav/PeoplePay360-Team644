@@ -73,7 +73,7 @@ const WizardStep1: React.FC<{
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
-        <h2 className="font-serif text-xl font-bold text-ink">Step 1 — Select Structure & Period</h2>
+        <h2 className="font-sans text-xl font-bold text-ink">Step 1 — Select Structure & Period</h2>
         <p className="text-xs text-ink-soft mt-1">Choose the salary structure and payroll period for this run.</p>
       </div>
 
@@ -219,7 +219,7 @@ const WizardStep2: React.FC<{
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h2 className="font-serif text-xl font-bold text-ink">Step 2 — Select Employees</h2>
+        <h2 className="font-sans text-xl font-bold text-ink">Step 2 — Select Employees</h2>
         <p className="text-xs text-ink-soft mt-1">
           Showing employees eligible for{' '}
           <span className="font-semibold text-ink">
@@ -242,7 +242,7 @@ const WizardStep2: React.FC<{
               id="select-all"
               checked={selectedIds.size === eligible.length && eligible.length > 0}
               onChange={toggleAll}
-              className="w-4 h-4 rounded border-line accent-[#6A3FA0] cursor-pointer"
+              className="w-4 h-4 rounded border-line accent-accent cursor-pointer"
             />
             <label htmlFor="select-all" className="text-xs font-semibold text-ink cursor-pointer">
               Select All ({eligible.length} employees)
@@ -265,9 +265,14 @@ const WizardStep2: React.FC<{
               >
                 <input
                   type="checkbox"
+                  id={`emp-select-${emp.id}`}
                   checked={isSelected}
-                  onChange={() => toggleEmployee(emp.id)}
-                  className="w-4 h-4 rounded border-line accent-[#6A3FA0] cursor-pointer shrink-0"
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    toggleEmployee(emp.id);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-4 h-4 rounded border-line accent-accent cursor-pointer shrink-0"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center  gap-2">
@@ -374,7 +379,7 @@ const PayrunDetail: React.FC<{
           >
             ← Back to Payruns
           </button>
-          <h2 className="font-serif text-2xl font-bold text-ink">{payrun.name}</h2>
+          <h2 className="font-sans text-2xl font-bold text-ink">{payrun.name}</h2>
           <p className="text-xs text-ink-soft mt-1">
             {formatDate(payrun.period_start)} — {formatDate(payrun.period_end)} ·{' '}
             {payrun.salary_structure_name}
@@ -467,7 +472,7 @@ const PayrunDetail: React.FC<{
       {payrun.payslips && payrun.payslips.length > 0 && (
         <div className="rounded-2xl border border-line bg-bg overflow-hidden">
           <div className="p-4 border-b border-line">
-            <h3 className="font-serif text-base font-semibold text-ink">
+            <h3 className="font-sans text-base font-semibold text-ink">
               Payslips ({payrun.payslips.length})
             </h3>
           </div>
@@ -614,7 +619,7 @@ export const PayrunsPage: React.FC = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+            <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
               Payrun Management
             </h1>
             <p className="text-xs text-ink-soft mt-1">
@@ -640,6 +645,8 @@ export const PayrunsPage: React.FC = () => {
         {/* KPIs */}
         <StatGrid
           columns={3}
+          isLoading={isLoading}
+          skeletonCount={3}
           items={[
             {
               label: 'Total Paid (All Time)',
@@ -674,7 +681,7 @@ export const PayrunsPage: React.FC = () => {
             <div className="w-12 h-12 rounded-full bg-accent-soft text-accent flex items-center justify-center mx-auto mb-4 text-2xl">
               ⚡
             </div>
-            <h3 className="font-serif text-base font-semibold text-ink mb-1">No Payruns Yet</h3>
+            <h3 className="font-sans text-base font-semibold text-ink mb-1">No Payruns Yet</h3>
             <p className="text-xs text-ink-soft max-w-xs mx-auto">
               Launch the Payrun Wizard to compute your first payroll cycle.
             </p>

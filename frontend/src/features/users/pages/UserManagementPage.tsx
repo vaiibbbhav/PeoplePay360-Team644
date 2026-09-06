@@ -12,6 +12,15 @@ import { UserAddModal } from '../components/UserAddModal';
 import { UserEditModal } from '../components/UserEditModal';
 import { DeleteConfirmDialog } from '../components/DeleteConfirmDialog';
 import { useNavigate } from 'react-router-dom';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { SearchInput } from '@/components/ui/SearchInput';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/Select';
 
 // ── Helper ─────────────────────────────────────────────────────────────────
 const roleBadge: Record<string, string> = {
@@ -24,8 +33,6 @@ const roleBadge: Record<string, string> = {
     'bg-black text-white border border-black dark:bg-neutral-950 dark:border-neutral-700',
   Employee: 'bg-bg text-ink-soft border border-line',
 };
-
-import { AppLayout } from '@/components/layout/AppLayout';
 
 export const UserManagementPage: React.FC = () => {
   const navigate = useNavigate();
@@ -122,7 +129,7 @@ export const UserManagementPage: React.FC = () => {
 
   return (
     <AppLayout title="User Management">
-      <div className="max-w-6xl mx-auto w-full px-6 sm:px-8 py-8">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8">
         {/* ── Page heading ── */}
         <div className="mb-1">
           <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
@@ -134,52 +141,38 @@ export const UserManagementPage: React.FC = () => {
         </div>
 
         {/* ── Divider ── */}
-        <div className="border-t border-line my-6" />
+        <div className="border-t border-line my-5 sm:my-6" />
 
-        {/* ── Toolbar ── */}
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between mb-5">
-          {/* Search */}
-          <div className="relative w-full sm:w-1/3">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-soft pointer-events-none"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-line bg-bg text-ink placeholder:text-ink-soft/60 focus:outline-none focus:border-accent transition-colors"
-            />
-          </div>
+        {/* ── Top controls (search + filter + add) ── */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-line bg-bg">
+          <SearchInput
+            placeholder="Search users by name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
           {/* Right: role filter + add button */}
-          <div className="flex items-center gap-2.5">
-            <select
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              className="px-3 py-2 text-sm rounded-lg border border-line bg-bg text-ink focus:outline-none focus:border-accent cursor-pointer transition-colors"
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <Select
+              value={roleFilter || 'all'}
+              onValueChange={(val) => setRoleFilter(val === 'all' ? '' : val)}
             >
-              <option value="">All Roles</option>
-              <option value="Admin">Admin</option>
-              <option value="HR Manager">HR Manager</option>
-              <option value="HR Payroll Manager">HR Payroll Manager</option>
-              <option value="HR Payroll User">HR Payroll User</option>
-              <option value="Employee">Employee</option>
-            </select>
+              <SelectTrigger className="w-full sm:w-44">
+                <SelectValue placeholder="All Roles" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value="Admin">Admin</SelectItem>
+                <SelectItem value="HR Manager">HR Manager</SelectItem>
+                <SelectItem value="HR Payroll Manager">HR Payroll Manager</SelectItem>
+                <SelectItem value="HR Payroll User">HR Payroll User</SelectItem>
+                <SelectItem value="Employee">Employee</SelectItem>
+              </SelectContent>
+            </Select>
 
             <button
               onClick={() => setAddOpen(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer whitespace-nowrap shrink-0 shadow-xs"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -189,14 +182,14 @@ export const UserManagementPage: React.FC = () => {
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              Add User
+              <span>Add User</span>
             </button>
           </div>
         </div>
 
         {/* ── Table ── */}
-        <div className="border border-line rounded-xl overflow-hidden">
-          <table className="w-full text-sm text-left">
+        <div className="border border-line rounded-xl overflow-x-auto bg-bg mt-6">
+          <table className="w-full min-w-[620px] text-sm text-left">
             <thead>
               <tr className="bg-bg-raised border-b border-line text-xs font-semibold text-ink-soft uppercase tracking-wider">
                 <th className="py-3 px-4 w-14">S.No.</th>

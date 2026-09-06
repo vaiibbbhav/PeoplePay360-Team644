@@ -29,7 +29,7 @@ users (canonical identity & auth) ──1:1── employees (HR operational exte
 - `manager_id` (UUID, nullable)
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 
-### `jobPositions`
+### `job_positions` (TypeScript export: `jobPositions`)
 - `id` (UUID, Primary Key, default random)
 - `title` (VARCHAR(100), NOT NULL)
 - `department_id` (UUID, references `departments.id` ON DELETE SET NULL)
@@ -78,11 +78,12 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 | Column | Type | Constraints | Description |
 |---|---|---|---|
 | `id` | `UUID` | `PRIMARY KEY`, default `gen_random_uuid()` | Unique employee ID |
+| `employeeCode` | `VARCHAR(20)` | Nullable, `UNIQUE` | Unique human-readable employee code (e.g., EMP-001) |
 | `userId` | `UUID` | `NOT NULL`, `UNIQUE`, FK `users.id` (`CASCADE`) | Linked user identity account |
 | `phone` | `VARCHAR(30)` | Nullable | Contact number |
 | `departmentId` | `UUID` | FK `departments.id` (`SET NULL`) | Department binding |
 | `jobPositionId` | `UUID` | FK `jobPositions.id` (`SET NULL`) | Job role binding |
-| `managerId` | `UUID` | Nullable | Reporting manager employee ID |
+| `managerId` | `UUID` | FK `employees.id` (`SET NULL`) | Reporting manager employee ID |
 | `workingScheduleId`| `UUID` | FK `working_schedules.id` (`SET NULL`) | Assigned schedule |
 | `employmentStatus` | `VARCHAR(30)` | `NOT NULL`, default `'incomplete'` | `incomplete`, `active`, `on_leave`, `inactive`, `terminated` |
 | `dateOfJoining` | `DATE` | `NOT NULL`, default `CURRENT_DATE` | Date hired |
@@ -128,14 +129,18 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `check_out` (TIMESTAMP WITH TIME ZONE)
 - `worked_hours` (NUMERIC(5, 2))
 - `status` (VARCHAR(30), NOT NULL, default 'present')
+- A unique index `uq_attendance_emp_date` enforces at most one attendance record per employee and date.
+- Database checks prevent a check-out timestamp earlier than check-in.
 - `is_manual_edit` (BOOLEAN, NOT NULL, default false)
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 - `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
 
 ### `fingerprint`
 - `id` (UUID, Primary Key, default random)
-- `employee_id` (UUID, NOT NULL, references `employees.id` ON DELETE CASCADE)
-- `encryted_template` (TEXT, NOT NULL)
+- `employee_id` (UUID, NOT NULL, unique, references `employees.id` ON DELETE CASCADE)
+- `encrypted_template` (TEXT, NOT NULL)
+- `iv` (VARCHAR(64), NOT NULL)
+- `key_version` (VARCHAR(20), NOT NULL, default 'v1')
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 - `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
 
@@ -199,6 +204,7 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `percentage` (NUMERIC(6, 3))
 - `formula` (TEXT)
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
+- A unique index `uq_structure_rule_code` enforces unique rule code per salary structure `(structure_id, code)`.
 
 ### `payruns`
 - `id` (UUID, Primary Key, default random)
@@ -214,6 +220,7 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `warnings` (JSONB, default '[]')
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 - `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
+- Database checks enforce `period_end >= period_start` and valid payrun states (`draft`, `computed`, `validated`, `paid`, `sent`).
 
 ### `payslips`
 - `id` (UUID, Primary Key, default random)
@@ -232,6 +239,7 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `warnings` (JSONB, default '[]')
 - `created_at` (TIMESTAMP WITH TIME ZONE, default now)
 - `updated_at` (TIMESTAMP WITH TIME ZONE, default now)
+- A unique index prevents more than one payslip for the same employee and payroll period. Database checks enforce date ordering and valid payslip states (`draft`, `validated`, `paid`).
 
 ### `payslip_lines`
 - `id` (UUID, Primary Key, default random)
@@ -271,3 +279,18 @@ HR operational extension for employment lifecycle, payroll bindings, and banking
 - `ip_address` (VARCHAR(50))
 - `user_agent` (TEXT)
 - **Constraint**: `UNIQUE(policy_id, user_id, policy_version)`
+
+---
+
+## 9. System Audit Logs
+
+### `audit_logs`
+- `id` (UUID, Primary Key, default random)
+- `actor_id` (UUID, nullable, references `users.id` ON DELETE SET NULL)
+- `actor_name` (VARCHAR(150), NOT NULL, default 'System Admin')
+- `action` (VARCHAR(60), NOT NULL) — e.g. 'USER_CREATED', 'USER_UPDATED', 'USER_DEACTIVATED', 'ROLE_CHANGED'
+- `entity_type` (VARCHAR(50), NOT NULL, default 'user')
+- `entity_id` (VARCHAR(100), nullable)
+- `description` (TEXT, NOT NULL) — human-readable feed message (e.g. "Admin created user J. Patel — HR Payroll User")
+- `metadata` (JSONB, default '{}')
+- `created_at` (TIMESTAMP WITH TIME ZONE, default now)
