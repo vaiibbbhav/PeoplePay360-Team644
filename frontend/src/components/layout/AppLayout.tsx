@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Sparkles } from 'lucide-react';
 import { useCurrentUser, useLogout } from '@/features/auth/queries/useAuth';
+import { SideChatbot } from '@/features/chatbot/components/SideChatbot';
+import { ChatbotTrigger } from '@/features/chatbot/components/ChatbotTrigger';
 
 type NavItem = {
   label: string;
@@ -193,6 +195,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
   const logout = useLogout();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [chatbotOpen, setChatbotOpen] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -729,21 +732,48 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
             </button>
           </div>
 
-          {/* Right controls: Theme toggle */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-            className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-line bg-bg-raised text-ink cursor-pointer hover:bg-bg transition-colors"
-          >
-            {isDark ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
+          {/* Right controls: Theme toggle + AI Assistant */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setChatbotOpen(!chatbotOpen)}
+              title="Ask HR AI Assistant (Cmd+J / Ctrl+J)"
+              className={`inline-flex items-center gap-1.5 px-3 h-9 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${
+                chatbotOpen
+                  ? 'border-accent bg-accent text-accent-ink'
+                  : 'border-line bg-bg-raised text-ink hover:bg-bg hover:border-accent/40'
+              }`}
+            >
+              <Sparkles size={14} className={chatbotOpen ? 'text-accent-ink' : 'text-accent'} />
+              <span className="hidden sm:inline font-sans">AI Assistant</span>
+              <span className="hidden md:inline-block text-[10px] font-mono opacity-60 ml-0.5">
+                ⌘J
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-line bg-bg-raised text-ink cursor-pointer hover:bg-bg transition-colors"
+            >
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+          </div>
         </header>
 
         {/* Page Content */}
         <main id="main-content" tabIndex={-1} aria-label={title} className="flex-1 min-w-0 w-full">
           {children ?? <Outlet />}
         </main>
+
+        {/* Global Side Chatbot & Floating Trigger */}
+        <ChatbotTrigger
+          isOpen={chatbotOpen}
+          onToggle={() => setChatbotOpen((prev) => !prev)}
+          onClose={() => setChatbotOpen(false)}
+        />
+        <SideChatbot isOpen={chatbotOpen} onClose={() => setChatbotOpen(false)} />
       </div>
     </div>
   );

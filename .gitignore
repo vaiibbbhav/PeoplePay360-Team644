@@ -39,3 +39,8 @@ logs/
 *.njsproj
 *.sln
 *.sw?
+
+# BullMQ & Redis isolated implementation
+backend/src/modules/queue/
+frontend/src/features/queue/
+

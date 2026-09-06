@@ -4,3 +4,4 @@ dist/
 *.log
 coverage/
 GEMINI.md
+src/modules/queue/

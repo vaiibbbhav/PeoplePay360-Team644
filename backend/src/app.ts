@@ -11,6 +11,8 @@ import payrollRoutes from './modules/payroll/payroll.routes';
 import reportingRoutes from './modules/reporting/reporting.routes';
 import documentsRoutes from './modules/documents/documents.routes';
 import schedulesRoutes from './modules/schedules/schedules.routes';
+import chatbotRoutes from './modules/chatbot/chatbot.routes';
+import queueRoutes from './modules/queue/queue.routes';
 import { AppError } from './shared/errors';
 import { securityHeaders } from './shared/security';
 
@@ -61,6 +63,8 @@ export const createApp = (): Express => {
   app.use('/api/reports', reportingRoutes);
   app.use('/api/documents', documentsRoutes);
   app.use('/api/schedules', schedulesRoutes);
+  app.use('/api/chatbot', chatbotRoutes);
+  app.use('/api/queue', queueRoutes);
 
   // 404 handler for unmatched routes
   app.use((_req: Request, res: Response) => {
