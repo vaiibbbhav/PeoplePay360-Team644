@@ -122,21 +122,27 @@ export const PayrunsPage: React.FC = () => {
     return (
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
-            <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+            <div className="mb-1">
+              <span className="text-xs font-mono text-accent font-medium">
+                Payroll & Compensation
+              </span>
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               Payrun Management
             </h1>
-            <p className="text-xs text-ink-soft mt-1">
-              Execute payroll runs, validate, and mark payslips as paid.
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
+              Execute payroll runs, validate computations, and mark payslips as paid.
             </p>
           </div>
           {canWrite && (
             <button
               onClick={() => setView('step1')}
-              className="px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 shrink-0"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 shrink-0 shadow-2xs"
             >
-              ⚡ New Payrun Wizard
+              <span>+</span>
+              <span>New Payrun Wizard</span>
             </button>
           )}
         </div>

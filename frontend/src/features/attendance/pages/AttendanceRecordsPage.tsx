@@ -144,12 +144,10 @@ export const AttendanceRecordsPage: React.FC = () => {
         {/* Page Top Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="mb-1">
               <span className="text-xs font-mono text-accent font-medium">
-                Workforce Tracking & Biometrics
+                Time & Attendance
               </span>
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span className="text-xs text-ink-soft">Live Operations Ledger</span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               Attendance Records

@@ -84,21 +84,36 @@ export const ContractsPage: React.FC = () => {
   };
 
   return (
-    <AppLayout
-      title="Contracts"
-      actions={
-        canWrite ? (
-          <button
-            type="button"
-            onClick={handleOpenCreate}
-            className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
-          >
-            <span>+</span> New Contract
-          </button>
-        ) : undefined
-      }
-    >
-      <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+    <AppLayout title="Contracts">
+      <main className="max-w-6xl mx-auto w-full flex-1 px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
+        {/* Page Top Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
+          <div>
+            <div className="mb-1">
+              <span className="text-xs font-mono text-accent font-medium">
+                Core HR
+              </span>
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
+              Contracts
+            </h1>
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
+              Employee employment contracts, salary structures, wage terms, and active period status.
+            </p>
+          </div>
+
+          {canWrite && (
+            <button
+              type="button"
+              onClick={handleOpenCreate}
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 shrink-0 shadow-2xs"
+            >
+              <span>+</span>
+              <span>New Contract</span>
+            </button>
+          )}
+        </div>
+
         {/* Stat Cards */}
         <StatGrid
           columns={4}

@@ -149,22 +149,21 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
   return (
     <div className="max-w-7xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
       {/* ─── 1. Header & Quick Context Bar ─── */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-line">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 sm:pb-6 border-b border-line">
         <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium tracking-wide bg-accent-soft text-accent border border-accent/20 inline-flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-              HR Operations Console
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-mono text-accent font-medium">
+              Overview
             </span>
             <span className="text-xs text-ink-soft hidden sm:inline">·</span>
             <span className="text-xs text-ink-soft font-medium hidden sm:inline">
               {todayFormatted}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-ink font-sans">
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
             Good day, {displayName}
           </h1>
-          <p className="text-ink-soft text-xs sm:text-sm mt-1">
+          <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
             Workforce health, daily attendance punctuality, shift coverage & compliance monitoring.
           </p>
         </div>

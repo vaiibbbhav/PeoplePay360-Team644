@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Plus } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 import {
@@ -134,18 +135,26 @@ export const DocumentsPage: React.FC = () => {
         {/* Page Header with Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">Policies & Documents</h1>
+            <div className="mb-1">
+              <span className="text-xs font-mono text-accent font-medium">
+                Governance & Compliance
+              </span>
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
+              Policies & Documents
+            </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
-              Compliance, Regulations & Employee Acknowledgment
+              Company-wide policies, employee acknowledgments, code of conduct, and regulatory compliance.
             </p>
           </div>
           {isHrAdmin && (
             <button
               type="button"
               onClick={handleOpenCreate}
-              className="px-4 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 self-start sm:self-auto shrink-0 shadow-2xs"
             >
-              <span>+</span> New Policy
+              <Plus className="w-3.5 h-3.5" />
+              <span>New Policy</span>
             </button>
           )}
         </div>
@@ -165,24 +174,24 @@ export const DocumentsPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('catalog')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer border shrink-0 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer border shrink-0 ${
                 activeTab === 'catalog'
                   ? 'border-accent bg-accent-soft text-accent font-semibold'
                   : 'border-line bg-bg text-ink-soft hover:text-ink'
               }`}
             >
-              Documents Catalog & Sign-off
+              Policies
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('audit')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer border shrink-0 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer border shrink-0 ${
                 activeTab === 'audit'
                   ? 'border-accent bg-accent-soft text-accent font-semibold'
                   : 'border-line bg-bg text-ink-soft hover:text-ink'
               }`}
             >
-              Company Compliance Audit Roster
+              Acknowledgement audit
             </button>
           </div>
         )}

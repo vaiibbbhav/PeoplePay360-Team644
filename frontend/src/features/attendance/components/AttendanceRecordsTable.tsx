@@ -131,14 +131,14 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-line bg-bg-raised/70 text-ink-soft font-semibold text-xs">
-              <th className="py-3 px-4">Employee</th>
-              <th className="py-3 px-4">Date</th>
-              <th className="py-3 px-4">Check In</th>
-              <th className="py-3 px-4">Check Out</th>
-              <th className="py-3 px-4">Hours</th>
-              <th className="py-3 px-4 text-center">Status</th>
-              <th className="py-3 px-4">Source & Exceptions</th>
-              {canManage && <th className="py-3 px-4 text-right">Actions</th>}
+              <th className="py-3 px-4 w-[24%] min-w-[200px]">Employee</th>
+              <th className="py-3 px-4 w-[14%] min-w-[120px]">Date</th>
+              <th className="py-3 px-3 w-[10%] min-w-[85px]">Check In</th>
+              <th className="py-3 px-3 w-[10%] min-w-[85px]">Check Out</th>
+              <th className="py-3 px-3 w-[10%] min-w-[85px]">Hours</th>
+              <th className="py-3 px-3 w-[12%] min-w-[110px] text-center">Status</th>
+              <th className="py-3 px-4 w-[20%] max-w-[200px]">Source & Exceptions</th>
+              {canManage && <th className="py-3 px-4 w-[80px] text-right">Actions</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -189,17 +189,17 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                   </td>
 
                   {/* Check In */}
-                  <td className="py-3.5 px-4 whitespace-nowrap font-mono text-ink text-xs">
+                  <td className="py-3.5 px-3 whitespace-nowrap font-mono text-ink text-xs">
                     {formatTime(record.check_in) || '—'}
                   </td>
 
                   {/* Check Out */}
-                  <td className="py-3.5 px-4 whitespace-nowrap font-mono text-ink text-xs">
+                  <td className="py-3.5 px-3 whitespace-nowrap font-mono text-ink text-xs">
                     {formatTime(record.check_out) || '—'}
                   </td>
 
                   {/* Worked Hours */}
-                  <td className="py-3.5 px-4 whitespace-nowrap">
+                  <td className="py-3.5 px-3 whitespace-nowrap">
                     <div className="font-semibold text-ink font-mono">{hrs} hrs</div>
                     {Number(hrs) > 8 && (
                       <span className="text-[10px] text-accent font-medium block">+{(Number(hrs) - 8).toFixed(1)}h OT</span>
@@ -207,12 +207,12 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                   </td>
 
                   {/* Status Badge */}
-                  <td className="py-3.5 px-4 whitespace-nowrap text-center">
+                  <td className="py-3.5 px-3 whitespace-nowrap text-center">
                     {getStatusBadge(record.status)}
                   </td>
 
                   {/* Source & Exceptions */}
-                  <td className="py-3.5 px-4 max-w-[280px]">
+                  <td className="py-3.5 px-4 max-w-[200px]">
                     <div className="space-y-1">
                       <div className="flex items-center gap-1.5">
                         {record.is_manual_edit ? (
@@ -229,11 +229,11 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                       </div>
                       {record.exception_note && (
                         <div
-                          className="text-[11px] text-ink-soft italic truncate flex items-center gap-1"
+                          className="text-[11px] text-ink-soft italic flex items-center gap-1 max-w-full"
                           title={record.exception_note}
                         >
                           <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
-                          <span className="truncate">{record.exception_note}</span>
+                          <span className="truncate max-w-[170px] block">{record.exception_note}</span>
                         </div>
                       )}
                     </div>

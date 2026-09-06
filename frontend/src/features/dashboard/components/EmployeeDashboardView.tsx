@@ -78,14 +78,19 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
   return (
     <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
       {/* Welcome Banner */}
-      <div>
-        <h1 className="font-sans text-2xl sm:text-4xl font-bold tracking-tight text-ink">
+      <div className="border-b border-line pb-5 sm:pb-6">
+        <div className="mb-1">
+          <span className="text-xs font-mono text-accent font-medium">
+            Overview
+          </span>
+        </div>
+        <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
           Welcome, {user.employee?.firstName || user.firstName || user.email.split('@')[0]}
         </h1>
-        <p className="text-ink-soft text-xs sm:text-sm mt-1">
+        <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
           Employee Self-Service Portal · Logged in as <b className="text-ink">{user.email}</b>
         </p>
-        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+        <div className="flex items-center gap-3 mt-2 flex-wrap">
           {employeeCode && (
             <span className="inline-flex items-center gap-1.5 text-xs text-ink-soft">
               Employee ID: <code className="font-mono text-sm font-semibold bg-accent/10 text-accent px-2 py-0.5 rounded-md border border-accent/20 select-all">{employeeCode}</code>

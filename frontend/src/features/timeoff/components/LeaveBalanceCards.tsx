@@ -87,27 +87,17 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
   }
 
   return (
-    <div className="space-y-3 sm:space-y-4 font-sans">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
-        <div>
-          <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
-            Available Leave Quotas & Balances
-          </h3>
-          <p className="text-xs text-ink-soft mt-0.5">
-            Annual entitlements, taken days, and remaining valid quota.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => onApplyLeave()}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent text-white text-xs font-semibold hover:bg-accent/90 transition-colors shadow-xs cursor-pointer self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Apply for Leave</span>
-        </button>
+    <div className="space-y-4 font-sans">
+      <div>
+        <h3 className="text-xs font-semibold text-ink uppercase tracking-wider">
+          Leave Quotas &amp; Balances
+        </h3>
+        <p className="text-xs text-ink-soft mt-0.5">
+          Available annual allocations, taken leaves, and active quotas.
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {balances.map((item) => {
           const percentUsed =
             item.allocated > 0
@@ -117,44 +107,40 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
           return (
             <div
               key={item.typeId}
-              className="p-4 sm:p-5 rounded-2xl border border-line bg-bg hover:border-line-strong transition-all flex flex-col justify-between group"
+              className="p-4 sm:p-5 rounded-2xl border border-line bg-bg hover:border-line-strong transition-all flex flex-col justify-between shadow-2xs"
             >
               <div>
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-ink-soft">
-                      {item.typeCode}
-                    </span>
-                    <h4 className="text-base font-sans font-medium text-ink leading-tight">
-                      {item.typeName}
-                    </h4>
-                  </div>
+                {/* Header: Name + Badge */}
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <h4 className="text-sm font-serif font-bold text-ink truncate leading-tight">
+                    {item.typeName}
+                  </h4>
                   {item.isPaid ? (
-                    <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                      <ShieldCheck className="w-3 h-3" />
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/80 dark:bg-emerald-950/40 dark:text-emerald-300 shrink-0">
+                      <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                       Paid
                     </span>
                   ) : (
-                    <span className="text-[10px] font-medium text-ink-soft bg-bg-raised px-1.5 py-0.5 rounded border border-line">
+                    <span className="text-[11px] font-medium text-ink-soft bg-bg-raised px-2 py-0.5 rounded-full border border-line shrink-0">
                       Unpaid
                     </span>
                   )}
                 </div>
 
-                {/* Remaining Amount */}
-                <div className="mt-3 flex items-baseline gap-1.5">
-                  <span className="text-2xl lg:text-3xl font-sans font-bold text-ink tracking-tight">
+                {/* Big Metric Display */}
+                <div className="mt-2 flex items-baseline gap-1.5">
+                  <span className="text-2xl sm:text-3xl font-bold font-sans text-ink tracking-tight">
                     {item.requiresAllocation ? item.remaining.toFixed(1) : '∞'}
                   </span>
                   <span className="text-xs text-ink-soft font-medium">
-                    {item.unit} remaining
+                    days available
                   </span>
                 </div>
 
-                {/* Progress bar */}
-                {item.requiresAllocation && (
+                {/* Progress Bar (Only for quota-based allocations) */}
+                {item.requiresAllocation ? (
                   <div className="mt-3 space-y-1.5">
-                    <div className="h-1.5 w-full bg-bg-raised rounded-full overflow-hidden border border-line">
+                    <div className="h-1.5 w-full bg-line/40 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${
                           percentUsed > 80 ? 'bg-amber-500' : 'bg-accent'
@@ -162,22 +148,27 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
                         style={{ width: `${percentUsed}%` }}
                       />
                     </div>
-                    <div className="flex items-center justify-between text-[11px] text-ink-soft">
-                      <span>Taken: {item.taken.toFixed(1)} {item.unit}</span>
-                      <span>Total: {item.allocated.toFixed(1)} {item.unit}</span>
+                    <div className="flex items-center justify-between text-[11px] text-ink-soft font-mono">
+                      <span>Used: {item.taken.toFixed(1)}d</span>
+                      <span>Total: {item.allocated.toFixed(1)}d</span>
                     </div>
+                  </div>
+                ) : (
+                  <div className="mt-4 text-xs text-ink-soft">
+                    Unlimited policy quota
                   </div>
                 )}
               </div>
 
-              <div className="mt-4 pt-3 border-t border-line/60 flex items-center justify-between">
+              {/* Bottom Row */}
+              <div className="mt-4 pt-3 border-t border-line flex items-center justify-between">
                 <span className="text-[11px] text-ink-soft">
-                  {item.requiresAllocation ? `${percentUsed}% consumed` : 'Unlimited'}
+                  {item.requiresAllocation ? `${percentUsed}% used` : 'No deduction'}
                 </span>
                 <button
                   type="button"
                   onClick={() => onApplyLeave(item.typeId)}
-                  className="text-xs font-medium text-accent hover:underline flex items-center gap-1"
+                  className="text-xs font-semibold text-accent hover:opacity-85 transition-opacity flex items-center gap-1 cursor-pointer"
                 >
                   <span>Request</span>
                   <Clock className="w-3 h-3" />

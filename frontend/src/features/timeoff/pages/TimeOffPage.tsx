@@ -106,13 +106,15 @@ export const TimeOffPage: React.FC = () => {
         {/* Sleek Editorial Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
-            <span className="text-xs font-mono uppercase tracking-widest text-accent font-semibold">
-              Time & Absence Management
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-ink tracking-tight mt-1">
-              Time Off & Leaves
+            <div className="mb-1">
+              <span className="text-xs font-mono text-accent font-medium">
+                Time & Attendance
+              </span>
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
+              Time Off Requests
             </h1>
-            <p className="text-xs text-ink-soft mt-1 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
               Track personal leave quotas, review team requests, and govern organizational absence
               allocations.
             </p>
@@ -136,11 +138,10 @@ export const TimeOffPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('my_leave')}
-            className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'my_leave'
+            className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${activeTab === 'my_leave'
                 ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
                 : 'text-ink-soft hover:text-ink'
-            }`}
+              }`}
           >
             <Clock className="w-3.5 h-3.5 text-accent" />
             <span>My Leave & Balances</span>
@@ -151,11 +152,10 @@ export const TimeOffPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('team_approvals')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'team_approvals'
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${activeTab === 'team_approvals'
                   ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
                   : 'text-ink-soft hover:text-ink'
-              }`}
+                }`}
             >
               <Users className="w-3.5 h-3.5 text-accent" />
               <span>Team Approvals</span>
@@ -172,11 +172,10 @@ export const TimeOffPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('company_requests')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'company_requests'
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${activeTab === 'company_requests'
                   ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
                   : 'text-ink-soft hover:text-ink'
-              }`}
+                }`}
             >
               <Calendar className="w-3.5 h-3.5 text-accent" />
               <span>Company Requests</span>
@@ -188,11 +187,10 @@ export const TimeOffPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('allocations')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'allocations'
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${activeTab === 'allocations'
                   ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
                   : 'text-ink-soft hover:text-ink'
-              }`}
+                }`}
             >
               <ShieldCheck className="w-3.5 h-3.5 text-accent" />
               <span>Allocations Ledger</span>
@@ -204,11 +202,10 @@ export const TimeOffPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab('policies')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === 'policies'
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${activeTab === 'policies'
                   ? 'bg-bg text-ink shadow-xs border border-line font-semibold'
                   : 'text-ink-soft hover:text-ink'
-              }`}
+                }`}
             >
               <Settings className="w-3.5 h-3.5 text-accent" />
               <span>Leave Policies</span>

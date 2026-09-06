@@ -33,81 +33,77 @@ export const PolicyCard: React.FC<PolicyCardProps> = ({
 
   return (
     <div
-      className={`relative flex flex-col justify-between p-6 bg-bg-raised border rounded-2xl transition-all duration-200 hover:border-ink/40 ${
-        policy.isAccepted ? 'border-line' : 'border-accent/40 bg-accent/[0.01]'
+      className={`rounded-2xl border p-5 flex flex-col justify-between bg-bg hover:border-ink/30 transition-all font-sans ${
+        policy.isAccepted ? 'border-line' : 'border-accent/40 shadow-2xs'
       }`}
     >
       <div>
-        {/* Card Header Tags */}
+        {/* Card Header: Category + Status */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase font-mono tracking-wider font-semibold px-2 py-0.5 rounded-md bg-bg-sunken text-ink-soft border border-line-subtle">
-              {categoryLabels[policy.category] || policy.category}
-            </span>
-            <span className="text-[10px] font-mono text-ink-faint">v{policy.version}</span>
-          </div>
+          <span className="text-[11px] font-medium text-ink-soft bg-bg-raised px-2.5 py-1 rounded-md border border-line">
+            {categoryLabels[policy.category] || policy.category}
+          </span>
 
           {policy.isAccepted ? (
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/80 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               <span>Signed</span>
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-accent bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent bg-accent-soft px-2.5 py-0.5 rounded-full border border-accent/40">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
               <span>Action Required</span>
             </span>
           )}
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-sans font-medium text-ink tracking-tight mb-2 leading-snug">
+        <h3 className="font-serif text-lg font-bold text-ink tracking-tight mb-2 leading-snug">
           {policy.title}
         </h3>
 
         {/* Summary */}
-        <p className="text-xs text-ink-soft leading-relaxed line-clamp-3 mb-6">{policy.summary}</p>
+        <p className="text-xs text-ink-soft leading-relaxed line-clamp-3 mb-4">
+          {policy.summary}
+        </p>
       </div>
 
       {/* Footer / Actions */}
-      <div className="pt-4 border-t border-line-subtle flex items-center justify-between gap-3">
-        <div className="text-[11px] text-ink-faint">
+      <div className="pt-3.5 border-t border-line flex items-center justify-between gap-3">
+        <div className="text-[11px] text-ink-soft">
           {policy.isAccepted && formattedAcceptedDate ? (
-            <span>Signed on {formattedAcceptedDate}</span>
+            <span>Signed {formattedAcceptedDate}</span>
           ) : (
-            <span className="text-amber-700 font-medium">Mandatory acknowledgment</span>
+            <span className="text-accent font-medium">Action required</span>
           )}
         </div>
 
         <div className="flex items-center gap-2">
           {onEdit && (
             <button
+              type="button"
               onClick={() => onEdit(policy)}
-              className="px-2.5 py-1.5 text-xs font-medium text-ink-soft hover:text-ink border border-line rounded-lg hover:bg-bg-sunken transition-all cursor-pointer"
+              className="px-2.5 py-1 text-xs font-medium text-ink-soft hover:text-ink border border-line rounded-lg hover:bg-bg-raised transition-colors cursor-pointer"
             >
               Edit
             </button>
           )}
           <button
+            type="button"
             onClick={() => onView(policy)}
-            className="px-3 py-1.5 text-xs font-medium text-ink border border-line rounded-lg hover:border-ink hover:bg-bg-sunken transition-all cursor-pointer"
+            className="px-3 py-1.5 text-xs font-medium text-ink border border-line rounded-lg hover:bg-bg-raised transition-colors cursor-pointer"
           >
-            {policy.isAccepted ? 'View Policy' : 'Read & Review'}
+            {policy.isAccepted ? 'View Policy' : 'Review'}
           </button>
 
           {!policy.isAccepted && (
             <button
+              type="button"
               onClick={() => onAccept(policy)}
               disabled={isAccepting}
-              className="px-3 py-1.5 text-xs font-medium bg-accent text-accent-ink rounded-lg hover:opacity-90 transition-all cursor-pointer disabled:opacity-50"
+              className="px-3 py-1.5 text-xs font-semibold bg-accent text-accent-ink rounded-lg hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
             >
-              {isAccepting ? 'Accepting...' : 'Accept'}
+              {isAccepting ? 'Signing...' : 'Accept'}
             </button>
           )}
         </div>
