@@ -285,13 +285,13 @@ export const TimeOffPage: React.FC = () => {
 
             {/* Prominent Actionable Approval Queue Alert */}
             {pendingCompanyCount > 0 && (
-              <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-4 rounded-xl border border-line bg-bg-raised flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                    <AlertCircle className="w-5 h-5" />
+                  <div className="w-8 h-8 rounded-lg border border-line bg-bg text-accent flex items-center justify-center shrink-0">
+                    <AlertCircle className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-ink">
+                    <h4 className="text-xs font-semibold text-ink">
                       {pendingCompanyCount} Leave Request{pendingCompanyCount === 1 ? '' : 's'} Awaiting Your Decision
                     </h4>
                     <p className="text-xs text-ink-soft mt-0.5">
@@ -303,7 +303,7 @@ export const TimeOffPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setStatusFilter('pending')}
-                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white transition-colors cursor-pointer self-start sm:self-auto shrink-0"
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-accent text-accent-ink hover:opacity-90 transition-opacity cursor-pointer self-start sm:self-auto shrink-0"
                   >
                     View Pending Queue ({pendingCompanyCount})
                   </button>
@@ -346,8 +346,8 @@ export const TimeOffPage: React.FC = () => {
                   onClick={() => setStatusFilter('all')}
                   className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
                     statusFilter === 'all'
-                      ? 'border-accent bg-accent-soft text-accent font-semibold'
-                      : 'border-line text-ink-soft hover:text-ink'
+                      ? 'border-accent bg-accent text-accent-ink'
+                      : 'border-line bg-bg text-ink-soft hover:text-ink'
                   }`}
                 >
                   All ({allRequests.length})
@@ -357,8 +357,8 @@ export const TimeOffPage: React.FC = () => {
                   onClick={() => setStatusFilter('pending')}
                   className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
                     statusFilter === 'pending'
-                      ? 'border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-semibold'
-                      : 'border-line text-ink-soft hover:text-ink'
+                      ? 'border-accent bg-accent text-accent-ink'
+                      : 'border-line bg-bg text-ink-soft hover:text-ink'
                   }`}
                 >
                   Pending Review ({pendingCompanyCount})
@@ -368,8 +368,8 @@ export const TimeOffPage: React.FC = () => {
                   onClick={() => setStatusFilter('approved')}
                   className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
                     statusFilter === 'approved'
-                      ? 'border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-semibold'
-                      : 'border-line text-ink-soft hover:text-ink'
+                      ? 'border-accent bg-accent text-accent-ink'
+                      : 'border-line bg-bg text-ink-soft hover:text-ink'
                   }`}
                 >
                   Approved ({approvedCompanyCount})
@@ -379,8 +379,8 @@ export const TimeOffPage: React.FC = () => {
                   onClick={() => setStatusFilter('refused')}
                   className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
                     statusFilter === 'refused'
-                      ? 'border-rose-500 bg-rose-500/10 text-rose-700 dark:text-rose-300 font-semibold'
-                      : 'border-line text-ink-soft hover:text-ink'
+                      ? 'border-accent bg-accent text-accent-ink'
+                      : 'border-line bg-bg text-ink-soft hover:text-ink'
                   }`}
                 >
                   Refused ({refusedCompanyCount})

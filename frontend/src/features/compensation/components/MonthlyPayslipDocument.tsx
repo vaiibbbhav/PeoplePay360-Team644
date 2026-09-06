@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { PayslipDetail } from '../queries/useEmployeePayslips';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
+import { api } from '@/api/apiClient';
+import { Mail, Loader2 } from 'lucide-react';
 
 export type MonthlyPayslipDocumentProps = {
   payslip: PayslipDetail;
@@ -69,6 +71,24 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
   payslip,
   onClose,
 }) => {
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailStatus, setEmailStatus] = useState<string | null>(null);
+
+  const handleEmailPayslip = async () => {
+    setIsSendingEmail(true);
+    setEmailStatus(null);
+    try {
+      await api.post(`/payroll/payslips/${payslip.id}/send`);
+      setEmailStatus('Dispatched to employee email');
+      setTimeout(() => setEmailStatus(null), 4000);
+    } catch {
+      setEmailStatus('Dispatch failed');
+      setTimeout(() => setEmailStatus(null), 4000);
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -116,6 +136,25 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
           </div>
 
           <div className="flex items-center gap-2.5 sm:gap-3">
+            {emailStatus && (
+              <span className="text-[11px] font-medium text-ink-soft bg-neutral-200 px-2 py-0.5 rounded">
+                {emailStatus}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={handleEmailPayslip}
+              disabled={isSendingEmail}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium border border-line bg-white hover:bg-neutral-50 text-neutral-800 transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              title="Email this payslip to employee"
+            >
+              {isSendingEmail ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-accent" />
+              ) : (
+                <Mail className="w-3.5 h-3.5 text-accent" />
+              )}
+              <span>{isSendingEmail ? 'Sending…' : 'Email Payslip'}</span>
+            </button>
             <button
               type="button"
               onClick={handlePrint}

@@ -150,12 +150,12 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
             </div>
             <div>
               <span
-                className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold border ${
+                className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${
                   isPending
-                    ? 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                    ? 'border-accent/20 bg-accent-soft text-accent'
                     : request.status === 'approved'
-                      ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                      : 'border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                      ? 'border-line bg-bg-raised text-ink'
+                      : 'border-line bg-bg-raised text-ink-soft line-through'
                 }`}
               >
                 {isPending
@@ -203,17 +203,17 @@ export const RequestDetailModal: React.FC<RequestDetailModalProps> = ({
 
           {/* Refusal / Approval Notes */}
           {request.status === 'refused' && request.refused_reason && (
-            <div className="p-3 rounded-xl border border-rose-200 dark:border-rose-800/40 bg-rose-50 dark:bg-rose-950/30 text-xs text-rose-700 dark:text-rose-300 space-y-1">
-              <div className="font-semibold flex items-center gap-1">
-                <AlertTriangle className="w-3.5 h-3.5" />
+            <div className="p-3 rounded-xl border border-line bg-bg-raised text-xs text-ink space-y-1">
+              <div className="font-semibold flex items-center gap-1 text-ink">
+                <AlertTriangle className="w-3.5 h-3.5 text-accent" />
                 <span>Refusal Justification</span>
               </div>
-              <p>{request.refused_reason}</p>
+              <p className="text-ink-soft">{request.refused_reason}</p>
             </div>
           )}
 
           {request.status === 'approved' && request.approved_at && (
-            <div className="p-3 rounded-xl border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50 dark:bg-emerald-950/30 text-xs text-emerald-700 dark:text-emerald-300">
+            <div className="p-3 rounded-xl border border-line bg-bg-raised text-xs text-ink">
               Approved and deducted from allocation on{' '}
               {new Date(request.approved_at).toLocaleString('en-IN', {
                 dateStyle: 'medium',

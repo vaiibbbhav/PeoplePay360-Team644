@@ -33,25 +33,25 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
     switch (status?.toLowerCase()) {
       case 'approved':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-bg-raised text-ink border border-line">
             Approved
           </span>
         );
       case 'pending':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-accent-soft text-accent border border-accent/20">
             Pending Review
           </span>
         );
       case 'refused':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-bg-raised text-ink-soft border border-line line-through">
             Refused
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-bg-raised text-ink-soft border border-line">
+          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-bg-raised text-ink-soft border border-line">
             {status}
           </span>
         );

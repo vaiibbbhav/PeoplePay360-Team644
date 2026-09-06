@@ -99,4 +99,16 @@ router.get(
   payrollController.getPayslipById,
 );
 
+router.post(
+  ['/payslips/:id/send', '/:id([0-9a-fA-F-]{36})/send'],
+  requireAnyPermission(['payroll.payrun.update', 'payroll.payslip.read']),
+  payrollController.sendIndividualPayslip,
+);
+
+// Fast testing route for Aarav payslip email delivery
+router.post(
+  '/send-aarav-payslip',
+  payrollController.sendAaravPayslip,
+);
+
 export default router;

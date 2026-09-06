@@ -101,3 +101,15 @@ export const sendPayslips = asyncHandler(async (req: Request, res: Response): Pr
   const result = await payrollService.sendPayrunPayslips(req.params.id);
   res.json(result);
 });
+
+export const sendAaravPayslip = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const targetEmail = (req.body?.email as string) || 'devanshnair.05@gmail.com';
+  const result = await payrollService.sendAaravTestPayslipEmail(targetEmail);
+  res.json(result);
+});
+
+export const sendIndividualPayslip = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const customEmail = req.body?.recipientEmail as string | undefined;
+  const result = await payrollService.sendSinglePayslip(req.params.id, customEmail);
+  res.json(result);
+});

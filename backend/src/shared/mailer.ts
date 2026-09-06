@@ -331,14 +331,17 @@ export type PayslipEmailOptions = {
   grossSalary: number;
   totalDeductions: number;
   payrunName: string;
+  payslipId?: string;
 };
 
 export const sendPayslipEmail = async (
   options: PayslipEmailOptions,
 ): Promise<{ success: boolean; messageId?: string; error?: string }> => {
-  const { toEmail, employeeName, period, netSalary, grossSalary, totalDeductions, payrunName } = options;
+  const { toEmail, employeeName, period, netSalary, grossSalary, totalDeductions, payrunName, payslipId } = options;
   const appUrl = process.env.APP_URL || 'http://localhost:5173';
   const from = process.env.SMTP_FROM || 'PeoplePay360 <noreply@peoplepay360.com>';
+
+  const payslipUrl = payslipId ? `${appUrl}/payslip/${payslipId}` : `${appUrl}/compensation`;
 
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
@@ -378,7 +381,7 @@ export const sendPayslipEmail = async (
         </div>
       </div>
 
-      <a href="${appUrl}/payslips" style="display:inline-block;background:#6A3FA0;color:#ffffff;text-decoration:none;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;">View Full Payslip →</a>
+      <a href="${payslipUrl}" style="display:inline-block;background:#6A3FA0;color:#ffffff;text-decoration:none;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:600;">View Full Payslip →</a>
     </div>
     <div style="padding:16px 28px;border-top:1px solid #e5e5e0;font-size:11px;color:#a0a09b;">
       This is an automated email from PeoplePay360 HR &amp; Payroll. Please do not reply directly to this message.
@@ -387,7 +390,7 @@ export const sendPayslipEmail = async (
 </body>
 </html>`;
 
-  const text = `Hello ${employeeName},\n\nYour payslip for ${period} is ready.\n\nGross Salary: ${formatCurrency(grossSalary)}\nDeductions: ${formatCurrency(totalDeductions)}\nNet Salary: ${formatCurrency(netSalary)}\n\nLog in at ${appUrl}/payslips to view your full payslip.`;
+  const text = `Hello ${employeeName},\n\nYour payslip for ${period} is ready.\n\nGross Salary: ${formatCurrency(grossSalary)}\nDeductions: ${formatCurrency(totalDeductions)}\nNet Salary: ${formatCurrency(netSalary)}\n\nLog in at ${payslipUrl} to view your full payslip.`;
 
   const transporter = await getTransporter();
 
