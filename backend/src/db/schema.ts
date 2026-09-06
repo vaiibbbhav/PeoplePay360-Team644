@@ -13,6 +13,7 @@ import {
   uniqueIndex,
   index,
   check,
+  foreignKey,
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
@@ -81,7 +82,7 @@ export const employees = pgTable(
     jobPositionId: uuid('job_position_id').references(() => jobPositions.id, {
       onDelete: 'set null',
     }),
-    managerId: uuid('manager_id').references((): any => employees.id, { onDelete: 'set null' }),
+    managerId: uuid('manager_id'),
     workingScheduleId: uuid('working_schedule_id').references(() => workingSchedules.id, {
       onDelete: 'set null',
     }),
@@ -101,6 +102,11 @@ export const employees = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
   },
   (table) => [
+    foreignKey({
+      columns: [table.managerId],
+      foreignColumns: [table.id],
+      name: 'employees_manager_id_fk',
+    }).onDelete('set null'),
     index('idx_employees_department_id').on(table.departmentId),
     index('idx_employees_job_position_id').on(table.jobPositionId),
     index('idx_employees_manager_id').on(table.managerId),
