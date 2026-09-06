@@ -123,7 +123,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
       {/* ── Page Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+          <h1 className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-ink">
             Access &amp; Governance Overview
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft mt-1">

@@ -41,8 +41,8 @@ export async function getDashboardOverview() {
     charts: {
       departmentBreakdown: deptCosts.map((d) => ({
         department: d.department_name,
-        headcount: d.employee_count,
-        totalCost: parseFloat(d.total_salary_cost),
+        headcount: Number(d.employee_count) || 0,
+        totalCost: parseFloat(d.total_salary_cost) || 0,
       })),
       monthlyTrends: salaryTrends.map((m) => ({
         month: m.month_label,

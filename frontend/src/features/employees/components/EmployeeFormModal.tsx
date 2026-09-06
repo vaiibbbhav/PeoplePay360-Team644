@@ -63,6 +63,15 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
 
   const [formError, setFormError] = useState<string | null>(null);
 
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    if (!isSaving) onClose();
+  }, isOpen);
+
+  const setCombinedRef = (node: HTMLDivElement | null) => {
+    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -103,15 +112,6 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
   const filteredPositions = departmentId
     ? meta.jobPositions.filter((p) => p.departmentId === departmentId || !p.departmentId)
     : meta.jobPositions;
-
-  const modalRef = useClickOutside<HTMLDivElement>(() => {
-    if (!isSaving) onClose();
-  }, isOpen);
-
-  const setCombinedRef = (node: HTMLDivElement | null) => {
-    (dialogRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-    (modalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/40 backdrop-blur-xs">

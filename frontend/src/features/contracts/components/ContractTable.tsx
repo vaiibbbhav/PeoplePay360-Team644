@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ContractItem, ContractStatus } from '../queries/useContracts';
+import { Pagination, usePagination } from '@/components/ui/Pagination';
 
 type ContractTableProps = {
   contracts: ContractItem[];
@@ -12,6 +13,13 @@ export const ContractTable: React.FC<ContractTableProps> = ({
   onSelect,
   onEdit,
 }) => {
+  const {
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    paginatedItems: paginatedContracts,
+  } = usePagination(contracts, 15);
   const formatDate = (val?: string | null) => {
     if (!val) return 'Indefinite';
     try {
@@ -82,7 +90,7 @@ export const ContractTable: React.FC<ContractTableProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
-            {contracts.map((contract) => (
+            {paginatedContracts.map((contract) => (
               <tr
                 key={contract.id}
                 className="hover:bg-bg-raised/40 transition-colors cursor-pointer"
@@ -170,6 +178,19 @@ export const ContractTable: React.FC<ContractTableProps> = ({
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalItems={contracts.length}
+        pageSize={pageSize}
+        pageSizeOptions={[10, 15, 25, 50]}
+        itemName="contracts"
+        onPageChange={setCurrentPage}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setCurrentPage(1);
+        }}
+      />
     </div>
   );
 };

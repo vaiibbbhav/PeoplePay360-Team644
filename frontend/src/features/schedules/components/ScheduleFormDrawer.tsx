@@ -69,6 +69,10 @@ export const ScheduleFormDrawer: React.FC<ScheduleFormDrawerProps> = ({
     setErrorMessage(null);
   }, [initialData, isOpen]);
 
+  const drawerRef = useClickOutside<HTMLDivElement>(() => {
+    onClose();
+  }, isOpen);
+
   if (!isOpen) return null;
 
   const calculateDayHours = (d: DayState) => {
@@ -130,10 +134,6 @@ export const ScheduleFormDrawer: React.FC<ScheduleFormDrawerProps> = ({
       setErrorMessage(err?.response?.data?.error || err.message || 'Failed to save schedule');
     }
   };
-
-  const drawerRef = useClickOutside<HTMLDivElement>(() => {
-    onClose();
-  }, isOpen);
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">

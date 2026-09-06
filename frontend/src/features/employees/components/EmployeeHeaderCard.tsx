@@ -58,7 +58,7 @@ export const EmployeeHeaderCard: React.FC<EmployeeHeaderCardProps> = ({ employee
 
             <div className="pt-2 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="font-serif text-xl sm:text-3xl font-bold text-ink leading-tight truncate">
+                <h1 className="font-sans text-xl sm:text-3xl font-bold tracking-tight text-ink leading-tight truncate">
                   {fullName}
                 </h1>
               </div>
