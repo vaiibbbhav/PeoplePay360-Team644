@@ -500,39 +500,6 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
             </div>
           </Link>
 
-          {/* Biometric Terminal & Attendance */}
-          <Link
-            to="/attendance/terminal"
-            className="group p-5 rounded-xl border border-line bg-bg hover:border-accent/50 hover:bg-bg-raised/30 transition-all flex flex-col justify-between"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                </span>
-                <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-full border border-line text-ink-soft">
-                  Biometrics
-                </span>
-              </div>
-              <h3 className="text-sm font-bold text-ink group-hover:text-accent transition-colors">
-                Kiosk Terminal & Attendance
-              </h3>
-              <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                Live punch kiosk, scanner hardware logs, daily worked hours, and exception audit.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-line text-xs font-medium text-accent flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-              <span>Open Kiosk Terminal</span>
-              <span>→</span>
-            </div>
-          </Link>
         </div>
       </div>
 
