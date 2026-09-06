@@ -102,7 +102,7 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
         ) : (
           <>
             {/* State 1: Present Rate */}
-            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
+            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg">
               <span className="text-[11px] font-medium text-ink-soft block">Attendance Rate</span>
               <div className="text-xl sm:text-2xl font-bold font-sans text-ink mt-1 flex items-baseline gap-1.5">
                 <span>{attendanceRate}%</span>
@@ -110,43 +110,42 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
                   ({presentRecords.length} / {totalRecords} days)
                 </span>
               </div>
-              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className="text-[10px] text-ink-soft font-normal mt-1 block">
                 Standard Schedule
               </span>
             </div>
 
             {/* State 2: Total Hours */}
-            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
+            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg">
               <span className="text-[11px] font-medium text-ink-soft block">Total Worked Hours</span>
-              <div className="text-xl sm:text-2xl font-bold font-sans text-accent mt-1">
+              <div className="text-xl sm:text-2xl font-bold font-sans text-ink mt-1">
                 {totalWorkedHours.toFixed(1)}{' '}
                 <span className="text-xs font-sans font-normal text-ink-soft">hrs</span>
               </div>
-              <span className="text-[10px] text-ink-soft font-medium mt-1 block">
+              <span className="text-[10px] text-ink-soft font-normal mt-1 block">
                 Avg. {averageHoursPerDay} hrs/shift
               </span>
             </div>
 
             {/* State 3: Late Punches */}
-            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
+            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg">
               <span className="text-[11px] font-medium text-ink-soft block">Late Arrivals</span>
               <div className="text-xl sm:text-2xl font-bold font-sans text-ink mt-1">
                 {lateRecords.length}
               </div>
-              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-1 block">
+              <span className="text-[10px] text-ink-soft font-normal mt-1 block">
                 {lateRecords.length > 0 ? 'Exceptions verified' : 'Zero arrival exceptions'}
               </span>
             </div>
 
             {/* State 4: Biometric & Manual Audits */}
-            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40">
+            <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg">
               <span className="text-[11px] font-medium text-ink-soft block">Audit & Edits</span>
               <div className="text-xl sm:text-2xl font-bold font-sans text-ink mt-1">
                 {manualEdits.length}{' '}
                 <span className="text-xs font-sans font-normal text-ink-soft">manual</span>
               </div>
-              <span className="text-[10px] text-accent font-medium mt-1 block truncate">
+              <span className="text-[10px] text-ink-soft font-normal mt-1 block truncate">
                 {fingerprint?.encrypted_template || fingerprint?.encryted_template ? 'Hardware Fingerprint Active' : 'Scanner Pending'}
               </span>
             </div>
