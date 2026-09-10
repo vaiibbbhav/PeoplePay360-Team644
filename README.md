@@ -5,11 +5,11 @@
 
 ---
 
+## 📺 Product Walkthrough
 
+https://github.com/vaiibbbhav/PeoplePay360-Team644/releases/download/demo-assets/Odoo_PeoplePay360_Demo.mp4
 
-https://github.com/user-attachments/assets/b1c70767-ad05-41c8-89f4-11186381aa80
-
-
+---
 
 ## 🌟 Executive Summary
 
