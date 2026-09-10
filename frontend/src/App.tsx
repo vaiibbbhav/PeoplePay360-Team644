@@ -15,7 +15,9 @@ const VerifyEmailPage = lazy(() =>
   import('./features/auth/pages/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })),
 );
 const ForgotPasswordPage = lazy(() =>
-  import('./features/auth/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })),
+  import('./features/auth/pages/ForgotPasswordPage').then((m) => ({
+    default: m.ForgotPasswordPage,
+  })),
 );
 const ResetPasswordPage = lazy(() =>
   import('./features/auth/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })),

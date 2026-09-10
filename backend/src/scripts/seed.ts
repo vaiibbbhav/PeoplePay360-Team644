@@ -1640,10 +1640,7 @@ export const seedDatabase = async (): Promise<void> => {
       const onLeaveEmployees = insertedEmployees.slice(15, 23);
       const inactiveEmployees = insertedEmployees.slice(23, 28);
       const terminatedEmployees = insertedEmployees.slice(28, 33);
-      const activeEmployees = [
-        ...insertedEmployees.slice(0, 15),
-        ...insertedEmployees.slice(33),
-      ];
+      const activeEmployees = [...insertedEmployees.slice(0, 15), ...insertedEmployees.slice(33)];
 
       // Update On Leave
       for (const emp of onLeaveEmployees) {
@@ -1689,9 +1686,10 @@ export const seedDatabase = async (): Promise<void> => {
       }
 
       // Synchronize active leave requests for on-leave employees
-      const annualLeaveType = insertedTypes.find(
-        (t) => t.name.toLowerCase().includes('annual') || t.name.toLowerCase().includes('paid'),
-      ) || insertedTypes[0];
+      const annualLeaveType =
+        insertedTypes.find(
+          (t) => t.name.toLowerCase().includes('annual') || t.name.toLowerCase().includes('paid'),
+        ) || insertedTypes[0];
 
       if (annualLeaveType) {
         for (const emp of onLeaveEmployees) {

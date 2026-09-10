@@ -125,7 +125,9 @@ async function runAudit() {
   const hrPayruns = await testEndpoint(hrManagerToken, 'GET', '/payruns');
   console.log(`   [HR Manager] GET /payruns: ${hrPayruns.status} (Expected 403 Forbidden)`);
   const hrStructures = await testEndpoint(hrManagerToken, 'GET', '/payroll/structures');
-  console.log(`   [HR Manager] GET /payroll/structures: ${hrStructures.status} (Expected 403 Forbidden)`);
+  console.log(
+    `   [HR Manager] GET /payroll/structures: ${hrStructures.status} (Expected 403 Forbidden)`,
+  );
 
   // 2. HR Payroll User
   console.log('\n--- Checking HR Payroll User (aarav@company.com) ---');
@@ -133,12 +135,16 @@ async function runAudit() {
   const puPayruns = await testEndpoint(payrollUserToken, 'GET', '/payruns');
   console.log(`   [HR Payroll User] GET /payruns: ${puPayruns.status} (Expected 200)`);
   const puStructures = await testEndpoint(payrollUserToken, 'GET', '/payroll/structures');
-  console.log(`   [HR Payroll User] GET /payroll/structures: ${puStructures.status} (Expected 200 Read-Only)`);
+  console.log(
+    `   [HR Payroll User] GET /payroll/structures: ${puStructures.status} (Expected 200 Read-Only)`,
+  );
   const puCreateStruct = await testEndpoint(payrollUserToken, 'POST', '/payroll/structures', {
     name: 'Unauthorized Structure',
     code: 'UNAUTH_TEST',
   });
-  console.log(`   [HR Payroll User] POST /payroll/structures: ${puCreateStruct.status} (Expected 403 Forbidden)`);
+  console.log(
+    `   [HR Payroll User] POST /payroll/structures: ${puCreateStruct.status} (Expected 403 Forbidden)`,
+  );
 
   // 3. HR Payroll Manager
   console.log('\n--- Checking HR Payroll Manager (nisha@company.com) ---');
@@ -150,7 +156,9 @@ async function runAudit() {
     code: `TEST_${Date.now()}`,
     description: 'Structure for RBAC verification',
   });
-  console.log(`   [HR Payroll Manager] POST /payroll/structures: ${pmCreateStruct.status} (Expected 201 Created)`);
+  console.log(
+    `   [HR Payroll Manager] POST /payroll/structures: ${pmCreateStruct.status} (Expected 201 Created)`,
+  );
 
   // 4. Employee (Self-Service)
   console.log('\n--- Checking Regular Employee (rohan@company.com) ---');

@@ -332,7 +332,8 @@ export const resetPassword = async (
 
     return {
       success: true,
-      message: 'Your password has been successfully reset. You may now sign in with your new credentials.',
+      message:
+        'Your password has been successfully reset. You may now sign in with your new credentials.',
     };
   } catch (err: unknown) {
     if (err instanceof UnauthorizedError || err instanceof NotFoundError) {

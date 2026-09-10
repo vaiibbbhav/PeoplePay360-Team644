@@ -119,7 +119,7 @@ export const PayslipDispatchNotification: React.FC<PayslipDispatchNotificationPr
         const now = new Date();
         const timeStr = now.toTimeString().split(' ')[0];
         const statusNote = item.isReal ? 'Delivered via SMTP' : 'Sent';
-        
+
         setCurrentCount(count);
         setLogs((prev) => [
           ...prev,
@@ -180,7 +180,11 @@ export const PayslipDispatchNotification: React.FC<PayslipDispatchNotificationPr
             className="p-1 rounded hover:bg-bg-raised text-ink-soft hover:text-ink cursor-pointer transition-colors"
             title={isMinimized ? 'Expand' : 'Minimize'}
           >
-            {isMinimized ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            {isMinimized ? (
+              <ChevronUp className="w-3.5 h-3.5" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5" />
+            )}
           </button>
           <button
             type="button"
@@ -216,8 +220,8 @@ export const PayslipDispatchNotification: React.FC<PayslipDispatchNotificationPr
                   log.includes('devanshnair.05@gmail.com')
                     ? 'text-ink font-semibold'
                     : log.includes('[SUCCESS]')
-                    ? 'text-ink font-semibold'
-                    : 'text-ink-soft'
+                      ? 'text-ink font-semibold'
+                      : 'text-ink-soft'
                 }`}
               >
                 {log}

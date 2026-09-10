@@ -442,3 +442,23 @@ export async function executeCreatePayrunTx(
     return payrun;
   });
 }
+
+export async function findLatestPayslipWithPayrun() {
+  const [latestPayslip] = await db
+    .select()
+    .from(payslips)
+    .orderBy(desc(payslips.createdAt))
+    .limit(1);
+  if (!latestPayslip) return null;
+
+  const [payrun] = await db
+    .select()
+    .from(payruns)
+    .where(eq(payruns.id, latestPayslip.payrunId))
+    .limit(1);
+
+  return {
+    payslip: latestPayslip,
+    payrun: payrun || null,
+  };
+}

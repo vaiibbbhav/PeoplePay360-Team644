@@ -7,9 +7,6 @@ import { ConflictError, NotFoundError, ValidationError } from '../../shared/erro
 import { roundToTwoDecimals } from '../../shared/formatters';
 import { sendPayslipEmail } from '../../shared/mailer';
 import { queuePayslipEmails, PayslipEmailJobData } from '../../shared/queue';
-import { db } from '../../shared/db';
-import { users, employees, payruns, payslips } from '../../db/schema';
-import { eq, or, desc } from 'drizzle-orm';
 
 function countPeriodDays(periodStart: string, periodEnd: string): number {
   const start = Date.parse(`${periodStart}T00:00:00Z`);
@@ -358,30 +355,21 @@ export async function sendSinglePayslip(
   return { ...result, toEmail };
 }
 
-export async function sendAaravTestPayslipEmail(
-  targetEmail?: string,
-): Promise<{ success: boolean; messageId?: string; error?: string; details?: Record<string, unknown> }> {
+export async function sendAaravTestPayslipEmail(targetEmail?: string): Promise<{
+  success: boolean;
+  messageId?: string;
+  error?: string;
+  details?: Record<string, unknown>;
+}> {
   try {
     const recipient = targetEmail || process.env.SMTP_USER || 'employee@company.com';
 
-    // Locate latest payslip in DB
-    const payslipRecord = await db
-      .select()
-      .from(payslips)
-      .orderBy(desc(payslips.createdAt))
-      .limit(1)
-      .then((rows) => rows[0]);
-
-    if (!payslipRecord) {
+    const latest = await payrollRepo.findLatestPayslipWithPayrun();
+    if (!latest || !latest.payslip) {
       throw new NotFoundError('No payslip records available to dispatch');
     }
-
-    const payrunRecord = await db
-      .select()
-      .from(payruns)
-      .where(eq(payruns.id, payslipRecord.payrunId))
-      .limit(1)
-      .then((rows) => rows[0]);
+    const payslipRecord = latest.payslip;
+    const payrunRecord = latest.payrun;
 
     const periodLabel = new Date(payslipRecord.periodStart).toLocaleDateString('en-IN', {
       month: 'short',

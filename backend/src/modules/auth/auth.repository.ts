@@ -2,7 +2,6 @@ import { eq } from 'drizzle-orm';
 import { db } from '../../shared/db';
 import { users, employees } from '../../db/schema';
 import { UserRole } from '../../shared/auth-middleware';
-import { generateEmployeeCode } from '../../shared/employee-code';
 
 export type UserRecord = typeof users.$inferSelect;
 export type NewUserRecord = typeof users.$inferInsert;

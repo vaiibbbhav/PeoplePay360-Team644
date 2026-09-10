@@ -129,7 +129,8 @@ export const getWelcomeEmailHtml = (options: {
     bodyHtml,
     ctaText: 'Verify Email & Sign In',
     ctaUrl: options.verificationUrl,
-    footerNote: '<strong>Security Reminder:</strong> For your security, please log in and change your password upon your first sign-in.',
+    footerNote:
+      '<strong>Security Reminder:</strong> For your security, please log in and change your password upon your first sign-in.',
   });
 };
 
@@ -153,7 +154,8 @@ export const getVerificationEmailHtml = (options: {
     bodyHtml,
     ctaText: 'Verify Email Address',
     ctaUrl: options.verificationUrl,
-    footerNote: 'This verification link will expire in 8 hours. If you did not request this email, please disregard it.',
+    footerNote:
+      'This verification link will expire in 8 hours. If you did not request this email, please disregard it.',
   });
 };
 
@@ -177,7 +179,8 @@ export const getPasswordResetEmailHtml = (options: {
     bodyHtml,
     ctaText: 'Reset Password',
     ctaUrl: options.resetUrl,
-    footerNote: 'This password reset link is valid for 1 hour. If you did not request a password reset, you can safely ignore this email; your account remains secure.',
+    footerNote:
+      'This password reset link is valid for 1 hour. If you did not request a password reset, you can safely ignore this email; your account remains secure.',
   });
 };
 
@@ -231,6 +234,7 @@ export const getPayslipEmailHtml = (options: {
     bodyHtml,
     ctaText: 'View Full Payslip',
     ctaUrl: options.payslipUrl,
-    footerNote: 'This is an automated notification from PeoplePay360 HR &amp; Payroll. For inquiries regarding your salary statement, please contact your payroll manager.',
+    footerNote:
+      'This is an automated notification from PeoplePay360 HR &amp; Payroll. For inquiries regarding your salary statement, please contact your payroll manager.',
   });
 };

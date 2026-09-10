@@ -23,6 +23,9 @@ let isRedisAvailable = false;
 
 // Initialize BullMQ with graceful fallback
 const initQueue = () => {
+  if (process.env.NODE_ENV === 'test') {
+    return;
+  }
   try {
     const connection = new IORedis(REDIS_URL, {
       maxRetriesPerRequest: null,
@@ -88,9 +91,12 @@ const initQueue = () => {
     });
 
     emailWorker.on('failed', (job, err) => {
-      console.error(`[QUEUE] Payslip email job ${job?.id} failed for ${job?.data.toEmail}:`, err.message);
+      console.error(
+        `[QUEUE] Payslip email job ${job?.id} failed for ${job?.data.toEmail}:`,
+        err.message,
+      );
     });
-  } catch (err: unknown) {
+  } catch (_err: unknown) {
     isRedisAvailable = false;
     console.warn('[QUEUE] Redis client init failed, utilizing in-process async dispatch mode.');
   }

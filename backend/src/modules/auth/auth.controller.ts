@@ -82,18 +82,14 @@ export const resendVerification = asyncHandler(
   },
 );
 
-export const forgotPassword = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const validated = forgotPasswordSchema.parse(req.body);
-    const result = await authService.forgotPassword(validated.email);
-    res.json(result);
-  },
-);
+export const forgotPassword = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const validated = forgotPasswordSchema.parse(req.body);
+  const result = await authService.forgotPassword(validated.email);
+  res.json(result);
+});
 
-export const resetPassword = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const validated = resetPasswordSchema.parse(req.body);
-    const result = await authService.resetPassword(validated.token, validated.newPassword);
-    res.json(result);
-  },
-);
+export const resetPassword = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const validated = resetPasswordSchema.parse(req.body);
+  const result = await authService.resetPassword(validated.token, validated.newPassword);
+  res.json(result);
+});

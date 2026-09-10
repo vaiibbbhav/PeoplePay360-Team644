@@ -160,9 +160,7 @@ export const sendPasswordResetEmail = async (
   );
 };
 
-export const sendPayslipEmail = async (
-  options: PayslipEmailOptions,
-): Promise<SendMailResult> => {
+export const sendPayslipEmail = async (options: PayslipEmailOptions): Promise<SendMailResult> => {
   const appUrl = process.env.APP_URL || 'http://localhost:5173';
   const payslipUrl = options.payslipId
     ? `${appUrl}/payslip/${options.payslipId}`

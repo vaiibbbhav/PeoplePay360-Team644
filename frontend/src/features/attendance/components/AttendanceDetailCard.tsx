@@ -170,12 +170,16 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
             <div className="flex items-center justify-between px-3.5 py-2.5">
               <span className="text-ink-soft">Verification Source</span>
               <span className="font-medium text-ink">
-                {record.is_manual_edit ? 'Manual Supervisor Adjustment' : 'Biometric Hardware Terminal'}
+                {record.is_manual_edit
+                  ? 'Manual Supervisor Adjustment'
+                  : 'Biometric Hardware Terminal'}
               </span>
             </div>
             <div className="flex items-center justify-between px-3.5 py-2.5">
               <span className="text-ink-soft">Exception Note</span>
-              <span className={`text-ink ${!record.exception_note ? 'text-ink-soft italic' : 'font-medium'}`}>
+              <span
+                className={`text-ink ${!record.exception_note ? 'text-ink-soft italic' : 'font-medium'}`}
+              >
                 {record.exception_note || 'No exception note filed'}
               </span>
             </div>
