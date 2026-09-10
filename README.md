@@ -5,6 +5,9 @@
 
 ---
 
+https://github.com/user-attachments/assets/f723c9df-2e0e-4fc5-b2c6-32bfebe96bc2
+
+
 ## 🌟 Executive Summary
 
 **PeoplePay360** is a full-lifecycle HR and Payroll management platform designed for modern enterprises. It integrates operational HR administration (employee profiles, contracts, working schedules, attendance, and leave management) with a sequence-driven salary rule computation engine and 2-step payrun execution wizard.
