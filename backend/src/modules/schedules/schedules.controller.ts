@@ -1,9 +1,6 @@
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../../shared/async-handler';
-import {
-  validateCreateSchedule,
-  validateUpdateSchedule,
-} from './schedules.validators';
+import { validateCreateSchedule, validateUpdateSchedule } from './schedules.validators';
 import * as schedulesService from './schedules.service';
 
 export const listSchedules = asyncHandler(async (_req: Request, res: Response) => {

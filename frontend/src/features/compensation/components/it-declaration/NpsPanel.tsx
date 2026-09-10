@@ -45,9 +45,12 @@ export const NpsPanel: React.FC<NpsPanelProps> = ({
         {/* 80CCD(1B) */}
         <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-3">
           <div>
-            <h4 className="font-semibold text-xs text-ink">Section 80CCD(1B) - Employee Voluntary NPS</h4>
+            <h4 className="font-semibold text-xs text-ink">
+              Section 80CCD(1B) - Employee Voluntary NPS
+            </h4>
             <p className="text-[11px] text-ink-soft">
-              Additional exclusive deduction of up to <b>₹50,000</b> over and above Section 80C limit!
+              Additional exclusive deduction of up to <b>₹50,000</b> over and above Section 80C
+              limit!
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -68,7 +71,9 @@ export const NpsPanel: React.FC<NpsPanelProps> = ({
         <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-3">
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="font-semibold text-xs text-ink">Section 80CCD(2) - Employer NPS Contribution</h4>
+              <h4 className="font-semibold text-xs text-ink">
+                Section 80CCD(2) - Employer NPS Contribution
+              </h4>
               <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold">
                 BOTH REGIMES
               </span>
@@ -86,13 +91,13 @@ export const NpsPanel: React.FC<NpsPanelProps> = ({
               className="w-full px-3 py-2 text-xs rounded-xl border border-line bg-bg text-ink font-mono focus:outline-none focus:border-accent"
             />
           </div>
-          <span className="text-[11px] text-ink-soft font-mono">
-            Deductible under both regimes
-          </span>
+          <span className="text-[11px] text-ink-soft font-mono">Deductible under both regimes</span>
         </div>
 
         <div className="space-y-1.5 md:col-span-2">
-          <label className="text-xs font-semibold text-ink">PRAN (Permanent Retirement Account Number)</label>
+          <label className="text-xs font-semibold text-ink">
+            PRAN (Permanent Retirement Account Number)
+          </label>
           <input
             type="text"
             value={pranNumber}

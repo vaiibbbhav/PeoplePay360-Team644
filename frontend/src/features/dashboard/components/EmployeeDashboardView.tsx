@@ -43,7 +43,10 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
       title: 'My Profile',
       desc: 'Personal details, emergency contacts, and employment history.',
       tag: 'Account',
-      link: user.employee?.id || user.employeeId ? `/employees/${user.employee?.id || user.employeeId}` : '/employees',
+      link:
+        user.employee?.id || user.employeeId
+          ? `/employees/${user.employee?.id || user.employeeId}`
+          : '/employees',
     },
     {
       id: 'team',
@@ -80,9 +83,7 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
       {/* Welcome Banner */}
       <div className="border-b border-line pb-5 sm:pb-6">
         <div className="mb-1">
-          <span className="text-xs font-mono text-accent font-medium">
-            Overview
-          </span>
+          <span className="text-xs font-mono text-accent font-medium">Overview</span>
         </div>
         <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
           Welcome, {user.employee?.firstName || user.firstName || user.email.split('@')[0]}
@@ -93,7 +94,10 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
         <div className="flex items-center gap-3 mt-2 flex-wrap">
           {employeeCode && (
             <span className="inline-flex items-center gap-1.5 text-xs text-ink-soft">
-              Employee ID: <code className="font-mono text-sm font-semibold bg-accent/10 text-accent px-2 py-0.5 rounded-md border border-accent/20 select-all">{employeeCode}</code>
+              Employee ID:{' '}
+              <code className="font-mono text-sm font-semibold bg-accent/10 text-accent px-2 py-0.5 rounded-md border border-accent/20 select-all">
+                {employeeCode}
+              </code>
             </span>
           )}
         </div>
@@ -145,9 +149,7 @@ export const EmployeeDashboardView: React.FC<EmployeeDashboardViewProps> = ({ us
               {employeeCode}
             </span>
           )}
-          <span className="text-[11px] text-accent font-medium mt-0.5 block">
-            Active Workspace
-          </span>
+          <span className="text-[11px] text-accent font-medium mt-0.5 block">Active Workspace</span>
         </div>
         <div className="p-5 border border-line rounded-xl bg-bg-raised/40">
           <span className="text-xs text-ink-soft font-medium">Employment Contract</span>

@@ -209,4 +209,3 @@ export const deleteUser = async (id: string, actor?: any) => {
 
   return result;
 };
-

@@ -38,9 +38,7 @@ export const OtherDeductionsPanel: React.FC<OtherDeductionsPanelProps> = ({
     <div className="border border-line rounded-2xl p-6 bg-bg space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
         <div>
-          <h3 className="font-sans text-lg font-bold text-ink">
-            Other Chapter VI-A Deductions
-          </h3>
+          <h3 className="font-sans text-lg font-bold text-ink">Other Chapter VI-A Deductions</h3>
           <p className="text-xs text-ink-soft mt-0.5">
             Specialized deductions for education loans, donations, savings interest, and disability.
           </p>
@@ -56,8 +54,12 @@ export const OtherDeductionsPanel: React.FC<OtherDeductionsPanelProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* 80E */}
         <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2">
-          <h4 className="font-semibold text-xs text-ink">Section 80E - Higher Education Loan Interest</h4>
-          <p className="text-[11px] text-ink-soft">No upper limit on interest paid for 8 consecutive years</p>
+          <h4 className="font-semibold text-xs text-ink">
+            Section 80E - Higher Education Loan Interest
+          </h4>
+          <p className="text-[11px] text-ink-soft">
+            No upper limit on interest paid for 8 consecutive years
+          </p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-ink-soft">₹</span>
             <input
@@ -71,8 +73,12 @@ export const OtherDeductionsPanel: React.FC<OtherDeductionsPanelProps> = ({
 
         {/* 80G */}
         <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2">
-          <h4 className="font-semibold text-xs text-ink">Section 80G - Donations to Charitable Funds</h4>
-          <p className="text-[11px] text-ink-soft">Donations to PM Relief, approved NGOs & Trusts</p>
+          <h4 className="font-semibold text-xs text-ink">
+            Section 80G - Donations to Charitable Funds
+          </h4>
+          <p className="text-[11px] text-ink-soft">
+            Donations to PM Relief, approved NGOs & Trusts
+          </p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-ink-soft">₹</span>
             <input
@@ -86,8 +92,12 @@ export const OtherDeductionsPanel: React.FC<OtherDeductionsPanelProps> = ({
 
         {/* 80TTA */}
         <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2">
-          <h4 className="font-semibold text-xs text-ink">Section 80TTA - Savings Account Interest</h4>
-          <p className="text-[11px] text-ink-soft">Deduction up to ₹10,000 on savings bank interest</p>
+          <h4 className="font-semibold text-xs text-ink">
+            Section 80TTA - Savings Account Interest
+          </h4>
+          <p className="text-[11px] text-ink-soft">
+            Deduction up to ₹10,000 on savings bank interest
+          </p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-ink-soft">₹</span>
             <input
@@ -101,8 +111,12 @@ export const OtherDeductionsPanel: React.FC<OtherDeductionsPanelProps> = ({
 
         {/* 80EEB */}
         <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2">
-          <h4 className="font-semibold text-xs text-ink">Section 80EEB - Electric Vehicle (EV) Loan Interest</h4>
-          <p className="text-[11px] text-ink-soft">Interest deduction up to ₹1,50,000 on EV loans</p>
+          <h4 className="font-semibold text-xs text-ink">
+            Section 80EEB - Electric Vehicle (EV) Loan Interest
+          </h4>
+          <p className="text-[11px] text-ink-soft">
+            Interest deduction up to ₹1,50,000 on EV loans
+          </p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-ink-soft">₹</span>
             <input
@@ -116,7 +130,9 @@ export const OtherDeductionsPanel: React.FC<OtherDeductionsPanelProps> = ({
 
         {/* 80EEA */}
         <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2">
-          <h4 className="font-semibold text-xs text-ink">Section 80EEA - Affordable Housing Loan Interest</h4>
+          <h4 className="font-semibold text-xs text-ink">
+            Section 80EEA - Affordable Housing Loan Interest
+          </h4>
           <p className="text-[11px] text-ink-soft">Additional interest deduction up to ₹1,50,000</p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-ink-soft">₹</span>
@@ -131,8 +147,12 @@ export const OtherDeductionsPanel: React.FC<OtherDeductionsPanelProps> = ({
 
         {/* 80U */}
         <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2">
-          <h4 className="font-semibold text-xs text-ink">Section 80U / 80DD - Person with Disability</h4>
-          <p className="text-[11px] text-ink-soft">Fixed deduction (₹75,000 normal / ₹1,25,000 severe)</p>
+          <h4 className="font-semibold text-xs text-ink">
+            Section 80U / 80DD - Person with Disability
+          </h4>
+          <p className="text-[11px] text-ink-soft">
+            Fixed deduction (₹75,000 normal / ₹1,25,000 severe)
+          </p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-ink-soft">₹</span>
             <input

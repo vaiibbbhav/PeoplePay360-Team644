@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { useEmployeesList } from '@/features/employees/queries/useEmployees';
-import {
-  useTimeOffTypes,
-  useCreateTimeOffRequest,
-} from '../queries/useTimeOff';
+import { useTimeOffTypes, useCreateTimeOffRequest } from '../queries/useTimeOff';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
 
 type RequestTimeOffModalProps = {
@@ -11,10 +8,7 @@ type RequestTimeOffModalProps = {
   onClose: () => void;
 };
 
-export const RequestTimeOffModal: React.FC<RequestTimeOffModalProps> = ({
-  isOpen,
-  onClose,
-}) => {
+export const RequestTimeOffModal: React.FC<RequestTimeOffModalProps> = ({ isOpen, onClose }) => {
   const { data: user } = useCurrentUser();
   const { data: types = [] } = useTimeOffTypes();
   const { data: employees = [] } = useEmployeesList();
@@ -74,9 +68,7 @@ export const RequestTimeOffModal: React.FC<RequestTimeOffModalProps> = ({
       <div className="bg-bg border border-line rounded-2xl w-full max-w-lg shadow-xl overflow-hidden font-sans">
         <div className="flex items-center justify-between px-6 py-4 border-b border-line">
           <div>
-            <h3 className="text-lg font-bold tracking-tight text-ink m-0">
-              Request Time Off
-            </h3>
+            <h3 className="text-lg font-bold tracking-tight text-ink m-0">Request Time Off</h3>
             <p className="text-xs text-ink-soft mt-0.5 mb-0">
               Submit a leave application for approval
             </p>

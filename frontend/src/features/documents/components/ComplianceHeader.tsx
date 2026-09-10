@@ -59,4 +59,3 @@ export const ComplianceHeader: React.FC<ComplianceHeaderProps> = ({
     </div>
   );
 };
-

@@ -106,7 +106,9 @@ export async function findPaginatedEmployees(filters: {
         job_position_id: employees.jobPositionId,
         job_position_title: jobPositions.title,
         manager_id: employees.managerId,
-        manager_name: sql<string | null>`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
+        manager_name: sql<
+          string | null
+        >`concat(${managerUsers.firstName}, ' ', ${managerUsers.lastName})`,
         working_schedule_id: employees.workingScheduleId,
         working_schedule_name: workingSchedules.name,
         employment_status: employees.employmentStatus,
@@ -270,7 +272,8 @@ export async function updateEmployeeById(id: string, data: UpdateEmployeeData) {
   if (data.dateOfJoining !== undefined) values.dateOfJoining = data.dateOfJoining;
   if (data.dateOfBirth !== undefined) values.dateOfBirth = data.dateOfBirth;
   if (data.gender !== undefined) values.gender = data.gender;
-  if (data.identificationNumber !== undefined) values.identificationNumber = data.identificationNumber;
+  if (data.identificationNumber !== undefined)
+    values.identificationNumber = data.identificationNumber;
   if (data.location !== undefined) values.location = data.location;
   if (data.bankName !== undefined) values.bankName = data.bankName;
   if (data.bankAccountNumber !== undefined) values.bankAccountNumber = data.bankAccountNumber;

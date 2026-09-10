@@ -130,20 +130,16 @@ export async function updateScheduleWithLines(
   return await db.transaction(async (tx) => {
     const updatePayload: Partial<typeof workingSchedules.$inferInsert> = {};
     if (scheduleData.name !== undefined) updatePayload.name = scheduleData.name;
-    if (scheduleData.weeklyHours !== undefined) updatePayload.weeklyHours = scheduleData.weeklyHours;
+    if (scheduleData.weeklyHours !== undefined)
+      updatePayload.weeklyHours = scheduleData.weeklyHours;
     if (scheduleData.isActive !== undefined) updatePayload.isActive = scheduleData.isActive;
 
     if (Object.keys(updatePayload).length > 0) {
-      await tx
-        .update(workingSchedules)
-        .set(updatePayload)
-        .where(eq(workingSchedules.id, id));
+      await tx.update(workingSchedules).set(updatePayload).where(eq(workingSchedules.id, id));
     }
 
     if (lines !== undefined) {
-      await tx
-        .delete(workingScheduleLines)
-        .where(eq(workingScheduleLines.scheduleId, id));
+      await tx.delete(workingScheduleLines).where(eq(workingScheduleLines.scheduleId, id));
 
       if (lines.length > 0) {
         await tx.insert(workingScheduleLines).values(

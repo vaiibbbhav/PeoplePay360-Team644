@@ -124,7 +124,10 @@ class FingerprintService {
     }
   }
 
-  private emit<K extends keyof ListenerMap>(event: K, data: Parameters<ListenerMap[K][number]>[0]): void {
+  private emit<K extends keyof ListenerMap>(
+    event: K,
+    data: Parameters<ListenerMap[K][number]>[0],
+  ): void {
     const list = this.listeners[event];
     if (list) {
       list.forEach((cb) => {
@@ -149,7 +152,6 @@ class FingerprintService {
     }
     return await this.sdk.enumerateDevices();
   }
-
 
   /**
    * Starts fingerprint acquisition.

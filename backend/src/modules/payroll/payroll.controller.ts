@@ -18,21 +18,27 @@ const listPayslipsQuerySchema = z.object({
   payrunId: z.string().uuid().optional(),
 });
 
-export const listSalaryStructures = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
-  const structures = await payrollService.listSalaryStructures();
-  res.json(structures);
-});
+export const listSalaryStructures = asyncHandler(
+  async (_req: Request, res: Response): Promise<void> => {
+    const structures = await payrollService.listSalaryStructures();
+    res.json(structures);
+  },
+);
 
-export const getSalaryStructureById = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const structure = await payrollService.getSalaryStructureById(req.params.id);
-  res.json(structure);
-});
+export const getSalaryStructureById = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const structure = await payrollService.getSalaryStructureById(req.params.id);
+    res.json(structure);
+  },
+);
 
-export const createSalaryStructure = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const validated = validateCreateSalaryStructure(req.body);
-  const created = await payrollService.createSalaryStructure(validated);
-  res.status(201).json(created);
-});
+export const createSalaryStructure = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const validated = validateCreateSalaryStructure(req.body);
+    const created = await payrollService.createSalaryStructure(validated);
+    res.status(201).json(created);
+  },
+);
 
 export const createSalaryRule = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const validated = validateCreateSalaryRule(req.body);
@@ -46,11 +52,16 @@ export const listSalaryRules = asyncHandler(async (req: Request, res: Response):
   res.json(rules);
 });
 
-export const getEligibleEmployeesForPeriod = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const query = wizardEligibilityQuerySchema.parse(req.query);
-  const eligible = await payrollService.getEligibleEmployeesForPeriod(query.periodStart, query.periodEnd);
-  res.json(eligible);
-});
+export const getEligibleEmployeesForPeriod = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const query = wizardEligibilityQuerySchema.parse(req.query);
+    const eligible = await payrollService.getEligibleEmployeesForPeriod(
+      query.periodStart,
+      query.periodEnd,
+    );
+    res.json(eligible);
+  },
+);
 
 export const listPayruns = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
   const payruns = await payrollService.listPayruns();
@@ -62,11 +73,13 @@ export const getPayrunById = asyncHandler(async (req: Request, res: Response): P
   res.json(payrun);
 });
 
-export const createPayrunWizard = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const validated = validateCreatePayrunWizard(req.body);
-  const payrun = await payrollService.createPayrunWizard(validated);
-  res.status(201).json(payrun);
-});
+export const createPayrunWizard = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const validated = validateCreatePayrunWizard(req.body);
+    const payrun = await payrollService.createPayrunWizard(validated);
+    res.status(201).json(payrun);
+  },
+);
 
 export const validatePayrun = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const validated = await payrollService.validatePayrun(req.params.id);
@@ -80,10 +93,7 @@ export const markPayrunPaid = asyncHandler(async (req: Request, res: Response): 
 
 export const listPayslips = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const query = listPayslipsQuerySchema.parse(req.query);
-  const employeeId =
-    req.user?.role === 'Employee'
-      ? req.user.employeeId
-      : query.employeeId;
+  const employeeId = req.user?.role === 'Employee' ? req.user.employeeId : query.employeeId;
   const payslips = await payrollService.listPayslips({ employeeId, payrunId: query.payrunId });
   res.json(payslips);
 });
@@ -108,8 +118,10 @@ export const sendAaravPayslip = asyncHandler(async (req: Request, res: Response)
   res.json(result);
 });
 
-export const sendIndividualPayslip = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const customEmail = req.body?.recipientEmail as string | undefined;
-  const result = await payrollService.sendSinglePayslip(req.params.id, customEmail);
-  res.json(result);
-});
+export const sendIndividualPayslip = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const customEmail = req.body?.recipientEmail as string | undefined;
+    const result = await payrollService.sendSinglePayslip(req.params.id, customEmail);
+    res.json(result);
+  },
+);

@@ -32,7 +32,6 @@ type AttendanceFilterParams = {
   endDate?: string;
 };
 
-
 // 1. API Functions
 const getAttendanceApi = async (params?: AttendanceFilterParams): Promise<AttendanceRecord[]> => {
   try {

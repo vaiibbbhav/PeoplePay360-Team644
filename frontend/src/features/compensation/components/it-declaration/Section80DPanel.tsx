@@ -74,7 +74,8 @@ export const Section80DPanel: React.FC<Section80DPanelProps> = ({
             />
           </div>
           <span className="text-[11px] text-ink-soft font-mono">
-            Cap: {healthSelfSenior ? '₹50,000' : '₹25,000'} | Declared: {formatCurrency(healthSelf, showValues)}
+            Cap: {healthSelfSenior ? '₹50,000' : '₹25,000'} | Declared:{' '}
+            {formatCurrency(healthSelf, showValues)}
           </span>
         </div>
 
@@ -102,7 +103,8 @@ export const Section80DPanel: React.FC<Section80DPanelProps> = ({
             />
           </div>
           <span className="text-[11px] text-ink-soft font-mono">
-            Cap: {healthParentsSenior ? '₹50,000' : '₹25,000'} | Declared: {formatCurrency(healthParents, showValues)}
+            Cap: {healthParentsSenior ? '₹50,000' : '₹25,000'} | Declared:{' '}
+            {formatCurrency(healthParents, showValues)}
           </span>
         </div>
 
@@ -111,7 +113,9 @@ export const Section80DPanel: React.FC<Section80DPanelProps> = ({
           <div className="flex justify-between items-center">
             <div>
               <h4 className="font-semibold text-xs text-ink">Preventive Health Check-Up</h4>
-              <p className="text-[11px] text-ink-soft">Combined cap of ₹5,000 for family within overall 80D limit</p>
+              <p className="text-[11px] text-ink-soft">
+                Combined cap of ₹5,000 for family within overall 80D limit
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2 max-w-sm">

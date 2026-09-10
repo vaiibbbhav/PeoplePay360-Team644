@@ -10,11 +10,7 @@ type RefuseLeaveModalProps = {
   request: TimeOffRequest | null;
 };
 
-export const RefuseLeaveModal: React.FC<RefuseLeaveModalProps> = ({
-  isOpen,
-  onClose,
-  request,
-}) => {
+export const RefuseLeaveModal: React.FC<RefuseLeaveModalProps> = ({ isOpen, onClose, request }) => {
   const [reason, setReason] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const refuseMutation = useRefuseLeaveRequest();
@@ -73,7 +69,10 @@ export const RefuseLeaveModal: React.FC<RefuseLeaveModalProps> = ({
           <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-line flex items-center justify-between bg-bg-raised/40">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0" />
-              <h2 id="refuse-leave-title" className="text-base sm:text-lg font-serif font-bold text-ink">
+              <h2
+                id="refuse-leave-title"
+                className="text-base sm:text-lg font-serif font-bold text-ink"
+              >
                 Refuse Leave Request
               </h2>
             </div>

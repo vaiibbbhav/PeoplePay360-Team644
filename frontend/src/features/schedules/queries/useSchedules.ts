@@ -88,9 +88,7 @@ export const useDeleteSchedule = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const response = await api.delete<{ success: boolean; message: string }>(
-        `/schedules/${id}`,
-      );
+      const response = await api.delete<{ success: boolean; message: string }>(`/schedules/${id}`);
       return response.data;
     },
     onSuccess: () => {
@@ -98,4 +96,3 @@ export const useDeleteSchedule = () => {
     },
   });
 };
-

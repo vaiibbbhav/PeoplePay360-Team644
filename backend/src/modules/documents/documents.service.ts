@@ -221,4 +221,3 @@ export async function deletePolicy(id: string) {
 export async function getCompanyComplianceRoster() {
   return await docsRepo.getCompanyComplianceRoster();
 }
-

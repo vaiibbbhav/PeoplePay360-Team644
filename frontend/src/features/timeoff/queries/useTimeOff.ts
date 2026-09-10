@@ -227,10 +227,7 @@ export type TimeOffRequestFilters =
     };
 
 export const useTimeOffRequests = (filters?: TimeOffRequestFilters) => {
-  const params =
-    typeof filters === 'string'
-      ? { employeeId: filters }
-      : filters;
+  const params = typeof filters === 'string' ? { employeeId: filters } : filters;
 
   return useQuery<TimeOffRequest[]>({
     queryKey: [

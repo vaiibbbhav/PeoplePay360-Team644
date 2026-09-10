@@ -84,9 +84,7 @@ export const ScheduleFormDrawer: React.FC<ScheduleFormDrawerProps> = ({
     return Math.max(0, workedMinutes / 60);
   };
 
-  const totalWeeklyHours = days
-    .reduce((sum, d) => sum + calculateDayHours(d), 0)
-    .toFixed(2);
+  const totalWeeklyHours = days.reduce((sum, d) => sum + calculateDayHours(d), 0).toFixed(2);
 
   const handleDayChange = (index: number, field: keyof DayState, value: any) => {
     setDays((prev) => {
@@ -167,7 +165,10 @@ export const ScheduleFormDrawer: React.FC<ScheduleFormDrawerProps> = ({
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6"
+          >
             {errorMessage && (
               <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-over-red text-xs">
                 {errorMessage}
@@ -218,9 +219,7 @@ export const ScheduleFormDrawer: React.FC<ScheduleFormDrawerProps> = ({
                 </span>
               </div>
               <div className="text-right">
-                <span className="font-sans text-2xl font-bold text-accent">
-                  {totalWeeklyHours}
-                </span>
+                <span className="font-sans text-2xl font-bold text-accent">{totalWeeklyHours}</span>
                 <span className="text-xs text-ink-soft block -mt-1">hrs / week</span>
               </div>
             </div>
@@ -283,14 +282,18 @@ export const ScheduleFormDrawer: React.FC<ScheduleFormDrawerProps> = ({
                           </div>
 
                           <div>
-                            <span className="text-[10px] text-ink-soft block mb-1">Break (min)</span>
+                            <span className="text-[10px] text-ink-soft block mb-1">
+                              Break (min)
+                            </span>
                             <input
                               type="number"
                               min="0"
                               max="300"
                               step="15"
                               value={d.breakMinutes}
-                              onChange={(e) => handleDayChange(idx, 'breakMinutes', Number(e.target.value))}
+                              onChange={(e) =>
+                                handleDayChange(idx, 'breakMinutes', Number(e.target.value))
+                              }
                               className="w-full px-2 py-1.5 rounded-lg border border-line bg-bg text-ink text-xs focus:outline-none focus:border-accent"
                             />
                           </div>

@@ -37,11 +37,7 @@ export async function findAllAttendance(employeeId?: string, startDate?: string,
 }
 
 export async function findAttendanceById(id: string) {
-  const rows = await db
-    .select()
-    .from(attendance)
-    .where(eq(attendance.id, id))
-    .limit(1);
+  const rows = await db.select().from(attendance).where(eq(attendance.id, id)).limit(1);
 
   return rows[0] || null;
 }
@@ -147,10 +143,7 @@ export async function upsertAttendance(data: UpsertAttendanceData) {
 }
 
 export async function deleteAttendance(id: string) {
-  const [deleted] = await db
-    .delete(attendance)
-    .where(eq(attendance.id, id))
-    .returning();
+  const [deleted] = await db.delete(attendance).where(eq(attendance.id, id)).returning();
   return deleted || null;
 }
 

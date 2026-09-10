@@ -17,8 +17,10 @@ type WizardStep = 'list' | 'step1' | 'step2' | 'detail';
 
 const STATUS_COLORS: Record<string, string> = {
   draft: 'text-ink-soft border-line bg-bg-raised',
-  computed: 'text-sky-700 dark:text-sky-300 border-sky-200/80 dark:border-sky-800/60 bg-sky-50 dark:bg-sky-950/40',
-  validated: 'text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/40',
+  computed:
+    'text-sky-700 dark:text-sky-300 border-sky-200/80 dark:border-sky-800/60 bg-sky-50 dark:bg-sky-950/40',
+  validated:
+    'text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/40',
   paid: 'text-accent border-accent/40 bg-accent-soft',
 };
 
@@ -75,24 +77,23 @@ export const PayrunsPage: React.FC = () => {
       setView('detail');
     } catch (err: unknown) {
       const errorObj = err as { response?: { data?: { error?: string } }; message?: string };
-      setCreateError(errorObj?.response?.data?.error || errorObj?.message || 'Failed to create payrun');
+      setCreateError(
+        errorObj?.response?.data?.error || errorObj?.message || 'Failed to create payrun',
+      );
       setView('step2');
     }
   };
 
   // KPI calculations from the list
-  const totalPaid = payruns.filter((p) => p.status === 'paid').reduce((sum, p) => sum + Number(p.total_net), 0);
+  const totalPaid = payruns
+    .filter((p) => p.status === 'paid')
+    .reduce((sum, p) => sum + Number(p.total_net), 0);
   const paidCount = payruns.filter((p) => p.status === 'paid').length;
   const pendingCount = payruns.filter((p) => p.status !== 'paid').length;
 
   const renderContent = () => {
     if (view === 'step1') {
-      return (
-        <WizardStep1
-          onNext={handleWizardStep1}
-          onCancel={() => setView('list')}
-        />
-      );
+      return <WizardStep1 onNext={handleWizardStep1} onCancel={() => setView('list')} />;
     }
 
     if (view === 'step2' && step1Data) {
@@ -186,7 +187,9 @@ export const PayrunsPage: React.FC = () => {
           </div>
         ) : isError ? (
           <div className="py-12 text-center border border-line rounded-2xl bg-bg">
-            <p className="text-xs text-red-600 dark:text-red-400 font-medium">Failed to load payruns.</p>
+            <p className="text-xs text-red-600 dark:text-red-400 font-medium">
+              Failed to load payruns.
+            </p>
           </div>
         ) : payruns.length === 0 ? (
           <div className="py-16 text-center border border-line border-dashed rounded-2xl bg-bg">
@@ -214,11 +217,21 @@ export const PayrunsPage: React.FC = () => {
                 <thead>
                   <tr className="border-b border-line bg-bg-raised/60">
                     <th className="py-3 px-4 text-left font-semibold text-ink-soft">Payrun</th>
-                    <th className="py-3 px-4 text-left font-semibold text-ink-soft w-64 min-w-[220px]">Period</th>
-                    <th className="py-3 px-4 text-right font-semibold text-ink-soft w-24">Payslips</th>
-                    <th className="py-3 px-4 text-right font-semibold text-ink-soft w-32">Net Total</th>
-                    <th className="py-3 px-4 text-center font-semibold text-ink-soft w-28">Status</th>
-                    <th className="py-3 px-4 text-right font-semibold text-ink-soft w-20">Action</th>
+                    <th className="py-3 px-4 text-left font-semibold text-ink-soft w-64 min-w-[220px]">
+                      Period
+                    </th>
+                    <th className="py-3 px-4 text-right font-semibold text-ink-soft w-24">
+                      Payslips
+                    </th>
+                    <th className="py-3 px-4 text-right font-semibold text-ink-soft w-32">
+                      Net Total
+                    </th>
+                    <th className="py-3 px-4 text-center font-semibold text-ink-soft w-28">
+                      Status
+                    </th>
+                    <th className="py-3 px-4 text-right font-semibold text-ink-soft w-20">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line/40">
@@ -235,7 +248,9 @@ export const PayrunsPage: React.FC = () => {
                           <span>{formatDate(pr.period_end)}</span>
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-right text-ink font-medium">{pr.payslip_count}</td>
+                      <td className="py-3 px-4 text-right text-ink font-medium">
+                        {pr.payslip_count}
+                      </td>
                       <td className="py-3 px-4 text-right font-mono font-bold text-accent">
                         {formatCurrency(pr.total_net)}
                       </td>

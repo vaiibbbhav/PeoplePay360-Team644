@@ -18,8 +18,10 @@ export type PayrunDetailProps = {
 
 const STATUS_COLORS: Record<string, string> = {
   draft: 'text-ink-soft border-line bg-bg-raised',
-  computed: 'text-sky-700 dark:text-sky-300 border-sky-200/80 dark:border-sky-800/60 bg-sky-50 dark:bg-sky-950/40',
-  validated: 'text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/40',
+  computed:
+    'text-sky-700 dark:text-sky-300 border-sky-200/80 dark:border-sky-800/60 bg-sky-50 dark:bg-sky-950/40',
+  validated:
+    'text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/40',
   paid: 'text-accent border-accent/40 bg-accent-soft',
 };
 
@@ -44,7 +46,11 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
   const markPaidMutation = useMarkPayrunPaid();
   const sendPayslipsMutation = useSendPayslips();
   const [actionError, setActionError] = useState<string | null>(null);
-  const [sendResult, setSendResult] = useState<{ sent: number; failed: number; total: number } | null>(null);
+  const [sendResult, setSendResult] = useState<{
+    sent: number;
+    failed: number;
+    total: number;
+  } | null>(null);
   const [isDispatchNotificationOpen, setIsDispatchNotificationOpen] = useState(false);
 
   const handleValidate = async () => {
@@ -53,7 +59,9 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
       await validateMutation.mutateAsync(payrun.id);
     } catch (err: unknown) {
       const errorObj = err as { response?: { data?: { error?: string } }; message?: string };
-      setActionError(errorObj?.response?.data?.error || errorObj?.message || 'Failed to validate payrun');
+      setActionError(
+        errorObj?.response?.data?.error || errorObj?.message || 'Failed to validate payrun',
+      );
     }
   };
 
@@ -63,7 +71,9 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
       await markPaidMutation.mutateAsync(payrun.id);
     } catch (err: unknown) {
       const errorObj = err as { response?: { data?: { error?: string } }; message?: string };
-      setActionError(errorObj?.response?.data?.error || errorObj?.message || 'Failed to mark payrun as paid');
+      setActionError(
+        errorObj?.response?.data?.error || errorObj?.message || 'Failed to mark payrun as paid',
+      );
     }
   };
 
@@ -76,7 +86,9 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
       setSendResult(res);
     } catch (err: unknown) {
       const errorObj = err as { response?: { data?: { error?: string } }; message?: string };
-      setActionError(errorObj?.response?.data?.error || errorObj?.message || 'Failed to send payslip emails');
+      setActionError(
+        errorObj?.response?.data?.error || errorObj?.message || 'Failed to send payslip emails',
+      );
     }
   };
 
@@ -145,7 +157,10 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
       {sendResult && (
         <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-950/30 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-medium flex items-center gap-2">
           <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>Payslip emails dispatched — {sendResult.sent} sent{sendResult.failed > 0 ? `, ${sendResult.failed} failed` : ''}.</span>
+          <span>
+            Payslip emails dispatched — {sendResult.sent} sent
+            {sendResult.failed > 0 ? `, ${sendResult.failed} failed` : ''}.
+          </span>
           {sendResult.sent === 0 && ' No SMTP configured — check server console for delivery log.'}
         </div>
       )}

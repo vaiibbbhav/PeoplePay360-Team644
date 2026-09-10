@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Fingerprint,
-  FileEdit,
-  AlertTriangle,
-  Calendar,
-  ArrowRight,
-} from 'lucide-react';
+import { Fingerprint, FileEdit, AlertTriangle, Calendar, ArrowRight } from 'lucide-react';
 import type { AttendanceRecord } from '../queries/useAttendance';
 import { Pagination, usePagination } from '@/components/ui/Pagination';
 
@@ -157,10 +151,7 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                 .slice(0, 2);
 
               return (
-                <tr
-                  key={record.id}
-                  className="hover:bg-bg-raised/40 transition-colors group"
-                >
+                <tr key={record.id} className="hover:bg-bg-raised/40 transition-colors group">
                   {/* Employee identity */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="flex items-center gap-3">
@@ -183,9 +174,7 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                   {/* Date */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="font-medium text-ink">{dayMonthYear}</div>
-                    <div className="text-[11px] text-ink-soft">
-                      {weekday}
-                    </div>
+                    <div className="text-[11px] text-ink-soft">{weekday}</div>
                   </td>
 
                   {/* Check In */}
@@ -202,7 +191,9 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                   <td className="py-3.5 px-3 whitespace-nowrap">
                     <div className="font-semibold text-ink font-mono">{hrs} hrs</div>
                     {Number(hrs) > 8 && (
-                      <span className="text-[10px] text-accent font-medium block">+{(Number(hrs) - 8).toFixed(1)}h OT</span>
+                      <span className="text-[10px] text-accent font-medium block">
+                        +{(Number(hrs) - 8).toFixed(1)}h OT
+                      </span>
                     )}
                   </td>
 
@@ -233,7 +224,9 @@ export const AttendanceRecordsTable: React.FC<AttendanceRecordsTableProps> = ({
                           title={record.exception_note}
                         >
                           <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
-                          <span className="truncate max-w-[170px] block">{record.exception_note}</span>
+                          <span className="truncate max-w-[170px] block">
+                            {record.exception_note}
+                          </span>
                         </div>
                       )}
                     </div>

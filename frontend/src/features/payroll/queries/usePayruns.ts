@@ -89,7 +89,10 @@ const fetchSalaryStructuresApi = async (): Promise<SalaryStructure[]> => {
   return data;
 };
 
-const fetchEligibleEmployeesApi = async (periodStart: string, periodEnd: string): Promise<EligibleEmployee[]> => {
+const fetchEligibleEmployeesApi = async (
+  periodStart: string,
+  periodEnd: string,
+): Promise<EligibleEmployee[]> => {
   const { data } = await api.get<EligibleEmployee[]>('/payroll/wizard/eligible-employees', {
     params: { periodStart, periodEnd },
   });
@@ -178,8 +181,12 @@ export const useMarkPayrunPaid = () => {
   });
 };
 
-const sendPayslipsApi = async (id: string): Promise<{ sent: number; failed: number; total: number }> => {
-  const { data } = await api.post<{ sent: number; failed: number; total: number }>(`/payroll/payruns/${id}/send-payslips`);
+const sendPayslipsApi = async (
+  id: string,
+): Promise<{ sent: number; failed: number; total: number }> => {
+  const { data } = await api.post<{ sent: number; failed: number; total: number }>(
+    `/payroll/payruns/${id}/send-payslips`,
+  );
   return data;
 };
 

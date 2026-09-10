@@ -134,7 +134,10 @@ export const PolicyFormDrawer: React.FC<PolicyFormDrawerProps> = ({
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5 text-xs">
+          <form
+            onSubmit={handleSubmit}
+            className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5 text-xs"
+          >
             {errorMessage && (
               <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-over-red text-xs">
                 {errorMessage}
@@ -175,9 +178,7 @@ export const PolicyFormDrawer: React.FC<PolicyFormDrawerProps> = ({
             {/* Category & Version & Effective Date */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-ink mb-1.5">
-                  Category
-                </label>
+                <label className="block text-xs font-semibold text-ink mb-1.5">Category</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as PolicyCategory)}
@@ -191,9 +192,7 @@ export const PolicyFormDrawer: React.FC<PolicyFormDrawerProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink mb-1.5">
-                  Version
-                </label>
+                <label className="block text-xs font-semibold text-ink mb-1.5">Version</label>
                 <input
                   type="text"
                   value={version}

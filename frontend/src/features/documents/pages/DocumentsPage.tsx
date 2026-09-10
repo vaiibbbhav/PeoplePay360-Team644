@@ -144,7 +144,8 @@ export const DocumentsPage: React.FC = () => {
               Policies & Documents
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
-              Company-wide policies, employee acknowledgments, code of conduct, and regulatory compliance.
+              Company-wide policies, employee acknowledgments, code of conduct, and regulatory
+              compliance.
             </p>
           </div>
           {isHrAdmin && (
@@ -196,7 +197,6 @@ export const DocumentsPage: React.FC = () => {
           </div>
         )}
 
-
         {activeTab === 'audit' && isHrAdmin ? (
           <CompanyComplianceTable
             onEditPolicy={(policyId) => {
@@ -209,7 +209,6 @@ export const DocumentsPage: React.FC = () => {
           />
         ) : (
           <>
-
             {isError && (
               <div className="p-8 text-center bg-bg-raised border border-line rounded-2xl">
                 <p className="text-xs text-over-red font-medium mb-3">

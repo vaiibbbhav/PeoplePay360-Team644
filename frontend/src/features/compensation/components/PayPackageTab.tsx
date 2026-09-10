@@ -14,6 +14,10 @@ export const PayPackageTab: React.FC<PayPackageTabProps> = ({ employeeId, showVa
     null,
   );
 
+  const modalRef = useClickOutside<HTMLDivElement>(() => {
+    setSelectedContractForBreakdown(null);
+  }, Boolean(selectedContractForBreakdown));
+
   if (isLoading) {
     return (
       <div className="py-8 space-y-4">
@@ -49,15 +53,13 @@ export const PayPackageTab: React.FC<PayPackageTabProps> = ({ employeeId, showVa
   const medical = 1250;
   const pf = basic * 0.12;
 
-  const modalRef = useClickOutside<HTMLDivElement>(() => {
-    setSelectedContractForBreakdown(null);
-  }, Boolean(selectedContractForBreakdown));
-
   return (
     <div className="space-y-6 pt-2">
       <div className="flex justify-between items-center pb-2 border-b border-line">
         <div>
-          <h2 className="font-sans text-lg sm:text-xl font-semibold text-ink">Pay Package & CTC Breakdown</h2>
+          <h2 className="font-sans text-lg sm:text-xl font-semibold text-ink">
+            Pay Package & CTC Breakdown
+          </h2>
           <p className="text-xs text-ink-soft mt-0.5">
             Historical and active compensation contracts with salary rule decomposition.
           </p>

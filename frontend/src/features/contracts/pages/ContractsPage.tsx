@@ -90,15 +90,14 @@ export const ContractsPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
             <div className="mb-1">
-              <span className="text-xs font-mono text-accent font-medium">
-                Core HR
-              </span>
+              <span className="text-xs font-mono text-accent font-medium">Core HR</span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               Contracts
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
-              Employee employment contracts, salary structures, wage terms, and active period status.
+              Employee employment contracts, salary structures, wage terms, and active period
+              status.
             </p>
           </div>
 

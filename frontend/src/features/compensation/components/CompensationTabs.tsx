@@ -47,8 +47,8 @@ export const CompensationTabs: React.FC<CompensationTabsProps> = ({ activeTab, o
                     tab.badge === 'ACTIVE'
                       ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
                       : tab.badge === 'CLOSED'
-                      ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-                      : 'bg-accent-soft text-accent'
+                        ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                        : 'bg-accent-soft text-accent'
                   }`}
                 >
                   {tab.badge}

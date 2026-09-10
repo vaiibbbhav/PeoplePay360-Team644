@@ -20,10 +20,7 @@ function countPeriodDays(periodStart: string, periodEnd: string): number {
   return Math.floor((end - start) / 86_400_000) + 1;
 }
 
-import {
-  CreateSalaryStructureInput,
-  CreateSalaryRuleInput,
-} from './payroll.validators';
+import { CreateSalaryStructureInput, CreateSalaryRuleInput } from './payroll.validators';
 
 export async function listSalaryStructures() {
   return await payrollRepo.findAllStructures();
@@ -416,4 +413,3 @@ export async function sendAaravTestPayslipEmail(
     return { success: false, error: errorMsg };
   }
 }
-

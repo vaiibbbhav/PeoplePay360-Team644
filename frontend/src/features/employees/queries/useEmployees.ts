@@ -138,10 +138,7 @@ export const useEmployeesList = (enabled = true) => {
   });
 };
 
-export const useEmployeeDirectoryList = (
-  params: EmployeeDirectoryQueryParams,
-  enabled = true,
-) => {
+export const useEmployeeDirectoryList = (params: EmployeeDirectoryQueryParams, enabled = true) => {
   return useQuery({
     queryKey: ['employees', 'directory', params],
     queryFn: () => fetchEmployeeDirectory(params),

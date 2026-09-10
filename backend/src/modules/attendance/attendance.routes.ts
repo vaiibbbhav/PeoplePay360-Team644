@@ -38,10 +38,6 @@ router.post(
   requireEmployeeBodyAccess,
   attendanceController.saveManualAttendance,
 );
-router.delete(
-  '/:id',
-  requirePermission('attendance.write'),
-  attendanceController.deleteAttendance,
-);
+router.delete('/:id', requirePermission('attendance.write'), attendanceController.deleteAttendance);
 
 export default router;

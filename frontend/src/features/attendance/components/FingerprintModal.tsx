@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { useFingerprintStatus, useEnrollFingerprint } from '@/features/attendance/queries/useFingerprint';
+import {
+  useFingerprintStatus,
+  useEnrollFingerprint,
+} from '@/features/attendance/queries/useFingerprint';
 import { ReaderStatusCard } from '@/features/attendance/components/ReaderStatusCard';
 import { FingerprintScannerPad } from '@/features/attendance/components/FingerprintScannerPad';
 import { useClickOutside } from '@/hooks/useClickOutside';
@@ -142,10 +145,7 @@ export const FingerprintModal: React.FC<FingerprintModalProps> = ({
         )}
 
         {/* Reader Status Card */}
-        <ReaderStatusCard
-          selectedReader={selectedReader}
-          onSelectReader={setSelectedReader}
-        />
+        <ReaderStatusCard selectedReader={selectedReader} onSelectReader={setSelectedReader} />
 
         {/* Biometric Scanning Pad */}
         <FingerprintScannerPad

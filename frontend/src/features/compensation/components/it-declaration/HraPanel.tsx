@@ -79,7 +79,9 @@ export const HraPanel: React.FC<HraPanelProps> = ({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-ink">Accommodation City Classification</label>
+          <label className="text-xs font-semibold text-ink">
+            Accommodation City Classification
+          </label>
           <div className="flex gap-3 pt-1">
             <label className="flex items-center gap-2 text-xs text-ink cursor-pointer">
               <input
@@ -127,7 +129,9 @@ export const HraPanel: React.FC<HraPanelProps> = ({
           {annualRentPaid > 100000 && !landlordPan && (
             <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 mt-1">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-              <span>Landlord PAN is mandatory under IT rules for rent exceeding ₹1,00,000 per annum.</span>
+              <span>
+                Landlord PAN is mandatory under IT rules for rent exceeding ₹1,00,000 per annum.
+              </span>
             </span>
           )}
         </div>

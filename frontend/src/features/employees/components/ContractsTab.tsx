@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useEmployeeContracts, type EmployeeContract } from '../queries/useEmployees';
-import { useCreateContract, type CreateContractPayload } from '@/features/contracts/queries/useContracts';
+import {
+  useCreateContract,
+  type CreateContractPayload,
+} from '@/features/contracts/queries/useContracts';
 import { ContractFormDrawer } from '@/features/contracts/components/ContractFormDrawer';
 import { StatGrid } from '@/components/ui/StatCard';
 
@@ -200,4 +203,3 @@ export const ContractsTab: React.FC<ContractsTabProps> = ({ employeeId }) => {
     </div>
   );
 };
-

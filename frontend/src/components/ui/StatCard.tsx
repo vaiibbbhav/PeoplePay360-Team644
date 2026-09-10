@@ -16,10 +16,7 @@ export type StatCardProps = {
 
 // Reusable shimmer skeleton bar
 const Shimmer: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <span
-    className={`block rounded bg-ink/8 animate-pulse ${className}`}
-    aria-hidden="true"
-  />
+  <span className={`block rounded bg-ink/8 animate-pulse ${className}`} aria-hidden="true" />
 );
 
 export const StatCard: React.FC<StatCardProps> = ({

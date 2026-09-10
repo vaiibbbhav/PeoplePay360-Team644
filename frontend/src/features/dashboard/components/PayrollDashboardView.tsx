@@ -52,9 +52,10 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
   const isPayrollManager = user.role === 'HR Payroll Manager';
 
   // --- Filters ---
-  const allDepts = useMemo(() => [
-    ...new Set(departmentBreakdown.map((d) => d.department)),
-  ], [departmentBreakdown]);
+  const allDepts = useMemo(
+    () => [...new Set(departmentBreakdown.map((d) => d.department))],
+    [departmentBreakdown],
+  );
 
   const allMonths = useMemo(() => monthlyTrends.map((m) => m.month), [monthlyTrends]);
 
@@ -76,9 +77,7 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
         <div>
           <div className="mb-1">
-            <span className="text-xs font-mono text-accent font-medium">
-              Overview
-            </span>
+            <span className="text-xs font-mono text-accent font-medium">Overview</span>
           </div>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
             Payroll Operations &amp; Finance Console
@@ -110,7 +109,9 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
 
       {/* Filter Bar */}
       <div className="flex flex-wrap items-center gap-3 p-3.5 rounded-2xl border border-line bg-bg">
-        <span className="text-[11px] font-semibold text-ink-soft uppercase tracking-widest">Filters:</span>
+        <span className="text-[11px] font-semibold text-ink-soft uppercase tracking-widest">
+          Filters:
+        </span>
         <select
           value={selectedDept}
           onChange={(e) => setSelectedDept(e.target.value)}
@@ -118,7 +119,9 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
         >
           <option value="">All Departments</option>
           {allDepts.map((d) => (
-            <option key={d} value={d}>{d}</option>
+            <option key={d} value={d}>
+              {d}
+            </option>
           ))}
         </select>
         <select
@@ -128,7 +131,9 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
         >
           <option value="">All Periods</option>
           {allMonths.map((m) => (
-            <option key={m} value={m}>{m}</option>
+            <option key={m} value={m}>
+              {m}
+            </option>
           ))}
         </select>
         <select
@@ -144,7 +149,11 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
         </select>
         {(selectedDept || selectedMonth || selectedEmployeeType) && (
           <button
-            onClick={() => { setSelectedDept(''); setSelectedMonth(''); setSelectedEmployeeType(''); }}
+            onClick={() => {
+              setSelectedDept('');
+              setSelectedMonth('');
+              setSelectedEmployeeType('');
+            }}
             className="text-xs text-accent font-medium hover:opacity-80 cursor-pointer"
           >
             Clear
@@ -199,15 +208,16 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
         {/* Biometric Attendance Distribution */}
         <div className="bg-bg border border-line rounded-2xl p-6">
           <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
-            <h3 className="font-sans text-base font-semibold text-ink">
-              Biometric Punch Status
-            </h3>
+            <h3 className="font-sans text-base font-semibold text-ink">Biometric Punch Status</h3>
             <span className="text-xs text-accent font-medium">Payroll Context Inputs</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
             {isLoading ? (
               [0, 1, 2, 3, 4].map((i) => (
-                <div key={i} className="p-3 rounded-xl border border-line bg-bg-raised/40 space-y-2 flex flex-col items-center justify-center">
+                <div
+                  key={i}
+                  className="p-3 rounded-xl border border-line bg-bg-raised/40 space-y-2 flex flex-col items-center justify-center"
+                >
                   <div className="h-2.5 w-14 bg-ink/10 rounded animate-pulse" />
                   <div className="h-6 w-10 bg-ink/10 rounded animate-pulse" />
                 </div>
@@ -259,21 +269,25 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
           </div>
           <div className="space-y-3">
             {filteredDeptBreakdown.length === 0 ? (
-              <p className="text-xs text-ink-soft py-4 text-center">No data for selected department.</p>
-            ) : filteredDeptBreakdown.map((dept) => (
-              <div
-                key={dept.department}
-                className="flex items-center justify-between text-xs py-1.5 border-b border-line/50 last:border-0"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-ink">{dept.department}</span>
-                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-bg-raised border border-line text-ink-soft">
-                    {dept.headcount} Staff
-                  </span>
+              <p className="text-xs text-ink-soft py-4 text-center">
+                No data for selected department.
+              </p>
+            ) : (
+              filteredDeptBreakdown.map((dept) => (
+                <div
+                  key={dept.department}
+                  className="flex items-center justify-between text-xs py-1.5 border-b border-line/50 last:border-0"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-ink">{dept.department}</span>
+                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-bg-raised border border-line text-ink-soft">
+                      {dept.headcount} Staff
+                    </span>
+                  </div>
+                  <span className="font-semibold text-ink">{formatCurrency(dept.totalCost)}</span>
                 </div>
-                <span className="font-semibold text-ink">{formatCurrency(dept.totalCost)}</span>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -293,27 +307,31 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {filteredMonthlyTrends.length === 0 ? (
-            <p className="text-xs text-ink-soft py-4 text-center col-span-3">No data for selected period.</p>
-          ) : filteredMonthlyTrends.map((trend) => (
-            <div
-              key={trend.month}
-              className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2"
-            >
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-ink">{trend.month}</span>
-                <span className="text-[11px] text-ink-soft">Net Disbursed</span>
+            <p className="text-xs text-ink-soft py-4 text-center col-span-3">
+              No data for selected period.
+            </p>
+          ) : (
+            filteredMonthlyTrends.map((trend) => (
+              <div
+                key={trend.month}
+                className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2"
+              >
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-ink">{trend.month}</span>
+                  <span className="text-[11px] text-ink-soft">Net Disbursed</span>
+                </div>
+                <div className="text-xl font-sans font-bold text-accent">
+                  {formatCurrency(trend.netSalary)}
+                </div>
+                <div className="text-[11px] text-ink-soft pt-1 border-t border-line/60 flex justify-between">
+                  <span>Gross Burden:</span>
+                  <span className="font-mono font-medium text-ink">
+                    {formatCurrency(trend.grossSalary)}
+                  </span>
+                </div>
               </div>
-              <div className="text-xl font-sans font-bold text-accent">
-                {formatCurrency(trend.netSalary)}
-              </div>
-              <div className="text-[11px] text-ink-soft pt-1 border-t border-line/60 flex justify-between">
-                <span>Gross Burden:</span>
-                <span className="font-mono font-medium text-ink">
-                  {formatCurrency(trend.grossSalary)}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
@@ -323,9 +341,7 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <div>
-                <h3 className="font-sans text-base font-semibold text-ink">
-                  Contracts Baseline
-                </h3>
+                <h3 className="font-sans text-base font-semibold text-ink">Contracts Baseline</h3>
                 <p className="text-xs text-ink-soft mt-0.5">
                   Payroll salary base & active wage contracts
                 </p>
@@ -368,7 +384,8 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-semibold text-ink">
-                      ₹{Number(c.wage).toLocaleString('en-IN')}/{c.wage_type === 'hourly' ? 'hr' : 'mo'}
+                      ₹{Number(c.wage).toLocaleString('en-IN')}/
+                      {c.wage_type === 'hourly' ? 'hr' : 'mo'}
                     </span>
                     <span className="text-[10px] px-2 py-0.5 rounded-full border border-accent/40 bg-accent-soft text-accent">
                       {c.status}
@@ -380,10 +397,7 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
           </div>
           <div className="pt-4 mt-4 border-t border-line/60 flex justify-between items-center text-xs">
             <span className="text-ink-soft">Drives payrun wage computation</span>
-            <Link
-              to="/contracts"
-              className="text-accent font-medium hover:underline no-underline"
-            >
+            <Link to="/contracts" className="text-accent font-medium hover:underline no-underline">
               Open Contracts List →
             </Link>
           </div>
@@ -437,16 +451,12 @@ export const PayrollDashboardView: React.FC<PayrollDashboardViewProps> = ({ user
           </div>
           <div className="pt-4 mt-4 border-t border-line/60 flex justify-between items-center text-xs">
             <span className="text-ink-soft">Sets standard shift duration</span>
-            <Link
-              to="/schedules"
-              className="text-accent font-medium hover:underline no-underline"
-            >
+            <Link to="/schedules" className="text-accent font-medium hover:underline no-underline">
               Open Shift Schedules →
             </Link>
           </div>
         </div>
       </div>
-
     </div>
   );
 };

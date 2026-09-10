@@ -142,7 +142,6 @@ export const UserManagementPage: React.FC = () => {
     }
   };
 
-
   return (
     <AppLayout title="User Management">
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 font-sans">
@@ -158,7 +157,8 @@ export const UserManagementPage: React.FC = () => {
               User Management
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
-              Manage system credentials, portal access, and role-based permissions across the organization.
+              Manage system credentials, portal access, and role-based permissions across the
+              organization.
             </p>
           </div>
 

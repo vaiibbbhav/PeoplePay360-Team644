@@ -70,9 +70,7 @@ export const CompanyComplianceTable: React.FC<CompanyComplianceTableProps> = ({
                   {item.category}
                 </td>
 
-                <td className="py-3.5 px-4 font-mono text-ink">
-                  v{item.version}
-                </td>
+                <td className="py-3.5 px-4 font-mono text-ink">v{item.version}</td>
 
                 <td className="py-3.5 px-4">
                   {item.isMandatory ? (
@@ -98,8 +96,8 @@ export const CompanyComplianceTable: React.FC<CompanyComplianceTableProps> = ({
                           item.complianceRate === 100
                             ? 'bg-emerald-500'
                             : item.complianceRate >= 50
-                            ? 'bg-accent'
-                            : 'bg-amber-500'
+                              ? 'bg-accent'
+                              : 'bg-amber-500'
                         }`}
                         style={{ width: `${item.complianceRate}%` }}
                       />

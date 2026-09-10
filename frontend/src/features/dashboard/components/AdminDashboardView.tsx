@@ -124,9 +124,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="mb-1">
-            <span className="text-xs font-mono text-accent font-medium">
-              Overview
-            </span>
+            <span className="text-xs font-mono text-accent font-medium">Overview</span>
           </div>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
             Access &amp; Governance Overview
@@ -265,9 +263,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
           <div className="bg-bg p-5 sm:p-6 flex flex-col justify-between">
             <div>
               <div className="flex justify-between items-center mb-3">
-                <span className="text-xs font-medium text-ink-soft">
-                  Deactivated, last 30 days
-                </span>
+                <span className="text-xs font-medium text-ink-soft">Deactivated, last 30 days</span>
                 <span
                   className={`w-2 h-2 rounded-full ${
                     attention.deactivatedAccounts.count30Days > 0 ? 'bg-over-red' : 'bg-ink-faint'
@@ -295,9 +291,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
           <div className="bg-bg p-5 sm:p-6 flex flex-col justify-between">
             <div>
               <div className="flex justify-between items-center mb-3">
-                <span className="text-xs font-medium text-ink-soft">
-                  Role assignment integrity
-                </span>
+                <span className="text-xs font-medium text-ink-soft">Role assignment integrity</span>
                 <span
                   className={`w-2 h-2 rounded-full ${
                     attention.unassignedRolesCount === 0 ? 'bg-emerald-600' : 'bg-over-red'
@@ -327,9 +321,12 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
       <div className="mb-8">
         <div className="flex justify-between items-baseline mb-4">
           <div>
-            <h2 className="text-base sm:text-lg font-semibold text-ink">Enterprise Operations Hub</h2>
+            <h2 className="text-base sm:text-lg font-semibold text-ink">
+              Enterprise Operations Hub
+            </h2>
             <p className="text-xs text-ink-soft mt-0.5">
-              Direct access to all administrative modules, workforce hierarchy, and governance consoles
+              Direct access to all administrative modules, workforce hierarchy, and governance
+              consoles
             </p>
           </div>
         </div>
@@ -360,7 +357,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
                 Organization & Hierarchy
               </h3>
               <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                Interactive corporate chart, leadership tree, direct reports map, and department roster.
+                Interactive corporate chart, leadership tree, direct reports map, and department
+                roster.
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-line text-xs font-medium text-accent flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
@@ -394,7 +392,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
                 Policies & Compliance
               </h3>
               <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                Mandatory regulations, code of conduct catalog, and employee acknowledgment audit trails.
+                Mandatory regulations, code of conduct catalog, and employee acknowledgment audit
+                trails.
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-line text-xs font-medium text-accent flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
@@ -446,7 +445,12 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
               <div className="flex items-center justify-between mb-3">
                 <span className="w-9 h-9 rounded-lg bg-accent-soft text-accent flex items-center justify-center">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
                   </svg>
                 </span>
                 <span className="text-[10px] uppercase font-mono tracking-wider px-2 py-0.5 rounded-full border border-line text-ink-soft">
@@ -457,7 +461,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
                 Payruns & Payslips
               </h3>
               <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                2-step payrun execution wizard, salary rules computation, and company-wide payslip archive.
+                2-step payrun execution wizard, salary rules computation, and company-wide payslip
+                archive.
               </p>
             </div>
             <div className="mt-4 pt-3 border-t border-line text-xs font-medium text-accent flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
@@ -664,9 +669,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
                   ＋
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs sm:text-sm text-ink leading-snug">
-                    {act.description}
-                  </div>
+                  <div className="text-xs sm:text-sm text-ink leading-snug">{act.description}</div>
                   <div className="text-xs text-ink-faint mt-1 flex items-center gap-1.5 flex-wrap">
                     <span>By {act.actorName || 'Admin'}</span>
                     <span>·</span>
@@ -706,7 +709,9 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ user }) 
           >
             <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-line flex items-center justify-between">
               <div>
-                <h3 className="font-serif text-base sm:text-lg font-bold text-ink">System Audit Trail</h3>
+                <h3 className="font-serif text-base sm:text-lg font-bold text-ink">
+                  System Audit Trail
+                </h3>
                 <p className="text-xs text-ink-soft mt-0.5">
                   Chronological record of account modifications, provision events, and permissions
                   changes.

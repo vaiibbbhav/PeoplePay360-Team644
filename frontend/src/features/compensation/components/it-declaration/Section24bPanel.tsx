@@ -43,11 +43,14 @@ export const Section24bPanel: React.FC<Section24bPanelProps> = ({
             Section 24(b) - Interest on Housing Loan
           </h3>
           <p className="text-xs text-ink-soft mt-0.5">
-            Deduction of interest on borrowed capital for acquisition/construction of residential property.
+            Deduction of interest on borrowed capital for acquisition/construction of residential
+            property.
           </p>
         </div>
         <div className="text-right">
-          <span className="text-[11px] text-ink-soft block font-mono">Eligible 24(b) Deduction</span>
+          <span className="text-[11px] text-ink-soft block font-mono">
+            Eligible 24(b) Deduction
+          </span>
           <span className="text-base font-bold text-accent font-mono">
             {formatCurrency(eligibleDeduction, showValues)}
           </span>
@@ -102,7 +105,9 @@ export const Section24bPanel: React.FC<Section24bPanelProps> = ({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-ink">Lender Financial Institution Name</label>
+          <label className="text-xs font-semibold text-ink">
+            Lender Financial Institution Name
+          </label>
           <input
             type="text"
             value={lenderName}

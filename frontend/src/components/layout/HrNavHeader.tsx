@@ -24,7 +24,10 @@ export const HrNavHeader: React.FC<HrNavHeaderProps> = ({
   ];
 
   const isActive = (path: string) => {
-    if (path === '/employees' && (location.pathname === '/employees' || location.pathname.startsWith('/employees/'))) {
+    if (
+      path === '/employees' &&
+      (location.pathname === '/employees' || location.pathname.startsWith('/employees/'))
+    ) {
       return true;
     }
     return location.pathname === path || location.pathname.startsWith(`${path}/`);
@@ -35,12 +38,17 @@ export const HrNavHeader: React.FC<HrNavHeaderProps> = ({
       {/* Top row with Brand and actions */}
       <div className="px-6 sm:px-8 py-3.5 flex justify-between items-center">
         <div className="flex items-center gap-6">
-          <Link to="/dashboard" className="font-sans text-xl font-bold text-ink no-underline tracking-tight">
+          <Link
+            to="/dashboard"
+            className="font-sans text-xl font-bold text-ink no-underline tracking-tight"
+          >
             PeoplePay<span className="text-accent">360</span>
           </Link>
           <div className="h-4 w-px bg-line hidden sm:block" />
           <div className="hidden sm:flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-accent">{title}</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+              {title}
+            </span>
             {subtitle && (
               <>
                 <span className="text-ink-soft text-xs">·</span>

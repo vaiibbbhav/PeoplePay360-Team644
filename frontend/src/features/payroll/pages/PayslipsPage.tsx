@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { useAllCompanyPayslips, usePayslipDetail } from '@/features/compensation/queries/useEmployeePayslips';
+import {
+  useAllCompanyPayslips,
+  usePayslipDetail,
+} from '@/features/compensation/queries/useEmployeePayslips';
 import { formatPeriod } from '@/lib/formatters';
 import { StatGrid } from '@/components/ui/StatCard';
 import { PayslipDetailModal } from '@/features/compensation/components/PayslipDetailModal';
@@ -14,25 +17,12 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/Select';
-import {
-  FileText,
-  Download,
-  Printer,
-  Eye,
-  CheckCircle2,
-  Clock,
-  AlertTriangle,
-} from 'lucide-react';
+import { FileText, Download, Printer, Eye, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
 
 type PayslipSortOption = 'date_desc' | 'date_asc' | 'net_desc' | 'net_asc' | 'name_asc';
 
 export const PayslipsPage: React.FC = () => {
-  const {
-    data: payslips = [],
-    isLoading,
-    isError,
-    refetch,
-  } = useAllCompanyPayslips();
+  const { data: payslips = [], isLoading, isError, refetch } = useAllCompanyPayslips();
 
   // Selected payslip for modal
   const [selectedPayslipId, setSelectedPayslipId] = useState<string | null>(null);
@@ -133,7 +123,10 @@ export const PayslipsPage: React.FC = () => {
   // KPI Calculations
   const totalCount = filteredPayslips.length;
   const totalGross = filteredPayslips.reduce((acc, p) => acc + (Number(p.gross_salary) || 0), 0);
-  const totalDeductions = filteredPayslips.reduce((acc, p) => acc + (Number(p.total_deductions) || 0), 0);
+  const totalDeductions = filteredPayslips.reduce(
+    (acc, p) => acc + (Number(p.total_deductions) || 0),
+    0,
+  );
   const totalNet = filteredPayslips.reduce((acc, p) => acc + (Number(p.net_salary) || 0), 0);
   const avgNet = totalCount > 0 ? totalNet / totalCount : 0;
 
@@ -168,11 +161,16 @@ export const PayslipsPage: React.FC = () => {
       p.net_salary,
       p.status,
     ]);
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `company_payslips_export_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute(
+      'download',
+      `company_payslips_export_${new Date().toISOString().slice(0, 10)}.csv`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -237,7 +235,8 @@ export const PayslipsPage: React.FC = () => {
               All Employee Payslips
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1 max-w-2xl leading-relaxed">
-              Complete organizational registry of all computed, validated, and paid employee payslips.
+              Complete organizational registry of all computed, validated, and paid employee
+              payslips.
             </p>
           </div>
 
@@ -373,7 +372,8 @@ export const PayslipsPage: React.FC = () => {
             <AlertTriangle className="w-8 h-8 text-rose-500 mx-auto" />
             <h3 className="font-serif text-base font-bold text-ink">Failed to Load Payslips</h3>
             <p className="text-xs text-ink-soft max-w-sm mx-auto">
-              Could not retrieve employee payslips. Ensure your account has appropriate payroll or HR permissions.
+              Could not retrieve employee payslips. Ensure your account has appropriate payroll or
+              HR permissions.
             </p>
             <button
               onClick={() => refetch()}

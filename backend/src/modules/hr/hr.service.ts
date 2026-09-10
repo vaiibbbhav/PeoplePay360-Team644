@@ -3,11 +3,7 @@ import * as usersRepo from '../users/users.repository';
 import { NotFoundError, ConflictError } from '../../shared/errors';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import {
-  CreateEmployeeInput,
-  EmployeeListQueryInput,
-  UpdateEmployeeInput,
-} from './hr.validators';
+import { CreateEmployeeInput, EmployeeListQueryInput, UpdateEmployeeInput } from './hr.validators';
 
 export async function listEmployees() {
   return await hrRepo.findAllEmployees();

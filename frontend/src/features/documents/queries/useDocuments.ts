@@ -77,7 +77,10 @@ export async function createPolicy(payload: CreatePolicyPayload): Promise<Policy
   return res.data;
 }
 
-export async function updatePolicy(id: string, payload: Partial<CreatePolicyPayload>): Promise<Policy> {
+export async function updatePolicy(
+  id: string,
+  payload: Partial<CreatePolicyPayload>,
+): Promise<Policy> {
   const res = await api.put<Policy>(`/documents/${id}`, payload);
   return res.data;
 }
@@ -201,4 +204,3 @@ export function useDeletePolicy() {
     },
   });
 }
-

@@ -68,7 +68,9 @@ export const EmployeeQuickModal: React.FC<EmployeeQuickModalProps> = ({
         <div className="my-4 sm:my-5 space-y-2.5 sm:space-y-3 text-xs">
           <div className="flex items-center justify-between py-1.5 border-b border-line-subtle gap-2">
             <span className="text-ink-faint shrink-0">Work Email</span>
-            <span className="font-mono text-ink select-all truncate max-w-[200px] sm:max-w-none">{employee.email}</span>
+            <span className="font-mono text-ink select-all truncate max-w-[200px] sm:max-w-none">
+              {employee.email}
+            </span>
           </div>
           {employee.phone && (
             <div className="flex items-center justify-between py-1.5 border-b border-line-subtle">

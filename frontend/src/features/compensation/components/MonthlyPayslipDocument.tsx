@@ -130,7 +130,10 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
         {/* Modal Controls Toolbar (Hidden on print) */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-3.5 border-b border-neutral-300 bg-neutral-100 print:hidden">
           <div className="flex items-center gap-2">
-            <h2 id="monthly-payslip-title" className="font-serif text-xs sm:text-sm font-bold text-neutral-800">
+            <h2
+              id="monthly-payslip-title"
+              className="font-serif text-xs sm:text-sm font-bold text-neutral-800"
+            >
               Monthly Salary Slip ({monthName} - {yearNum})
             </h2>
           </div>
@@ -191,215 +194,218 @@ export const MonthlyPayslipDocument: React.FC<MonthlyPayslipDocumentProps> = ({
         {/* Printable Paper Document (Pure B&W Table Structure matching Image 2) */}
         <div className="p-2 sm:p-8 overflow-y-auto flex-1 bg-white text-black font-sans text-xs">
           <div className="overflow-x-auto">
-            <div id="monthly-salary-slip" className="border border-black max-w-3xl min-w-[580px] sm:min-w-0 mx-auto">
-            {/* Top Company Header */}
-            <div className="grid grid-cols-12 border-b border-black">
-              <div className="col-span-3 border-r border-black p-4 flex items-center justify-center">
-                {/* Logo Box */}
-                <div className="w-16 h-16 border border-neutral-300 rounded flex items-center justify-center text-center text-[10px] text-neutral-500 font-sans font-bold p-1">
-                  PeoplePay 360
-                </div>
-              </div>
-              <div className="col-span-9 p-4 text-center">
-                <h1 className="text-xl sm:text-2xl font-sans font-medium text-black m-0">
-                  Anchorage Technologies Pvt. Ltd.
-                </h1>
-                <p className="text-[11px] leading-relaxed text-neutral-800 mt-1 mb-0.5">
-                  <b>Office Address :</b> 3rd Floor, Le Parc Richmonde, Richmond Rd, Shanthala
-                  Nagar, Bengaluru, Karnataka 560025, Bangalore , Karnataka, India
-                </p>
-                <p className="text-[11px] font-bold text-black m-0">Business Unit : NA</p>
-              </div>
-            </div>
-
-            {/* Document Title Banner */}
-            <div className="border-b border-black py-2 text-center bg-white">
-              <h2 className="text-base sm:text-lg font-normal text-black m-0">
-                Salary Slip for {monthName} - {yearNum}
-              </h2>
-            </div>
-
-            {/* Employee Metadata Matrix (Bordered Table per screenshot) */}
-            <div className="border-b border-black text-[11px]">
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>Employee Name : </span>
-                  <b>{payslip.employee_name}</b>
-                </div>
-                <div className="col-span-3 p-1.5 pl-2">
-                  <span>Employee Type : </span>
-                  <b>Full-Time / Regular</b>
-                </div>
-                <div className="col-span-3 p-1.5 pl-2">
-                  <span>Employee Code : </span>
-                  <b>{payslip.employee_id.slice(0, 8).toUpperCase()}</b>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>Designation: </span>
-                  <b>{payslip.job_position_title || 'SOFTWARE ENGINEER'}</b>
-                </div>
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>Duration: </span>
-                  <b>
-                    1st {monthName}, {yearNum} to 31st {monthName}, {yearNum}
-                  </b>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>Department: </span>
-                  <b>
-                    {payslip.department_name
-                      ? payslip.department_name.toUpperCase()
-                      : 'ENGINEERING'}
-                  </b>
-                </div>
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>No of Days in the Month: </span>
-                  <b>31</b>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>Date of Joining: </span>
-                  <b>01-04-2026</b>
-                </div>
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>Working Days: </span>
-                  <b>{payslip.worked_days}</b>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>Provident Fund: </span>
-                  <b>N.A.</b>
-                </div>
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>ESIC Number: </span>
-                  <b>N.A.</b>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>Current Office Location: </span>
-                  <b>Richmond Road, Bangalore</b>
-                </div>
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>Increment Arrear Days: </span>
-                  <b>0</b>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>Total Arrear Days: </span>
-                  <b>0</b>
-                </div>
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>LOP: </span>
-                  <b>0</b>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-12 divide-x divide-black">
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>UAN No: </span>
-                  <b>000000000000</b>
-                </div>
-                <div className="col-span-6 p-1.5 pl-2">
-                  <span>PAN No: </span>
-                  <b>{payslip.identification_number || 'JFCPM0169G'}</b>
-                </div>
-              </div>
-            </div>
-
-            {/* Earnings and Deductions Table Grid */}
-            <div className="text-[11px]">
-              {/* Main Headers */}
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black text-center font-bold">
-                <div className="col-span-6 py-1">Earnings</div>
-                <div className="col-span-6 py-1">Deductions</div>
-              </div>
-
-              {/* Sub Columns */}
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black font-bold">
-                <div className="col-span-4 p-1.5 pl-2">Components</div>
-                <div className="col-span-2 p-1.5 text-right pr-2">Amount (Rs.)</div>
-                <div className="col-span-4 p-1.5 pl-2">Common Deductions</div>
-                <div className="col-span-2 p-1.5 text-right pr-2">Amount (Rs.)</div>
-              </div>
-
-              {/* Itemized Rows */}
-              {Array.from({ length: maxRows }).map((_, idx) => {
-                const earn = earnings[idx];
-                const ded = deductions[idx];
-
-                return (
-                  <div
-                    key={idx}
-                    className="grid grid-cols-12 border-b border-black divide-x divide-black min-h-[26px]"
-                  >
-                    <div className="col-span-4 p-1.5 pl-2">{earn ? earn.name : ''}</div>
-                    <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
-                      {earn ? Math.round(Number(earn.amount)) : ''}
-                    </div>
-                    <div className="col-span-4 p-1.5 pl-2">{ded ? ded.name : ''}</div>
-                    <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
-                      {ded ? Math.round(Number(ded.amount)) : ''}
-                    </div>
+            <div
+              id="monthly-salary-slip"
+              className="border border-black max-w-3xl min-w-[580px] sm:min-w-0 mx-auto"
+            >
+              {/* Top Company Header */}
+              <div className="grid grid-cols-12 border-b border-black">
+                <div className="col-span-3 border-r border-black p-4 flex items-center justify-center">
+                  {/* Logo Box */}
+                  <div className="w-16 h-16 border border-neutral-300 rounded flex items-center justify-center text-center text-[10px] text-neutral-500 font-sans font-bold p-1">
+                    PeoplePay 360
                   </div>
-                );
-              })}
-
-              {/* Summary Rows */}
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black font-bold">
-                <div className="col-span-4 p-1.5 pl-2">Gross Earning (A)</div>
-                <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
-                  {Math.round(Number(payslip.gross_salary))}
                 </div>
-                <div className="col-span-4 p-1.5 pl-2">Total Deductions (B)</div>
-                <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
-                  {Math.round(Number(payslip.total_deductions))}
+                <div className="col-span-9 p-4 text-center">
+                  <h1 className="text-xl sm:text-2xl font-sans font-medium text-black m-0">
+                    Anchorage Technologies Pvt. Ltd.
+                  </h1>
+                  <p className="text-[11px] leading-relaxed text-neutral-800 mt-1 mb-0.5">
+                    <b>Office Address :</b> 3rd Floor, Le Parc Richmonde, Richmond Rd, Shanthala
+                    Nagar, Bengaluru, Karnataka 560025, Bangalore , Karnataka, India
+                  </p>
+                  <p className="text-[11px] font-bold text-black m-0">Business Unit : NA</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black font-bold">
-                <div className="col-span-4 p-1.5 pl-2">Net Pay (A - B)</div>
-                <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
-                  {Math.round(Number(payslip.net_salary))}
-                </div>
-                <div className="col-span-6 p-1.5 pl-2 text-right pr-2"></div>
+              {/* Document Title Banner */}
+              <div className="border-b border-black py-2 text-center bg-white">
+                <h2 className="text-base sm:text-lg font-normal text-black m-0">
+                  Salary Slip for {monthName} - {yearNum}
+                </h2>
               </div>
 
-              <div className="grid grid-cols-12 border-b border-black divide-x divide-black font-bold">
-                <div className="col-span-4 p-1.5 pl-2">Total Pay</div>
-                <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
-                  {Math.round(Number(payslip.net_salary))}
+              {/* Employee Metadata Matrix (Bordered Table per screenshot) */}
+              <div className="border-b border-black text-[11px]">
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>Employee Name : </span>
+                    <b>{payslip.employee_name}</b>
+                  </div>
+                  <div className="col-span-3 p-1.5 pl-2">
+                    <span>Employee Type : </span>
+                    <b>Full-Time / Regular</b>
+                  </div>
+                  <div className="col-span-3 p-1.5 pl-2">
+                    <span>Employee Code : </span>
+                    <b>{payslip.employee_id.slice(0, 8).toUpperCase()}</b>
+                  </div>
                 </div>
-                <div className="col-span-6 p-2 text-right pr-2 font-sans font-normal italic leading-tight">
-                  {numberToWords(netAmount)}
+
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>Designation: </span>
+                    <b>{payslip.job_position_title || 'SOFTWARE ENGINEER'}</b>
+                  </div>
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>Duration: </span>
+                    <b>
+                      1st {monthName}, {yearNum} to 31st {monthName}, {yearNum}
+                    </b>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>Department: </span>
+                    <b>
+                      {payslip.department_name
+                        ? payslip.department_name.toUpperCase()
+                        : 'ENGINEERING'}
+                    </b>
+                  </div>
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>No of Days in the Month: </span>
+                    <b>31</b>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>Date of Joining: </span>
+                    <b>01-04-2026</b>
+                  </div>
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>Working Days: </span>
+                    <b>{payslip.worked_days}</b>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>Provident Fund: </span>
+                    <b>N.A.</b>
+                  </div>
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>ESIC Number: </span>
+                    <b>N.A.</b>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>Current Office Location: </span>
+                    <b>Richmond Road, Bangalore</b>
+                  </div>
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>Increment Arrear Days: </span>
+                    <b>0</b>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black">
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>Total Arrear Days: </span>
+                    <b>0</b>
+                  </div>
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>LOP: </span>
+                    <b>0</b>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 divide-x divide-black">
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>UAN No: </span>
+                    <b>000000000000</b>
+                  </div>
+                  <div className="col-span-6 p-1.5 pl-2">
+                    <span>PAN No: </span>
+                    <b>{payslip.identification_number || 'JFCPM0169G'}</b>
+                  </div>
                 </div>
               </div>
 
-              {/* Empty spacing block before note */}
-              <div className="h-6 border-b border-black"></div>
+              {/* Earnings and Deductions Table Grid */}
+              <div className="text-[11px]">
+                {/* Main Headers */}
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black text-center font-bold">
+                  <div className="col-span-6 py-1">Earnings</div>
+                  <div className="col-span-6 py-1">Deductions</div>
+                </div>
 
-              {/* Note Footer */}
-              <div className="py-2 text-center text-[11px]">
-                <b>Note:</b> This is a Computer Generated Slip and does not require signature
+                {/* Sub Columns */}
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black font-bold">
+                  <div className="col-span-4 p-1.5 pl-2">Components</div>
+                  <div className="col-span-2 p-1.5 text-right pr-2">Amount (Rs.)</div>
+                  <div className="col-span-4 p-1.5 pl-2">Common Deductions</div>
+                  <div className="col-span-2 p-1.5 text-right pr-2">Amount (Rs.)</div>
+                </div>
+
+                {/* Itemized Rows */}
+                {Array.from({ length: maxRows }).map((_, idx) => {
+                  const earn = earnings[idx];
+                  const ded = deductions[idx];
+
+                  return (
+                    <div
+                      key={idx}
+                      className="grid grid-cols-12 border-b border-black divide-x divide-black min-h-[26px]"
+                    >
+                      <div className="col-span-4 p-1.5 pl-2">{earn ? earn.name : ''}</div>
+                      <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
+                        {earn ? Math.round(Number(earn.amount)) : ''}
+                      </div>
+                      <div className="col-span-4 p-1.5 pl-2">{ded ? ded.name : ''}</div>
+                      <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
+                        {ded ? Math.round(Number(ded.amount)) : ''}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Summary Rows */}
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black font-bold">
+                  <div className="col-span-4 p-1.5 pl-2">Gross Earning (A)</div>
+                  <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
+                    {Math.round(Number(payslip.gross_salary))}
+                  </div>
+                  <div className="col-span-4 p-1.5 pl-2">Total Deductions (B)</div>
+                  <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
+                    {Math.round(Number(payslip.total_deductions))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black font-bold">
+                  <div className="col-span-4 p-1.5 pl-2">Net Pay (A - B)</div>
+                  <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
+                    {Math.round(Number(payslip.net_salary))}
+                  </div>
+                  <div className="col-span-6 p-1.5 pl-2 text-right pr-2"></div>
+                </div>
+
+                <div className="grid grid-cols-12 border-b border-black divide-x divide-black font-bold">
+                  <div className="col-span-4 p-1.5 pl-2">Total Pay</div>
+                  <div className="col-span-2 p-1.5 text-right pr-2 font-mono">
+                    {Math.round(Number(payslip.net_salary))}
+                  </div>
+                  <div className="col-span-6 p-2 text-right pr-2 font-sans font-normal italic leading-tight">
+                    {numberToWords(netAmount)}
+                  </div>
+                </div>
+
+                {/* Empty spacing block before note */}
+                <div className="h-6 border-b border-black"></div>
+
+                {/* Note Footer */}
+                <div className="py-2 text-center text-[11px]">
+                  <b>Note:</b> This is a Computer Generated Slip and does not require signature
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   );
 };

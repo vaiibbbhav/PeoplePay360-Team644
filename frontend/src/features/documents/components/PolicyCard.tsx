@@ -45,9 +45,7 @@ export const PolicyCard: React.FC<PolicyCardProps> = ({
               Signed
             </span>
           ) : (
-            <span className="text-xs font-semibold text-accent">
-              Action Required
-            </span>
+            <span className="text-xs font-semibold text-accent">Action Required</span>
           )}
         </div>
 
@@ -55,9 +53,7 @@ export const PolicyCard: React.FC<PolicyCardProps> = ({
         <h3 className="font-serif text-lg font-bold text-ink tracking-tight leading-snug">
           {policy.title}
         </h3>
-        <p className="text-xs text-ink-soft leading-relaxed line-clamp-3 mt-2">
-          {policy.summary}
-        </p>
+        <p className="text-xs text-ink-soft leading-relaxed line-clamp-3 mt-2">{policy.summary}</p>
       </div>
 
       {/* Footer */}
@@ -98,4 +94,3 @@ export const PolicyCard: React.FC<PolicyCardProps> = ({
     </div>
   );
 };
-

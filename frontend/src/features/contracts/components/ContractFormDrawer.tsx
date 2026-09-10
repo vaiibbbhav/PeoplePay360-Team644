@@ -183,7 +183,10 @@ export const ContractFormDrawer: React.FC<ContractFormDrawerProps> = ({
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5 text-xs">
+          <form
+            onSubmit={handleSubmit}
+            className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5 text-xs"
+          >
             {errorMessage && (
               <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-over-red text-xs leading-relaxed">
                 {errorMessage}
@@ -301,9 +304,7 @@ export const ContractFormDrawer: React.FC<ContractFormDrawerProps> = ({
             {/* Department & Job Position */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-ink mb-1.5">
-                  Department
-                </label>
+                <label className="block text-xs font-semibold text-ink mb-1.5">Department</label>
                 <select
                   value={departmentId}
                   onChange={(e) => setDepartmentId(e.target.value)}
@@ -319,9 +320,7 @@ export const ContractFormDrawer: React.FC<ContractFormDrawerProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink mb-1.5">
-                  Job Position
-                </label>
+                <label className="block text-xs font-semibold text-ink mb-1.5">Job Position</label>
                 <select
                   value={jobPositionId}
                   onChange={(e) => setJobPositionId(e.target.value)}

@@ -12,9 +12,7 @@ export const realCalendarDateSchema = z
       const [y, m, d] = val.split('-').map(Number);
       const parsed = new Date(Date.UTC(y, m - 1, d));
       return (
-        parsed.getUTCFullYear() === y &&
-        parsed.getUTCMonth() === m - 1 &&
-        parsed.getUTCDate() === d
+        parsed.getUTCFullYear() === y && parsed.getUTCMonth() === m - 1 && parsed.getUTCDate() === d
       );
     },
     { message: 'Invalid calendar date' },

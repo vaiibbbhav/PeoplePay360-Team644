@@ -1,9 +1,6 @@
 import { Router } from 'express';
 import * as schedulesController from './schedules.controller';
-import {
-  authenticateToken,
-  requirePermission,
-} from '../../shared/auth-middleware';
+import { authenticateToken, requirePermission } from '../../shared/auth-middleware';
 
 const router = Router();
 
