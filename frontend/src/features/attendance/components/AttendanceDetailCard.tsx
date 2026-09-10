@@ -157,19 +157,29 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
             </div>
           </div>
 
-          {/* Exception / Operational Notes (Only shown if present) */}
-          {record.exception_note && (
-            <div className="p-3 rounded-lg border border-line bg-bg-raised/30 text-xs space-y-1">
-              <span className="font-medium text-ink block">Exception Note</span>
-              <p className="text-ink-soft m-0">{record.exception_note}</p>
+          {/* Record Details Ledger */}
+          <div className="border border-line rounded-lg overflow-hidden bg-bg-raised/20 text-xs divide-y divide-line">
+            <div className="flex items-center justify-between px-3.5 py-2.5">
+              <span className="text-ink-soft">Shift Date</span>
+              <span className="font-medium text-ink">{formattedDate}</span>
             </div>
-          )}
-
-          {record.is_manual_edit && !record.exception_note && (
-            <div className="text-[11px] text-ink-soft">
-              This record was manually adjusted or corrected by an authorized supervisor.
+            <div className="flex items-center justify-between px-3.5 py-2.5">
+              <span className="text-ink-soft">Attendance Status</span>
+              <div>{getStatusBadge(record.status)}</div>
             </div>
-          )}
+            <div className="flex items-center justify-between px-3.5 py-2.5">
+              <span className="text-ink-soft">Verification Source</span>
+              <span className="font-medium text-ink">
+                {record.is_manual_edit ? 'Manual Supervisor Adjustment' : 'Biometric Hardware Terminal'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between px-3.5 py-2.5">
+              <span className="text-ink-soft">Exception Note</span>
+              <span className={`text-ink ${!record.exception_note ? 'text-ink-soft italic' : 'font-medium'}`}>
+                {record.exception_note || 'No exception note filed'}
+              </span>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="py-6 text-center bg-bg-raised/30 rounded-lg border border-line">

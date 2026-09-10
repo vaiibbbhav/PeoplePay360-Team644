@@ -5,7 +5,7 @@ import { EmailNotVerifiedError } from './auth.errors';
 import { LoginInput } from './auth.validators';
 import * as authRepository from './auth.repository';
 import { AuthUser, UserRole } from '../../shared/auth-middleware';
-import { sendVerificationEmail } from '../../shared/mailer';
+import { sendVerificationEmail, sendPasswordResetEmail } from '../../shared/mailer';
 
 export const getJwtSecret = (): string => {
   const secret = process.env.JWT_SECRET;
@@ -272,4 +272,72 @@ export const resendVerificationEmail = async (
     success: true,
     message: 'Verification email has been sent. Please check your inbox.',
   };
+};
+
+export const forgotPassword = async (
+  email: string,
+): Promise<{ success: boolean; message: string }> => {
+  const normalizedEmail = email.toLowerCase().trim();
+  const user = await authRepository.findUserByEmail(normalizedEmail);
+  if (!user) {
+    // Return generic message to avoid leaking user existence
+    return {
+      success: true,
+      message: 'If an account exists with this email address, a password reset link has been sent.',
+    };
+  }
+
+  const resetToken = jwt.sign(
+    { userId: user.id, email: user.email, purpose: 'password-reset' },
+    getJwtSecret(),
+    { expiresIn: '1h' },
+  );
+
+  const employeeName = `${user.firstName} ${user.lastName}`.trim();
+
+  await sendPasswordResetEmail({
+    toEmail: user.email,
+    employeeName,
+    resetToken,
+  });
+
+  return {
+    success: true,
+    message: 'If an account exists with this email address, a password reset link has been sent.',
+  };
+};
+
+export const resetPassword = async (
+  token: string,
+  newPassword: string,
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    const decoded = jwt.verify(token, getJwtSecret()) as {
+      userId: string;
+      email: string;
+      purpose: string;
+    };
+
+    if (decoded.purpose !== 'password-reset') {
+      throw new UnauthorizedError('Invalid password reset token');
+    }
+
+    const user = await authRepository.findUserById(decoded.userId);
+    if (!user) {
+      throw new NotFoundError('User account not found');
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await authRepository.updateUserPassword(user.id, passwordHash);
+
+    return {
+      success: true,
+      message: 'Your password has been successfully reset. You may now sign in with your new credentials.',
+    };
+  } catch (err: unknown) {
+    if (err instanceof UnauthorizedError || err instanceof NotFoundError) {
+      throw err;
+    }
+    throw new UnauthorizedError('Password reset link is invalid or has expired');
+  }
 };

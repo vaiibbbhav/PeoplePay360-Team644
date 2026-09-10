@@ -86,6 +86,47 @@ export const useResendVerificationMutation = () => {
   });
 };
 
+export type ForgotPasswordInput = {
+  email: string;
+};
+
+export type ResetPasswordInput = {
+  token: string;
+  newPassword: string;
+};
+
+const forgotPasswordApi = async (
+  input: ForgotPasswordInput,
+): Promise<{ success: boolean; message: string }> => {
+  const { data } = await publicApi.post<{ success: boolean; message: string }>(
+    '/auth/forgot-password',
+    input,
+  );
+  return data;
+};
+
+const resetPasswordApi = async (
+  input: ResetPasswordInput,
+): Promise<{ success: boolean; message: string }> => {
+  const { data } = await publicApi.post<{ success: boolean; message: string }>(
+    '/auth/reset-password',
+    input,
+  );
+  return data;
+};
+
+export const useForgotPasswordMutation = () => {
+  return useMutation({
+    mutationFn: forgotPasswordApi,
+  });
+};
+
+export const useResetPasswordMutation = () => {
+  return useMutation({
+    mutationFn: resetPasswordApi,
+  });
+};
+
 export const useLogout = () => {
   const queryClient = useQueryClient();
   return async () => {

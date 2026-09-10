@@ -8,6 +8,7 @@ import {
   useSendPayslips,
   type PayrunItem,
 } from '../queries/usePayruns';
+import { PayslipDispatchNotification } from './PayslipDispatchNotification';
 
 export type PayrunDetailProps = {
   payrun: PayrunItem;
@@ -44,6 +45,7 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
   const sendPayslipsMutation = useSendPayslips();
   const [actionError, setActionError] = useState<string | null>(null);
   const [sendResult, setSendResult] = useState<{ sent: number; failed: number; total: number } | null>(null);
+  const [isDispatchNotificationOpen, setIsDispatchNotificationOpen] = useState(false);
 
   const handleValidate = async () => {
     setActionError(null);
@@ -68,6 +70,7 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
   const handleSendPayslips = async () => {
     setActionError(null);
     setSendResult(null);
+    setIsDispatchNotificationOpen(true);
     try {
       const res = await sendPayslipsMutation.mutateAsync(payrun.id);
       setSendResult(res);
@@ -255,6 +258,13 @@ export const PayrunDetail: React.FC<PayrunDetailProps> = ({ payrun, onBack, canM
           </div>
         </div>
       )}
+
+      {/* Floating Payslip Dispatch Notification */}
+      <PayslipDispatchNotification
+        isOpen={isDispatchNotificationOpen}
+        onClose={() => setIsDispatchNotificationOpen(false)}
+        payrunName={payrun.name}
+      />
     </div>
   );
 };

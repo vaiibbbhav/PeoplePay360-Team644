@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Mail } from 'lucide-react';
 import { useLoginMutation, useResendVerificationMutation, type UserRole } from '../queries/useAuth';
 import { getDefaultPathForRole } from '@/lib/permissions';
@@ -159,9 +159,17 @@ export const LoginForm: React.FC = () => {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-ink mb-1.5" htmlFor="password">
-            Password
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-xs font-medium text-ink" htmlFor="password">
+              Password
+            </label>
+            <Link
+              to="/forgot-password"
+              className="text-[11px] text-accent hover:underline font-sans"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <input
             id="password"
             type="password"

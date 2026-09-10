@@ -6,6 +6,7 @@ import { computePayslipLines } from './rule-engine';
 import { ConflictError, NotFoundError, ValidationError } from '../../shared/errors';
 import { roundToTwoDecimals } from '../../shared/formatters';
 import { sendPayslipEmail } from '../../shared/mailer';
+import { queuePayslipEmails, PayslipEmailJobData } from '../../shared/queue';
 import { db } from '../../shared/db';
 import { users, employees, payruns, payslips } from '../../db/schema';
 import { eq, or, desc } from 'drizzle-orm';
@@ -289,42 +290,42 @@ export async function getPayslipById(id: string) {
   return payslip;
 }
 
-export async function sendPayrunPayslips(id: string): Promise<{ sent: number; failed: number; total: number }> {
+export async function sendPayrunPayslips(
+  id: string,
+): Promise<{ sent: number; failed: number; total: number; queuedCount: number; mode: string }> {
   const payrun = await getPayrunById(id);
-  if (payrun.status !== 'paid') {
+  if (payrun.status !== 'paid' && payrun.status !== 'sent') {
     throw new ValidationError('Payslips can only be sent for paid payruns');
   }
 
   const payslips = payrun.payslips ?? [];
-  if (payslips.length === 0) {
-    return { sent: 0, failed: 0, total: 0 };
-  }
+  const periodLabel = `${new Date(payrun.period_start).toLocaleDateString('en-IN', {
+    month: 'short',
+    year: 'numeric',
+  })}`;
 
-  const periodLabel = `${new Date(payrun.period_start).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}`;
-
-  let sent = 0;
-  let failed = 0;
-
-  for (const payslip of payslips) {
-    if (!payslip.employee_email) {
-      failed++;
-      continue;
-    }
-    const result = await sendPayslipEmail({
-      toEmail: payslip.employee_email,
-      employeeName: payslip.employee_name,
+  const emailJobs: PayslipEmailJobData[] = payslips
+    .filter((p) => Boolean(p.employee_email))
+    .map((p) => ({
+      payslipId: p.id,
+      employeeName: p.employee_name || 'Employee',
+      toEmail: p.employee_email as string,
       period: periodLabel,
-      netSalary: Number(payslip.net_salary),
-      grossSalary: Number(payslip.gross_salary),
-      totalDeductions: Number(payslip.total_deductions),
+      netSalary: Number(p.net_salary),
+      grossSalary: Number(p.gross_salary),
+      totalDeductions: Number(p.total_deductions),
       payrunName: payrun.name,
-      payslipId: payslip.id,
-    });
-    if (result.success) sent++;
-    else failed++;
-  }
+    }));
 
-  return { sent, failed, total: payslips.length };
+  const queueResult = await queuePayslipEmails(emailJobs);
+
+  return {
+    sent: emailJobs.length,
+    failed: 0,
+    total: payslips.length,
+    queuedCount: queueResult.queuedCount,
+    mode: queueResult.mode,
+  };
 }
 
 export async function sendSinglePayslip(
@@ -361,113 +362,57 @@ export async function sendSinglePayslip(
 }
 
 export async function sendAaravTestPayslipEmail(
-  targetEmail: string = 'devanshnair.05@gmail.com',
+  targetEmail?: string,
 ): Promise<{ success: boolean; messageId?: string; error?: string; details?: Record<string, unknown> }> {
   try {
-    // 1. Locate Aarav in users table (by email or firstName)
-    let aaravUser = await db
+    const recipient = targetEmail || process.env.SMTP_USER || 'employee@company.com';
+
+    // Locate latest payslip in DB
+    const payslipRecord = await db
       .select()
-      .from(users)
-      .where(or(eq(users.firstName, 'Aarav'), eq(users.email, 'aarav@company.com'), eq(users.email, targetEmail)))
+      .from(payslips)
+      .orderBy(desc(payslips.createdAt))
       .limit(1)
       .then((rows) => rows[0]);
 
-    if (aaravUser) {
-      // Update Aarav's email to targetEmail so bulk sends also deliver to targetEmail
-      if (aaravUser.email !== targetEmail) {
-        await db
-          .update(users)
-          .set({ email: targetEmail, updatedAt: new Date() })
-          .where(eq(users.id, aaravUser.id));
-        aaravUser.email = targetEmail;
-        console.log(`[AARAV PAYSIP] Updated Aarav user email in database to ${targetEmail}`);
-      }
-    }
-
-    // 2. Locate employee record
-    let employee = aaravUser
-      ? await db
-          .select()
-          .from(employees)
-          .where(eq(employees.userId, aaravUser.id))
-          .limit(1)
-          .then((rows) => rows[0])
-      : null;
-
-    // 3. Find latest payslip for this employee
-    let payslipRecord = employee
-      ? await db
-          .select()
-          .from(payslips)
-          .where(eq(payslips.employeeId, employee.id))
-          .orderBy(desc(payslips.createdAt))
-          .limit(1)
-          .then((rows) => rows[0])
-      : null;
-
-    // If no payslip found for Aarav specifically, use the latest payslip in DB
     if (!payslipRecord) {
-      const existingPayslip = await db
-        .select()
-        .from(payslips)
-        .orderBy(desc(payslips.createdAt))
-        .limit(1)
-        .then((rows) => rows[0]);
-
-      if (existingPayslip) {
-        payslipRecord = existingPayslip;
-      }
+      throw new NotFoundError('No payslip records available to dispatch');
     }
 
-    // Find payrun info
-    const payrunRecord = payslipRecord
-      ? await db
-          .select()
-          .from(payruns)
-          .where(eq(payruns.id, payslipRecord.payrunId))
-          .limit(1)
-          .then((rows) => rows[0])
-      : null;
+    const payrunRecord = await db
+      .select()
+      .from(payruns)
+      .where(eq(payruns.id, payslipRecord.payrunId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
-    const employeeName = aaravUser ? `${aaravUser.firstName} ${aaravUser.lastName}` : 'Aarav Sharma';
-    const periodLabel = payslipRecord
-      ? new Date(payslipRecord.periodStart).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
-      : 'Aug 2026';
-    const netSalary = payslipRecord ? Number(payslipRecord.netSalary) : 74500;
-    const grossSalary = payslipRecord ? Number(payslipRecord.grossSalary) : 85000;
-    const totalDeductions = payslipRecord ? Number(payslipRecord.totalDeductions) : 10500;
-    const payrunName = payrunRecord?.name || 'August 2026 Regular Payrun';
-
-    console.log(`[AARAV PAYSIP] Dispatching payslip email for ${employeeName} to ${targetEmail}...`);
-
-    const result = await sendPayslipEmail({
-      toEmail: targetEmail,
-      employeeName,
-      period: periodLabel,
-      netSalary,
-      grossSalary,
-      totalDeductions,
-      payrunName,
-      payslipId: payslipRecord?.id,
+    const periodLabel = new Date(payslipRecord.periodStart).toLocaleDateString('en-IN', {
+      month: 'short',
+      year: 'numeric',
     });
 
-    console.log('[AARAV PAYSIP] Email send result:', result);
+    const result = await sendPayslipEmail({
+      toEmail: recipient,
+      employeeName: 'Aarav Sharma',
+      period: periodLabel,
+      netSalary: Number(payslipRecord.netSalary),
+      grossSalary: Number(payslipRecord.grossSalary),
+      totalDeductions: Number(payslipRecord.totalDeductions),
+      payrunName: payrunRecord?.name || 'Regular Payrun',
+      payslipId: payslipRecord.id,
+    });
 
     return {
       ...result,
       details: {
-        toEmail: targetEmail,
-        employeeName,
+        toEmail: recipient,
         period: periodLabel,
-        netSalary,
-        grossSalary,
-        totalDeductions,
-        payrunName,
+        payrunName: payrunRecord?.name,
       },
     };
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : String(err);
-    console.error('[AARAV PAYSIP] Error in sendAaravTestPayslipEmail:', errorMsg);
+    console.error('[TEST PAYSLIP] Error sending test payslip email:', errorMsg);
     return { success: false, error: errorMsg };
   }
 }

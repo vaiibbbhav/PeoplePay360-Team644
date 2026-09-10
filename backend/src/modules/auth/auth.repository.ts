@@ -81,3 +81,18 @@ export const markEmailVerified = async (userId: string): Promise<UserRecord | un
     .returning();
   return user;
 };
+
+export const updateUserPassword = async (
+  userId: string,
+  passwordHash: string,
+): Promise<UserRecord | undefined> => {
+  const [user] = await db
+    .update(users)
+    .set({
+      passwordHash,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, userId))
+    .returning();
+  return user;
+};

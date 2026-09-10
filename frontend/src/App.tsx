@@ -8,6 +8,8 @@ import { ProtectedRoute } from './components/layout/ProtectedRoute';
 const LandingPage = lazy(() => import('./features/landing/pages/LandingPage').then((m) => ({ default: m.LandingPage })));
 const LoginPage = lazy(() => import('./features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage })));
 const VerifyEmailPage = lazy(() => import('./features/auth/pages/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })));
+const ForgotPasswordPage = lazy(() => import('./features/auth/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })));
+const ResetPasswordPage = lazy(() => import('./features/auth/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })));
 const DashboardPage = lazy(() => import('./features/dashboard/pages/DashboardPage').then((m) => ({ default: m.DashboardPage })));
 const EmployeeAttendancePage = lazy(() => import('./features/attendance/pages/EmployeeAttendancePage').then((m) => ({ default: m.EmployeeAttendancePage })));
 const AttendanceRecordsPage = lazy(() => import('./features/attendance/pages/AttendanceRecordsPage').then((m) => ({ default: m.AttendanceRecordsPage })));
@@ -58,6 +60,8 @@ export function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Protected routes — all authenticated users */}
           <Route element={<ProtectedRoute />}>

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
-import { pool, db, closeDb } from './db';
+import { pool, db, closeDb } from '../shared/db';
 import * as schema from '../db/schema';
 import { passwordSchema } from '../modules/auth/auth.validators';
 
@@ -1244,6 +1244,220 @@ export const seedDatabase = async (): Promise<void> => {
 
     const insertedLogs = await db.insert(schema.auditLogs).values(auditLogsData).returning();
     console.info(`✅ Seeded ${insertedLogs.length} audit logs`);
+
+    // --- ENRICH DEMO DATA FOR PRESENTATION REALISM ---
+    console.info('🚀 Enriching demo data for operational metrics & dashboard realism...');
+    if (insertedEmployees.length >= 35) {
+      const onLeaveEmployees = insertedEmployees.slice(15, 23);
+      const inactiveEmployees = insertedEmployees.slice(23, 28);
+      const terminatedEmployees = insertedEmployees.slice(28, 33);
+      const activeEmployees = [
+        ...insertedEmployees.slice(0, 15),
+        ...insertedEmployees.slice(33),
+      ];
+
+      // Update On Leave
+      for (const emp of onLeaveEmployees) {
+        await db
+          .update(schema.employees)
+          .set({ employmentStatus: 'on_leave' })
+          .where(eq(schema.employees.id, emp.id));
+      }
+
+      // Update Inactive
+      for (const emp of inactiveEmployees) {
+        await db
+          .update(schema.employees)
+          .set({ employmentStatus: 'inactive' })
+          .where(eq(schema.employees.id, emp.id));
+
+        await db
+          .update(schema.users)
+          .set({ isActive: false })
+          .where(eq(schema.users.id, emp.userId));
+      }
+
+      // Update Terminated
+      for (const emp of terminatedEmployees) {
+        await db
+          .update(schema.employees)
+          .set({ employmentStatus: 'terminated' })
+          .where(eq(schema.employees.id, emp.id));
+
+        await db
+          .update(schema.users)
+          .set({ isActive: false })
+          .where(eq(schema.users.id, emp.userId));
+
+        await db
+          .update(schema.contracts)
+          .set({
+            status: 'terminated',
+            endDate: '2026-08-15',
+            notes: 'Resigned and relieved following handover completion.',
+          })
+          .where(eq(schema.contracts.employeeId, emp.id));
+      }
+
+      // Synchronize active leave requests for on-leave employees
+      const annualLeaveType = insertedTypes.find(
+        (t) => t.name.toLowerCase().includes('annual') || t.name.toLowerCase().includes('paid'),
+      ) || insertedTypes[0];
+
+      if (annualLeaveType) {
+        for (const emp of onLeaveEmployees) {
+          await db.insert(schema.timeOffRequests).values({
+            employeeId: emp.id,
+            timeOffTypeId: annualLeaveType.id,
+            startDate: '2026-09-01',
+            endDate: '2026-09-18',
+            duration: '14.0',
+            status: 'approved',
+            reason: 'Annual family sabbatical and vacation',
+          });
+        }
+      }
+
+      // Contracts status diversity: 4 expired + 6 draft renewals
+      const defaultStructureId = insertedStructures[0]?.id;
+      for (let i = 0; i < 4; i++) {
+        const emp = activeEmployees[i + 5];
+        await db.insert(schema.contracts).values({
+          employeeId: emp.id,
+          name: 'Historical Contract — 2024/2025',
+          wage: '65000.00',
+          wageType: 'monthly',
+          salaryStructureId: defaultStructureId,
+          departmentId: emp.departmentId,
+          jobPositionId: emp.jobPositionId,
+          startDate: '2024-01-01',
+          endDate: '2025-12-31',
+          status: 'expired',
+          notes: 'Prior multi-year employment contract expired and superseded.',
+        });
+      }
+
+      for (let i = 0; i < 6; i++) {
+        const emp = activeEmployees[i + 12];
+        await db.insert(schema.contracts).values({
+          employeeId: emp.id,
+          name: 'FY2027 Promotion & Compensation Revision (Draft)',
+          wage: '95000.00',
+          wageType: 'monthly',
+          salaryStructureId: defaultStructureId,
+          departmentId: emp.departmentId,
+          jobPositionId: emp.jobPositionId,
+          startDate: '2026-10-01',
+          endDate: '2027-09-30',
+          status: 'draft',
+          notes: 'Upcoming compensation revision undergoing executive review.',
+        });
+      }
+
+      // Add Overtime and Absent attendance entries
+      const sampleForAttendance = activeEmployees.slice(20, 36);
+      for (let i = 0; i < 8 && i < sampleForAttendance.length; i++) {
+        try {
+          await db.insert(schema.attendance).values({
+            employeeId: sampleForAttendance[i].id,
+            date: '2026-09-05',
+            checkIn: new Date('2026-09-05T08:30:00Z'),
+            checkOut: new Date('2026-09-05T19:30:00Z'),
+            workedHours: '10.00',
+            status: 'Overtime',
+            isManualEdit: false,
+          });
+        } catch {
+          // Ignore unique constraints
+        }
+      }
+
+      for (let i = 8; i < 16 && i < sampleForAttendance.length; i++) {
+        try {
+          await db.insert(schema.attendance).values({
+            employeeId: sampleForAttendance[i].id,
+            date: '2026-09-05',
+            checkIn: new Date('2026-09-05T09:00:00Z'),
+            checkOut: new Date('2026-09-05T09:00:00Z'),
+            workedHours: '0.00',
+            status: 'Absent',
+            isManualEdit: false,
+          });
+        } catch {
+          // Ignore unique constraints
+        }
+      }
+
+      // Create draft payrun for demonstration
+      if (defaultStructureId) {
+        await db.insert(schema.payruns).values({
+          name: 'Payrun — October 2026 (Upcoming Cycle)',
+          salaryStructureId: defaultStructureId,
+          periodStart: '2026-10-01',
+          periodEnd: '2026-10-31',
+          status: 'draft',
+          totalBasic: '0.00',
+          totalGross: '0.00',
+          totalDeductions: '0.00',
+          totalNet: '0.00',
+          payslipCount: 0,
+          warnings: [],
+        });
+
+        // Create computed payrun with 15 payslips and validation warnings
+        const [computedRun] = await db
+          .insert(schema.payruns)
+          .values({
+            name: 'Payrun — September 2026 (Ready to Validate)',
+            salaryStructureId: defaultStructureId,
+            periodStart: '2026-09-01',
+            periodEnd: '2026-09-30',
+            status: 'computed',
+            totalBasic: '1250000.00',
+            totalGross: '1850000.00',
+            totalDeductions: '215000.00',
+            totalNet: '1635000.00',
+            payslipCount: 15,
+            warnings: [
+              {
+                severity: 'attention',
+                message: '3 employees have pending leave requests awaiting approval.',
+              },
+              {
+                severity: 'attention',
+                message: '1 employee contract renewal starts in this pay period.',
+              },
+            ],
+          })
+          .returning();
+
+        const activeContractsForRun = insertedContracts.slice(0, 15);
+        for (const c of activeContractsForRun) {
+          const wageNum = parseFloat(c.wage);
+          const basic = Math.round(wageNum * 0.5);
+          const gross = Math.round(wageNum * 1.2);
+          const ded = Math.round(wageNum * 0.12);
+          const net = gross - ded;
+
+          await db.insert(schema.payslips).values({
+            payrunId: computedRun.id,
+            employeeId: c.employeeId,
+            contractId: c.id,
+            structureId: c.salaryStructureId || defaultStructureId,
+            periodStart: '2026-09-01',
+            periodEnd: '2026-09-30',
+            workedDays: '22.00',
+            basicSalary: String(basic),
+            grossSalary: String(gross),
+            totalDeductions: String(ded),
+            netSalary: String(net),
+            status: 'draft',
+            warnings: [],
+          });
+        }
+      }
+      console.info('✅ Demo data enrichment integrated successfully');
+    }
 
     console.info('===============================================================');
     console.info('🎉 PEOPLEPAY360 DATABASE SEEDING COMPLETED SUCCESSFULLY!');

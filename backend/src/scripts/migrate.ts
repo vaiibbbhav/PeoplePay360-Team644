@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { pool, closeDb } from './db';
+import { pool, closeDb } from '../shared/db';
 
 export const runMigrations = async (): Promise<void> => {
   const client = await pool.connect();

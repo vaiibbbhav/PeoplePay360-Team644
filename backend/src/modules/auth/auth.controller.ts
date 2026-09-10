@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../shared/async-handler';
-import { loginSchema, resendVerificationSchema } from './auth.validators';
+import {
+  loginSchema,
+  resendVerificationSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from './auth.validators';
 import * as authService from './auth.service';
 import { UnauthorizedError } from '../../shared/errors';
 import { getCookieValue } from '../../shared/auth-middleware';
@@ -73,6 +78,22 @@ export const resendVerification = asyncHandler(
   async (req: Request, res: Response): Promise<void> => {
     const validated = resendVerificationSchema.parse(req.body);
     const result = await authService.resendVerificationEmail(validated.email);
+    res.json(result);
+  },
+);
+
+export const forgotPassword = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const validated = forgotPasswordSchema.parse(req.body);
+    const result = await authService.forgotPassword(validated.email);
+    res.json(result);
+  },
+);
+
+export const resetPassword = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const validated = resetPasswordSchema.parse(req.body);
+    const result = await authService.resetPassword(validated.token, validated.newPassword);
     res.json(result);
   },
 );
