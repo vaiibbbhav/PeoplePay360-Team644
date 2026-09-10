@@ -5,18 +5,6 @@
 
 ---
 
-## 📺 Demo
-
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=AOBDgXmI9wI">
-    <img src="https://img.youtube.com/vi/AOBDgXmI9wI/maxresdefault.jpg" alt="PeoplePay360 Demo Video" width="720">
-  </a>
-  <br>
-  <em>▶️ Click above to watch the end-to-end walkthrough video on YouTube.</em>
-</p>
-
----
-
 ## 🌟 Executive Summary
 
 **PeoplePay360** is a full-lifecycle HR and Payroll management platform designed for modern enterprises. It integrates operational HR administration (employee profiles, contracts, working schedules, attendance, and leave management) with a sequence-driven salary rule computation engine and 2-step payrun execution wizard.
