@@ -3,10 +3,6 @@
 > **Odoo Hackathon 2026** — Built by **Team 644**  
 > *A high-precision, modular HRMS and statutory payroll engine built with TypeScript, Node.js, React, Neon Serverless PostgreSQL, and OpenAFIS Biometrics.*
 
----
-
-## 📺 Product Walkthrough
-
 https://github.com/user-attachments/assets/ac2999f4-2e55-4650-baff-25a4be26237b
 
 ---
