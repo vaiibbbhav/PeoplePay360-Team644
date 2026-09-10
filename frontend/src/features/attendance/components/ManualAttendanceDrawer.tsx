@@ -111,8 +111,12 @@ export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
     }
 
     // Parse input times with Indian Standard Time (+05:30) offset
-    const checkInIso = checkInTime ? new Date(`${date}T${checkInTime}:00+05:30`).toISOString() : null;
-    const checkOutIso = checkOutTime ? new Date(`${date}T${checkOutTime}:00+05:30`).toISOString() : null;
+    const checkInIso = checkInTime
+      ? new Date(`${date}T${checkInTime}:00+05:30`).toISOString()
+      : null;
+    const checkOutIso = checkOutTime
+      ? new Date(`${date}T${checkOutTime}:00+05:30`).toISOString()
+      : null;
 
     const payload: SaveManualAttendancePayload = {
       id: initialRecord?.id || undefined,
@@ -212,7 +216,8 @@ export const ManualAttendanceDrawer: React.FC<ManualAttendanceDrawerProps> = ({
                   </option>
                   {employees.map((emp) => (
                     <option key={emp.id} value={emp.id}>
-                      {emp.first_name} {emp.last_name} ({emp.department_name || 'No Dept'}) - {emp.id}
+                      {emp.first_name} {emp.last_name} ({emp.department_name || 'No Dept'}) -{' '}
+                      {emp.id}
                     </option>
                   ))}
                 </select>

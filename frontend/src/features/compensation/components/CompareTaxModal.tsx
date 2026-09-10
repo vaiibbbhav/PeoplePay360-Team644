@@ -177,7 +177,8 @@ export const CompareTaxModal: React.FC<CompareTaxModalProps> = ({
                 Tax Regime Comparison (FY 2026-27)
               </h2>
               <p className="text-xs text-ink-soft mt-0.5">
-                Side-by-side analysis of New Tax Regime (u/s 115BAC) vs Old Tax Regime based on your declarations.
+                Side-by-side analysis of New Tax Regime (u/s 115BAC) vs Old Tax Regime based on your
+                declarations.
               </p>
             </div>
           </div>
@@ -206,10 +207,15 @@ export const CompareTaxModal: React.FC<CompareTaxModalProps> = ({
                   <span>Both regimes result in the exact same tax liability for your income.</span>
                 ) : (
                   <span>
-                    You save <strong className="font-bold underline">{formatCurrency(savings, showValues)}</strong> annually with the{' '}
+                    You save{' '}
+                    <strong className="font-bold underline">
+                      {formatCurrency(savings, showValues)}
+                    </strong>{' '}
+                    annually with the{' '}
                     <strong className="font-bold uppercase tracking-wide">
                       {recommendedRegime === 'new' ? 'New Tax Regime' : 'Old Tax Regime'}
-                    </strong>!
+                    </strong>
+                    !
                   </span>
                 )}
               </p>
@@ -233,7 +239,9 @@ export const CompareTaxModal: React.FC<CompareTaxModalProps> = ({
                 : 'bg-accent text-white hover:bg-accent/90'
             }`}
           >
-            {recommendedRegime === activeRegime ? 'Currently Selected' : `Switch to ${recommendedRegime === 'new' ? 'New' : 'Old'} Regime`}
+            {recommendedRegime === activeRegime
+              ? 'Currently Selected'
+              : `Switch to ${recommendedRegime === 'new' ? 'New' : 'Old'} Regime`}
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -297,7 +305,9 @@ export const CompareTaxModal: React.FC<CompareTaxModalProps> = ({
                   Less: House Rent Allowance Exemption (u/s 10(13A))
                 </td>
                 <td className="py-2.5 px-4 text-right font-mono text-emerald-600 dark:text-emerald-400">
-                  {data.hraExemption > 0 ? `-${formatCurrency(data.hraExemption, showValues)}` : '₹0'}
+                  {data.hraExemption > 0
+                    ? `-${formatCurrency(data.hraExemption, showValues)}`
+                    : '₹0'}
                 </td>
                 <td className="py-2.5 px-4 text-right font-mono text-ink-soft italic">
                   Not Eligible
@@ -370,10 +380,14 @@ export const CompareTaxModal: React.FC<CompareTaxModalProps> = ({
                   Less: Section 80CCD(2) Employer NPS Contribution
                 </td>
                 <td className="py-2.5 px-4 text-right font-mono text-emerald-600 dark:text-emerald-400">
-                  {data.section80CCD2 > 0 ? `-${formatCurrency(data.section80CCD2, showValues)}` : '₹0'}
+                  {data.section80CCD2 > 0
+                    ? `-${formatCurrency(data.section80CCD2, showValues)}`
+                    : '₹0'}
                 </td>
                 <td className="py-2.5 px-4 text-right font-mono text-emerald-600 dark:text-emerald-400">
-                  {data.section80CCD2 > 0 ? `-${formatCurrency(data.section80CCD2, showValues)}` : '₹0'}
+                  {data.section80CCD2 > 0
+                    ? `-${formatCurrency(data.section80CCD2, showValues)}`
+                    : '₹0'}
                 </td>
               </tr>
 
@@ -383,7 +397,9 @@ export const CompareTaxModal: React.FC<CompareTaxModalProps> = ({
                   Less: Other Chapter VI-A (80E Education, 80G Charity, 80TTA)
                 </td>
                 <td className="py-2.5 px-4 text-right font-mono text-emerald-600 dark:text-emerald-400">
-                  {data.otherDeductions > 0 ? `-${formatCurrency(data.otherDeductions, showValues)}` : '₹0'}
+                  {data.otherDeductions > 0
+                    ? `-${formatCurrency(data.otherDeductions, showValues)}`
+                    : '₹0'}
                 </td>
                 <td className="py-2.5 px-4 text-right font-mono text-ink-soft italic">
                   Not Eligible
@@ -414,14 +430,16 @@ export const CompareTaxModal: React.FC<CompareTaxModalProps> = ({
 
               {/* Section 87A Rebate */}
               <tr className="hover:bg-bg-raised/40">
-                <td className="py-2.5 px-4 text-ink-soft">
-                  Less: Section 87A Tax Rebate
+                <td className="py-2.5 px-4 text-ink-soft">Less: Section 87A Tax Rebate</td>
+                <td className="py-2.5 px-4 text-right font-mono text-emerald-600 dark:text-emerald-400">
+                  {oldCalc.rebate87A > 0
+                    ? `-${formatCurrency(oldCalc.rebate87A, showValues)}`
+                    : '₹0'}
                 </td>
                 <td className="py-2.5 px-4 text-right font-mono text-emerald-600 dark:text-emerald-400">
-                  {oldCalc.rebate87A > 0 ? `-${formatCurrency(oldCalc.rebate87A, showValues)}` : '₹0'}
-                </td>
-                <td className="py-2.5 px-4 text-right font-mono text-emerald-600 dark:text-emerald-400">
-                  {newCalc.rebate87A > 0 ? `-${formatCurrency(newCalc.rebate87A, showValues)}` : '₹0'}
+                  {newCalc.rebate87A > 0
+                    ? `-${formatCurrency(newCalc.rebate87A, showValues)}`
+                    : '₹0'}
                 </td>
               </tr>
 
@@ -441,14 +459,18 @@ export const CompareTaxModal: React.FC<CompareTaxModalProps> = ({
                 <td className="py-3 px-4 text-ink">Total Annual Tax Liability</td>
                 <td
                   className={`py-3 px-4 text-right font-mono font-extrabold ${
-                    oldCalc.totalTax <= newCalc.totalTax ? 'text-emerald-600 dark:text-emerald-400 text-base' : 'text-ink'
+                    oldCalc.totalTax <= newCalc.totalTax
+                      ? 'text-emerald-600 dark:text-emerald-400 text-base'
+                      : 'text-ink'
                   }`}
                 >
                   {formatCurrency(oldCalc.totalTax, showValues)}
                 </td>
                 <td
                   className={`py-3 px-4 text-right font-mono font-extrabold ${
-                    newCalc.totalTax <= oldCalc.totalTax ? 'text-emerald-600 dark:text-emerald-400 text-base' : 'text-ink'
+                    newCalc.totalTax <= oldCalc.totalTax
+                      ? 'text-emerald-600 dark:text-emerald-400 text-base'
+                      : 'text-ink'
                   }`}
                 >
                   {formatCurrency(newCalc.totalTax, showValues)}
@@ -473,8 +495,9 @@ export const CompareTaxModal: React.FC<CompareTaxModalProps> = ({
         <div className="mt-4 flex items-start gap-2 text-xs text-ink-soft bg-bg-raised p-3 rounded-lg border border-line">
           <AlertCircle className="w-4 h-4 text-accent shrink-0 mt-0.5" />
           <p>
-            Under Section 115BAC of the Income Tax Act, the New Tax Regime is the default regime for all salaried individuals.
-            Salaried employees can opt for the Old Tax Regime every financial year at the time of filing IT declaration or ITR filing u/s 139(1).
+            Under Section 115BAC of the Income Tax Act, the New Tax Regime is the default regime for
+            all salaried individuals. Salaried employees can opt for the Old Tax Regime every
+            financial year at the time of filing IT declaration or ITR filing u/s 139(1).
           </p>
         </div>
 

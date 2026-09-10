@@ -41,12 +41,12 @@ export const createUser = async (data: {
 };
 
 export const createEmployeeForUser = async (data: { userId: string }): Promise<EmployeeRecord> => {
-  const employeeCode = await generateEmployeeCode();
+  // const employeeCode = await generateEmployeeCode();
   const [employee] = await db
     .insert(employees)
     .values({
       userId: data.userId,
-      employeeCode,
+      // employeeCode,
       employmentStatus: 'incomplete',
     })
     .returning();

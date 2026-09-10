@@ -21,9 +21,12 @@ export const PolicyViewerModal: React.FC<PolicyViewerModalProps> = ({
   const [agreedPolicyId, setAgreedPolicyId] = useState<string | null>(null);
   const dialogRef = useDialogAccessibility({ isOpen, onClose });
 
-  const modalRef = useClickOutside<HTMLDivElement>(() => {
-    if (!isAccepting) onClose();
-  }, isOpen && Boolean(policy));
+  const modalRef = useClickOutside<HTMLDivElement>(
+    () => {
+      if (!isAccepting) onClose();
+    },
+    isOpen && Boolean(policy),
+  );
 
   if (!isOpen || !policy) return null;
 

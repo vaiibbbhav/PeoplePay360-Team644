@@ -107,7 +107,9 @@ export const LeaveRequestsTable: React.FC<LeaveRequestsTableProps> = ({
                 <th className="py-3 px-3.5 sm:px-4 font-semibold">Duration</th>
                 <th className="py-3 px-3.5 sm:px-4 font-semibold">Status</th>
                 <th className="py-3 px-3.5 sm:px-4 font-semibold">Reason / Audit</th>
-                {canManage && <th className="py-3 px-3.5 sm:px-4 font-semibold text-right">Actions</th>}
+                {canManage && (
+                  <th className="py-3 px-3.5 sm:px-4 font-semibold text-right">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-line">

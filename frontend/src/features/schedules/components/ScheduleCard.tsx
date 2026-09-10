@@ -8,11 +8,7 @@ type ScheduleCardProps = {
   onDelete: (schedule: ScheduleItem) => void;
 };
 
-export const ScheduleCard: React.FC<ScheduleCardProps> = ({
-  schedule,
-  onEdit,
-  onDelete,
-}) => {
+export const ScheduleCard: React.FC<ScheduleCardProps> = ({ schedule, onEdit, onDelete }) => {
   const workingDayCount = schedule.lines.length;
 
   return (
@@ -22,13 +18,11 @@ export const ScheduleCard: React.FC<ScheduleCardProps> = ({
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-bold tracking-tight text-ink m-0">
-                {schedule.name}
-              </h3>
-
+              <h3 className="text-lg font-bold tracking-tight text-ink m-0">{schedule.name}</h3>
             </div>
             <p className="text-xs text-ink-soft mt-1 mb-0">
-              {workingDayCount} working days per week · {schedule.employeeCount || 0} employees assigned
+              {workingDayCount} working days per week · {schedule.employeeCount || 0} employees
+              assigned
             </p>
           </div>
 
@@ -49,7 +43,12 @@ export const ScheduleCard: React.FC<ScheduleCardProps> = ({
       {/* Actions footer */}
       <div className="flex items-center justify-between pt-4 border-t border-line/60">
         <span className="text-[11px] text-ink-soft">
-          Created {new Date(schedule.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+          Created{' '}
+          {new Date(schedule.createdAt).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })}
         </span>
 
         <div className="flex items-center gap-2">

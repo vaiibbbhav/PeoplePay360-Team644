@@ -60,7 +60,8 @@ export const OrgTree: React.FC<OrgTreeProps> = ({
     const containerRect = container.getBoundingClientRect();
     const nodeRect = nodeEl.getBoundingClientRect();
 
-    const nodeCenter = nodeRect.left + nodeRect.width / 2 - containerRect.left + container.scrollLeft;
+    const nodeCenter =
+      nodeRect.left + nodeRect.width / 2 - containerRect.left + container.scrollLeft;
     const targetScrollLeft = nodeCenter - container.clientWidth / 2;
 
     container.scrollTo({

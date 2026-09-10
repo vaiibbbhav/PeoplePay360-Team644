@@ -32,39 +32,42 @@ export const getTimeOffMeta = asyncHandler(async (req: Request, res: Response): 
   });
 });
 
-export const getEmployeeBalances = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const query = balancesQuerySchema.parse(req.query);
-  const employeeId =
-    req.user?.role === 'Employee'
-      ? req.user.employeeId
-      : query.employeeId || req.user?.employeeId;
+export const getEmployeeBalances = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const query = balancesQuerySchema.parse(req.query);
+    const employeeId =
+      req.user?.role === 'Employee'
+        ? req.user.employeeId
+        : query.employeeId || req.user?.employeeId;
 
-  if (!employeeId) {
-    res.json([]);
-    return;
-  }
+    if (!employeeId) {
+      res.json([]);
+      return;
+    }
 
-  const balances = await timeoffService.getEmployeeBalances(employeeId);
-  res.json(balances);
-});
+    const balances = await timeoffService.getEmployeeBalances(employeeId);
+    res.json(balances);
+  },
+);
 
-export const listTimeOffTypes = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
-  const types = await timeoffService.listTimeOffTypes();
-  res.json(types);
-});
+export const listTimeOffTypes = asyncHandler(
+  async (_req: Request, res: Response): Promise<void> => {
+    const types = await timeoffService.listTimeOffTypes();
+    res.json(types);
+  },
+);
 
-export const createTimeOffType = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const validated = validateCreateTimeOffType(req.body);
-  const created = await timeoffService.createTimeOffType(validated);
-  res.status(201).json(created);
-});
+export const createTimeOffType = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const validated = validateCreateTimeOffType(req.body);
+    const created = await timeoffService.createTimeOffType(validated);
+    res.status(201).json(created);
+  },
+);
 
 export const listAllocations = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const query = allocationsQuerySchema.parse(req.query);
-  const employeeId =
-    req.user?.role === 'Employee'
-      ? req.user.employeeId
-      : query.employeeId;
+  const employeeId = req.user?.role === 'Employee' ? req.user.employeeId : query.employeeId;
   const allocations = await timeoffService.listAllocations(employeeId);
   res.json(allocations);
 });
@@ -75,11 +78,13 @@ export const createAllocation = asyncHandler(async (req: Request, res: Response)
   res.status(201).json(created);
 });
 
-export const approveAllocation = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const approverId = req.user?.id;
-  const approved = await timeoffService.approveAllocation(req.params.id, approverId);
-  res.json(approved);
-});
+export const approveAllocation = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const approverId = req.user?.id;
+    const approved = await timeoffService.approveAllocation(req.params.id, approverId);
+    res.json(approved);
+  },
+);
 
 export const listRequests = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const query = requestsQuerySchema.parse(req.query);
@@ -140,4 +145,3 @@ export const refuseRequest = asyncHandler(async (req: Request, res: Response): P
   const refused = await timeoffService.refuseRequest(req.params.id, reason, req.user?.id);
   res.json(refused);
 });
-

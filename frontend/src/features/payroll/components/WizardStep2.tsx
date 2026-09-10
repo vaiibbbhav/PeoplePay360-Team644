@@ -31,7 +31,10 @@ export const WizardStep2: React.FC<WizardStep2Props> = ({
   onBack,
   isSubmitting,
 }) => {
-  const { data: eligible = [], isLoading } = useEligibleEmployees(step1Data.periodStart, step1Data.periodEnd);
+  const { data: eligible = [], isLoading } = useEligibleEmployees(
+    step1Data.periodStart,
+    step1Data.periodEnd,
+  );
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
 

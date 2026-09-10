@@ -657,14 +657,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, title }) => {
               sidebarCollapsed ? 'justify-center p-1' : 'gap-2.5 px-2 py-2'
             } rounded-xl hover:bg-bg-raised transition-colors cursor-pointer text-ink no-underline group`}
           >
-            <div
-              className="w-8 h-8 rounded-full bg-accent/15 text-accent font-semibold flex items-center justify-center text-xs shrink-0 group-hover:bg-accent group-hover:text-accent-ink transition-colors"
-            >
+            <div className="w-8 h-8 rounded-full bg-accent/15 text-accent font-semibold flex items-center justify-center text-xs shrink-0 group-hover:bg-accent group-hover:text-accent-ink transition-colors">
               {initials}
             </div>
             {!sidebarCollapsed && (
               <div className="min-w-0 flex-1">
-                <div className="text-xs font-semibold text-ink truncate group-hover:text-accent transition-colors">{displayName}</div>
+                <div className="text-xs font-semibold text-ink truncate group-hover:text-accent transition-colors">
+                  {displayName}
+                </div>
                 <div className="text-[11px] text-ink-soft truncate">{user.email}</div>
               </div>
             )}

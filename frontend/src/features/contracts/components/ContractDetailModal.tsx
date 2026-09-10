@@ -99,7 +99,8 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
                   {contract.employee_name || 'Contract Beneficiary'}
                 </span>
                 <span className="text-[11px] text-ink-soft block truncate">
-                  {contract.job_position_title || 'Position not specified'} · {contract.department_name || 'No department'}
+                  {contract.job_position_title || 'Position not specified'} ·{' '}
+                  {contract.department_name || 'No department'}
                 </span>
               </div>
             </div>

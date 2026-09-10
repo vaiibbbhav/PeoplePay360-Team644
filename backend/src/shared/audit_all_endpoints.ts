@@ -1,4 +1,3 @@
-
 const BASE_URL = 'http://localhost:3000/api';
 
 async function runAudit() {
@@ -19,7 +18,7 @@ async function runAudit() {
   console.log('   ✓ Logged in successfully. Token obtained.\n');
 
   const headers = {
-    'Authorization': `Bearer ${token}`,
+    Authorization: `Bearer ${token}`,
     'Content-Type': 'application/json',
   };
 
@@ -44,17 +43,23 @@ async function runAudit() {
   // 2. Test Reports / Dashboard Endpoints
   console.log('2. Auditing Dashboard & Reports endpoints...');
   await testGet('Dashboard Overview', '/reports/dashboard', (d) => {
-    console.log(`     - Total Net Paid: ${d.kpis?.totalNetPaid}, Avg Salary: ${d.kpis?.averageSalary}, Present: ${d.attendance?.present}`);
+    console.log(
+      `     - Total Net Paid: ${d.kpis?.totalNetPaid}, Avg Salary: ${d.kpis?.averageSalary}, Present: ${d.attendance?.present}`,
+    );
   });
   await testGet('Admin Overview', '/reports/admin-overview', (d) => {
-    console.log(`     - Deactivated Accounts: ${d.attention?.deactivatedAccounts?.totalCount}, Incomplete: ${d.attention?.incompleteProfiles?.count}`);
+    console.log(
+      `     - Deactivated Accounts: ${d.attention?.deactivatedAccounts?.totalCount}, Incomplete: ${d.attention?.incompleteProfiles?.count}`,
+    );
   });
 
   // 3. Test Employees
   console.log('\n3. Auditing Employees endpoints...');
   const employeesData = await testGet('Employees List', '/employees?page=1&limit=50', (d) => {
     const list = d.data || d.employees || d;
-    console.log(`     - Total employees returned: ${list.length}, total count: ${d.total || list.length}`);
+    console.log(
+      `     - Total employees returned: ${list.length}, total count: ${d.total || list.length}`,
+    );
   });
   const firstEmp = (employeesData?.data || employeesData?.employees || employeesData || [])[0];
   if (firstEmp?.id) {

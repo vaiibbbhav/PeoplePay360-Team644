@@ -7,7 +7,10 @@ type AttendanceSummaryCardsProps = {
   isLoading?: boolean;
 };
 
-export const AttendanceSummaryCards: React.FC<AttendanceSummaryCardsProps> = ({ records, isLoading = false }) => {
+export const AttendanceSummaryCards: React.FC<AttendanceSummaryCardsProps> = ({
+  records,
+  isLoading = false,
+}) => {
   const total = records.length;
   const present = records.filter(
     (r) => r.status === 'Present' || r.status.toLowerCase() === 'present',
@@ -17,9 +20,7 @@ export const AttendanceSummaryCards: React.FC<AttendanceSummaryCardsProps> = ({ 
   ).length;
   const halfDay = records.filter(
     (r) =>
-      r.status === 'Half-Day' ||
-      r.status === 'Half-day' ||
-      r.status.toLowerCase() === 'half-day',
+      r.status === 'Half-Day' || r.status === 'Half-day' || r.status.toLowerCase() === 'half-day',
   ).length;
   const overtime = records.filter(
     (r) => r.status === 'Overtime' || r.status.toLowerCase() === 'overtime',
@@ -27,7 +28,10 @@ export const AttendanceSummaryCards: React.FC<AttendanceSummaryCardsProps> = ({ 
   const exceptions = records.filter((r) => r.is_manual_edit || r.exception_note).length;
 
   const totalHours = records.reduce((acc, r) => {
-    const hrs = typeof r.worked_hours === 'number' ? r.worked_hours : parseFloat(String(r.worked_hours || '0'));
+    const hrs =
+      typeof r.worked_hours === 'number'
+        ? r.worked_hours
+        : parseFloat(String(r.worked_hours || '0'));
     return acc + (isNaN(hrs) ? 0 : hrs);
   }, 0);
 
@@ -53,7 +57,8 @@ export const AttendanceSummaryCards: React.FC<AttendanceSummaryCardsProps> = ({ 
     {
       label: 'Exceptions & Edits',
       value: String(exceptions),
-      subtext: exceptions > 0 ? `${halfDay} half-day · ${overtime} overtime` : 'No audit exceptions',
+      subtext:
+        exceptions > 0 ? `${halfDay} half-day · ${overtime} overtime` : 'No audit exceptions',
     },
   ];
 

@@ -36,7 +36,9 @@ export const WeeklyTimetableGrid: React.FC<WeeklyTimetableGridProps> = ({ lines 
         <div className="min-w-[460px] sm:min-w-0">
           <div className="grid grid-cols-7 border-b border-line bg-bg-raised text-[11px] font-semibold text-ink-soft uppercase tracking-wider text-center py-2">
             {ALL_DAYS.map((day) => (
-              <div key={day} className="px-1">{day.slice(0, 3)}</div>
+              <div key={day} className="px-1">
+                {day.slice(0, 3)}
+              </div>
             ))}
           </div>
           <div className="grid grid-cols-7 divide-x divide-line text-center text-xs">

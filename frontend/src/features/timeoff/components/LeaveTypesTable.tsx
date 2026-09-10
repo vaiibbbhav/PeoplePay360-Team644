@@ -75,9 +75,7 @@ export const LeaveTypesTable: React.FC<LeaveTypesTableProps> = ({ canManage }) =
                       {t.code}
                     </td>
 
-                    <td className="py-3.5 px-4 whitespace-nowrap capitalize text-ink">
-                      {t.unit}
-                    </td>
+                    <td className="py-3.5 px-4 whitespace-nowrap capitalize text-ink">{t.unit}</td>
 
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       {t.isPaid ? (
@@ -124,10 +122,7 @@ export const LeaveTypesTable: React.FC<LeaveTypesTableProps> = ({ canManage }) =
         </div>
       )}
 
-      <NewLeaveTypeModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <NewLeaveTypeModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };

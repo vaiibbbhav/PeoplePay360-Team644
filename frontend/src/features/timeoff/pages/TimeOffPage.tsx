@@ -23,15 +23,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/Select';
-import {
-  Calendar,
-  Clock,
-  Plus,
-  Users,
-  ShieldCheck,
-  Settings,
-  AlertCircle,
-} from 'lucide-react';
+import { Calendar, Clock, Plus, Users, ShieldCheck, Settings, AlertCircle } from 'lucide-react';
 
 export const TimeOffPage: React.FC = () => {
   const { data: user } = useCurrentUser();
@@ -39,17 +31,14 @@ export const TimeOffPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const role = user?.role || 'Employee';
-  const isHrOrAdmin = [
-    'Admin',
-    'HR Manager',
-    'HR Payroll Manager',
-    'HR Payroll User',
-  ].includes(role);
+  const isHrOrAdmin = ['Admin', 'HR Manager', 'HR Payroll Manager', 'HR Payroll User'].includes(
+    role,
+  );
   const isManager = meta?.isManager ?? false;
 
   // Active Tab: Default to 'company_requests' for HR/Admin, 'my_leave' for standard employees
   type TabKey = 'company_requests' | 'team_approvals' | 'my_leave' | 'allocations' | 'policies';
-  
+
   const getInitialTab = (): TabKey => {
     const tabParam = searchParams.get('tab');
     if (tabParam === 'requests' || tabParam === 'company_requests') return 'company_requests';
@@ -66,7 +55,8 @@ export const TimeOffPage: React.FC = () => {
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     if (tabParam) {
-      if (tabParam === 'requests' || tabParam === 'company_requests') setActiveTab('company_requests');
+      if (tabParam === 'requests' || tabParam === 'company_requests')
+        setActiveTab('company_requests');
       else if (tabParam === 'team' || tabParam === 'team_approvals') setActiveTab('team_approvals');
       else if (tabParam === 'allocations') setActiveTab('allocations');
       else if (tabParam === 'policies') setActiveTab('policies');
@@ -292,10 +282,12 @@ export const TimeOffPage: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="text-xs font-semibold text-ink">
-                      {pendingCompanyCount} Leave Request{pendingCompanyCount === 1 ? '' : 's'} Awaiting Your Decision
+                      {pendingCompanyCount} Leave Request{pendingCompanyCount === 1 ? '' : 's'}{' '}
+                      Awaiting Your Decision
                     </h4>
                     <p className="text-xs text-ink-soft mt-0.5">
-                      Approving requests immediately updates allocation balances and links to payroll calculations.
+                      Approving requests immediately updates allocation balances and links to
+                      payroll calculations.
                     </p>
                   </div>
                 </div>
@@ -321,16 +313,15 @@ export const TimeOffPage: React.FC = () => {
                 />
 
                 <div className="w-full sm:w-auto">
-                  <Select
-                    value={statusFilter}
-                    onValueChange={(val) => setStatusFilter(val)}
-                  >
+                  <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val)}>
                     <SelectTrigger className="w-full sm:w-44">
                       <SelectValue placeholder="All Requests" />
                     </SelectTrigger>
                     <SelectContent align="end">
                       <SelectItem value="all">All Requests ({allRequests.length})</SelectItem>
-                      <SelectItem value="pending">Pending Review ({pendingCompanyCount})</SelectItem>
+                      <SelectItem value="pending">
+                        Pending Review ({pendingCompanyCount})
+                      </SelectItem>
                       <SelectItem value="approved">Approved ({approvedCompanyCount})</SelectItem>
                       <SelectItem value="refused">Refused ({refusedCompanyCount})</SelectItem>
                     </SelectContent>
@@ -340,7 +331,9 @@ export const TimeOffPage: React.FC = () => {
 
               {/* Quick Status Pill Bar */}
               <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-line/60 text-xs">
-                <span className="text-[11px] font-medium text-ink-soft uppercase tracking-wider mr-1">Status:</span>
+                <span className="text-[11px] font-medium text-ink-soft uppercase tracking-wider mr-1">
+                  Status:
+                </span>
                 <button
                   type="button"
                   onClick={() => setStatusFilter('all')}
@@ -429,14 +422,10 @@ export const TimeOffPage: React.FC = () => {
         )}
 
         {/* ─── Tab Content: Allocations Ledger ─── */}
-        {activeTab === 'allocations' && (
-          <AllocationsTable canManage={isHrOrAdmin} />
-        )}
+        {activeTab === 'allocations' && <AllocationsTable canManage={isHrOrAdmin} />}
 
         {/* ─── Tab Content: Leave Policies ─── */}
-        {activeTab === 'policies' && (
-          <LeaveTypesTable canManage={isHrOrAdmin} />
-        )}
+        {activeTab === 'policies' && <LeaveTypesTable canManage={isHrOrAdmin} />}
 
         {/* ─── Tab Content: My Personal Leave & Balances ─── */}
         {activeTab === 'my_leave' && (

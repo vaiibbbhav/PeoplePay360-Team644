@@ -32,14 +32,17 @@ export const PreviousEmploymentPanel: React.FC<PreviousEmploymentPanelProps> = (
             Previous Employment Details (Form 12B)
           </h3>
           <p className="text-xs text-ink-soft mt-0.5">
-            If you joined in FY {financialYear}, declare earnings & TDS from your previous employer to prevent under-deduction.
+            If you joined in FY {financialYear}, declare earnings & TDS from your previous employer
+            to prevent under-deduction.
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-ink">Gross Salary from Previous Employer</label>
+          <label className="text-xs font-semibold text-ink">
+            Gross Salary from Previous Employer
+          </label>
           <div className="flex items-center gap-2">
             <span className="text-xs text-ink-soft">₹</span>
             <input
@@ -52,7 +55,9 @@ export const PreviousEmploymentPanel: React.FC<PreviousEmploymentPanelProps> = (
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-ink">TDS Deducted by Previous Employer</label>
+          <label className="text-xs font-semibold text-ink">
+            TDS Deducted by Previous Employer
+          </label>
           <div className="flex items-center gap-2">
             <span className="text-xs text-ink-soft">₹</span>
             <input

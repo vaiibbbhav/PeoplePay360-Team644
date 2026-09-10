@@ -70,8 +70,9 @@ async function runRoleAudit() {
 
   // BLOCKED: Salary Structures
   const hrStructures = await testEndpoint(hrManagerToken, 'GET', '/payroll/structures');
-  console.log(`[HR Manager] GET /payroll/structures: ${hrStructures.status} (Expected 403 Forbidden)`);
-
+  console.log(
+    `[HR Manager] GET /payroll/structures: ${hrStructures.status} (Expected 403 Forbidden)`,
+  );
 
   // 2. Test HR Payroll User (rohan.mehta@company.com or aarav@company.com)
   console.log('\n--- 2. Testing HR Payroll User (rohan.mehta@company.com) ---');
@@ -102,7 +103,9 @@ async function runRoleAudit() {
     name: 'Unauthorized Structure',
     code: 'UNAUTH',
   });
-  console.log(`[HR Payroll User] POST /payroll/structures: ${puCreateStruct.status} (Expected 403 Forbidden)`);
+  console.log(
+    `[HR Payroll User] POST /payroll/structures: ${puCreateStruct.status} (Expected 403 Forbidden)`,
+  );
 
   // BLOCKED: Create Salary Rule
   const puCreateRule = await testEndpoint(payrollUserToken, 'POST', '/payroll/rules', {
@@ -113,8 +116,9 @@ async function runRoleAudit() {
     sequence: 1,
     computationMethod: 'fixed',
   });
-  console.log(`[HR Payroll User] POST /payroll/rules: ${puCreateRule.status} (Expected 403 Forbidden)`);
-
+  console.log(
+    `[HR Payroll User] POST /payroll/rules: ${puCreateRule.status} (Expected 403 Forbidden)`,
+  );
 
   // 3. Test HR Payroll Manager (nisha@company.com)
   console.log('\n--- 3. Testing HR Payroll Manager (nisha@company.com) ---');
@@ -134,8 +138,9 @@ async function runRoleAudit() {
     code: `TEST_${Date.now()}`,
     description: 'Structure for RBAC verification',
   });
-  console.log(`[HR Payroll Manager] POST /payroll/structures: ${pmCreateStruct.status} (Expected 201 Created)`);
-
+  console.log(
+    `[HR Payroll Manager] POST /payroll/structures: ${pmCreateStruct.status} (Expected 201 Created)`,
+  );
 
   // 4. Test Admin (admin@peoplepay.com)
   console.log('\n--- 4. Testing Admin (admin@peoplepay.com) ---');

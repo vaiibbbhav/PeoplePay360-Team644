@@ -102,26 +102,35 @@ export const Form12BBDocumentModal: React.FC<Form12BBProps> = ({
             </h1>
             <p className="text-xs text-ink-soft font-mono">[See rule 26C]</p>
             <p className="text-xs text-ink-soft max-w-lg mx-auto">
-              Statement of claims by an employee for deduction of tax under section 192 of the Income-tax Act, 1961
+              Statement of claims by an employee for deduction of tax under section 192 of the
+              Income-tax Act, 1961
             </p>
           </div>
 
           {/* Employee Metadata */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-xl bg-bg-raised border border-line text-xs">
             <div>
-              <span className="text-ink-soft block font-mono text-[11px] uppercase">1. Name of Employee</span>
+              <span className="text-ink-soft block font-mono text-[11px] uppercase">
+                1. Name of Employee
+              </span>
               <span className="font-bold text-ink mt-0.5 block">{employeeName}</span>
             </div>
             <div>
-              <span className="text-ink-soft block font-mono text-[11px] uppercase">2. Permanent Account No. (PAN)</span>
+              <span className="text-ink-soft block font-mono text-[11px] uppercase">
+                2. Permanent Account No. (PAN)
+              </span>
               <span className="font-mono font-bold text-ink mt-0.5 block">{panNumber}</span>
             </div>
             <div>
-              <span className="text-ink-soft block font-mono text-[11px] uppercase">3. Designation / Role</span>
+              <span className="text-ink-soft block font-mono text-[11px] uppercase">
+                3. Designation / Role
+              </span>
               <span className="font-medium text-ink mt-0.5 block">{designation}</span>
             </div>
             <div>
-              <span className="text-ink-soft block font-mono text-[11px] uppercase">4. Financial Year</span>
+              <span className="text-ink-soft block font-mono text-[11px] uppercase">
+                4. Financial Year
+              </span>
               <span className="font-bold text-accent mt-0.5 block">{financialYear}</span>
             </div>
           </div>
@@ -130,7 +139,9 @@ export const Form12BBDocumentModal: React.FC<Form12BBProps> = ({
           <div className="flex items-center justify-between px-4 py-2.5 rounded-lg border border-line bg-bg text-xs">
             <span className="text-ink-soft">Declared Tax Regime for TDS:</span>
             <span className="font-bold uppercase tracking-wider text-accent">
-              {regime === 'new' ? 'New Tax Regime (Section 115BAC)' : 'Old Tax Regime (With Chapter VI-A Deductions)'}
+              {regime === 'new'
+                ? 'New Tax Regime (Section 115BAC)'
+                : 'Old Tax Regime (With Chapter VI-A Deductions)'}
             </span>
           </div>
 
@@ -151,15 +162,23 @@ export const Form12BBDocumentModal: React.FC<Form12BBProps> = ({
                   <td className="py-3 px-3 text-center font-mono font-bold text-ink">1</td>
                   <td className="py-3 px-3">
                     <span className="font-semibold text-ink block">House Rent Allowance (HRA)</span>
-                    <span className="text-ink-soft text-[11px]">Rent paid to the landlord during the financial year</span>
+                    <span className="text-ink-soft text-[11px]">
+                      Rent paid to the landlord during the financial year
+                    </span>
                   </td>
                   <td className="py-3 px-3 text-right font-mono font-bold text-ink">
                     {formatCurrency(rentPaid, true)}
                   </td>
                   <td className="py-3 px-3 text-ink-soft text-[11px] space-y-0.5">
-                    <div><b>Landlord:</b> {landlordName}</div>
-                    <div><b>Landlord PAN:</b> {landlordPan}</div>
-                    <div><b>Address:</b> {landlordAddress}</div>
+                    <div>
+                      <b>Landlord:</b> {landlordName}
+                    </div>
+                    <div>
+                      <b>Landlord PAN:</b> {landlordPan}
+                    </div>
+                    <div>
+                      <b>Address:</b> {landlordAddress}
+                    </div>
                   </td>
                 </tr>
 
@@ -167,14 +186,20 @@ export const Form12BBDocumentModal: React.FC<Form12BBProps> = ({
                 <tr className="hover:bg-bg-raised/40">
                   <td className="py-3 px-3 text-center font-mono font-bold text-ink">2</td>
                   <td className="py-3 px-3">
-                    <span className="font-semibold text-ink block">Leave Travel Concession / Assistance</span>
-                    <span className="text-ink-soft text-[11px]">Travel expenditure incurred within India (Section 10(5))</span>
+                    <span className="font-semibold text-ink block">
+                      Leave Travel Concession / Assistance
+                    </span>
+                    <span className="text-ink-soft text-[11px]">
+                      Travel expenditure incurred within India (Section 10(5))
+                    </span>
                   </td>
                   <td className="py-3 px-3 text-right font-mono font-bold text-ink">
                     {formatCurrency(ltaAmount, true)}
                   </td>
                   <td className="py-3 px-3 text-ink-soft text-[11px]">
-                    {ltaAmount > 0 ? 'Travel boarding tickets and proof vouchers attached' : 'Nil declared'}
+                    {ltaAmount > 0
+                      ? 'Travel boarding tickets and proof vouchers attached'
+                      : 'Nil declared'}
                   </td>
                 </tr>
 
@@ -182,24 +207,38 @@ export const Form12BBDocumentModal: React.FC<Form12BBProps> = ({
                 <tr className="hover:bg-bg-raised/40">
                   <td className="py-3 px-3 text-center font-mono font-bold text-ink">3</td>
                   <td className="py-3 px-3">
-                    <span className="font-semibold text-ink block">Deduction of Interest on Borrowing</span>
-                    <span className="text-ink-soft text-[11px]">Interest payable on loan for self-occupied / let-out property (u/s 24(b))</span>
+                    <span className="font-semibold text-ink block">
+                      Deduction of Interest on Borrowing
+                    </span>
+                    <span className="text-ink-soft text-[11px]">
+                      Interest payable on loan for self-occupied / let-out property (u/s 24(b))
+                    </span>
                   </td>
                   <td className="py-3 px-3 text-right font-mono font-bold text-ink">
                     {formatCurrency(homeLoanInterest, true)}
                   </td>
                   <td className="py-3 px-3 text-ink-soft text-[11px] space-y-0.5">
-                    <div><b>Lender:</b> {lenderName}</div>
-                    <div><b>Lender PAN:</b> {lenderPan}</div>
-                    <div><b>Certificate:</b> Provisional Interest Certificate</div>
+                    <div>
+                      <b>Lender:</b> {lenderName}
+                    </div>
+                    <div>
+                      <b>Lender PAN:</b> {lenderPan}
+                    </div>
+                    <div>
+                      <b>Certificate:</b> Provisional Interest Certificate
+                    </div>
                   </td>
                 </tr>
 
                 {/* 4. Chapter VI-A: 80C */}
                 <tr className="hover:bg-bg-raised/40">
-                  <td className="py-3 px-3 text-center font-mono font-bold text-ink" rowSpan={2}>4</td>
+                  <td className="py-3 px-3 text-center font-mono font-bold text-ink" rowSpan={2}>
+                    4
+                  </td>
                   <td className="py-3 px-3">
-                    <span className="font-semibold text-ink block">Deductions under Chapter VI-A (Section 80C & 80CCC)</span>
+                    <span className="font-semibold text-ink block">
+                      Deductions under Chapter VI-A (Section 80C & 80CCC)
+                    </span>
                     <div className="mt-1 space-y-0.5 text-[11px] text-ink-soft">
                       {section80CItems.filter((i) => i.amount > 0).length === 0 ? (
                         <span>EPF / Standard deductions</span>
@@ -226,18 +265,24 @@ export const Form12BBDocumentModal: React.FC<Form12BBProps> = ({
                 {/* 4b. Other Chapter VI-A items (80D, 80CCD, etc.) */}
                 <tr className="hover:bg-bg-raised/40">
                   <td className="py-3 px-3">
-                    <span className="font-semibold text-ink block">Other Deductions under Chapter VI-A</span>
+                    <span className="font-semibold text-ink block">
+                      Other Deductions under Chapter VI-A
+                    </span>
                     <div className="mt-1 space-y-0.5 text-[11px] text-ink-soft">
                       {section80DAmount > 0 && (
                         <div className="flex justify-between max-w-sm">
                           <span>• Section 80D (Health Insurance / Mediclaim)</span>
-                          <span className="font-mono">{formatCurrency(section80DAmount, true)}</span>
+                          <span className="font-mono">
+                            {formatCurrency(section80DAmount, true)}
+                          </span>
                         </div>
                       )}
                       {section80CCD1BAmount > 0 && (
                         <div className="flex justify-between max-w-sm">
                           <span>• Section 80CCD(1B) (Voluntary NPS Contribution)</span>
-                          <span className="font-mono">{formatCurrency(section80CCD1BAmount, true)}</span>
+                          <span className="font-mono">
+                            {formatCurrency(section80CCD1BAmount, true)}
+                          </span>
                         </div>
                       )}
                       {otherDeductionsItems
@@ -267,15 +312,24 @@ export const Form12BBDocumentModal: React.FC<Form12BBProps> = ({
               Verification Declaration
             </h3>
             <p className="text-xs text-ink-soft leading-relaxed italic">
-              I, <strong className="text-ink not-italic">{employeeName}</strong>, do hereby certify that what is stated above is true to the best of my knowledge and belief.
-              I undertake to indemnify the employer for any short-deduction or penalty arising out of incorrect or incomplete declarations provided by me.
+              I, <strong className="text-ink not-italic">{employeeName}</strong>, do hereby certify
+              that what is stated above is true to the best of my knowledge and belief. I undertake
+              to indemnify the employer for any short-deduction or penalty arising out of incorrect
+              or incomplete declarations provided by me.
             </p>
 
             <div className="pt-4 flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-t border-line/60 text-xs">
               <div>
-                <span className="text-ink-soft block font-mono text-[11px]">Place of Submission: India</span>
                 <span className="text-ink-soft block font-mono text-[11px]">
-                  Date: {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                  Place of Submission: India
+                </span>
+                <span className="text-ink-soft block font-mono text-[11px]">
+                  Date:{' '}
+                  {new Date().toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                  })}
                 </span>
               </div>
 

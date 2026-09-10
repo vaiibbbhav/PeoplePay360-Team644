@@ -262,8 +262,9 @@ export async function getCrossModuleAnomalies() {
       )
   `);
 
-  const employeesWithoutContractCount =
-    Number((employeesWithoutContractCountRes.rows[0] as any)?.count || 0);
+  const employeesWithoutContractCount = Number(
+    (employeesWithoutContractCountRes.rows[0] as any)?.count || 0,
+  );
 
   // 2. Payruns stuck in draft
   const draftPayruns = await db

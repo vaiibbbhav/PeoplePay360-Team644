@@ -124,7 +124,9 @@ export const EmployeeDirectoryPage: React.FC = () => {
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="font-serif text-sm font-bold text-ink leading-tight truncate">{fullName}</h3>
+            <h3 className="font-serif text-sm font-bold text-ink leading-tight truncate">
+              {fullName}
+            </h3>
             <span className="text-[11px] text-ink-soft block mt-0.5 truncate">
               {emp.job_position_title || 'Unassigned Role'}
             </span>
@@ -133,11 +135,15 @@ export const EmployeeDirectoryPage: React.FC = () => {
         <div className="space-y-1 pt-2 border-t border-line text-[11px] text-ink-soft">
           <div className="flex justify-between">
             <span>Dept:</span>
-            <span className="font-medium text-ink truncate max-w-[120px]">{emp.department_name || '—'}</span>
+            <span className="font-medium text-ink truncate max-w-[120px]">
+              {emp.department_name || '—'}
+            </span>
           </div>
           <div className="flex justify-between">
             <span>Manager:</span>
-            <span className="font-medium text-ink truncate max-w-[120px]">{emp.manager_name || '—'}</span>
+            <span className="font-medium text-ink truncate max-w-[120px]">
+              {emp.manager_name || '—'}
+            </span>
           </div>
         </div>
         <div className="pt-2 mt-2 border-t border-line text-[11px] text-accent font-medium">
@@ -146,7 +152,6 @@ export const EmployeeDirectoryPage: React.FC = () => {
       </div>
     );
   };
-
 
   return (
     <AppLayout
@@ -165,9 +170,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-5 sm:pb-6">
           <div>
             <div className="mb-1">
-              <span className="text-xs font-mono text-accent font-medium">
-                Core HR
-              </span>
+              <span className="text-xs font-mono text-accent font-medium">Core HR</span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               Employee Directory
@@ -198,7 +201,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
               onValueChange={(val) => {
                 setDepartmentFilter(val === 'all' ? '' : val);
                 setCurrentPage(1);
-              }} 
+              }}
             >
               <SelectTrigger className="w-full sm:w-44">
                 <SelectValue placeholder="All Departments" />
@@ -206,7 +209,9 @@ export const EmployeeDirectoryPage: React.FC = () => {
               <SelectContent align="end">
                 <SelectItem value="all">All Departments</SelectItem>
                 {meta?.departments.map((d) => (
-                  <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
+                  <SelectItem key={d.id} value={d.id}>
+                    {d.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -216,7 +221,7 @@ export const EmployeeDirectoryPage: React.FC = () => {
               onValueChange={(val) => {
                 setStatusFilter(val === 'all' ? '' : (val as EmploymentStatus));
                 setCurrentPage(1);
-              }} 
+              }}
             >
               <SelectTrigger className="w-full sm:w-36">
                 <SelectValue placeholder="All Statuses" />
@@ -238,7 +243,12 @@ export const EmployeeDirectoryPage: React.FC = () => {
                 className={`px-3 py-1.5 text-xs font-medium cursor-pointer transition-colors ${viewMode === 'kanban' ? 'bg-accent text-accent-ink' : 'bg-bg text-ink-soft hover:text-ink'}`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"
+                  />
                 </svg>
               </button>
               <button
@@ -247,7 +257,12 @@ export const EmployeeDirectoryPage: React.FC = () => {
                 className={`px-3 py-1.5 text-xs font-medium cursor-pointer transition-colors border-l border-line ${viewMode === 'list' ? 'bg-accent text-accent-ink' : 'bg-bg text-ink-soft hover:text-ink'}`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                  />
                 </svg>
               </button>
             </div>
@@ -283,7 +298,9 @@ export const EmployeeDirectoryPage: React.FC = () => {
               return (
                 <div key={status} className="space-y-2">
                   <div className="flex items-center gap-2 px-1">
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${STATUS_BADGE[status]}`}>
+                    <span
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${STATUS_BADGE[status]}`}
+                    >
                       {label}
                     </span>
                     <span className="text-[10px] text-ink-soft">{colEmployees.length}</span>
@@ -307,9 +324,15 @@ export const EmployeeDirectoryPage: React.FC = () => {
                 <thead>
                   <tr className="bg-bg-raised border-b border-line">
                     <th className="text-left px-4 py-3 font-semibold text-ink-soft">Employee</th>
-                    <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden sm:table-cell">Department</th>
-                    <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden md:table-cell">Manager</th>
-                    <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden lg:table-cell">Schedule</th>
+                    <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden sm:table-cell">
+                      Department
+                    </th>
+                    <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden md:table-cell">
+                      Manager
+                    </th>
+                    <th className="text-left px-4 py-3 font-semibold text-ink-soft hidden lg:table-cell">
+                      Schedule
+                    </th>
                     <th className="text-left px-4 py-3 font-semibold text-ink-soft">Status</th>
                   </tr>
                 </thead>
@@ -329,22 +352,38 @@ export const EmployeeDirectoryPage: React.FC = () => {
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg bg-accent-soft text-accent font-serif font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden">
                               {emp.avatar_url ? (
-                                <img src={emp.avatar_url} alt={fullName} className="w-full h-full object-cover" />
+                                <img
+                                  src={emp.avatar_url}
+                                  alt={fullName}
+                                  className="w-full h-full object-cover"
+                                />
                               ) : (
                                 <span>{initials}</span>
                               )}
                             </div>
                             <div className="min-w-0">
-                              <div className="font-serif font-bold text-ink truncate">{fullName}</div>
-                              <div className="text-[11px] text-ink-soft truncate">{emp.job_position_title || '—'}</div>
+                              <div className="font-serif font-bold text-ink truncate">
+                                {fullName}
+                              </div>
+                              <div className="text-[11px] text-ink-soft truncate">
+                                {emp.job_position_title || '—'}
+                              </div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-ink-soft hidden sm:table-cell">{emp.department_name || '—'}</td>
-                        <td className="px-4 py-3 text-ink-soft hidden md:table-cell">{emp.manager_name || '—'}</td>
-                        <td className="px-4 py-3 text-ink-soft hidden lg:table-cell">{emp.working_schedule_name || '—'}</td>
+                        <td className="px-4 py-3 text-ink-soft hidden sm:table-cell">
+                          {emp.department_name || '—'}
+                        </td>
+                        <td className="px-4 py-3 text-ink-soft hidden md:table-cell">
+                          {emp.manager_name || '—'}
+                        </td>
+                        <td className="px-4 py-3 text-ink-soft hidden lg:table-cell">
+                          {emp.working_schedule_name || '—'}
+                        </td>
                         <td className="px-4 py-3">
-                          <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${STATUS_BADGE[emp.employment_status] || STATUS_BADGE.inactive}`}>
+                          <span
+                            className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${STATUS_BADGE[emp.employment_status] || STATUS_BADGE.inactive}`}
+                          >
                             {emp.employment_status.replace('_', ' ')}
                           </span>
                         </td>

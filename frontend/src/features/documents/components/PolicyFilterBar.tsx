@@ -42,10 +42,7 @@ export const PolicyFilterBar: React.FC<PolicyFilterBarProps> = ({
       />
 
       <div className="flex items-center gap-2 shrink-0">
-        <Select
-          value={selectedCategory}
-          onValueChange={onCategoryChange}
-        >
+        <Select value={selectedCategory} onValueChange={onCategoryChange}>
           <SelectTrigger className="w-full sm:w-48">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>

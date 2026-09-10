@@ -176,10 +176,7 @@ export async function updatePayrunStatus(id: string, status: string) {
     .returning();
 
   // Cascade status to child payslips in this payrun
-  await db
-    .update(payslips)
-    .set({ status, updatedAt: new Date() })
-    .where(eq(payslips.payrunId, id));
+  await db.update(payslips).set({ status, updatedAt: new Date() }).where(eq(payslips.payrunId, id));
 
   return updated || null;
 }

@@ -35,11 +35,7 @@ router.get(
   payrollController.listSalaryRules,
 );
 
-router.post(
-  '/rules',
-  requirePermission('payroll.rule.write'),
-  payrollController.createSalaryRule,
-);
+router.post('/rules', requirePermission('payroll.rule.write'), payrollController.createSalaryRule);
 
 // Payrun Wizard Step 1 Helper: List Eligible Employees
 router.get(
@@ -49,11 +45,7 @@ router.get(
 );
 
 // Payruns
-router.get(
-  '/payruns',
-  requirePermission('payroll.payrun.read'),
-  payrollController.listPayruns,
-);
+router.get('/payruns', requirePermission('payroll.payrun.read'), payrollController.listPayruns);
 
 router.get(
   '/payruns/:id',
@@ -106,9 +98,6 @@ router.post(
 );
 
 // Fast testing route for Aarav payslip email delivery
-router.post(
-  '/send-aarav-payslip',
-  payrollController.sendAaravPayslip,
-);
+router.post('/send-aarav-payslip', payrollController.sendAaravPayslip);
 
 export default router;

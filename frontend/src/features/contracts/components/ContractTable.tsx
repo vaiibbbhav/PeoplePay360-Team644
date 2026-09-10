@@ -8,11 +8,7 @@ type ContractTableProps = {
   onEdit: (contract: ContractItem) => void;
 };
 
-export const ContractTable: React.FC<ContractTableProps> = ({
-  contracts,
-  onSelect,
-  onEdit,
-}) => {
+export const ContractTable: React.FC<ContractTableProps> = ({ contracts, onSelect, onEdit }) => {
   const {
     currentPage,
     setCurrentPage,
@@ -116,16 +112,16 @@ export const ContractTable: React.FC<ContractTableProps> = ({
                         {contract.employee_name || 'Unnamed Employee'}
                       </span>
                       <span className="text-[11px] text-ink-soft block">
-                        {contract.job_position_title || contract.department_name || contract.employee_email}
+                        {contract.job_position_title ||
+                          contract.department_name ||
+                          contract.employee_email}
                       </span>
                     </div>
                   </div>
                 </td>
 
                 {/* Contract Name */}
-                <td className="py-3.5 px-4 font-medium text-ink">
-                  {contract.name}
-                </td>
+                <td className="py-3.5 px-4 font-medium text-ink">{contract.name}</td>
 
                 {/* Wage */}
                 <td className="py-3.5 px-4">
@@ -139,24 +135,17 @@ export const ContractTable: React.FC<ContractTableProps> = ({
 
                 {/* Duration */}
                 <td className="py-3.5 px-4">
-                  <span className="text-ink block">
-                    {formatDate(contract.start_date)}
-                  </span>
+                  <span className="text-ink block">{formatDate(contract.start_date)}</span>
                   <span className="text-[10px] text-ink-soft block">
                     to {formatDate(contract.end_date)}
                   </span>
                 </td>
 
                 {/* Status */}
-                <td className="py-3.5 px-4">
-                  {renderStatusBadge(contract.status)}
-                </td>
+                <td className="py-3.5 px-4">{renderStatusBadge(contract.status)}</td>
 
                 {/* Actions */}
-                <td
-                  className="py-3.5 px-4 text-right"
-                  onClick={(e) => e.stopPropagation()}
-                >
+                <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-1.5">
                     <button
                       type="button"

@@ -25,7 +25,8 @@ export const WizardStep1: React.FC<WizardStep1Props> = ({ onNext, onCancel }) =>
     if (!name.trim()) return setError('Payrun name is required.');
     if (!salaryStructureId) return setError('Please select a salary structure.');
     if (!periodStart || !periodEnd) return setError('Please set both period start and end dates.');
-    if (new Date(periodEnd) < new Date(periodStart)) return setError('Period end must be after period start.');
+    if (new Date(periodEnd) < new Date(periodStart))
+      return setError('Period end must be after period start.');
     setError(null);
     onNext({ name: name.trim(), salaryStructureId, periodStart, periodEnd });
   };
@@ -43,7 +44,9 @@ export const WizardStep1: React.FC<WizardStep1Props> = ({ onNext, onCancel }) =>
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
         <h2 className="font-sans text-xl font-bold text-ink">Step 1 — Select Structure & Period</h2>
-        <p className="text-xs text-ink-soft mt-1">Choose the salary structure and payroll period for this run.</p>
+        <p className="text-xs text-ink-soft mt-1">
+          Choose the salary structure and payroll period for this run.
+        </p>
       </div>
 
       {error && (

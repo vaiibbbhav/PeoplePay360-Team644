@@ -6,36 +6,196 @@ import { passwordSchema } from '../modules/auth/auth.validators';
 
 // --- Plausible Indian Corporate Profiles Data ---
 const FIRST_NAMES_MALE = [
-  'Aarav', 'Rohan', 'Aditya', 'Vikram', 'Kabir', 'Nikhil', 'Kunal', 'Sameer',
-  'Arjun', 'Pranav', 'Siddharth', 'Varun', 'Rahul', 'Aniket', 'Kartik', 'Dev',
-  'Tanmay', 'Gaurav', 'Yash', 'Aman', 'Alok', 'Harsh', 'Rishabh', 'Vivek',
-  'Tarun', 'Manish', 'Chetan', 'Sanjay', 'Mohit', 'Deepak', 'Rakesh', 'Vishal',
-  'Suresh', 'Amit', 'Nitin', 'Abhishek', 'Karan', 'Rajesh', 'Sachin', 'Pankaj',
-  'Mayank', 'Hemant', 'Sunil', 'Anil', 'Girish', 'Dinesh', 'Ashish', 'Bhavesh',
-  'Ravi', 'Manoj', 'Vijay', 'Sumit', 'Prateek', 'Harish', 'Lokesh', 'Neeraj',
-  'Akash', 'Suraj', 'Ajay', 'Vikas'
+  'Aarav',
+  'Rohan',
+  'Aditya',
+  'Vikram',
+  'Kabir',
+  'Nikhil',
+  'Kunal',
+  'Sameer',
+  'Arjun',
+  'Pranav',
+  'Siddharth',
+  'Varun',
+  'Rahul',
+  'Aniket',
+  'Kartik',
+  'Dev',
+  'Tanmay',
+  'Gaurav',
+  'Yash',
+  'Aman',
+  'Alok',
+  'Harsh',
+  'Rishabh',
+  'Vivek',
+  'Tarun',
+  'Manish',
+  'Chetan',
+  'Sanjay',
+  'Mohit',
+  'Deepak',
+  'Rakesh',
+  'Vishal',
+  'Suresh',
+  'Amit',
+  'Nitin',
+  'Abhishek',
+  'Karan',
+  'Rajesh',
+  'Sachin',
+  'Pankaj',
+  'Mayank',
+  'Hemant',
+  'Sunil',
+  'Anil',
+  'Girish',
+  'Dinesh',
+  'Ashish',
+  'Bhavesh',
+  'Ravi',
+  'Manoj',
+  'Vijay',
+  'Sumit',
+  'Prateek',
+  'Harish',
+  'Lokesh',
+  'Neeraj',
+  'Akash',
+  'Suraj',
+  'Ajay',
+  'Vikas',
 ];
 
 const FIRST_NAMES_FEMALE = [
-  'Nisha', 'Maya', 'Priya', 'Ananya', 'Sneha', 'Pooja', 'Neha', 'Ritu',
-  'Kavita', 'Shreya', 'Divya', 'Meera', 'Riya', 'Sunita', 'Tanvi', 'Radhika',
-  'Swati', 'Deepa', 'Akanksha', 'Ishita', 'Kriti', 'Sonali', 'Aarti', 'Payal',
-  'Simran', 'Bhavna', 'Shikha', 'Vandana', 'Pallavi', 'Namrata', 'Rashmi', 'Jyoti',
-  'Anjali', 'Komal', 'Suman', 'Garima', 'Aparna', 'Monika', 'Preeti', 'Swetha',
-  'Nandini', 'Shruti', 'Anuradha', 'Anita', 'Bhumika', 'Richa', 'Nidhi', 'Smriti',
-  'Reena', 'Sangeeta', 'Priyanka', 'Chitra', 'Madhuri', 'Archana', 'Divyanshi', 'Meenakshi',
-  'Tanushree', 'Isha', 'Sapna', 'Varsha'
+  'Nisha',
+  'Maya',
+  'Priya',
+  'Ananya',
+  'Sneha',
+  'Pooja',
+  'Neha',
+  'Ritu',
+  'Kavita',
+  'Shreya',
+  'Divya',
+  'Meera',
+  'Riya',
+  'Sunita',
+  'Tanvi',
+  'Radhika',
+  'Swati',
+  'Deepa',
+  'Akanksha',
+  'Ishita',
+  'Kriti',
+  'Sonali',
+  'Aarti',
+  'Payal',
+  'Simran',
+  'Bhavna',
+  'Shikha',
+  'Vandana',
+  'Pallavi',
+  'Namrata',
+  'Rashmi',
+  'Jyoti',
+  'Anjali',
+  'Komal',
+  'Suman',
+  'Garima',
+  'Aparna',
+  'Monika',
+  'Preeti',
+  'Swetha',
+  'Nandini',
+  'Shruti',
+  'Anuradha',
+  'Anita',
+  'Bhumika',
+  'Richa',
+  'Nidhi',
+  'Smriti',
+  'Reena',
+  'Sangeeta',
+  'Priyanka',
+  'Chitra',
+  'Madhuri',
+  'Archana',
+  'Divyanshi',
+  'Meenakshi',
+  'Tanushree',
+  'Isha',
+  'Sapna',
+  'Varsha',
 ];
 
 const LAST_NAMES = [
-  'Rao', 'Shah', 'Mehta', 'Patel', 'Sharma', 'Verma', 'Gupta', 'Iyer',
-  'Nair', 'Reddy', 'Kulkarni', 'Joshi', 'Deshmukh', 'Bhat', 'Singhania', 'Bansal',
-  'Agarwal', 'Chopra', 'Sengupta', 'Mukherjee', 'Chatterjee', 'Bose', 'Das', 'Saxena',
-  'Mathur', 'Mishra', 'Pandey', 'Tiwari', 'Shukla', 'Bhattacharya', 'Pillai', 'Menon',
-  'Nambiar', 'Hegde', 'Shetty', 'Kamath', 'Bhardwaj', 'Malhotra', 'Kapoor', 'Khanna',
-  'Goyal', 'Mittal', 'Jain', 'Bhatia', 'Chawla', 'Sood', 'Chauhan', 'Thakur',
-  'Yadav', 'Dubey', 'Tripathi', 'Goswami', 'Acharya', 'Prasad', 'Ghosh', 'Dutta',
-  'Venkatesh', 'Subramanian', 'Krishnan', 'Balakrishnan', 'Ranganathan', 'Sundaram', 'Naidu', 'Choudhury'
+  'Rao',
+  'Shah',
+  'Mehta',
+  'Patel',
+  'Sharma',
+  'Verma',
+  'Gupta',
+  'Iyer',
+  'Nair',
+  'Reddy',
+  'Kulkarni',
+  'Joshi',
+  'Deshmukh',
+  'Bhat',
+  'Singhania',
+  'Bansal',
+  'Agarwal',
+  'Chopra',
+  'Sengupta',
+  'Mukherjee',
+  'Chatterjee',
+  'Bose',
+  'Das',
+  'Saxena',
+  'Mathur',
+  'Mishra',
+  'Pandey',
+  'Tiwari',
+  'Shukla',
+  'Bhattacharya',
+  'Pillai',
+  'Menon',
+  'Nambiar',
+  'Hegde',
+  'Shetty',
+  'Kamath',
+  'Bhardwaj',
+  'Malhotra',
+  'Kapoor',
+  'Khanna',
+  'Goyal',
+  'Mittal',
+  'Jain',
+  'Bhatia',
+  'Chawla',
+  'Sood',
+  'Chauhan',
+  'Thakur',
+  'Yadav',
+  'Dubey',
+  'Tripathi',
+  'Goswami',
+  'Acharya',
+  'Prasad',
+  'Ghosh',
+  'Dutta',
+  'Venkatesh',
+  'Subramanian',
+  'Krishnan',
+  'Balakrishnan',
+  'Ranganathan',
+  'Sundaram',
+  'Naidu',
+  'Choudhury',
 ];
 
 const LOCATIONS = [
@@ -76,7 +236,9 @@ const LEAVE_REASONS = [
 export const seedDatabase = async (): Promise<void> => {
   const client = await pool.connect();
   try {
-    console.info('🌱 Starting PeoplePay360 database seed with 100-200 entries per operational table...');
+    console.info(
+      '🌱 Starting PeoplePay360 database seed with 100-200 entries per operational table...',
+    );
 
     // 1. Ensure table structure & clean previous data
     await client.query(`
@@ -162,11 +324,11 @@ export const seedDatabase = async (): Promise<void> => {
 
     // Backfill employee_code for any existing employees that don't have one
     const uncodedRows = await client.query(
-      `SELECT id FROM employees WHERE employee_code IS NULL ORDER BY created_at ASC`
+      `SELECT id FROM employees WHERE employee_code IS NULL ORDER BY created_at ASC`,
     );
     if (uncodedRows.rows.length > 0) {
       const maxCodeResult = await client.query(
-        `SELECT employee_code FROM employees WHERE employee_code IS NOT NULL ORDER BY employee_code DESC LIMIT 1`
+        `SELECT employee_code FROM employees WHERE employee_code IS NOT NULL ORDER BY employee_code DESC LIMIT 1`,
       );
       let nextNum = 1;
       if (maxCodeResult.rows.length > 0 && maxCodeResult.rows[0].employee_code) {
@@ -226,25 +388,64 @@ export const seedDatabase = async (): Promise<void> => {
       { title: 'Senior Frontend Developer', departmentId: deptMap['Frontend Engineering'] },
       { title: 'Frontend Software Engineer', departmentId: deptMap['Frontend Engineering'] },
       { title: 'Junior Frontend Developer', departmentId: deptMap['Frontend Engineering'] },
-      { title: 'Principal Distributed Systems Architect', departmentId: deptMap['Backend & Core Systems'] },
-      { title: 'Senior Backend Engineer (Go/Node)', departmentId: deptMap['Backend & Core Systems'] },
+      {
+        title: 'Principal Distributed Systems Architect',
+        departmentId: deptMap['Backend & Core Systems'],
+      },
+      {
+        title: 'Senior Backend Engineer (Go/Node)',
+        departmentId: deptMap['Backend & Core Systems'],
+      },
       { title: 'Backend Software Engineer', departmentId: deptMap['Backend & Core Systems'] },
       { title: 'Database Reliability Engineer', departmentId: deptMap['Backend & Core Systems'] },
       { title: 'Lead Mobile Architect', departmentId: deptMap['Mobile Engineering'] },
       { title: 'Senior Android/iOS Engineer', departmentId: deptMap['Mobile Engineering'] },
-      { title: 'Lead DevOps & Site Reliability Engineer', departmentId: deptMap['Cloud Infrastructure & SRE'] },
-      { title: 'Cloud Platform Engineer (AWS/K8s)', departmentId: deptMap['Cloud Infrastructure & SRE'] },
-      { title: 'Lead SDET & Automation Architect', departmentId: deptMap['Quality Engineering & Automation'] },
-      { title: 'Senior QA Automation Engineer', departmentId: deptMap['Quality Engineering & Automation'] },
+      {
+        title: 'Lead DevOps & Site Reliability Engineer',
+        departmentId: deptMap['Cloud Infrastructure & SRE'],
+      },
+      {
+        title: 'Cloud Platform Engineer (AWS/K8s)',
+        departmentId: deptMap['Cloud Infrastructure & SRE'],
+      },
+      {
+        title: 'Lead SDET & Automation Architect',
+        departmentId: deptMap['Quality Engineering & Automation'],
+      },
+      {
+        title: 'Senior QA Automation Engineer',
+        departmentId: deptMap['Quality Engineering & Automation'],
+      },
       { title: 'Head of People & Culture', departmentId: deptMap['Human Resources & People Ops'] },
-      { title: 'Senior HR Business Partner', departmentId: deptMap['Human Resources & People Ops'] },
-      { title: 'People Operations Specialist', departmentId: deptMap['Human Resources & People Ops'] },
-      { title: 'Head of Total Rewards & Payroll', departmentId: deptMap['Payroll & Total Rewards'] },
-      { title: 'Senior Payroll Operations Analyst', departmentId: deptMap['Payroll & Total Rewards'] },
-      { title: 'Statutory Compliance Specialist', departmentId: deptMap['Payroll & Total Rewards'] },
+      {
+        title: 'Senior HR Business Partner',
+        departmentId: deptMap['Human Resources & People Ops'],
+      },
+      {
+        title: 'People Operations Specialist',
+        departmentId: deptMap['Human Resources & People Ops'],
+      },
+      {
+        title: 'Head of Total Rewards & Payroll',
+        departmentId: deptMap['Payroll & Total Rewards'],
+      },
+      {
+        title: 'Senior Payroll Operations Analyst',
+        departmentId: deptMap['Payroll & Total Rewards'],
+      },
+      {
+        title: 'Statutory Compliance Specialist',
+        departmentId: deptMap['Payroll & Total Rewards'],
+      },
       { title: 'Lead Technical Talent Recruiter', departmentId: deptMap['Talent Acquisition'] },
-      { title: 'Enterprise Account Executive', departmentId: deptMap['Enterprise Sales & Partnerships'] },
-      { title: 'Corporate Legal Counsel & Compliance Lead', departmentId: deptMap['Finance, Legal & Governance'] },
+      {
+        title: 'Enterprise Account Executive',
+        departmentId: deptMap['Enterprise Sales & Partnerships'],
+      },
+      {
+        title: 'Corporate Legal Counsel & Compliance Lead',
+        departmentId: deptMap['Finance, Legal & Governance'],
+      },
     ];
 
     const insertedJobs = await db.insert(schema.jobPositions).values(jobPositionsData).returning();
@@ -253,13 +454,24 @@ export const seedDatabase = async (): Promise<void> => {
     // 5. Seed Working Schedules (5 schedules + lines)
     const schedulesData = [
       { name: 'Standard General Shift (Mon-Fri 9-6)', weeklyHours: '40.00', isActive: true },
-      { name: 'Early Morning Engineering Shift (Mon-Fri 7:30-4:30)', weeklyHours: '40.00', isActive: true },
-      { name: 'US East Coast Overlap Shift (Mon-Fri 12:30-9:30)', weeklyHours: '40.00', isActive: true },
+      {
+        name: 'Early Morning Engineering Shift (Mon-Fri 7:30-4:30)',
+        weeklyHours: '40.00',
+        isActive: true,
+      },
+      {
+        name: 'US East Coast Overlap Shift (Mon-Fri 12:30-9:30)',
+        weeklyHours: '40.00',
+        isActive: true,
+      },
       { name: 'Flexible Core Hours Shift (Mon-Fri 10-6:30)', weeklyHours: '37.50', isActive: true },
       { name: 'Weekend 24/7 Support Shift (Fri-Sun 8-8)', weeklyHours: '36.00', isActive: true },
     ];
 
-    const insertedSchedules = await db.insert(schema.workingSchedules).values(schedulesData).returning();
+    const insertedSchedules = await db
+      .insert(schema.workingSchedules)
+      .values(schedulesData)
+      .returning();
     const defaultScheduleId = insertedSchedules[0].id;
 
     const scheduleLinesData: Array<{
@@ -312,14 +524,17 @@ export const seedDatabase = async (): Promise<void> => {
     }
 
     await db.insert(schema.workingScheduleLines).values(scheduleLinesData);
-    console.info(`✅ Seeded ${insertedSchedules.length} working schedules with ${scheduleLinesData.length} lines`);
+    console.info(
+      `✅ Seeded ${insertedSchedules.length} working schedules with ${scheduleLinesData.length} lines`,
+    );
 
     // 6. Seed Salary Structures & Comprehensive Ordered Rules
     const structuresData = [
       {
         name: 'Standard Full-Time Tech Structure',
         code: 'STD_TECH_2026',
-        description: 'Comprehensive tech engineering compensation package with statutory compliance',
+        description:
+          'Comprehensive tech engineering compensation package with statutory compliance',
         isActive: true,
       },
       {
@@ -336,7 +551,10 @@ export const seedDatabase = async (): Promise<void> => {
       },
     ];
 
-    const insertedStructures = await db.insert(schema.salaryStructures).values(structuresData).returning();
+    const insertedStructures = await db
+      .insert(schema.salaryStructures)
+      .values(structuresData)
+      .returning();
     const defaultStructureId = insertedStructures[0].id;
 
     const createStructureRules = (structureId: string) => [
@@ -447,7 +665,9 @@ export const seedDatabase = async (): Promise<void> => {
 
     const allRulesData = insertedStructures.flatMap((s) => createStructureRules(s.id));
     await db.insert(schema.salaryRules).values(allRulesData);
-    console.info(`✅ Seeded ${insertedStructures.length} salary structures with ${allRulesData.length} salary rules`);
+    console.info(
+      `✅ Seeded ${insertedStructures.length} salary structures with ${allRulesData.length} salary rules`,
+    );
 
     // 7. Generate 125 Plausible Users and Employees (Forming a coherent org hierarchy)
     type Candidate = {
@@ -558,10 +778,14 @@ export const seedDatabase = async (): Promise<void> => {
 
       // Plausible wage based on experience level
       let wage = 55000;
-      if (candidates.length < 15) wage = 175000; // Leadership / Directors
-      else if (candidates.length < 35) wage = 135000; // Managers / Leads
-      else if (candidates.length < 75) wage = 95000; // Senior Engineers
-      else if (candidates.length < 110) wage = 72000; // Mid-level
+      if (candidates.length < 15)
+        wage = 175000; // Leadership / Directors
+      else if (candidates.length < 35)
+        wage = 135000; // Managers / Leads
+      else if (candidates.length < 75)
+        wage = 95000; // Senior Engineers
+      else if (candidates.length < 110)
+        wage = 72000; // Mid-level
       else wage = 48000; // Junior / Associates
 
       const location = LOCATIONS[candidates.length % LOCATIONS.length];
@@ -641,11 +865,14 @@ export const seedDatabase = async (): Promise<void> => {
         bankName: bank.name,
         bankAccountNumber: `50100${String(i).padStart(4, '0')}${String(1000 + i * 7)}`,
         bankRoutingCode: bank.ifsc,
-        phone: `+91 ${9800000000 + (i * 12345) % 99999999}`,
+        phone: `+91 ${9800000000 + ((i * 12345) % 99999999)}`,
       };
     });
 
-    const insertedEmployees = await db.insert(schema.employees).values(employeesToInsert).returning();
+    const insertedEmployees = await db
+      .insert(schema.employees)
+      .values(employeesToInsert)
+      .returning();
     console.info(`✅ Seeded ${insertedEmployees.length} employees`);
 
     // Link real manager hierarchy (CEO Nisha -> Dept Leads -> ICs)
@@ -664,10 +891,7 @@ export const seedDatabase = async (): Promise<void> => {
         managerId = assignedManager.id;
       }
 
-      await db
-        .update(schema.employees)
-        .set({ managerId })
-        .where(eq(schema.employees.id, emp.id));
+      await db.update(schema.employees).set({ managerId }).where(eq(schema.employees.id, emp.id));
     }
     console.info('✅ Employee manager hierarchy established');
 
@@ -686,7 +910,10 @@ export const seedDatabase = async (): Promise<void> => {
         startDate: c.joiningDate < '2026-04-01' ? '2026-04-01' : c.joiningDate,
         endDate: i >= 28 && i < 33 ? '2026-08-15' : undefined,
         status: i >= 28 && i < 33 ? 'terminated' : 'active',
-        notes: i >= 28 && i < 33 ? 'Resigned and relieved following handover completion.' : 'Standard permanent corporate employment contract with FY26 compensation schedule',
+        notes:
+          i >= 28 && i < 33
+            ? 'Resigned and relieved following handover completion.'
+            : 'Standard permanent corporate employment contract with FY26 compensation schedule',
       };
     });
 
@@ -774,9 +1001,9 @@ export const seedDatabase = async (): Promise<void> => {
     // For first 60 employees, allocate Annual (20), Sick (10), Casual (5) = 180 allocations
     for (let i = 0; i < 60; i++) {
       const emp = insertedEmployees[i];
-      const annualTaken = (i % 5);
-      const sickTaken = (i % 3);
-      const casualTaken = (i % 2);
+      const annualTaken = i % 5;
+      const sickTaken = i % 3;
+      const casualTaken = i % 2;
 
       allocationsData.push({
         employeeId: emp.id,
@@ -815,7 +1042,10 @@ export const seedDatabase = async (): Promise<void> => {
       });
     }
 
-    const insertedAllocations = await db.insert(schema.timeOffAllocations).values(allocationsData).returning();
+    const insertedAllocations = await db
+      .insert(schema.timeOffAllocations)
+      .values(allocationsData)
+      .returning();
     console.info(`✅ Seeded ${insertedAllocations.length} time off allocations`);
 
     // 11. Seed Time Off Requests (130 plausible requests)
@@ -860,7 +1090,8 @@ export const seedDatabase = async (): Promise<void> => {
         status = 'refused';
         approvedBy = topManager.userId;
         approvedAt = new Date('2026-07-02T11:30:00Z');
-        refusedReason = 'Key product release milestone scheduled during these dates. Kindly reschedule.';
+        refusedReason =
+          'Key product release milestone scheduled during these dates. Kindly reschedule.';
       }
 
       requestsData.push({
@@ -877,7 +1108,10 @@ export const seedDatabase = async (): Promise<void> => {
       });
     }
 
-    const insertedRequests = await db.insert(schema.timeOffRequests).values(requestsData).returning();
+    const insertedRequests = await db
+      .insert(schema.timeOffRequests)
+      .values(requestsData)
+      .returning();
     console.info(`✅ Seeded ${insertedRequests.length} time off requests`);
 
     // 12. Seed Attendance Records (250 entries across business days in August & September)
@@ -893,9 +1127,21 @@ export const seedDatabase = async (): Promise<void> => {
 
     // Distinct 15 business dates in August and September 2026
     const sampleDates = [
-      '2026-08-03', '2026-08-04', '2026-08-05', '2026-08-06', '2026-08-07',
-      '2026-08-10', '2026-08-11', '2026-08-12', '2026-08-13', '2026-08-14',
-      '2026-08-17', '2026-08-18', '2026-08-19', '2026-08-20', '2026-08-21',
+      '2026-08-03',
+      '2026-08-04',
+      '2026-08-05',
+      '2026-08-06',
+      '2026-08-07',
+      '2026-08-10',
+      '2026-08-11',
+      '2026-08-12',
+      '2026-08-13',
+      '2026-08-14',
+      '2026-08-17',
+      '2026-08-18',
+      '2026-08-19',
+      '2026-08-20',
+      '2026-08-21',
     ];
 
     // For 20 selected employees across 13 dates = 260 unique (employeeId, date) entries
@@ -907,12 +1153,16 @@ export const seedDatabase = async (): Promise<void> => {
         const isEarlyDepart = (d + attendanceData.length) % 15 === 0;
 
         const checkInHour = isLate ? 10 : 9;
-        const checkInMin = isLate ? 15 : ((d * 7) % 25);
+        const checkInMin = isLate ? 15 : (d * 7) % 25;
         const checkOutHour = isEarlyDepart ? 15 : 18;
-        const checkOutMin = isEarlyDepart ? 0 : ((d * 11) % 30);
+        const checkOutMin = isEarlyDepart ? 0 : (d * 11) % 30;
 
-        const checkIn = new Date(`${curDate}T${String(checkInHour).padStart(2, '0')}:${String(checkInMin).padStart(2, '0')}:00Z`);
-        const checkOut = new Date(`${curDate}T${String(checkOutHour).padStart(2, '0')}:${String(checkOutMin).padStart(2, '0')}:00Z`);
+        const checkIn = new Date(
+          `${curDate}T${String(checkInHour).padStart(2, '0')}:${String(checkInMin).padStart(2, '0')}:00Z`,
+        );
+        const checkOut = new Date(
+          `${curDate}T${String(checkOutHour).padStart(2, '0')}:${String(checkOutMin).padStart(2, '0')}:00Z`,
+        );
 
         const diffHours = (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60) - 1.0; // minus 1 hr lunch
         const workedHours = Math.max(diffHours, 4.0).toFixed(2);
@@ -940,7 +1190,10 @@ export const seedDatabase = async (): Promise<void> => {
       }
     }
 
-    const insertedAttendance = await db.insert(schema.attendance).values(attendanceData).returning();
+    const insertedAttendance = await db
+      .insert(schema.attendance)
+      .values(attendanceData)
+      .returning();
     console.info(`✅ Seeded ${insertedAttendance.length} daily attendance records`);
 
     // 13. Seed Payruns, Payslips (220 payslips) & Payslip Lines (2,420 lines)
@@ -1031,7 +1284,10 @@ export const seedDatabase = async (): Promise<void> => {
         };
       });
 
-      const insertedPayslips = await db.insert(schema.payslips).values(payslipsToInsert).returning();
+      const insertedPayslips = await db
+        .insert(schema.payslips)
+        .values(payslipsToInsert)
+        .returning();
       totalPayslipsCount += insertedPayslips.length;
 
       // 3. Update Payrun Totals
@@ -1063,17 +1319,94 @@ export const seedDatabase = async (): Promise<void> => {
         const net = gross - deductions;
 
         return [
-          { payslipId: ps.id, code: 'BASIC', name: 'Basic Salary', category: 'basic', sequence: 10, amount: basic.toFixed(2) },
-          { payslipId: ps.id, code: 'HRA', name: 'House Rent Allowance (HRA)', category: 'allowance', sequence: 20, amount: hra.toFixed(2) },
-          { payslipId: ps.id, code: 'SPECIAL_ALLOWANCE', name: 'Special Allowance', category: 'allowance', sequence: 30, amount: special.toFixed(2) },
-          { payslipId: ps.id, code: 'CONVEYANCE', name: 'Conveyance Allowance', category: 'allowance', sequence: 40, amount: conveyance.toFixed(2) },
-          { payslipId: ps.id, code: 'MEDICAL', name: 'Medical Allowance', category: 'allowance', sequence: 50, amount: medical.toFixed(2) },
-          { payslipId: ps.id, code: 'GROSS', name: 'Gross Earnings', category: 'gross', sequence: 100, amount: gross.toFixed(2) },
-          { payslipId: ps.id, code: 'PF_EMP', name: 'Provident Fund (Employee PF)', category: 'deduction', sequence: 110, amount: pf.toFixed(2) },
-          { payslipId: ps.id, code: 'PROF_TAX', name: 'Professional Tax (PT)', category: 'deduction', sequence: 120, amount: pt.toFixed(2) },
-          { payslipId: ps.id, code: 'TDS', name: 'Income Tax (TDS)', category: 'deduction', sequence: 130, amount: tds.toFixed(2) },
-          { payslipId: ps.id, code: 'TOTAL_DEDUCTIONS', name: 'Total Deductions', category: 'deduction', sequence: 190, amount: deductions.toFixed(2) },
-          { payslipId: ps.id, code: 'NET', name: 'Net Payable Salary', category: 'net', sequence: 200, amount: net.toFixed(2) },
+          {
+            payslipId: ps.id,
+            code: 'BASIC',
+            name: 'Basic Salary',
+            category: 'basic',
+            sequence: 10,
+            amount: basic.toFixed(2),
+          },
+          {
+            payslipId: ps.id,
+            code: 'HRA',
+            name: 'House Rent Allowance (HRA)',
+            category: 'allowance',
+            sequence: 20,
+            amount: hra.toFixed(2),
+          },
+          {
+            payslipId: ps.id,
+            code: 'SPECIAL_ALLOWANCE',
+            name: 'Special Allowance',
+            category: 'allowance',
+            sequence: 30,
+            amount: special.toFixed(2),
+          },
+          {
+            payslipId: ps.id,
+            code: 'CONVEYANCE',
+            name: 'Conveyance Allowance',
+            category: 'allowance',
+            sequence: 40,
+            amount: conveyance.toFixed(2),
+          },
+          {
+            payslipId: ps.id,
+            code: 'MEDICAL',
+            name: 'Medical Allowance',
+            category: 'allowance',
+            sequence: 50,
+            amount: medical.toFixed(2),
+          },
+          {
+            payslipId: ps.id,
+            code: 'GROSS',
+            name: 'Gross Earnings',
+            category: 'gross',
+            sequence: 100,
+            amount: gross.toFixed(2),
+          },
+          {
+            payslipId: ps.id,
+            code: 'PF_EMP',
+            name: 'Provident Fund (Employee PF)',
+            category: 'deduction',
+            sequence: 110,
+            amount: pf.toFixed(2),
+          },
+          {
+            payslipId: ps.id,
+            code: 'PROF_TAX',
+            name: 'Professional Tax (PT)',
+            category: 'deduction',
+            sequence: 120,
+            amount: pt.toFixed(2),
+          },
+          {
+            payslipId: ps.id,
+            code: 'TDS',
+            name: 'Income Tax (TDS)',
+            category: 'deduction',
+            sequence: 130,
+            amount: tds.toFixed(2),
+          },
+          {
+            payslipId: ps.id,
+            code: 'TOTAL_DEDUCTIONS',
+            name: 'Total Deductions',
+            category: 'deduction',
+            sequence: 190,
+            amount: deductions.toFixed(2),
+          },
+          {
+            payslipId: ps.id,
+            code: 'NET',
+            name: 'Net Payable Salary',
+            category: 'net',
+            sequence: 200,
+            amount: net.toFixed(2),
+          },
         ];
       });
 
@@ -1081,7 +1414,9 @@ export const seedDatabase = async (): Promise<void> => {
       totalLinesCount += linesToInsert.length;
     }
 
-    console.info(`✅ Seeded ${payrunsMeta.length} payruns with ${totalPayslipsCount} payslips and ${totalLinesCount} detailed payslip lines`);
+    console.info(
+      `✅ Seeded ${payrunsMeta.length} payruns with ${totalPayslipsCount} payslips and ${totalLinesCount} detailed payslip lines`,
+    );
 
     // 14. Seed Company Policies (6 comprehensive policies)
     const initialPolicies = [
@@ -1090,8 +1425,10 @@ export const seedDatabase = async (): Promise<void> => {
         title: 'Code of Business Conduct & Ethics',
         category: 'compliance',
         version: '1.0',
-        summary: 'Sets mandatory standards for integrity, workplace respect, anti-bribery, and ethical decision-making.',
-        content: 'Anchorage Technologies Pvt. Ltd. is dedicated to conducting business with absolute honesty, transparency, and integrity.',
+        summary:
+          'Sets mandatory standards for integrity, workplace respect, anti-bribery, and ethical decision-making.',
+        content:
+          'Anchorage Technologies Pvt. Ltd. is dedicated to conducting business with absolute honesty, transparency, and integrity.',
         isMandatory: true,
         effectiveDate: '2026-04-01',
       },
@@ -1100,8 +1437,10 @@ export const seedDatabase = async (): Promise<void> => {
         title: 'Information Security & Data Privacy Policy',
         category: 'security',
         version: '1.2',
-        summary: 'Governs data protection protocols, confidential system access, multi-factor authentication, and device encryption.',
-        content: 'All corporate assets, customer personal data, and source code repositories are designated Confidential.',
+        summary:
+          'Governs data protection protocols, confidential system access, multi-factor authentication, and device encryption.',
+        content:
+          'All corporate assets, customer personal data, and source code repositories are designated Confidential.',
         isMandatory: true,
         effectiveDate: '2026-04-01',
       },
@@ -1110,8 +1449,10 @@ export const seedDatabase = async (): Promise<void> => {
         title: 'Prevention of Sexual Harassment (POSH) & Anti-Discrimination',
         category: 'compliance',
         version: '2.0',
-        summary: 'Comprehensive policy providing a safe, respectful environment free from sexual harassment.',
-        content: 'Strict zero-tolerance policy against any form of sexual harassment or discrimination in the workplace.',
+        summary:
+          'Comprehensive policy providing a safe, respectful environment free from sexual harassment.',
+        content:
+          'Strict zero-tolerance policy against any form of sexual harassment or discrimination in the workplace.',
         isMandatory: true,
         effectiveDate: '2026-04-01',
       },
@@ -1120,8 +1461,10 @@ export const seedDatabase = async (): Promise<void> => {
         title: 'Remote & Hybrid Workplace Guidelines',
         category: 'workplace',
         version: '1.1',
-        summary: 'Operational expectations, core working hours, virtual meeting etiquette, and ergonomics for hybrid teams.',
-        content: 'Full-time employees operate on a flexible hybrid model comprising structured in-office days and remote allowances.',
+        summary:
+          'Operational expectations, core working hours, virtual meeting etiquette, and ergonomics for hybrid teams.',
+        content:
+          'Full-time employees operate on a flexible hybrid model comprising structured in-office days and remote allowances.',
         isMandatory: true,
         effectiveDate: '2026-04-01',
       },
@@ -1130,8 +1473,10 @@ export const seedDatabase = async (): Promise<void> => {
         title: 'Intellectual Property & Inventions Confidentiality Agreement',
         category: 'compliance',
         version: '1.0',
-        summary: 'Protects proprietary software, customer datasets, and confirms invention assignments.',
-        content: 'All software, algorithms, designs, and patents created during employment are exclusive property of the company.',
+        summary:
+          'Protects proprietary software, customer datasets, and confirms invention assignments.',
+        content:
+          'All software, algorithms, designs, and patents created during employment are exclusive property of the company.',
         isMandatory: true,
         effectiveDate: '2026-04-01',
       },
@@ -1140,14 +1485,19 @@ export const seedDatabase = async (): Promise<void> => {
         title: 'Leave, Working Hours & Regularization Policy',
         category: 'hr',
         version: '1.0',
-        summary: 'Defines daily check-in protocols, shift schedules, paid time off accruals, and regularization procedures.',
-        content: 'Standard working hours consist of 40 hours per week Monday to Friday with mandatory 1-hour lunch break.',
+        summary:
+          'Defines daily check-in protocols, shift schedules, paid time off accruals, and regularization procedures.',
+        content:
+          'Standard working hours consist of 40 hours per week Monday to Friday with mandatory 1-hour lunch break.',
         isMandatory: true,
         effectiveDate: '2026-04-01',
       },
     ];
 
-    const insertedPolicies = await db.insert(schema.companyPolicies).values(initialPolicies).returning();
+    const insertedPolicies = await db
+      .insert(schema.companyPolicies)
+      .values(initialPolicies)
+      .returning();
     console.info(`✅ Seeded ${insertedPolicies.length} company policies`);
 
     // 15. Seed Policy Acceptances (140 employee acceptances)
@@ -1194,20 +1544,59 @@ export const seedDatabase = async (): Promise<void> => {
       });
     }
 
-    const insertedAcceptances = await db.insert(schema.policyAcceptances).values(acceptancesData).returning();
+    const insertedAcceptances = await db
+      .insert(schema.policyAcceptances)
+      .values(acceptancesData)
+      .returning();
     console.info(`✅ Seeded ${insertedAcceptances.length} policy compliance acceptances`);
 
     // 16. Seed System Audit Logs (140 realistic logs)
     const auditActions = [
-      { action: 'USER_LOGIN', entityType: 'user', desc: 'User authenticated successfully via credentials' },
-      { action: 'CONTRACT_CREATED', entityType: 'contract', desc: 'Permanent employment contract generated and activated' },
-      { action: 'PAYRUN_COMPUTED', entityType: 'payrun', desc: 'Monthly regular payroll computation executed' },
-      { action: 'PAYRUN_VALIDATED', entityType: 'payrun', desc: 'Payroll administrator validated compensation ledger' },
-      { action: 'PAYRUN_PAID', entityType: 'payrun', desc: 'Net salary disbursemens marked as paid and sent to bank' },
-      { action: 'TIMEOFF_APPROVED', entityType: 'time_off_request', desc: 'Manager approved employee leave request' },
-      { action: 'POLICY_ACCEPTED', entityType: 'policy', desc: 'Employee acknowledged mandatory compliance policy' },
-      { action: 'SCHEDULE_ASSIGNED', entityType: 'working_schedule', desc: 'Assigned employee to weekly working schedule' },
-      { action: 'PASSWORD_RESET', entityType: 'user', desc: 'Account password changed via secure authentication flow' },
+      {
+        action: 'USER_LOGIN',
+        entityType: 'user',
+        desc: 'User authenticated successfully via credentials',
+      },
+      {
+        action: 'CONTRACT_CREATED',
+        entityType: 'contract',
+        desc: 'Permanent employment contract generated and activated',
+      },
+      {
+        action: 'PAYRUN_COMPUTED',
+        entityType: 'payrun',
+        desc: 'Monthly regular payroll computation executed',
+      },
+      {
+        action: 'PAYRUN_VALIDATED',
+        entityType: 'payrun',
+        desc: 'Payroll administrator validated compensation ledger',
+      },
+      {
+        action: 'PAYRUN_PAID',
+        entityType: 'payrun',
+        desc: 'Net salary disbursemens marked as paid and sent to bank',
+      },
+      {
+        action: 'TIMEOFF_APPROVED',
+        entityType: 'time_off_request',
+        desc: 'Manager approved employee leave request',
+      },
+      {
+        action: 'POLICY_ACCEPTED',
+        entityType: 'policy',
+        desc: 'Employee acknowledged mandatory compliance policy',
+      },
+      {
+        action: 'SCHEDULE_ASSIGNED',
+        entityType: 'working_schedule',
+        desc: 'Assigned employee to weekly working schedule',
+      },
+      {
+        action: 'PASSWORD_RESET',
+        entityType: 'user',
+        desc: 'Account password changed via secure authentication flow',
+      },
     ];
 
     const auditLogsData: Array<{
@@ -1251,8 +1640,12 @@ export const seedDatabase = async (): Promise<void> => {
     console.info(`   Employees:             ${insertedEmployees.length}`);
     console.info(`   Departments:           ${insertedDepts.length}`);
     console.info(`   Job Positions:         ${insertedJobs.length}`);
-    console.info(`   Working Schedules:     ${insertedSchedules.length} (${scheduleLinesData.length} lines)`);
-    console.info(`   Salary Structures:     ${insertedStructures.length} (${allRulesData.length} rules)`);
+    console.info(
+      `   Working Schedules:     ${insertedSchedules.length} (${scheduleLinesData.length} lines)`,
+    );
+    console.info(
+      `   Salary Structures:     ${insertedStructures.length} (${allRulesData.length} rules)`,
+    );
     console.info(`   Contracts:             ${insertedContracts.length}`);
     console.info(`   Attendance Records:    ${insertedAttendance.length}`);
     console.info(`   Time Off Types:        ${insertedTypes.length}`);

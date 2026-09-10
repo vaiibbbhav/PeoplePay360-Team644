@@ -38,7 +38,9 @@ import { fingerprintApi } from '@/api/apiClient';
 /**
  * Check if an employee has a registered fingerprint in NeonDB
  */
-export async function fetchFingerprintStatus(employeeId: string): Promise<FingerprintStatusResponse> {
+export async function fetchFingerprintStatus(
+  employeeId: string,
+): Promise<FingerprintStatusResponse> {
   if (!employeeId) return { employeeId: '', enrolled: false };
   try {
     const res = await fingerprintApi.get(`/status/${encodeURIComponent(employeeId)}`);
@@ -98,11 +100,7 @@ export async function punchWithFingerprint(
     });
     const rawScore = payload?.score;
     const numScore =
-      typeof rawScore === 'number' && !isNaN(rawScore)
-        ? rawScore
-        : matched
-        ? 88.0
-        : 0.0;
+      typeof rawScore === 'number' && !isNaN(rawScore) ? rawScore : matched ? 88.0 : 0.0;
 
     return {
       ...payload,

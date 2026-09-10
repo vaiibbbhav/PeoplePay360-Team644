@@ -18,7 +18,6 @@ async function enrichDemoData() {
     .from(schema.employees)
     .limit(125);
 
-    
   console.log(`Found ${allEmployees.length} employees`);
 
   if (allEmployees.length < 35) {
@@ -36,10 +35,7 @@ async function enrichDemoData() {
   const onLeaveEmployees = allEmployees.slice(15, 23);
   const inactiveEmployees = allEmployees.slice(23, 28);
   const terminatedEmployees = allEmployees.slice(28, 33);
-  const activeEmployees = [
-    ...allEmployees.slice(0, 15),
-    ...allEmployees.slice(33),
-  ];
+  const activeEmployees = [...allEmployees.slice(0, 15), ...allEmployees.slice(33)];
 
   console.log(`Setting:
 - Active: ${activeEmployees.length}
@@ -63,10 +59,7 @@ async function enrichDemoData() {
       .where(eq(schema.employees.id, emp.id));
 
     // Deactivate user account for 3 of them
-    await db
-      .update(schema.users)
-      .set({ isActive: false })
-      .where(eq(schema.users.id, emp.userId));
+    await db.update(schema.users).set({ isActive: false }).where(eq(schema.users.id, emp.userId));
   }
 
   // Update Terminated employees
@@ -77,10 +70,7 @@ async function enrichDemoData() {
       .where(eq(schema.employees.id, emp.id));
 
     // Deactivate user account
-    await db
-      .update(schema.users)
-      .set({ isActive: false })
-      .where(eq(schema.users.id, emp.userId));
+    await db.update(schema.users).set({ isActive: false }).where(eq(schema.users.id, emp.userId));
 
     // Terminate their contract
     await db
@@ -95,14 +85,18 @@ async function enrichDemoData() {
 
   // 2. Ensure Time Off Requests exist for the On Leave employees covering TODAY (2026-09-06)
   const timeOffTypes = await db.select().from(schema.timeOffTypes).limit(5);
-  const annualLeaveType = timeOffTypes.find((t) => t.name.toLowerCase().includes('annual') || t.name.toLowerCase().includes('paid')) || timeOffTypes[0];
-  const sickLeaveType = timeOffTypes.find((t) => t.name.toLowerCase().includes('sick')) || timeOffTypes[1];
+  const annualLeaveType =
+    timeOffTypes.find(
+      (t) => t.name.toLowerCase().includes('annual') || t.name.toLowerCase().includes('paid'),
+    ) || timeOffTypes[0];
+  const sickLeaveType =
+    timeOffTypes.find((t) => t.name.toLowerCase().includes('sick')) || timeOffTypes[1];
 
   if (annualLeaveType) {
     for (let i = 0; i < onLeaveEmployees.length; i++) {
       const emp = onLeaveEmployees[i];
-      const selectedType = i % 2 === 0 ? annualLeaveType : (sickLeaveType || annualLeaveType);
-      
+      const selectedType = i % 2 === 0 ? annualLeaveType : sickLeaveType || annualLeaveType;
+
       // Check if existing request covers today
       const existing = await db
         .select()
@@ -118,7 +112,10 @@ async function enrichDemoData() {
             startDate: '2026-09-01',
             endDate: '2026-09-18',
             duration: '14.0',
-            reason: i % 2 === 0 ? 'Annual family sabbatical and vacation' : 'Medical recovery and doctor recommended rest',
+            reason:
+              i % 2 === 0
+                ? 'Annual family sabbatical and vacation'
+                : 'Medical recovery and doctor recommended rest',
           })
           .where(eq(schema.timeOffRequests.id, existing[0].id));
       } else {
@@ -129,7 +126,10 @@ async function enrichDemoData() {
           endDate: '2026-09-18',
           duration: '14.0',
           status: 'approved',
-          reason: i % 2 === 0 ? 'Annual family sabbatical and vacation' : 'Medical recovery and doctor recommended rest',
+          reason:
+            i % 2 === 0
+              ? 'Annual family sabbatical and vacation'
+              : 'Medical recovery and doctor recommended rest',
         });
       }
     }
@@ -312,7 +312,9 @@ async function enrichDemoData() {
         warnings: [],
       });
     }
-    console.log('✅ Created computed payrun with 15 payslips and warnings (ready to validate & pay)');
+    console.log(
+      '✅ Created computed payrun with 15 payslips and warnings (ready to validate & pay)',
+    );
   }
 
   console.log('🎉 Demo data enrichment complete!');

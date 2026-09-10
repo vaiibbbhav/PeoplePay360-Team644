@@ -14,10 +14,12 @@ export const listContracts = asyncHandler(async (req: Request, res: Response): P
   res.json(contracts);
 });
 
-export const getContractsMetadata = asyncHandler(async (_req: Request, res: Response): Promise<void> => {
-  const meta = await contractsService.getContractsMetadata();
-  res.json(meta);
-});
+export const getContractsMetadata = asyncHandler(
+  async (_req: Request, res: Response): Promise<void> => {
+    const meta = await contractsService.getContractsMetadata();
+    res.json(meta);
+  },
+);
 
 export const getContractById = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const contract = await contractsService.getContractById(req.params.id);

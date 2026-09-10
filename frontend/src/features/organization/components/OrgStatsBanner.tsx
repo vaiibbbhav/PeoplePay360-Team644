@@ -20,15 +20,14 @@ export const OrgStatsBanner: React.FC<OrgStatsBannerProps> = ({
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="mb-1">
-            <span className="text-xs font-mono text-accent font-medium">
-              Core HR
-            </span>
+            <span className="text-xs font-mono text-accent font-medium">Core HR</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-serif text-ink font-bold tracking-tight mt-1">
             Org View
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
-            {totalEmployees} people · {totalDepartments} departments · {totalManagers} people managers
+            {totalEmployees} people · {totalDepartments} departments · {totalManagers} people
+            managers
           </p>
         </div>
 

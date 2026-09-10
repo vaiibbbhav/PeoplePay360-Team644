@@ -56,9 +56,7 @@ export const Section80CPanel: React.FC<Section80CPanelProps> = ({
     <div className="border border-line rounded-2xl p-6 bg-bg space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
         <div>
-          <h3 className="font-sans text-lg font-bold text-ink">
-            Section 80C & 80CCC Deductions
-          </h3>
+          <h3 className="font-sans text-lg font-bold text-ink">Section 80C & 80CCC Deductions</h3>
           <p className="text-xs text-ink-soft mt-0.5">
             Aggregate statutory limit under Section 80CCE is <b>₹1,50,000 per financial year</b>.
           </p>
@@ -97,7 +95,9 @@ export const Section80CPanel: React.FC<Section80CPanelProps> = ({
         <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2">
           <div className="flex justify-between items-start">
             <div>
-              <h4 className="font-semibold text-xs text-ink">Employee Provident Fund (EPF / VPF)</h4>
+              <h4 className="font-semibold text-xs text-ink">
+                Employee Provident Fund (EPF / VPF)
+              </h4>
               <p className="text-[11px] text-ink-soft">Auto-calculated from payroll deductions</p>
             </div>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-medium">
@@ -157,7 +157,9 @@ export const Section80CPanel: React.FC<Section80CPanelProps> = ({
         <div className="p-4 rounded-xl border border-line bg-bg-raised/40 space-y-2">
           <div className="flex justify-between items-start">
             <div>
-              <h4 className="font-semibold text-xs text-ink">Life Insurance Premium (LIC / Term)</h4>
+              <h4 className="font-semibold text-xs text-ink">
+                Life Insurance Premium (LIC / Term)
+              </h4>
               <p className="text-[11px] text-ink-soft">Premium for Self, Spouse, Children</p>
             </div>
           </div>
@@ -196,7 +198,9 @@ export const Section80CPanel: React.FC<Section80CPanelProps> = ({
           <div className="flex justify-between items-start">
             <div>
               <h4 className="font-semibold text-xs text-ink">Children Tuition Fees</h4>
-              <p className="text-[11px] text-ink-soft">Full time school/college fees (max 2 kids)</p>
+              <p className="text-[11px] text-ink-soft">
+                Full time school/college fees (max 2 kids)
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -253,7 +257,9 @@ export const Section80CPanel: React.FC<Section80CPanelProps> = ({
           <div className="flex justify-between items-start">
             <div>
               <h4 className="font-semibold text-xs text-ink">National Savings Certificate (NSC)</h4>
-              <p className="text-[11px] text-ink-soft">5-year Post Office certificate & accrued interest</p>
+              <p className="text-[11px] text-ink-soft">
+                5-year Post Office certificate & accrued interest
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">

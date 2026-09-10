@@ -169,7 +169,9 @@ export const AttendanceDetailCard: React.FC<AttendanceDetailCardProps> = ({
 
               <div className="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <span className="text-ink-soft font-medium">date</span>
-                <span className="font-mono text-ink font-semibold">{getRecordDateIST(record) || record.date}</span>
+                <span className="font-mono text-ink font-semibold">
+                  {getRecordDateIST(record) || record.date}
+                </span>
               </div>
 
               <div className="px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">

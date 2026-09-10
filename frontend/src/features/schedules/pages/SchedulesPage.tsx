@@ -100,15 +100,14 @@ export const SchedulesPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
             <div className="mb-1">
-              <span className="text-xs font-mono text-accent font-medium">
-                Core HR
-              </span>
+              <span className="text-xs font-mono text-accent font-medium">Core HR</span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               Work Schedules
             </h1>
             <p className="text-xs sm:text-sm text-ink-soft mt-1 leading-relaxed">
-              Standard operating shifts, weekly hours distribution, working days, and break definitions.
+              Standard operating shifts, weekly hours distribution, working days, and break
+              definitions.
             </p>
           </div>
 
@@ -246,9 +245,7 @@ export const SchedulesPage: React.FC = () => {
             ref={deleteModalRef}
             className="bg-bg border border-line rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl"
           >
-            <h3 className="font-serif text-lg font-bold text-ink m-0">
-              Delete Working Schedule?
-            </h3>
+            <h3 className="font-serif text-lg font-bold text-ink m-0">Delete Working Schedule?</h3>
             <p className="text-xs text-ink-soft leading-relaxed m-0">
               Are you sure you want to delete <b className="text-ink">{deletingSchedule.name}</b>?
               This action cannot be undone.

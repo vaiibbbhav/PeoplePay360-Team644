@@ -175,17 +175,24 @@ async function callGeminiWithContext(
     const presentRate =
       totalAttendance > 0
         ? Math.round(
-            ((snap.attendanceToday.present + snap.attendanceToday.overtime) / totalAttendance) * 100,
+            ((snap.attendanceToday.present + snap.attendanceToday.overtime) / totalAttendance) *
+              100,
           )
         : 100;
 
     const deptText = depts
       .slice(0, 5)
-      .map((d) => `${d.departmentName}: ${d.employeeCount} staff (Budget: ${formatCurrency(Number(d.totalWages))})`)
+      .map(
+        (d) =>
+          `${d.departmentName}: ${d.employeeCount} staff (Budget: ${formatCurrency(Number(d.totalWages))})`,
+      )
       .join('; ');
 
     const payrunText = payruns
-      .map((p) => `${p.name} [${p.status.toUpperCase()}]: Net ${formatCurrency(parseFloat(p.totalNet || '0'))}, ${p.payslipCount} payslips, ${p.warningsCount} warnings`)
+      .map(
+        (p) =>
+          `${p.name} [${p.status.toUpperCase()}]: Net ${formatCurrency(parseFloat(p.totalNet || '0'))}, ${p.payslipCount} payslips, ${p.warningsCount} warnings`,
+      )
       .join('; ');
 
     const leavesText =
@@ -200,7 +207,10 @@ async function callGeminiWithContext(
 
     const policyText = policies
       .slice(0, 6)
-      .map((p) => `${p.title} (${p.category}, ${p.isMandatory ? 'Mandatory' : 'Optional'}): ${p.summary}`)
+      .map(
+        (p) =>
+          `${p.title} (${p.category}, ${p.isMandatory ? 'Mandatory' : 'Optional'}): ${p.summary}`,
+      )
       .join('; ');
 
     const systemInstruction = `
@@ -296,9 +306,15 @@ You MUST respond with a valid JSON object matching this schema:
           const matched = pendingLeaves.find(
             (l) =>
               (p.requestId && l.requestId.toLowerCase() === String(p.requestId).toLowerCase()) ||
-              (p.employeeCode && l.employeeCode && l.employeeCode.toLowerCase() === String(p.employeeCode).toLowerCase()) ||
-              (p.employeeName && `${l.firstName} ${l.lastName}`.toLowerCase().includes(String(p.employeeName).toLowerCase())) ||
-              (p.employeeName && String(p.employeeName).toLowerCase().includes(l.firstName.toLowerCase())),
+              (p.employeeCode &&
+                l.employeeCode &&
+                l.employeeCode.toLowerCase() === String(p.employeeCode).toLowerCase()) ||
+              (p.employeeName &&
+                `${l.firstName} ${l.lastName}`
+                  .toLowerCase()
+                  .includes(String(p.employeeName).toLowerCase())) ||
+              (p.employeeName &&
+                String(p.employeeName).toLowerCase().includes(l.firstName.toLowerCase())),
           );
 
           if (matched) {
@@ -369,7 +385,10 @@ You MUST respond with a valid JSON object matching this schema:
 
     return null;
   } catch (err) {
-    console.warn('Gemini API call failed or encountered rate limit, using live database engine:', err);
+    console.warn(
+      'Gemini API call failed or encountered rate limit, using live database engine:',
+      err,
+    );
     return null;
   }
 }
@@ -414,16 +433,14 @@ async function generateDeterministicDbResponse(
     text.includes('approve') ||
     text.includes('grant leave') ||
     text.includes('accept leave') ||
-    (text.includes('approval') && (text.includes('leave') || text.includes('request') || text.includes('time off')))
+    (text.includes('approval') &&
+      (text.includes('leave') || text.includes('request') || text.includes('time off')))
   ) {
     if (!isHR) {
       return {
         reply: `### ⚠️ Authorization Notice\n\nOnly **HR Managers** and administrators have authority to approve time-off requests on behalf of the organization.\n\nAs an employee, please submit your leave request through the Time Off page so your reporting manager or HR can review it.`,
         actionLinks: [{ label: 'Go to Time Off Requests', url: '/time-off' }],
-        suggestedFollowUps: [
-          'What is our company leave policy?',
-          'How do I request time off?',
-        ],
+        suggestedFollowUps: ['What is our company leave policy?', 'How do I request time off?'],
         provider: 'builtin-db',
       };
     }
@@ -451,10 +468,7 @@ async function generateDeterministicDbResponse(
         return {
           reply: `### ✅ All Clear: No Pending Leave Requests\n\nThere are currently no pending leave requests awaiting approval in the database!`,
           actionLinks: [{ label: 'View Time Off Hub', url: '/time-off' }],
-          suggestedFollowUps: [
-            'Give me quick insights',
-            'How is attendance health today?',
-          ],
+          suggestedFollowUps: ['Give me quick insights', 'How is attendance health today?'],
           provider: 'builtin-db',
         };
       }
@@ -477,10 +491,7 @@ async function generateDeterministicDbResponse(
         reply: `### 🌴 Pending Leave Requests Awaiting Action\n\nI found **${allPending.length}** pending time-off request(s). Which one would you like to approve? Review the details below and click **Confirm & Approve** to execute on behalf of HR:`,
         actionProposals: proposals,
         actionLinks: [{ label: 'Manage All Requests', url: '/time-off' }],
-        suggestedFollowUps: [
-          'Give me quick insights',
-          'How is attendance health today?',
-        ],
+        suggestedFollowUps: ['Give me quick insights', 'How is attendance health today?'],
         provider: 'builtin-db',
       };
     }
@@ -505,10 +516,7 @@ async function generateDeterministicDbResponse(
       reply: `### ⚠️ Confirmation Required: Approve Time Off\n\nI located the pending request for **${target.firstName} ${target.lastName}** (\`${target.employeeCode || 'EMP'}\`).\n\nAs an agentic action on behalf of HR, please confirm the approval below before I update the database:`,
       actionProposal: proposal,
       actionLinks: [{ label: 'View in Time Off Hub', url: '/time-off' }],
-      suggestedFollowUps: [
-        'Show all pending leave requests',
-        'Give me quick insights',
-      ],
+      suggestedFollowUps: ['Show all pending leave requests', 'Give me quick insights'],
       provider: 'builtin-db',
     };
   }
@@ -533,7 +541,8 @@ async function generateDeterministicDbResponse(
     const presentRate =
       totalAttendance > 0
         ? Math.round(
-            ((snap.attendanceToday.present + snap.attendanceToday.overtime) / totalAttendance) * 100,
+            ((snap.attendanceToday.present + snap.attendanceToday.overtime) / totalAttendance) *
+              100,
           )
         : 100;
 
@@ -576,7 +585,10 @@ async function generateDeterministicDbResponse(
 
     const topDepts = deptList
       .slice(0, 4)
-      .map((d) => `• **${d.departmentName}**: ${d.employeeCount} employees (${formatCurrency(Number(d.totalWages))} total wages)`)
+      .map(
+        (d) =>
+          `• **${d.departmentName}**: ${d.employeeCount} employees (${formatCurrency(Number(d.totalWages))} total wages)`,
+      )
       .join('\n');
 
     const reply = `### 📊 PeoplePay360 Executive Briefing
@@ -716,8 +728,7 @@ ${runList}
     const snap = await chatbotRepo.getHRQuickSnapshot();
     const att = snap.attendanceToday;
     const total = att.total;
-    const presentRate =
-      total > 0 ? Math.round(((att.present + att.overtime) / total) * 100) : 100;
+    const presentRate = total > 0 ? Math.round(((att.present + att.overtime) / total) * 100) : 100;
 
     const cards: MetricCard[] = [
       {
@@ -840,9 +851,7 @@ ${pendingList}
       reply,
       metricCards: cards,
       actionProposals: proposals,
-      actionLinks: [
-        { label: 'Manage Time Off Requests', url: '/time-off' },
-      ],
+      actionLinks: [{ label: 'Manage Time Off Requests', url: '/time-off' }],
       suggestedFollowUps: [
         'What is our sick leave policy?',
         'How is attendance health today?',
@@ -976,10 +985,7 @@ ${deptRows}
         return {
           reply: `### 👤 Employee Lookup Results\n\nFound matching records for *"${cleanTerm}"*:\n\n${empDetails}`,
           actionLinks: [{ label: 'Open Employee Directory', url: '/employees' }],
-          suggestedFollowUps: [
-            'Give me quick insights',
-            'Show pending leave requests',
-          ],
+          suggestedFollowUps: ['Give me quick insights', 'Show pending leave requests'],
           provider: 'builtin-db',
         };
       }
@@ -1003,7 +1009,8 @@ ${deptRows}
         const fullText = `${p.title} ${p.summary} ${p.category} ${p.content}`.toLowerCase();
         if (text.includes('leave') && fullText.includes('leave')) return true;
         if (text.includes('sick') && fullText.includes('sick')) return true;
-        if (text.includes('remote') && (fullText.includes('remote') || fullText.includes('wfh'))) return true;
+        if (text.includes('remote') && (fullText.includes('remote') || fullText.includes('wfh')))
+          return true;
         if (text.includes('conduct') && fullText.includes('conduct')) return true;
         return false;
       });
@@ -1211,4 +1218,3 @@ export async function executeAction(
 
   throw new ValidationError(`Unsupported action type: ${input.action}`);
 }
-

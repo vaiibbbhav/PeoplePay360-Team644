@@ -104,7 +104,10 @@ export const PayslipDetailModal: React.FC<PayslipDetailModalProps> = ({
         {/* Modal Top Bar (Hidden on print) */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-line bg-bg-raised/50 print:hidden">
           <div className="flex items-center gap-2">
-            <h2 id="payslip-modal-title" className="font-serif text-sm sm:text-base font-bold text-ink">
+            <h2
+              id="payslip-modal-title"
+              className="font-serif text-sm sm:text-base font-bold text-ink"
+            >
               Payslip Document Preview
             </h2>
             <span className="text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full bg-accent-soft text-accent font-medium border border-accent/20">

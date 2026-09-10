@@ -92,7 +92,10 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
         {isLoading ? (
           <>
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40 space-y-2">
+              <div
+                key={i}
+                className="p-4 sm:p-5 border border-line rounded-xl bg-bg-raised/40 space-y-2"
+              >
                 <div className="h-3 w-20 bg-ink/10 rounded animate-pulse" />
                 <div className="h-7 w-24 bg-ink/10 rounded animate-pulse" />
                 <div className="h-2.5 w-28 bg-ink/10 rounded animate-pulse" />
@@ -117,7 +120,9 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
 
             {/* State 2: Total Hours */}
             <div className="p-4 sm:p-5 border border-line rounded-xl bg-bg">
-              <span className="text-[11px] font-medium text-ink-soft block">Total Worked Hours</span>
+              <span className="text-[11px] font-medium text-ink-soft block">
+                Total Worked Hours
+              </span>
               <div className="text-xl sm:text-2xl font-bold font-sans text-ink mt-1">
                 {totalWorkedHours.toFixed(1)}{' '}
                 <span className="text-xs font-sans font-normal text-ink-soft">hrs</span>
@@ -146,7 +151,9 @@ export const AttendanceStatsHeader: React.FC<AttendanceStatsHeaderProps> = ({
                 <span className="text-xs font-sans font-normal text-ink-soft">manual</span>
               </div>
               <span className="text-[10px] text-ink-soft font-normal mt-1 block truncate">
-                {fingerprint?.encrypted_template || fingerprint?.encryted_template ? 'Hardware Fingerprint Active' : 'Scanner Pending'}
+                {fingerprint?.encrypted_template || fingerprint?.encryted_template
+                  ? 'Hardware Fingerprint Active'
+                  : 'Scanner Pending'}
               </span>
             </div>
           </>

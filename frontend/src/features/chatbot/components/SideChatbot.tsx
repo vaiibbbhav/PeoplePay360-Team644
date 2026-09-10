@@ -78,7 +78,10 @@ const FormattedContent: React.FC<{ content: string; onNavigate: (url: string) =>
         // Italic/Quote note
         if (trimmed.startsWith('*') && trimmed.endsWith('*')) {
           return (
-            <p key={idx} className="text-[11px] italic text-ink-soft bg-bg/50 px-2 py-1 rounded border-l-2 border-accent">
+            <p
+              key={idx}
+              className="text-[11px] italic text-ink-soft bg-bg/50 px-2 py-1 rounded border-l-2 border-accent"
+            >
               {trimmed.slice(1, -1)}
             </p>
           );
@@ -91,7 +94,10 @@ const FormattedContent: React.FC<{ content: string; onNavigate: (url: string) =>
 };
 
 // Helper for inline bold, code, and markdown links
-function renderInlineFormatting(text: string, onNavigate: (url: string) => void): React.ReactNode[] {
+function renderInlineFormatting(
+  text: string,
+  onNavigate: (url: string) => void,
+): React.ReactNode[] {
   // Regex to match **bold**, `code`, and [link](url)
   const regex = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g;
   const parts = text.split(regex);
@@ -138,10 +144,7 @@ type ActionProposalCardProps = {
   onExecuteSuccess?: (result: ExecuteActionResult) => void;
 };
 
-const ActionProposalCard: React.FC<ActionProposalCardProps> = ({
-  proposal,
-  onExecuteSuccess,
-}) => {
+const ActionProposalCard: React.FC<ActionProposalCardProps> = ({ proposal, onExecuteSuccess }) => {
   const [actionState, setActionState] = useState<
     'pending' | 'executing' | 'executed' | 'cancelled' | 'error'
   >('pending');
@@ -204,9 +207,7 @@ const ActionProposalCard: React.FC<ActionProposalCardProps> = ({
             <span className="font-serif font-bold text-xs text-ink truncate block">
               {proposal.title}
             </span>
-            <span className="text-[10px] text-ink-soft truncate block">
-              Agentic HR Action
-            </span>
+            <span className="text-[10px] text-ink-soft truncate block">Agentic HR Action</span>
           </div>
         </div>
 
@@ -248,13 +249,9 @@ const ActionProposalCard: React.FC<ActionProposalCardProps> = ({
             <span className="text-[10px] uppercase font-semibold text-ink-soft tracking-wider block mb-0.5">
               Employee
             </span>
-            <span className="font-medium text-ink truncate block">
-              {proposal.employeeName}
-            </span>
+            <span className="font-medium text-ink truncate block">{proposal.employeeName}</span>
             {proposal.employeeCode && (
-              <span className="text-[10px] font-mono text-ink-soft">
-                {proposal.employeeCode}
-              </span>
+              <span className="text-[10px] font-mono text-ink-soft">{proposal.employeeCode}</span>
             )}
           </div>
 
@@ -262,21 +259,15 @@ const ActionProposalCard: React.FC<ActionProposalCardProps> = ({
             <span className="text-[10px] uppercase font-semibold text-ink-soft tracking-wider block mb-0.5">
               Duration & Type
             </span>
-            <span className="font-medium text-ink block">
-              {proposal.duration}
-            </span>
-            <span className="text-[10px] text-ink-soft truncate block">
-              {proposal.leaveType}
-            </span>
+            <span className="font-medium text-ink block">{proposal.duration}</span>
+            <span className="text-[10px] text-ink-soft truncate block">{proposal.leaveType}</span>
           </div>
 
           <div className="col-span-2 bg-bg-raised/50 p-2 rounded-lg border border-line">
             <span className="text-[10px] uppercase font-semibold text-ink-soft tracking-wider block mb-0.5">
               Period / Dates
             </span>
-            <span className="font-mono text-[11px] text-ink">
-              {proposal.dates}
-            </span>
+            <span className="font-mono text-[11px] text-ink">{proposal.dates}</span>
           </div>
 
           {proposal.reason && (
@@ -284,9 +275,7 @@ const ActionProposalCard: React.FC<ActionProposalCardProps> = ({
               <span className="text-[10px] uppercase font-semibold text-ink-soft tracking-wider block mb-0.5">
                 Reason
               </span>
-              <span className="text-ink italic text-[11px]">
-                "{proposal.reason}"
-              </span>
+              <span className="text-ink italic text-[11px]">"{proposal.reason}"</span>
             </div>
           )}
         </div>
@@ -334,7 +323,8 @@ const ActionProposalCard: React.FC<ActionProposalCardProps> = ({
               <span>Leave Approved on Behalf of HR</span>
             </div>
             <p className="text-[11px] text-ink-soft leading-relaxed">
-              Deducted {result?.duration || proposal.duration} from {proposal.employeeName}'s balance. Request status updated to <strong>Approved</strong>.
+              Deducted {result?.duration || proposal.duration} from {proposal.employeeName}'s
+              balance. Request status updated to <strong>Approved</strong>.
             </p>
             {result?.approvedBy && (
               <div className="text-[10px] font-mono text-ink-soft/70 pt-0.5">
@@ -551,11 +541,19 @@ export const SideChatbot: React.FC<SideChatbotProps> = ({ isOpen, onClose }) => 
 
   const quickActionChips = [
     { label: '⚡ Insights', query: 'Give me quick insights', icon: TrendingUp },
-    { label: '🌴 Approve Leaves', query: 'Show pending leave requests awaiting approval', icon: CalendarCheck },
+    {
+      label: '🌴 Approve Leaves',
+      query: 'Show pending leave requests awaiting approval',
+      icon: CalendarCheck,
+    },
     { label: '💰 Payroll', query: 'Summarize latest payrun status', icon: DollarSign },
     { label: '⏱️ Attendance', query: 'How is attendance health today?', icon: Clock },
     { label: '📜 Contracts', query: 'Are there any expiring contracts?', icon: Shield },
-    { label: '🏢 Departments', query: 'Show department headcount and salary costs', icon: Building },
+    {
+      label: '🏢 Departments',
+      query: 'Show department headcount and salary costs',
+      icon: Building,
+    },
   ];
 
   if (!isOpen) return null;
@@ -582,7 +580,9 @@ export const SideChatbot: React.FC<SideChatbotProps> = ({ isOpen, onClose }) => 
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="font-serif font-bold text-sm text-ink truncate">HR AI Assistant</span>
+                <span className="font-serif font-bold text-sm text-ink truncate">
+                  HR AI Assistant
+                </span>
                 {/* <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   Live DB
@@ -648,10 +648,11 @@ export const SideChatbot: React.FC<SideChatbotProps> = ({ isOpen, onClose }) => 
                 <div className={`max-w-[85%] space-y-2.5 ${isUser ? 'items-end' : 'items-start'}`}>
                   {/* Message Bubble */}
                   <div
-                    className={`rounded-xl p-3 text-xs ${isUser
-                      ? 'bg-accent text-accent-ink rounded-tr-xs'
-                      : 'bg-bg-raised border border-line text-ink rounded-tl-xs'
-                      }`}
+                    className={`rounded-xl p-3 text-xs ${
+                      isUser
+                        ? 'bg-accent text-accent-ink rounded-tr-xs'
+                        : 'bg-bg-raised border border-line text-ink rounded-tl-xs'
+                    }`}
                   >
                     {isUser ? (
                       <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>

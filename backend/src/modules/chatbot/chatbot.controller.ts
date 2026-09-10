@@ -16,36 +16,30 @@ export const handleChatMessage = asyncHandler(
   },
 );
 
-export const executeAction = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    if (!req.user) {
-      throw new UnauthorizedError('Authentication required');
-    }
+export const executeAction = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) {
+    throw new UnauthorizedError('Authentication required');
+  }
 
-    const validatedInput = executeActionSchema.parse(req.body);
-    const result = await chatbotService.executeAction(validatedInput, req.user);
-    res.status(200).json(result);
-  },
-);
+  const validatedInput = executeActionSchema.parse(req.body);
+  const result = await chatbotService.executeAction(validatedInput, req.user);
+  res.status(200).json(result);
+});
 
-export const getQuickInsights = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    if (!req.user) {
-      throw new UnauthorizedError('Authentication required');
-    }
+export const getQuickInsights = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) {
+    throw new UnauthorizedError('Authentication required');
+  }
 
-    const insights = await chatbotService.getQuickInsights(req.user);
-    res.status(200).json(insights);
-  },
-);
+  const insights = await chatbotService.getQuickInsights(req.user);
+  res.status(200).json(insights);
+});
 
-export const getSuggestions = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    if (!req.user) {
-      throw new UnauthorizedError('Authentication required');
-    }
+export const getSuggestions = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) {
+    throw new UnauthorizedError('Authentication required');
+  }
 
-    const suggestions = chatbotService.getSuggestions(req.user);
-    res.status(200).json({ suggestions });
-  },
-);
+  const suggestions = chatbotService.getSuggestions(req.user);
+  res.status(200).json({ suggestions });
+});

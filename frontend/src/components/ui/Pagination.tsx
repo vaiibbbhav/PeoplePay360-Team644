@@ -1,11 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  ChevronDown,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ChevronDown } from 'lucide-react';
 
 export type PaginationProps = {
   currentPage: number;
@@ -67,9 +61,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   if (totalItems <= 0) return null;
 
   const containerStyle =
-    variant === 'standalone'
-      ? 'border border-line rounded-2xl'
-      : 'border-t border-line';
+    variant === 'standalone' ? 'border border-line rounded-2xl' : 'border-t border-line';
 
   return (
     <div

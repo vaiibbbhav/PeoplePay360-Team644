@@ -208,7 +208,7 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
         err instanceof Error
           ? err.message
           : (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
-          'Failed to submit leave request.';
+            'Failed to submit leave request.';
       setErrorMessage(msg);
     }
   };
@@ -232,7 +232,10 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
           {/* Header */}
           <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-line flex items-center justify-between bg-bg-raised/40">
             <div>
-              <h2 id="apply-leave-title" className="text-lg sm:text-xl font-serif font-bold text-ink mt-0.5">
+              <h2
+                id="apply-leave-title"
+                className="text-lg sm:text-xl font-serif font-bold text-ink mt-0.5"
+              >
                 Apply for Leave
               </h2>
             </div>
@@ -360,10 +363,11 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
                 <button
                   type="button"
                   onClick={handleToggleHalfDay}
-                  className={`px-2 py-1 rounded-lg text-[11px] font-medium border transition-colors ${isHalfDay
-                    ? 'bg-accent text-white border-accent'
-                    : 'border-line bg-bg text-ink hover:bg-bg-raised'
-                    }`}
+                  className={`px-2 py-1 rounded-lg text-[11px] font-medium border transition-colors ${
+                    isHalfDay
+                      ? 'bg-accent text-white border-accent'
+                      : 'border-line bg-bg text-ink hover:bg-bg-raised'
+                  }`}
                 >
                   {isHalfDay ? 'Half-Day (0.5d) Active' : 'Half-Day (0.5d)'}
                 </button>
@@ -373,7 +377,8 @@ export const ApplyLeaveModal: React.FC<ApplyLeaveModalProps> = ({
               <div className="flex items-center gap-1.5 text-[11px] text-ink-soft pt-1">
                 <Info className="w-3 h-3 text-accent shrink-0" />
                 <span>
-                  {dateCalculation.calendarDays} total calendar days • {duration} working days requested
+                  {dateCalculation.calendarDays} total calendar days • {duration} working days
+                  requested
                 </span>
               </div>
             </div>

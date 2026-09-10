@@ -70,7 +70,8 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
           <div>
             <h4 className="text-sm font-sans font-medium text-ink">No Active Leave Allocations</h4>
             <p className="text-xs text-ink-soft mt-0.5">
-              Contact your HR administrator to set up your annual vacation, sick, and casual leave quotas.
+              Contact your HR administrator to set up your annual vacation, sick, and casual leave
+              quotas.
             </p>
           </div>
         </div>
@@ -100,9 +101,7 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {balances.map((item) => {
           const percentUsed =
-            item.allocated > 0
-              ? Math.min(100, Math.round((item.taken / item.allocated) * 100))
-              : 0;
+            item.allocated > 0 ? Math.min(100, Math.round((item.taken / item.allocated) * 100)) : 0;
 
           return (
             <div
@@ -120,9 +119,7 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
                       Paid
                     </span>
                   ) : (
-                    <span className="text-[11px] font-medium text-ink-soft shrink-0">
-                      Unpaid
-                    </span>
+                    <span className="text-[11px] font-medium text-ink-soft shrink-0">Unpaid</span>
                   )}
                 </div>
 
@@ -131,9 +128,7 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
                   <span className="text-2xl sm:text-3xl font-bold font-sans text-ink tracking-tight">
                     {item.requiresAllocation ? item.remaining.toFixed(1) : '∞'}
                   </span>
-                  <span className="text-xs text-ink-soft font-medium">
-                    days available
-                  </span>
+                  <span className="text-xs text-ink-soft font-medium">days available</span>
                 </div>
 
                 {/* Progress Bar (Only for quota-based allocations) */}
@@ -153,9 +148,7 @@ export const LeaveBalanceCards: React.FC<LeaveBalanceCardsProps> = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="mt-4 text-xs text-ink-soft">
-                    Unlimited policy quota
-                  </div>
+                  <div className="mt-4 text-xs text-ink-soft">Unlimited policy quota</div>
                 )}
               </div>
 

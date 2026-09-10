@@ -95,4 +95,3 @@ export const getRecordDateIST = (rec: { date?: string; check_in?: string | null 
   }
   return rec.date || '';
 };
-

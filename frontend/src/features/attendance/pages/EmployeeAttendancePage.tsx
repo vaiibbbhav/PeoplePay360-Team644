@@ -124,9 +124,7 @@ export const EmployeeAttendancePage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
             <div className="mb-1">
-              <span className="text-xs font-mono text-accent font-medium">
-                Time & Attendance
-              </span>
+              <span className="text-xs font-mono text-accent font-medium">Time & Attendance</span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               Time & Attendance
@@ -140,10 +138,11 @@ export const EmployeeAttendancePage: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsFingerprintModalOpen(true)}
-              className={`px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs ${!isEnrolled
-                ? 'border-accent bg-accent/10 text-accent font-semibold'
-                : 'border-line bg-bg hover:bg-bg-raised text-ink'
-                }`}
+              className={`px-3.5 py-2 rounded-lg text-xs font-medium border transition-colors cursor-pointer inline-flex items-center gap-2 shadow-xs ${
+                !isEnrolled
+                  ? 'border-accent bg-accent/10 text-accent font-semibold'
+                  : 'border-line bg-bg hover:bg-bg-raised text-ink'
+              }`}
             >
               <svg
                 className="w-4 h-4 text-accent"
@@ -172,7 +171,8 @@ export const EmployeeAttendancePage: React.FC = () => {
                   Fingerprint Not Registered
                 </span>
                 <span className="text-[11px] text-ink-soft">
-                  Enroll your biometric minutiae to activate hardware terminal matching and attendance tracking.
+                  Enroll your biometric minutiae to activate hardware terminal matching and
+                  attendance tracking.
                 </span>
               </div>
             </div>
@@ -189,7 +189,11 @@ export const EmployeeAttendancePage: React.FC = () => {
         {/* Top States Header & Summary */}
         <AttendanceStatsHeader
           records={records}
-          fingerprint={isEnrolled ? { id: 'fp-active', employee_id: employeeId, encrypted_template: 'AES-256-GCM' } : null}
+          fingerprint={
+            isEnrolled
+              ? { id: 'fp-active', employee_id: employeeId, encrypted_template: 'AES-256-GCM' }
+              : null
+          }
           onOpenFingerprintModal={() => setIsFingerprintModalOpen(true)}
           monthName={monthName}
           year={year}

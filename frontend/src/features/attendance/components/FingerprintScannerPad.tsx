@@ -141,38 +141,22 @@ export const FingerprintScannerPad: React.FC<FingerprintScannerPadProps> = ({
           {/* Reticle Corner Crosshair Brackets */}
           <span
             className={`absolute top-2.5 left-2.5 w-3.5 h-3.5 border-t-2 border-l-2 pointer-events-none z-30 transition-colors ${
-              isSuccess
-                ? 'border-emerald-500'
-                : isFailed
-                  ? 'border-rose-500'
-                  : 'border-accent/80'
+              isSuccess ? 'border-emerald-500' : isFailed ? 'border-rose-500' : 'border-accent/80'
             }`}
           />
           <span
             className={`absolute top-2.5 right-2.5 w-3.5 h-3.5 border-t-2 border-r-2 pointer-events-none z-30 transition-colors ${
-              isSuccess
-                ? 'border-emerald-500'
-                : isFailed
-                  ? 'border-rose-500'
-                  : 'border-accent/80'
+              isSuccess ? 'border-emerald-500' : isFailed ? 'border-rose-500' : 'border-accent/80'
             }`}
           />
           <span
             className={`absolute bottom-2.5 left-2.5 w-3.5 h-3.5 border-b-2 border-l-2 pointer-events-none z-30 transition-colors ${
-              isSuccess
-                ? 'border-emerald-500'
-                : isFailed
-                  ? 'border-rose-500'
-                  : 'border-accent/80'
+              isSuccess ? 'border-emerald-500' : isFailed ? 'border-rose-500' : 'border-accent/80'
             }`}
           />
           <span
             className={`absolute bottom-2.5 right-2.5 w-3.5 h-3.5 border-b-2 border-r-2 pointer-events-none z-30 transition-colors ${
-              isSuccess
-                ? 'border-emerald-500'
-                : isFailed
-                  ? 'border-rose-500'
-                  : 'border-accent/80'
+              isSuccess ? 'border-emerald-500' : isFailed ? 'border-rose-500' : 'border-accent/80'
             }`}
           />
 
@@ -257,16 +241,8 @@ export const FingerprintScannerPad: React.FC<FingerprintScannerPadProps> = ({
                   strokeLinecap="round"
                 />
                 {/* Lower delta lines */}
-                <path
-                  d="M22 62 C26 70 32 76 38 80"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M58 62 C54 70 48 76 42 80"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
+                <path d="M22 62 C26 70 32 76 38 80" strokeWidth="2.5" strokeLinecap="round" />
+                <path d="M58 62 C54 70 48 76 42 80" strokeWidth="2.5" strokeLinecap="round" />
                 {/* Key Minutiae Nodes */}
                 <circle cx="28" cy="50" r="2.5" className="fill-current" />
                 <circle cx="52" cy="50" r="2.5" className="fill-current" />

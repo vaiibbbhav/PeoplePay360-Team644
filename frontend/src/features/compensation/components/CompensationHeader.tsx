@@ -17,9 +17,7 @@ export const CompensationHeader: React.FC<CompensationHeaderProps> = ({
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
       <div>
         <div className="mb-1">
-          <span className="text-xs font-mono text-accent font-medium">
-            Payroll & Compensation
-          </span>
+          <span className="text-xs font-mono text-accent font-medium">Payroll & Compensation</span>
         </div>
         <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
           Compensation

@@ -199,10 +199,7 @@ Security Notice: After signing in, you can change your password in your settings
     return { success: true, messageId: info.messageId };
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : String(error);
-    console.error(
-      `[MAILER] Failed to send credentials email to ${toEmail}:`,
-      errorMsg,
-    );
+    console.error(`[MAILER] Failed to send credentials email to ${toEmail}:`, errorMsg);
     return { success: false, error: errorMsg };
   }
 };
@@ -315,10 +312,7 @@ This link is valid for 8 hours.
     return { success: true, messageId: info.messageId };
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : String(error);
-    console.error(
-      `[MAILER] Failed to send verification email to ${toEmail}:`,
-      errorMsg,
-    );
+    console.error(`[MAILER] Failed to send verification email to ${toEmail}:`, errorMsg);
     return { success: false, error: errorMsg };
   }
 };
@@ -337,14 +331,27 @@ export type PayslipEmailOptions = {
 export const sendPayslipEmail = async (
   options: PayslipEmailOptions,
 ): Promise<{ success: boolean; messageId?: string; error?: string }> => {
-  const { toEmail, employeeName, period, netSalary, grossSalary, totalDeductions, payrunName, payslipId } = options;
+  const {
+    toEmail,
+    employeeName,
+    period,
+    netSalary,
+    grossSalary,
+    totalDeductions,
+    payrunName,
+    payslipId,
+  } = options;
   const appUrl = process.env.APP_URL || 'http://localhost:5173';
   const from = process.env.SMTP_FROM || 'PeoplePay360 <noreply@peoplepay360.com>';
 
   const payslipUrl = payslipId ? `${appUrl}/payslip/${payslipId}` : `${appUrl}/compensation`;
 
   const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+    new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(amount);
 
   const html = `
 <!DOCTYPE html>
@@ -402,7 +409,13 @@ export const sendPayslipEmail = async (
   }
 
   try {
-    const info = await transporter.sendMail({ from, to: toEmail, subject: `Your Payslip — ${period} | PeoplePay360`, text, html });
+    const info = await transporter.sendMail({
+      from,
+      to: toEmail,
+      subject: `Your Payslip — ${period} | PeoplePay360`,
+      text,
+      html,
+    });
     return { success: true, messageId: info.messageId };
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : String(error);

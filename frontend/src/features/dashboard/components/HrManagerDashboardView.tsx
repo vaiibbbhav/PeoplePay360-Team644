@@ -57,9 +57,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
   const departmentBreakdown = dashboard?.charts?.departmentBreakdown || [];
 
   const topDepartments = useMemo(() => {
-    return [...departmentBreakdown]
-      .sort((a, b) => b.headcount - a.headcount)
-      .slice(0, 6);
+    return [...departmentBreakdown].sort((a, b) => b.headcount - a.headcount).slice(0, 6);
   }, [departmentBreakdown]);
 
   const totalHeadcount = useMemo(() => {
@@ -72,9 +70,9 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
   // Attendance Donut calculations
   const totalAttendanceEntries =
     (attendance.present || 0) +
-    (attendance.late || 0) +
-    (attendance.absent || 0) +
-    (attendance.overtime || 0) || 1;
+      (attendance.late || 0) +
+      (attendance.absent || 0) +
+      (attendance.overtime || 0) || 1;
 
   const donutCircumference = 2 * Math.PI * 54; // r = 54
   const attendanceSegments = useMemo(() => {
@@ -144,9 +142,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <div className="mb-1">
-            <span className="text-xs font-mono text-accent font-medium">
-              Overview
-            </span>
+            <span className="text-xs font-mono text-accent font-medium">Overview</span>
           </div>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
             HR Operations Overview
@@ -307,7 +303,8 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
                 {schedules.active || 4}
               </div>
               <p className="text-xs text-ink-soft m-0 mb-3 leading-relaxed">
-                Active shift patterns regulating biometric check-in windows (avg {schedules.avgWeeklyHours || 40} hrs/wk).
+                Active shift patterns regulating biometric check-in windows (avg{' '}
+                {schedules.avgWeeklyHours || 40} hrs/wk).
               </p>
             </div>
             <Link
@@ -527,7 +524,9 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
 
           {/* Footer note */}
           <div className="pt-3.5 mt-4 border-t border-line/60 flex items-center justify-between text-xs text-ink-soft">
-            <span>Manual edits recorded: <b className="text-ink">{attendance.manualEdits}</b></span>
+            <span>
+              Manual edits recorded: <b className="text-ink">{attendance.manualEdits}</b>
+            </span>
             <span className="text-[11px] text-accent font-medium">Biometric Sync Active</span>
           </div>
         </div>
@@ -557,18 +556,25 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
             <div className="space-y-3.5 py-1">
               {topDepartments.length > 0 ? (
                 topDepartments.map((dept) => {
-                  const sharePercent = totalHeadcount > 0 ? ((dept.headcount / totalHeadcount) * 100).toFixed(1) : '0';
+                  const sharePercent =
+                    totalHeadcount > 0 ? ((dept.headcount / totalHeadcount) * 100).toFixed(1) : '0';
 
                   return (
                     <div key={dept.department} className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-ink">{dept.department}</span>
-                          <span className="text-[11px] text-ink-soft">({dept.headcount} staff)</span>
+                          <span className="text-[11px] text-ink-soft">
+                            ({dept.headcount} staff)
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-[11px] font-semibold text-ink font-sans">{sharePercent}%</span>
-                          <span className="text-[10px] text-ink-soft hidden sm:inline">of total</span>
+                          <span className="text-[11px] font-semibold text-ink font-sans">
+                            {sharePercent}%
+                          </span>
+                          <span className="text-[10px] text-ink-soft hidden sm:inline">
+                            of total
+                          </span>
                         </div>
                       </div>
 
@@ -593,7 +599,8 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
           {/* Footer note */}
           <div className="pt-3.5 mt-4 border-t border-line/60 flex items-center justify-between text-xs text-ink-soft">
             <span>
-              Showing Top {topDepartments.length} of {departmentBreakdown.length || 6} Operational Departments
+              Showing Top {topDepartments.length} of {departmentBreakdown.length || 6} Operational
+              Departments
             </span>
             <Link to="/employees" className="text-accent hover:underline font-medium no-underline">
               View All Profiles →
@@ -674,7 +681,9 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
                   className="flex items-center justify-between text-xs p-3 rounded-lg border border-line/60 bg-bg-raised/30 hover:border-line transition-colors"
                 >
                   <div className="flex flex-col">
-                    <span className="font-semibold text-ink font-sans">{c.employee_name || c.name}</span>
+                    <span className="font-semibold text-ink font-sans">
+                      {c.employee_name || c.name}
+                    </span>
                     <span className="text-[11px] text-ink-soft">
                       Effective:{' '}
                       {new Date(c.start_date).toLocaleDateString('en-GB', {
@@ -686,7 +695,8 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-medium text-ink text-[11px]">
-                      ₹{Number(c.wage).toLocaleString('en-IN')}/{c.wage_type === 'hourly' ? 'hr' : 'mo'}
+                      ₹{Number(c.wage).toLocaleString('en-IN')}/
+                      {c.wage_type === 'hourly' ? 'hr' : 'mo'}
                     </span>
                     <span
                       className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${
@@ -708,10 +718,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
               <ShieldCheck className="w-3.5 h-3.5 text-accent" />
               Non-overlapping constraint active
             </span>
-            <Link
-              to="/contracts"
-              className="text-accent font-medium hover:underline"
-            >
+            <Link to="/contracts" className="text-accent font-medium hover:underline">
               Open Contracts Registry →
             </Link>
           </div>
@@ -722,7 +729,9 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-line mb-4">
               <div>
-                <h3 className="text-base font-semibold text-ink font-sans">Working Schedules &amp; Shifts</h3>
+                <h3 className="text-base font-semibold text-ink font-sans">
+                  Working Schedules &amp; Shifts
+                </h3>
                 <p className="text-xs text-ink-soft mt-0.5">
                   Standard weekly shift templates &amp; break allowances
                 </p>
@@ -786,10 +795,7 @@ export const HrManagerDashboardView: React.FC<HrManagerDashboardViewProps> = ({ 
               <Clock className="w-3.5 h-3.5 text-accent" />
               Automated break deduction enabled
             </span>
-            <Link
-              to="/schedules"
-              className="text-accent font-medium hover:underline"
-            >
+            <Link to="/schedules" className="text-accent font-medium hover:underline">
               Open Schedule Builder →
             </Link>
           </div>

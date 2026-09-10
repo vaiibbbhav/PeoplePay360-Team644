@@ -2,10 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Download } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useCurrentUser } from '@/features/auth/queries/useAuth';
-import {
-  useAttendanceList,
-  type AttendanceRecord,
-} from '../queries/useAttendance';
+import { useAttendanceList, type AttendanceRecord } from '../queries/useAttendance';
 import { AttendanceSummaryCards } from '../components/AttendanceSummaryCards';
 import {
   AttendanceFilterToolbar,
@@ -39,7 +36,7 @@ export const AttendanceRecordsPage: React.FC = () => {
   // Query: for non-employee users, fetch company-wide attendance records
   const { data: allRecords = [], isLoading } = useAttendanceList({
     // If not employee-only, don't pass employeeId so backend returns all attendance logs
-    employeeId: isEmployeeOnly ? (user?.employeeId || undefined) : undefined,
+    employeeId: isEmployeeOnly ? user?.employeeId || undefined : undefined,
     startDate: filter.startDate || undefined,
     endDate: filter.endDate || undefined,
   });
@@ -145,9 +142,7 @@ export const AttendanceRecordsPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-5 sm:pb-6">
           <div>
             <div className="mb-1">
-              <span className="text-xs font-mono text-accent font-medium">
-                Time & Attendance
-              </span>
+              <span className="text-xs font-mono text-accent font-medium">Time & Attendance</span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-ink mt-1">
               Attendance Records

@@ -132,7 +132,7 @@ export const AttendanceTerminalPage: React.FC = () => {
             Live Biometric Punch Station
           </div>
           <h1 className="font-sans text-3xl sm:text-4xl font-bold tracking-tight text-ink">
-            Biometric Attendance 
+            Biometric Attendance
           </h1>
           <p className="text-xs sm:text-sm text-ink-soft">
             Attendance with biometric fingerprint verification.
@@ -227,14 +227,12 @@ export const AttendanceTerminalPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      const num =
-                        currentUser.employeeCode?.replace(/^EMP-?0*/i, '') || '';
+                      const num = currentUser.employeeCode?.replace(/^EMP-?0*/i, '') || '';
                       setEmployeeNum(num);
                       setPunchResult(null);
                     }}
                     className={`px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium border transition-colors cursor-pointer ${
-                      employeeNum ===
-                      (currentUser.employeeCode?.replace(/^EMP-?0*/i, '') || '')
+                      employeeNum === (currentUser.employeeCode?.replace(/^EMP-?0*/i, '') || '')
                         ? 'border-accent bg-accent text-accent-ink font-semibold'
                         : 'border-line bg-bg hover:border-accent/50 text-ink'
                     }`}
@@ -446,7 +444,8 @@ export const AttendanceTerminalPage: React.FC = () => {
                               {`Verification Failed for ${formatEmpCode(punchResult.employeeCode || fullEmployeeCode)}`}
                             </h3>
                             <span className="font-mono text-xs px-2.5 py-0.5 rounded-md bg-rose-500/15 text-rose-600 dark:text-rose-400 font-semibold border border-rose-500/30">
-                              1:1 Target: {formatEmpCode(punchResult.employeeCode || fullEmployeeCode)}
+                              1:1 Target:{' '}
+                              {formatEmpCode(punchResult.employeeCode || fullEmployeeCode)}
                             </span>
                           </div>
                           <p className="text-xs text-ink-soft leading-relaxed">

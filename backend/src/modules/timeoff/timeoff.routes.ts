@@ -27,11 +27,7 @@ router.get(
   timeoffController.listTimeOffTypes,
 );
 
-router.post(
-  '/types',
-  requirePermission('timeoff.write'),
-  timeoffController.createTimeOffType,
-);
+router.post('/types', requirePermission('timeoff.write'), timeoffController.createTimeOffType);
 
 // Allocations
 router.get(
@@ -40,11 +36,7 @@ router.get(
   timeoffController.listAllocations,
 );
 
-router.post(
-  '/allocations',
-  requirePermission('timeoff.write'),
-  timeoffController.createAllocation,
-);
+router.post('/allocations', requirePermission('timeoff.write'), timeoffController.createAllocation);
 
 router.post(
   '/allocations/:id/approve',
@@ -79,4 +71,3 @@ router.post('/requests/:id/approve', timeoffController.approveRequest);
 router.post('/requests/:id/refuse', timeoffController.refuseRequest);
 
 export default router;
-

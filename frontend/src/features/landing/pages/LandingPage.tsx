@@ -95,7 +95,6 @@ export const LandingPage: React.FC = () => {
             <a href="#roles" className="no-underline hover:text-ink transition-colors">
               Roles
             </a>
-
           </nav>
 
           <div className="flex items-center gap-2.5 sm:gap-3.5">
@@ -262,9 +261,7 @@ export const LandingPage: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 lg:gap-12">
               <div>
-                <div className="text-xs font-semibold text-accent mb-2">
-                  The basics fall short
-                </div>
+                <div className="text-xs font-semibold text-accent mb-2">The basics fall short</div>
                 <p className="text-ink-soft text-sm sm:text-base m-0 leading-relaxed">
                   An employee accumulates multiple historical contracts, but payroll accidentally
                   pulls an outdated wage. Working hours mismatch schedule templates, leave requests
@@ -637,7 +634,9 @@ export const LandingPage: React.FC = () => {
         <footer className="border-t border-line py-6 sm:py-9 px-4 sm:px-8">
           <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs text-ink-soft gap-2 sm:gap-3 text-center sm:text-left">
             <span>PeoplePay360 — Integrated HR & Payroll Operations Platform</span>
-            <span className="hidden sm:inline">Master Data → Contracts → Time Off → Payroll → Reporting</span>
+            <span className="hidden sm:inline">
+              Master Data → Contracts → Time Off → Payroll → Reporting
+            </span>
           </div>
         </footer>
       </main>

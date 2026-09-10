@@ -60,7 +60,9 @@ export const updateAttendanceSchema = baseAttendanceRecordSchema.partial().refin
 export function validateAttendanceRecord(data: unknown) {
   const result = attendanceRecordSchema.safeParse(data);
   if (!result.success) {
-    const errorMsg = result.error.errors.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ');
+    const errorMsg = result.error.errors
+      .map((e: any) => `${e.path.join('.')}: ${e.message}`)
+      .join(', ');
     throw new ValidationError(errorMsg);
   }
   return result.data;
@@ -69,7 +71,9 @@ export function validateAttendanceRecord(data: unknown) {
 export function validateUpdateAttendance(data: unknown) {
   const result = updateAttendanceSchema.safeParse(data);
   if (!result.success) {
-    const errorMsg = result.error.errors.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ');
+    const errorMsg = result.error.errors
+      .map((e: any) => `${e.path.join('.')}: ${e.message}`)
+      .join(', ');
     throw new ValidationError(errorMsg);
   }
   return result.data;

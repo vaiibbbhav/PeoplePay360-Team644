@@ -128,9 +128,7 @@ export const AttendanceFilterToolbar: React.FC<AttendanceFilterToolbarProps> = (
       {/* Preset pills & Checkbox */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-line/60 text-xs">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-xs text-ink-soft font-medium mr-1">
-            Presets:
-          </span>
+          <span className="text-xs text-ink-soft font-medium mr-1">Presets:</span>
           <button
             type="button"
             onClick={() => handleQuickPreset('today')}

@@ -1,15 +1,21 @@
 import * as reportingRepo from './reporting.repository';
 
 export async function getDashboardOverview() {
-  const [payrollKpis, timeOffStats, attendanceHealth, deptCosts, salaryTrends, contractAndSchedule] =
-    await Promise.all([
-      reportingRepo.getPayrollKpis(),
-      reportingRepo.getTimeOffStats(),
-      reportingRepo.getAttendanceHealthStats(),
-      reportingRepo.getSalaryCostByDepartment(),
-      reportingRepo.getMonthlySalaryTrends(),
-      reportingRepo.getContractAndScheduleStats(),
-    ]);
+  const [
+    payrollKpis,
+    timeOffStats,
+    attendanceHealth,
+    deptCosts,
+    salaryTrends,
+    contractAndSchedule,
+  ] = await Promise.all([
+    reportingRepo.getPayrollKpis(),
+    reportingRepo.getTimeOffStats(),
+    reportingRepo.getAttendanceHealthStats(),
+    reportingRepo.getSalaryCostByDepartment(),
+    reportingRepo.getMonthlySalaryTrends(),
+    reportingRepo.getContractAndScheduleStats(),
+  ]);
 
   const totalAttendance = attendanceHealth.total_attendance_entries || 0;
   const presentRate =
@@ -68,4 +74,3 @@ export async function getAdminOverview() {
     recentActivity,
   };
 }
-

@@ -38,14 +38,7 @@ export type ITDeclarationTabProps = {
   employeeId?: string;
 };
 
-type SchemeCategory =
-  | '80c'
-  | 'hra'
-  | '80d'
-  | '24b'
-  | 'nps'
-  | 'other'
-  | 'previous-employment';
+type SchemeCategory = '80c' | 'hra' | '80d' | '24b' | 'nps' | 'other' | 'previous-employment';
 
 export const ITDeclarationTab: React.FC<ITDeclarationTabProps> = ({
   financialYear = '2026-27',
@@ -150,7 +143,8 @@ export const ITDeclarationTab: React.FC<ITDeclarationTabProps> = ({
         if (parsed.lenderPan !== undefined) setLenderPan(parsed.lenderPan);
         if (parsed.healthSelf !== undefined) setHealthSelf(parsed.healthSelf);
         if (parsed.healthParents !== undefined) setHealthParents(parsed.healthParents);
-        if (parsed.npsEmployee80CCD1B !== undefined) setNpsEmployee80CCD1B(parsed.npsEmployee80CCD1B);
+        if (parsed.npsEmployee80CCD1B !== undefined)
+          setNpsEmployee80CCD1B(parsed.npsEmployee80CCD1B);
         if (parsed.pranNumber !== undefined) setPranNumber(parsed.pranNumber);
         if (parsed.sec80GDeclared !== undefined) setSec80GDeclared(parsed.sec80GDeclared);
         if (parsed.sec80TTADeclared !== undefined) setSec80TTADeclared(parsed.sec80TTADeclared);
@@ -254,7 +248,8 @@ export const ITDeclarationTab: React.FC<ITDeclarationTabProps> = ({
       section80D: eligible80DTotal,
       section80CCD1B: Math.min(50000, npsEmployee80CCD1B),
       section80CCD2: npsEmployer80CCD2,
-      homeLoanInterest: propertyType === 'self_occupied' ? Math.min(200000, homeLoanInterest) : homeLoanInterest,
+      homeLoanInterest:
+        propertyType === 'self_occupied' ? Math.min(200000, homeLoanInterest) : homeLoanInterest,
       otherDeductions: otherDeductionsTotal,
     };
   }, [
@@ -320,8 +315,11 @@ export const ITDeclarationTab: React.FC<ITDeclarationTabProps> = ({
               IT Declaration for FY {financialYear}
             </h2>
             <p className="text-xs text-ink-soft mt-1">
-              Declare tax-saving investments, rent receipts, home loans, and select your preferred tax regime for TDS calculations.
-              <span className="ml-2 font-mono text-[11px] opacity-75">Last updated: {lastUpdated}</span>
+              Declare tax-saving investments, rent receipts, home loans, and select your preferred
+              tax regime for TDS calculations.
+              <span className="ml-2 font-mono text-[11px] opacity-75">
+                Last updated: {lastUpdated}
+              </span>
             </p>
           </div>
 
@@ -379,7 +377,8 @@ export const ITDeclarationTab: React.FC<ITDeclarationTabProps> = ({
                     </span>
                   </div>
                   <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                    Lower slab rates with enhanced standard deduction of <b>₹75,000</b>. Section 87A rebate offers <b>zero tax up to ₹7,75,000</b> income.
+                    Lower slab rates with enhanced standard deduction of <b>₹75,000</b>. Section 87A
+                    rebate offers <b>zero tax up to ₹7,75,000</b> income.
                   </p>
                 </div>
                 <div
@@ -417,7 +416,8 @@ export const ITDeclarationTab: React.FC<ITDeclarationTabProps> = ({
                     </span>
                   </div>
                   <p className="text-xs text-ink-soft mt-1 leading-relaxed">
-                    Full eligibility for Chapter VI-A deductions: 80C (₹1.5L), 80D Mediclaim, HRA exemption, and Section 24(b) Home Loan interest (₹2L).
+                    Full eligibility for Chapter VI-A deductions: 80C (₹1.5L), 80D Mediclaim, HRA
+                    exemption, and Section 24(b) Home Loan interest (₹2L).
                   </p>
                 </div>
                 <div
@@ -444,14 +444,19 @@ export const ITDeclarationTab: React.FC<ITDeclarationTabProps> = ({
           <div className="flex items-start gap-3 p-3.5 rounded-xl border border-accent/20 bg-accent/5 text-xs text-ink leading-relaxed">
             <Info className="w-4 h-4 text-accent shrink-0 mt-0.5" />
             <p>
-              <b>Active Regime: New Tax Regime (Section 115BAC).</b> Under this regime, itemized deductions (like 80C, 80D, and HRA) do not reduce tax liability, but you benefit from lower slab rates and a ₹75,000 standard deduction. Your declared investments below are saved and can be evaluated anytime by clicking <b>"Compare Regimes"</b>.
+              <b>Active Regime: New Tax Regime (Section 115BAC).</b> Under this regime, itemized
+              deductions (like 80C, 80D, and HRA) do not reduce tax liability, but you benefit from
+              lower slab rates and a ₹75,000 standard deduction. Your declared investments below are
+              saved and can be evaluated anytime by clicking <b>"Compare Regimes"</b>.
             </p>
           </div>
         ) : (
           <div className="flex items-start gap-3 p-3.5 rounded-xl border border-violet-200 dark:border-violet-900/40 bg-violet-50/60 dark:bg-violet-950/20 text-xs text-violet-900 dark:text-violet-300 leading-relaxed">
             <CheckCircle className="w-4 h-4 text-accent shrink-0 mt-0.5" />
             <p>
-              <b>Active Regime: Old Tax Regime.</b> Your TDS will be computed after factoring in all eligible Chapter VI-A deductions, HRA exemptions, and home loan interest claims declared below.
+              <b>Active Regime: Old Tax Regime.</b> Your TDS will be computed after factoring in all
+              eligible Chapter VI-A deductions, HRA exemptions, and home loan interest claims
+              declared below.
             </p>
           </div>
         )}

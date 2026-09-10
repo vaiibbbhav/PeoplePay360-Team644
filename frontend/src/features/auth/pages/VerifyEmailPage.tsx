@@ -14,7 +14,7 @@ export const VerifyEmailPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState(() =>
     token ? '' : 'No verification token found in URL.',
   );
-  
+
   useEffect(() => {
     if (!token) return;
 
@@ -53,7 +53,10 @@ export const VerifyEmailPage: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-bg text-ink font-sans">
       {/* Header */}
       <header className="border-b border-line px-4 sm:px-8 py-3.5 sm:py-4 flex justify-between items-center bg-bg">
-        <Link to="/" className="font-serif text-lg sm:text-xl font-bold tracking-tight text-ink no-underline">
+        <Link
+          to="/"
+          className="font-serif text-lg sm:text-xl font-bold tracking-tight text-ink no-underline"
+        >
           PeoplePay<span className="text-accent">360</span>
         </Link>
       </header>

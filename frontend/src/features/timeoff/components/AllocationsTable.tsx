@@ -88,7 +88,9 @@ export const AllocationsTable: React.FC<AllocationsTableProps> = ({ canManage })
                   <th className="py-3 px-3.5 sm:px-4 font-semibold">Remaining</th>
                   <th className="py-3 px-3.5 sm:px-4 font-semibold">Validity Period</th>
                   <th className="py-3 px-3.5 sm:px-4 font-semibold">Status</th>
-                  {canManage && <th className="py-3 px-3.5 sm:px-4 font-semibold text-right">Actions</th>}
+                  {canManage && (
+                    <th className="py-3 px-3.5 sm:px-4 font-semibold text-right">Actions</th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">

@@ -14,10 +14,7 @@ type GrantAllocationModalProps = {
   onClose: () => void;
 };
 
-export const GrantAllocationModal: React.FC<GrantAllocationModalProps> = ({
-  isOpen,
-  onClose,
-}) => {
+export const GrantAllocationModal: React.FC<GrantAllocationModalProps> = ({ isOpen, onClose }) => {
   const { data: employees = [] } = useEmployeesList();
   const { data: types = [] } = useTimeOffTypes();
   const createMutation = useCreateAllocation();
@@ -105,7 +102,10 @@ export const GrantAllocationModal: React.FC<GrantAllocationModalProps> = ({
               <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
                 HR Allocation Quota
               </span>
-              <h2 id="grant-allocation-title" className="text-lg sm:text-xl font-serif font-bold text-ink mt-0.5">
+              <h2
+                id="grant-allocation-title"
+                className="text-lg sm:text-xl font-serif font-bold text-ink mt-0.5"
+              >
                 Grant Leave Allocation
               </h2>
             </div>

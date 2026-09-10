@@ -346,12 +346,6 @@ export async function findPendingLeaveById(requestId: string) {
     .innerJoin(employees, eq(timeOffRequests.employeeId, employees.id))
     .innerJoin(users, eq(employees.userId, users.id))
     .innerJoin(timeOffTypes, eq(timeOffRequests.timeOffTypeId, timeOffTypes.id))
-    .where(
-      and(
-        eq(timeOffRequests.id, requestId),
-        eq(timeOffRequests.status, 'pending'),
-      ),
-    );
+    .where(and(eq(timeOffRequests.id, requestId), eq(timeOffRequests.status, 'pending')));
   return res || null;
 }
-

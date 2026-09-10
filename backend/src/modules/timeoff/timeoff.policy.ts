@@ -1,8 +1,5 @@
 import { Request } from 'express';
-import {
-  assertOwnerOrPermission,
-  assertManagerOrPermission,
-} from '../../shared/auth-middleware';
+import { assertOwnerOrPermission, assertManagerOrPermission } from '../../shared/auth-middleware';
 
 type TimeOffRequestAuthContext = {
   employee_id: string;

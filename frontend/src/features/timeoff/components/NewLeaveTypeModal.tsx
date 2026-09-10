@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { X, Check } from 'lucide-react';
-import {
-  useCreateTimeOffType,
-  type CreateTimeOffTypePayload,
-} from '../queries/useTimeOff';
+import { useCreateTimeOffType, type CreateTimeOffTypePayload } from '../queries/useTimeOff';
 import { useClickOutside } from '@/hooks/useClickOutside';
 import { useDialogAccessibility } from '@/components/ui/useDialogAccessibility';
 
@@ -19,7 +16,9 @@ export const NewLeaveTypeModal: React.FC<NewLeaveTypeModalProps> = ({ isOpen, on
   const [code, setCode] = useState('');
   const [unit, setUnit] = useState<'days' | 'hours'>('days');
   const [requiresAllocation, setRequiresAllocation] = useState(true);
-  const [approvalType, setApprovalType] = useState<'hr_only' | 'manager_and_hr' | 'auto'>('hr_only');
+  const [approvalType, setApprovalType] = useState<'hr_only' | 'manager_and_hr' | 'auto'>(
+    'hr_only',
+  );
   const [isPaid, setIsPaid] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -92,7 +91,10 @@ export const NewLeaveTypeModal: React.FC<NewLeaveTypeModalProps> = ({ isOpen, on
               <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
                 HR Policy Definition
               </span>
-              <h2 id="new-policy-title" className="text-lg sm:text-xl font-serif font-bold text-ink mt-0.5">
+              <h2
+                id="new-policy-title"
+                className="text-lg sm:text-xl font-serif font-bold text-ink mt-0.5"
+              >
                 New Leave Policy
               </h2>
             </div>
@@ -185,7 +187,9 @@ export const NewLeaveTypeModal: React.FC<NewLeaveTypeModalProps> = ({ isOpen, on
                   className="rounded border-line text-accent focus:ring-accent w-4 h-4"
                 />
                 <div>
-                  <div className="text-xs font-medium text-ink">Requires Prior Quota Allocation</div>
+                  <div className="text-xs font-medium text-ink">
+                    Requires Prior Quota Allocation
+                  </div>
                   <div className="text-[11px] text-ink-soft">
                     Employees must have an approved balance before requesting this leave.
                   </div>
@@ -200,9 +204,12 @@ export const NewLeaveTypeModal: React.FC<NewLeaveTypeModalProps> = ({ isOpen, on
                   className="rounded border-line text-accent focus:ring-accent w-4 h-4"
                 />
                 <div>
-                  <div className="text-xs font-medium text-ink">Paid Leave (Counts Toward Payroll)</div>
+                  <div className="text-xs font-medium text-ink">
+                    Paid Leave (Counts Toward Payroll)
+                  </div>
                   <div className="text-[11px] text-ink-soft">
-                    Days taken will be paid out as standard working days in the payroll salary calculation.
+                    Days taken will be paid out as standard working days in the payroll salary
+                    calculation.
                   </div>
                 </div>
               </label>
