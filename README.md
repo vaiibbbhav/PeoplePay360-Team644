@@ -5,8 +5,7 @@
 
 ---
 
-https://github.com/user-attachments/assets/f723c9df-2e0e-4fc5-b2c6-32bfebe96bc2
-
+https://github.com/user-attachments/assets/858087d3-b2a6-43e4-a007-d07ce45bb637
 
 ## 🌟 Executive Summary
 
